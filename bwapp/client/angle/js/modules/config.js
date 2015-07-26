@@ -12,7 +12,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
   $locationProvider.html5Mode(true);
 
   // default route
-  $urlRouterProvider.otherwise('/singleview');
+  $urlRouterProvider.otherwise('404');
 
   // 
   // Application Routes
@@ -35,7 +35,25 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         title: 'Submenu',
         templateUrl: helper.basepath('submenu.ng.html')
     })
-    // 
+    .state('404', {
+      url: '/404',
+      title: "Not Found",
+      templateUrl: helper.basepath('404.html'),
+      resolve: helper.resolveFor('modernizr', 'icons'),
+      controller: ["$rootScope", function($rootScope) {
+          $rootScope.app.layout.isBoxed = false;
+      }]
+    })
+    .state('main', {
+      url: '/main',
+      title: "Block World",
+      templateUrl: helper.basepath('main.html'),
+      resolve: helper.resolveFor('modernizr', 'icons'),
+      controller: ["$rootScope", function($rootScope) {
+        $rootScope.app.layout.isBoxed = false;
+      }]
+    })
+    //
     // CUSTOM RESOLVES
     //   Add your own resolves properties
     //   following this object extend
