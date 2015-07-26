@@ -6,8 +6,11 @@
 
 meteor-platform
 autopublish
-insecure
 less
 urigo:angular
 http
 cfs:http-methods
+mquandalle:bower
+accounts-password
+ian:accounts-ui-bootstrap-3
+twbs:bootstrap

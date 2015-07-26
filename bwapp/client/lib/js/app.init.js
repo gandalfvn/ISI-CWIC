@@ -54,8 +54,8 @@ angular.module('angle')
         // Scope Globals
         // ----------------------------------- 
         $rootScope.app = {
-          name: 'Angle',
-          description: 'Angular Bootstrap Admin Template',
+          name: 'Block World',
+          description: 'Block World Game',
           year: ((new Date()).getFullYear()),
           layout: {
             isFixed: true,
@@ -72,7 +72,7 @@ angular.module('angle')
           viewAnimation: 'ng-fadeInUp'
         };
         $rootScope.user = {
-          name:     'John',
+          name:     'William',
           job:      'ng-developer',
           picture:  'app/img/user/02.jpg'
         };
