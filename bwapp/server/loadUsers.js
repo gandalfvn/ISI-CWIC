@@ -8,7 +8,7 @@ Meteor.startup(function () {
   ]
 
   _.each(userlist, function(usr){
-    if(!Meteor.users.findOne({username: userlist[0].username})){
+    if(!Meteor.users.findOne({username: usr.username})){
       try{
         var userid = Accounts.createUser({
           username: usr.username,
