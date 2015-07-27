@@ -21,11 +21,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     .state('root', {
       url: '/',
       title: "Block World",
-      controller: ['$state', '$meteor', function($state, $meteor){
+      onEnter: ['$state', '$meteor', function($state, $meteor){
+        console.warn('root')
         var usr = $meteor.requireUser();
         if(usr) $state.go('app.worldview');
         else $state.go('main');
-      }],
+      }]
     })
     .state('app', {
         // url: '/app',
