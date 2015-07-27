@@ -8,17 +8,19 @@ Meteor.startup(function () {
   ]
 
   _.each(userlist, function(usr){
-    try{
-      var userid = Accounts.createUser({
-        username: usr.username,
-        email: usr.username,
-        password: usr.pwd,
-        profile: {roles: usr.roles}
-      });
-      console.warn(userid)
-    }
-    catch(err){
-      console.warn(err)
+    if(!Meteor.users.findOne({username: userlist[0].username})){
+      try{
+        var userid = Accounts.createUser({
+          username: usr.username,
+          email: usr.username,
+          password: usr.pwd,
+          profile: {roles: usr.roles}
+        });
+        console.warn(userid)
+      }
+      catch(err){
+        console.warn(err)
+      }
     }
   })
 });

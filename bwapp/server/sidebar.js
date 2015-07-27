@@ -9,12 +9,12 @@ Meteor.methods({
         "translate": "sidebar.heading.HEADER"
       },
       {
-        "text": "Single View",
-        "sref": "app.singleview",
-        "icon": "fa fa-file-o",
-        "translate": "sidebar.nav.SINGLEVIEW"
+        "text": "World",
+        "sref": "app.worldview",
+        "icon": "fa fa-globe",
+        "translate": "sidebar.nav.WORLDVIEW"
       },
-      {
+      /*{
         "text": "Menu",
         "sref": "#",
         "icon": "icon-folder",
@@ -25,7 +25,7 @@ Meteor.methods({
           }    
         ],
         "translate": "sidebar.nav.menu.MENU"
-      }
+      }*/
     ];
     
     return menu;

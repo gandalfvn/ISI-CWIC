@@ -32,7 +32,9 @@ angular.module('angle')
     scripts: {
       'modernizr':          ['vendor/modernizr/modernizr.js'],
       'icons':              ['vendor/fontawesome/css/font-awesome.min.css',
-                             'vendor/simple-line-icons/css/simple-line-icons.css']
+                             'vendor/simple-line-icons/css/simple-line-icons.css'],
+      'babylonjs':          ['vendor/babylonjs/babylon.2.1.js',
+                              'vendor/babylonjs/Oimo.js']
     },
     // Angular based script (use the right module name)
     modules: [

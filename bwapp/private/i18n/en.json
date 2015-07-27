@@ -13,6 +13,7 @@
       "HEADER": "Main Navigation"
     },
     "nav": {
+      "WORLDVIEW": "World View",
       "SINGLEVIEW": "Single View",
       "menu": {
         "MENU": "Menu",

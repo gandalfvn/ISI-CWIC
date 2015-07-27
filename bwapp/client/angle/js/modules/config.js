@@ -23,8 +23,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: "Block World",
       controller: ['$state', '$meteor', function($state, $meteor){
         var usr = $meteor.requireUser();
-        console.warn('root', usr);
-        if(usr) $state.go('app.singleview');
+        if(usr) $state.go('app.worldview');
         else $state.go('main');
       }],
     })
@@ -35,15 +34,15 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         controller: 'AppController',
         resolve: helper.resolveFor('modernizr', 'icons')
     })
-    .state('app.singleview', {
-        url: '/singleview',
-        title: 'Single View',
-        templateUrl: helper.basepath('singleview.ng.html'),
-        resolve: {
-          "currentUser": ["$meteor", function($meteor){
-            return $meteor.requireUser();
-          }]
-        }
+    .state('app.worldview', {
+        url: '/worldview',
+        title: 'World View',
+        templateUrl: helper.basepath('worldview.html'),
+        resolve: angular.extend(
+          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+          helper.resolveFor('babylonjs')
+        ),
+        controller: 'worldCtrl'
     })
     .state('app.submenu', {
         url: '/submenu',
