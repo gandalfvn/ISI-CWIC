@@ -18,6 +18,16 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
   // Application Routes
   // -----------------------------------   
   $stateProvider
+    .state('root', {
+      url: '/',
+      title: "Block World",
+      controller: ['$state', '$meteor', function($state, $meteor){
+        var usr = $meteor.requireUser();
+        console.warn('root', usr);
+        if(usr) $state.go('app.singleview');
+        else $state.go('main');
+      }],
+    })
     .state('app', {
         // url: '/app',
         abstract: true,
@@ -28,7 +38,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     .state('app.singleview', {
         url: '/singleview',
         title: 'Single View',
-        templateUrl: helper.basepath('singleview.ng.html')
+        templateUrl: helper.basepath('singleview.ng.html'),
+        resolve: {
+          "currentUser": ["$meteor", function($meteor){
+            return $meteor.requireUser();
+          }]
+        }
     })
     .state('app.submenu', {
         url: '/submenu',

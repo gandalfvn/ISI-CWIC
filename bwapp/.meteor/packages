@@ -10,8 +10,7 @@ less
 urigo:angular
 http
 cfs:http-methods
-mquandalle:bower
 accounts-password
-ian:accounts-ui-bootstrap-3
-twbs:bootstrap
 civilframe:angular-jade
+twbs:bootstrap
+ian:accounts-ui-bootstrap-3

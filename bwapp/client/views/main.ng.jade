@@ -1,26 +1,28 @@
 //
    Created by wjwong on 7/26/15.
-div(style="top: 118px; width: 100%;  height: 600px;  position: relative;  margin: 0 auto;  overflow: hidden;  background: transparent url(img/buidlingblocks.jpg) repeat 0% 0%; background-position: center; background-size: 90% 700px;")
-.abs-center.wd-xl
-   // START panel
-   .panel.widget.b0(style="margin: 10px;")
-      .panel-body.shadowbox
-         p.text-center
-            .fa.fa-cubes(style="font-size:2.8em; color:#23b7e5;")
-            span(style="font-size:2.8em; color:#23b7e5;") Block World
-            .clearfix
-               .pull-left.mt-sm
-                  .text-muted
-                     small Have a login?
-               .pull-right
-                  // Change this button type to submit to send the form data
-                  button.btn.btn-sm.btn-primary(type="button", ng-click="$state.go('page.login')") Login
-   // END panel
-   .p-lg.text-center
-      span &#169;
-      span(ng-bind="app.year")
-      span -
-      span(ng-bind="app.name")
-      br
-      span(ng-bind="app.description")
+div(style="top: 118px; width: 100%;  height: 600px;  position: relative;  margin: 0 auto;  overflow: hidden;  background: transparent url(img/buidlingblocks.jpg) repeat 0% 0%; background-position: center; background-size: 70% 700px;")
+.abs-center.wd-xl(style="overflow: visible;")
+  // START panel
+  .panel.widget.b0(style="margin: 10px;")
+    .panel-body.shadowbox
+      p.text-center
+        .fa.fa-cubes(style="font-size:2.8em; color:#23b7e5;")
+        span(style="font-size:2.8em; color:#23b7e5;") Block World
+        .clearfix
+          .pull-left.mt-sm
+            .text-muted
+              small Have a login?
+          .pull-right
+            // Change this button type to submit to send the form data
+            button.btn.btn-sm.btn-default(type="button", style="list-style-type: none;")
+              meteor-include(src="_loginButtons")
+
+  // END panel
+  .p-lg.text-center
+    span &#169;
+    span(ng-bind="app.year")
+    span -
+    span(ng-bind="app.name")
+    br
+    span(ng-bind="app.description")
 

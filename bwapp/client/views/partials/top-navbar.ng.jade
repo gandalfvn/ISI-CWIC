@@ -1,0 +1,50 @@
+//
+   Created by wjwong on 7/26/15.
+// START Top Navbar
+nav.navbar.topnavbar(role="navigation")
+  // START navbar header
+  .navbar-header
+    a.navbar-brand(href="#/")
+      .brand-logo(style="font-size:1em; color:white;")
+        span.fa.fa-cubes  Block World
+        // img src="img/logo.png" alt="App Logo" class="img-responsive" /
+      .brand-logo-collapsed(style="font-size:1.8em; color:white;")
+        span.fa.fa-cubes
+        // img src="img/logo-single.png" alt="App Logo" class="img-responsive" /
+  // END navbar header
+  // START Nav wrapper
+  .nav-wrapper
+    // START Left navbar
+    ul.nav.navbar-nav
+      li
+        // Button used to collapse the left sidebar. Only visible on tablet and desktops
+        a.hidden-xs(ng-click="app.layout.isCollapsed = !app.layout.isCollapsed")
+          em.fa.fa-navicon
+        // Button to show/hide the sidebar on mobile. Visible on mobile only.
+        a.visible-xs.sidebar-toggle(toggle-state="aside-toggled", no-persist="no-persist")
+          em.fa.fa-navicon
+    // END Left navbar
+    // START Right Navbar
+    ul.nav.navbar-nav.navbar-right
+      // Search icon
+      //-li
+        a(search-open="")
+          em.icon-magnifier
+      // START Offsidebar button
+      li
+        a(style='color:white')
+          meteor-include(src="_loginButtons")
+        //-a(toggle-state="offsidebar-open", no-persist="no-persist")
+           em.icon-notebook
+      // END Offsidebar menu
+    // END Right Navbar
+  // END Nav wrapper
+  // START Search form
+  form.navbar-form(role="search", action="search.html")
+    .form-group.has-feedback
+      input.form-control(type="text", placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}")
+      .fa.fa-times.form-control-feedback(search-dismiss="search-dismiss")
+    button.hidden.btn.btn-default(type="submit") Submit
+  // END Search form
+// END Top Navbar
+
