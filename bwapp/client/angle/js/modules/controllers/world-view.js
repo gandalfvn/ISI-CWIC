@@ -49,6 +49,7 @@ angular.module('angle').controller('worldCtrl',
        var halfelip = data.size/2;
        box.ellipsoid = new BABYLON.Vector3(halfelip, halfelip, halfelip);
        box.applyGravity = true;
+       box.receiveShadows = true;
        numcubes++;
        cubeslist.push(box);
      }
@@ -79,8 +80,13 @@ angular.module('angle').controller('worldCtrl',
        // This creates a light, aiming 0,1,0 - to the sky.
        var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
        // Dim the light a small amount
-       light.intensity = 0.9;
-
+       light.intensity = 0.7;
+       // this creates dir. light
+       var dirlight = new BABYLON.DirectionalLight("dir1", new BABYLON.Vector3(-0.4, -2, -0.4), scene);
+       // Dim the light a small amount
+       dirlight.intensity = 0.6;
+       dirlight.position = new BABYLON.Vector3(0, 40, 0);
+       
        /** SKYBOX **/
        BABYLON.Engine.ShadersRepository = "shaders/";
 
@@ -111,54 +117,60 @@ angular.module('angle').controller('worldCtrl',
        ground.material = mat; //gridshader; //mat;
        ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
        ground.checkCollisions = true;
-
+       ground.receiveShadows = true;
+       
        // Impact impostor
-       var impact = BABYLON.Mesh.CreatePlane("impact", 0.5, scene);
+       /*var impact = BABYLON.Mesh.CreatePlane("impact", 0.5, scene);
        impact.material = new BABYLON.StandardMaterial("impactMat", scene);
        impact.material.diffuseTexture = new BABYLON.Texture("img/textures/target.png", scene);
        impact.material.diffuseTexture.hasAlpha = true;
-       impact.position = new BABYLON.Vector3(0, 0, -0.1);
+       impact.position = new BABYLON.Vector3(0, 0, -0.1);*/
        
        //add cube
+       var p = -2;
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3(i*2,5,0), scene: scene, size: cubeSize.s, color: cubecolors[i]});
+         createCube({pos: new BABYLON.Vector3((p+i)*2,5,0), scene: scene, size: cubeSize.s, color: cubecolors[i]});
        }
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3(i*3,5,3), scene: scene, size: cubeSize.m, color: cubecolors[i]});
+         createCube({pos: new BABYLON.Vector3((p+i)*3,5,3), scene: scene, size: cubeSize.m, color: cubecolors[i]});
        }
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3(i*6,5,8), scene: scene, size: cubeSize.l, color: cubecolors[i]});
+         createCube({pos: new BABYLON.Vector3((p+i)*6,5,8), scene: scene, size: cubeSize.l, color: cubecolors[i]});
        }
 
+       //shadows
+       var shadowGenerator = new BABYLON.ShadowGenerator(1024, dirlight);
+       _.each(cubeslist, function(c){
+         shadowGenerator.getShadowMap().renderList.push(c);
+       });
+       //shadowGenerator.useVarianceShadowMap = true;
+       shadowGenerator.usePoissonSampling = true;
+       
        //handle drag and drop
        var startingPoint;
        var currentMesh;
-       var yplane;
        var lockxz = false;
+       var sceney = null;
 
        var getGroundPosition = function () {
          // Use a predicate to get position on the ground
          var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
          if (pickinfo.hit) {
-           return pickinfo.pickedPoint;
+           if(startingPoint){
+             var current = pickinfo.pickedPoint.clone();
+             current.y = startingPoint.y;
+             return current;
+           }
+           else return pickinfo.pickedPoint;
          }
          return null;
        }
-
-       var getYPosition = function () {
-         // Use a predicate to get position on the ground
-         var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == yplane; });
-         if (pickinfo.hit) {
-           return pickinfo.pickedPoint;
-         }
-         return null;
-       }
-
+       
        var onPointerDown = function (evt) {
          if (evt.button !== 0) return;
          // check if we are under a mesh
          var pickInfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) {
-           return (mesh !== ground) && (mesh !== skybox) && (mesh !== yplane); });
+           return (mesh !== ground) && (mesh !== skybox)});
          if (pickInfo.hit) {
            currentMesh = pickInfo.pickedMesh;
            startingPoint = getGroundPosition(evt);
@@ -183,18 +195,19 @@ angular.module('angle').controller('worldCtrl',
        var onPointerMove = function (evt) {
          if (!startingPoint) return;
          var current;
-         if(!lockxz)
-           current = getGroundPosition(evt);
-         else{
-           current = getYPosition(evt);
-           console.warn('loc ', current)
+         if(lockxz){
+           current = startingPoint.clone();
+           current.y += (sceney - scene.pointerY)*0.2;
+           sceney = scene.pointerY;
          }
+         else
+           current = getGroundPosition(evt);
          if (!current) {
            return;
          }
          var diff = current.subtract(startingPoint);
-         //currentMesh.position.addInPlace(diff);
-         currentMesh.moveWithCollisions(diff);
+         if(lockxz) currentMesh.position.addInPlace(diff);
+         else currentMesh.moveWithCollisions(diff);
          startingPoint = current;
        }
 
@@ -215,17 +228,17 @@ angular.module('angle').controller('worldCtrl',
          switch (evt.keyCode) {
            case 16:
              if(currentMesh){
-               console.warn('shift down', camera.position);
                lockxz = true;
+               sceney = scene.pointerY;
                //yplane
-               yplane = BABYLON.Mesh.CreatePlane("yplane", 100.0, scene, false);
+               /*yplane = currentMesh.clone(currentMesh.name);
                yplane.material = new BABYLON.StandardMaterial("yplanemat", scene);
                yplane.material.emissiveColor = new BABYLON.Color3(0.5, 1, 0.5);
                yplane.position.x = currentMesh.position.x;
                yplane.position.y = currentMesh.position.y;
                yplane.position.z = currentMesh.position.z;
                //yplane.material.backFaceCulling = false;
-               //yplane.rotation = new BABYLON.Vector3(Math.PI, 0, 0);
+               //yplane.rotation = new BABYLON.Vector3(Math.PI, 0, 0);*/
              }
              break;
            default: break;
@@ -236,21 +249,22 @@ angular.module('angle').controller('worldCtrl',
          console.warn(evt.keyCode);
          switch (evt.keyCode) {
            case 16:
-             if(yplane){
+             /*if(yplane){
                yplane.dispose();
                yplane = null;
                console.warn('shift up')
-             }
+             }*/
              lockxz = false;
+             sceney = null;
              break;
            default: break;
          }
        });
 
        var animate = function(){
-         if(yplane){
+         /*if(yplane){
            yplane.lookAt(camera.position);
-         }
+         }*/
        }
        scene.registerBeforeRender(animate);
        // Leave this function
