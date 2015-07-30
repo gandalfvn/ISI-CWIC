@@ -33,7 +33,7 @@ angular.module('angle')
       'modernizr':          ['vendor/modernizr/modernizr.js'],
       'icons':              ['vendor/fontawesome/css/font-awesome.min.css',
                              'vendor/simple-line-icons/css/simple-line-icons.css'],
-      'babylonjs':          ['vendor/babylonjs/babylon.2.1.js',
+      'babylonjs':          ['vendor/babylonjs/preview release - alpha/babylon.2.2.js',
                               'vendor/babylonjs/Oimo.js',
                               'vendor/handjs/hand.js']
     },

@@ -45,6 +45,16 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         ),
         controller: 'worldCtrl'
     })
+    .state('app.simpworld', {
+      url: '/simpworld',
+      title: 'World View',
+      templateUrl: helper.basepath('worldview.html'),
+      resolve: angular.extend(
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        helper.resolveFor('babylonjs')
+      ),
+      controller: 'worldSimpCtrl'
+    })
     .state('app.submenu', {
         url: '/submenu',
         title: 'Submenu',
