@@ -55,7 +55,7 @@ angular.module('angle').controller('worldCtrl',
        box.applyGravity = true;
        box.receiveShadows = true;
        box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:4, friction:0.5, restitution:0.1});
-       box.onCollide = function(a,b){
+       box.onCollide = function(a){
          console.warn('oncollide', objname, this, a)
        }
        //box.updatePhysicsBodyPosition();
