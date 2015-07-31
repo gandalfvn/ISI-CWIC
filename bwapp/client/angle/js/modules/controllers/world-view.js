@@ -8,6 +8,204 @@ angular.module('angle').controller('worldCtrl',
    function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout){
      "use strict";
 
+     //*****draw axis
+     var canvas2D = document.getElementById("canvas_2D");
+     var context2D = canvas2D.getContext("2d");
+
+     //Add a placeholder function for browsers that don't have setLineDash()
+     if (!context2D.setLineDash) {
+       context.setLineDash = function () {}
+     }
+
+     var clearCanvas2D = function(){
+       canvas2D.width = window.innerWidth;
+       canvas2D.height = window.innerHeight;
+     };
+     
+     var drawAxis = function(camera, mesh, drawAncestors, pivot){
+
+       context2D.lineWidth = 1;
+       context2D.shadowColor = '#000000';
+       context2D.lineCap = "square";
+       context2D.shadowBlur = 10;
+       context2D.shadowOffsetX = 0;
+       context2D.shadowOffsetY = 0;
+
+       //////////////////////// update camera view matrix
+       var viewMatrix = camera.getViewMatrix();
+       //////////////////////////
+
+       var originInLocalSpace = BABYLON.Vector3.Zero();
+       var xInLocalSpace = new BABYLON.Vector3(1,0,0);
+       var yInLocalSpace = new BABYLON.Vector3(0,1,0);
+       var zInLocalSpace = new BABYLON.Vector3(0,0,1);
+
+       var cameraPositionInLocalSpace = camera.position.clone();
+
+       // todo: case where camera has a parent
+
+       var worldMatrix;
+       var invWorldMatrix;
+       if(mesh)
+       {
+         worldMatrix = mesh.getWorldMatrix();
+         invWorldMatrix = worldMatrix.clone();
+         invWorldMatrix.invert();
+         cameraPositionInLocalSpace = BABYLON.Vector3.TransformCoordinates(cameraPositionInLocalSpace, invWorldMatrix);
+       }
+
+       var dist = originInLocalSpace.subtract(cameraPositionInLocalSpace);
+       dist.normalize();
+       var startInLocalSpace = dist.scale(30).add(cameraPositionInLocalSpace); // todo: use const for 15
+       var startLine = _drawAxis(startInLocalSpace, xInLocalSpace, "#ff0000", camera, worldMatrix, mesh);
+       _drawAxis(startInLocalSpace, yInLocalSpace, "#00ff00", camera, worldMatrix, mesh);
+       _drawAxis(startInLocalSpace, zInLocalSpace, "#0000ff", camera, worldMatrix, mesh);
+
+       if (drawAncestors && mesh) {
+         var endLine = drawAxis(camera, mesh.parent, drawAncestors, pivot);
+         context2D.setLineDash([3,9]);
+         context2D.shadowBlur = 2;
+         drawLine(startLine, endLine, "#ffffff");
+         context2D.shadowBlur = 10;
+         context2D.setLineDash([0]);
+       }
+
+       if(mesh && pivot)
+       {
+         var parentWorldMatrix = mesh.parent ? mesh.parent.getWorldMatrix() : BABYLON.Matrix.Identity();
+         var pivotWorldMatrix =  mesh._localScaling.multiply(mesh._localRotation).multiply (mesh._localTranslation).multiply(parentWorldMatrix);
+
+         var invPivotWorldMatrix = pivotWorldMatrix.clone();
+         invPivotWorldMatrix.invert();
+         var cameraPositionInPivotSpace = BABYLON.Vector3.TransformCoordinates(camera.position, invPivotWorldMatrix);
+
+         var dist = originInLocalSpace.subtract(cameraPositionInPivotSpace);
+         dist.normalize();
+         startInLocalSpace = dist.scale(30).add(cameraPositionInPivotSpace); // todo: use const for 30
+
+         _drawAxis(startInLocalSpace, xInLocalSpace, "#ff8888", camera, pivotWorldMatrix, mesh);
+         _drawAxis(startInLocalSpace, yInLocalSpace, "#88ff88", camera, pivotWorldMatrix, mesh);
+         _drawAxis(startInLocalSpace, zInLocalSpace, "#8888ff", camera, pivotWorldMatrix, mesh);
+       }
+
+       return startLine;
+     };
+
+     var _drawAxis = function (startInLocalSpace, axisInLocalSpace, color, camera, worldMatrix, mesh) {
+
+       var endInLocalSpace = startInLocalSpace.add(axisInLocalSpace);
+
+       var startInWorld = startInLocalSpace.clone();
+       var endInWorld = endInLocalSpace.clone();
+
+       if (mesh)
+       {
+         startInWorld = BABYLON.Vector3.TransformCoordinates(startInWorld, worldMatrix);
+         endInWorld = BABYLON.Vector3.TransformCoordinates(endInWorld, worldMatrix);
+       }
+
+       var v = _startEndLine(startInWorld, endInWorld, camera);
+
+       var startVectorInView = v.start;
+       if (!startVectorInView) return;
+       var endVectorInView = v.end;
+
+       var cW = canvas.width;
+       var cH = canvas.height;
+
+       var projectionMatrix = camera.getProjectionMatrix();
+
+       var startLine = BABYLON.Vector3.TransformCoordinates(startVectorInView, projectionMatrix);
+       startLine = new BABYLON.Vector2((startLine.x + 1) * (cW / 2), (1 - startLine.y) * (cH / 2));
+
+       var endLine = BABYLON.Vector3.TransformCoordinates(endVectorInView, projectionMatrix);
+       endLine = new BABYLON.Vector2((endLine.x + 1) * (cW / 2), (1 - endLine.y) * (cH / 2));
+
+       drawLine(startLine, endLine, color);
+
+       return startLine;
+     }
+
+     var _startEndLine = function (startVector, endVector, camera) {
+
+       var res = {};
+
+       var viewMatrix = camera.getViewMatrix();
+
+       var pointOfPlane = new BABYLON.Vector3(0,0,camera.minZ);
+       var normalOfPlane = new BABYLON.Vector3(0,0,1);
+
+       var startVectorInView = BABYLON.Vector3.TransformCoordinates(startVector, viewMatrix);
+       var endVectorInView = BABYLON.Vector3.TransformCoordinates(endVector, viewMatrix);
+
+       if (startVectorInView.z < 0 && endVectorInView.z < 0) {
+         return res;
+       }
+
+       var startLine;
+       var endLine;
+
+       if (startVectorInView.z >=0 && endVectorInView.z >= 0) {
+         res.start = startVectorInView;
+         res.end = endVectorInView;
+         return res;
+       }
+
+       if (startVectorInView.z < 0) {
+         startVectorInView = _intersectionPoint(startVectorInView, endVectorInView, pointOfPlane, normalOfPlane);
+       }
+       else {
+         endVectorInView = _intersectionPoint(startVectorInView, endVectorInView, pointOfPlane, normalOfPlane);
+       }
+
+       res.start = startVectorInView;
+       res.end = endVectorInView;
+
+       return res;
+     };
+
+     // inspiration from Blender
+     var _intersectionPoint = function(p0, p1, pointOfPlane, normalOfPlane) {
+       /*
+        p0, p1: define the line
+        pointOfPlane, normalOfPlane: define the plane:
+        pointOfPlane is a point on the plane (plane coordinate).
+        normalOfPlane is a normal vector defining the plane direction; does not need to be normalized.
+
+        return a Vector or None (when the intersection can't be found).
+        */
+
+       var u = p1.subtract(p0);
+       var w = p0.subtract(pointOfPlane);
+       var dot = BABYLON.Vector3.Dot(normalOfPlane, u);
+
+       if (Math.abs(dot) > 0.000001) {
+         // the factor of the point between p0 -> p1 (0 - 1)
+         // if 'fac' is between (0 - 1) the point intersects with the segment.
+         // otherwise:
+         //  < 0.0: behind p0.
+         //  > 1.0: infront of p1.
+         var fac = -BABYLON.Vector3.Dot(normalOfPlane, w) / dot;
+         u = u.scale(fac);
+         return p0.add(u);
+       }
+       else {
+         // The segment is parallel to plane
+         return undefined;
+       }
+     };
+
+     var drawLine = function(startPosition, endPosition, color){
+       var prevStrokeStyle = context2D.strokeStyle;
+       context2D.strokeStyle= color;
+       context2D.beginPath();
+       context2D.moveTo(startPosition.x, startPosition.y);
+       context2D.lineTo(endPosition.x, endPosition.y);
+       context2D.stroke();
+       context2D.strokeStyle= prevStrokeStyle;
+     };
+     //*****end draw axis
+     
      // Get the canvas element from our HTML above
      var canvas = document.getElementById("renderCanvasBab");
      // Load the BABYLON 3D engine
@@ -29,7 +227,8 @@ angular.module('angle').controller('worldCtrl',
        m: 2,
        l: 3
      };
-
+     var camera;
+     
      var createCube = function(data){
        var objname = "cube_"+ data.size + '_' + data.color + '_' +numcubes;
        var boxsize = cubesize[data.size];
@@ -54,17 +253,46 @@ angular.module('angle').controller('worldCtrl',
        //box.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
        box.applyGravity = true;
        box.receiveShadows = true;
-       box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:4, friction:0.5, restitution:0.1});
+       box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.5, restitution:0.1});
        box.onCollide = function(a){
          //console.warn('oncollide', objname, this, a)
        }
        //box.updatePhysicsBodyPosition();
-       box.refreshBoundingInfo();
+       //box.refreshBoundingInfo();
        //box.moveWithCollisions(new BABYLON.Vector3(-1, 0, 0));
        numcubes++;
        cubeslist.push(box);
      }
 
+     /**
+      * provide a quaternion and will return the current letter of up axis
+      * @param quat
+      */
+     var findUpAxis = function(quat){
+       var qm = new BABYLON.Matrix.Identity();
+       quat.toRotationMatrix(qm);
+       var axis = ['x','y','z'];
+       var vect = [new BABYLON.Vector3(1,0,0), new BABYLON.Vector3(0,1,0), new BABYLON.Vector3(0,0,1)];
+       var maxmag = 0, idx = -1;
+       vect.forEach(function(v, i){
+         var mag = Math.abs(BABYLON.Vector3.Dot(vect[1], BABYLON.Vector3.TransformCoordinates(v, qm)));
+         if(mag > maxmag){
+           maxmag = mag;
+           idx = i;
+         }
+       })
+       return axis[idx];
+     }
+
+     /**
+      * Recieves a mesh cube to create volume from
+      * Sceen to attach
+      * Determine if its a collider volume mesh to create
+      * @param mesh
+      * @param scene
+      * @param isCollider
+      * @returns {*}
+      */
      var createVolumeShadow = function(mesh, scene, isCollider){
        var volumeMesh;
        var statlist = mesh.name.split('_');
@@ -76,20 +304,22 @@ angular.module('angle').controller('worldCtrl',
        volmat.alpha = 0.3;
        volmat.diffuseColor = boxcolor;
        volumeMesh = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
+       volumeMesh.rotationQuaternion = mesh.rotationQuaternion.clone();
+       var upaxis = findUpAxis(mesh.rotationQuaternion);
+       console.warn('vm', volumeMesh);
        volumeMesh.material = volmat;
-       if(isCollider) volumeMesh.scaling.y = 40;
-       else volumeMesh.scaling.y = 60;
+       if(isCollider) volumeMesh.scaling[upaxis] = 40;
+       else volumeMesh.scaling[upaxis] = 60;
        volumeMesh.isPickable = false;
        volumeMesh.showBoundingBox = false;
        volumeMesh.checkCollisions = false;
        volumeMesh.applyGravity = false;
        volumeMesh.receiveShadows = false;
        volumeMesh.position = mesh.position.clone();
-       volumeMesh.refreshBoundingInfo();
        if(isCollider){
          volumeMesh.material.alpha = 0.3;
          volumeMesh.material.diffuseColor = new BABYLON.Color3.Green();
-         volumeMesh.bakeTransformIntoVertices (volumeMesh.getWorldMatrix (true)); //pretransform the vertices so we can get the actual bounds
+         volumeMesh.bakeTransformIntoVertices(volumeMesh.getWorldMatrix(true)); //pretransform the vertices so we can get the actual bounds
          var vectorsWorld = volumeMesh.getBoundingInfo().boundingBox.vectorsWorld; // 
          var miny, maxy;
          vectorsWorld.forEach(function(v){
@@ -120,7 +350,7 @@ angular.module('angle').controller('worldCtrl',
        scene.workerCollisions = true;
        
        // This creates and positions a free camera
-       var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -30), scene);
+       camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -30), scene);
        // This targets the camera to scene origin
        camera.setTarget(BABYLON.Vector3.Zero());
        // This attaches the camera to the canvas
@@ -230,14 +460,14 @@ angular.module('angle').controller('worldCtrl',
              && (mesh !== intersetMesh)});
          if (pickInfo.hit) {
            currentMesh = pickInfo.pickedMesh;
-           console.warn(currentMesh);
            if(volumeMesh) volumeMesh.dispose();
            volumeMesh = createVolumeShadow(currentMesh, scene);
+           console.warn(currentMesh);
            if(currentMesh.position.y < -8){//only move cube off ground
              var vectorsWorld = currentMesh.getBoundingInfo().boundingBox.vectorsWorld; // summits of the bounding box
              //determine position to move to improve bouding box;
              var d = vectorsWorld[1].subtract(vectorsWorld[0]).length(); // distance between summit 0 and summit 1
-             currentMesh.position.addInPlace(new BABYLON.Vector3(0, d * 0.3, 0));
+             currentMesh.position.addInPlace(new BABYLON.Vector3(0, d*0.4, 0));
            }
            startingPoint = pickInfo.pickedMesh.position;//getGroundPosition(evt);
 
@@ -390,6 +620,14 @@ angular.module('angle').controller('worldCtrl',
      // Register a render loop to repeatedly render the scene
      engine.runRenderLoop(function () {
        scene.render();
+
+       // 2D
+       if(false){
+         clearCanvas2D();
+         cubeslist.forEach(function(c){
+           drawAxis(camera, c, false, false);
+         })
+       }
      });
 
      // Watch for browser/canvas resize events
