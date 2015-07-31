@@ -41,7 +41,7 @@ angular.module('angle').controller('worldCtrl',
        boxmat.diffuseTexture = boxt;
        boxmat.specularColor = BABYLON.Color3.Black();*/
        boxmat.diffuseColor = boxcolor;
-       //boxmat.alpha = 0.7;
+       //boxmat.alpha = 0.8;
        var box = BABYLON.Mesh.CreateBox(objname, boxsize, data.scene);
        //box.position.y = 5;
        box.position = data.pos;
@@ -56,7 +56,7 @@ angular.module('angle').controller('worldCtrl',
        box.receiveShadows = true;
        box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:4, friction:0.5, restitution:0.1});
        box.onCollide = function(a){
-         console.warn('oncollide', objname, this, a)
+         //console.warn('oncollide', objname, this, a)
        }
        //box.updatePhysicsBodyPosition();
        box.refreshBoundingInfo();
@@ -65,7 +65,7 @@ angular.module('angle').controller('worldCtrl',
        cubeslist.push(box);
      }
 
-     var createVolumeShadow = function(mesh, scene){
+     var createVolumeShadow = function(mesh, scene, isCollider){
        var volumeMesh;
        var statlist = mesh.name.split('_');
        var sizet = statlist[1]; 
@@ -77,13 +77,35 @@ angular.module('angle').controller('worldCtrl',
        volmat.diffuseColor = boxcolor;
        volumeMesh = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
        volumeMesh.material = volmat;
-       volumeMesh.scaling.y = 40;
+       if(isCollider) volumeMesh.scaling.y = 40;
+       else volumeMesh.scaling.y = 60;
        volumeMesh.isPickable = false;
        volumeMesh.showBoundingBox = false;
        volumeMesh.checkCollisions = false;
        volumeMesh.applyGravity = false;
        volumeMesh.receiveShadows = false;
        volumeMesh.position = mesh.position.clone();
+       volumeMesh.refreshBoundingInfo();
+       if(isCollider){
+         volumeMesh.material.alpha = 0.3;
+         volumeMesh.material.diffuseColor = new BABYLON.Color3.Green();
+         volumeMesh.bakeTransformIntoVertices (volumeMesh.getWorldMatrix (true)); //pretransform the vertices so we can get the actual bounds
+         var vectorsWorld = volumeMesh.getBoundingInfo().boundingBox.vectorsWorld; // 
+         var miny, maxy;
+         vectorsWorld.forEach(function(v){
+           if(v.y < miny || !miny) miny = v.y;
+           if(v.y > maxy || !maxy) maxy = v.y;
+         })
+         volumeMesh.position.addInPlace(new BABYLON.Vector3(0, (maxy-miny)/2, 0));
+
+         /*var matPlan = new BABYLON.StandardMaterial("matPlan1", scene);
+         matPlan.backFaceCulling = false;
+         matPlan.emissiveColor = new BABYLON.Color3(0.2, 1, 0.2);
+         var pointToIntersect = new BABYLON.Vector3(-30, 0, 0);
+         var origin = BABYLON.Mesh.CreateSphere("origin", 4, 0.3, scene);
+         origin.position = volumeMesh.position.clone();
+         origin.material = matPlan;*/
+       }
        return volumeMesh;
      }
 
@@ -106,6 +128,10 @@ angular.module('angle').controller('worldCtrl',
        camera.speed = 1;
        camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); //bounding ellipse
        camera.checkCollisions = true;
+       camera.keysUp = [87]; // w
+       camera.keysDown = [83]; // s
+       camera.keysLeft = [65]; //  a
+       camera.keysRight = [68]; // d
 
        scene.activeCamera = camera;
        scene.activeCamera.attachControl(canvas, true);
@@ -178,6 +204,7 @@ angular.module('angle').controller('worldCtrl',
        var startingPoint;
        var currentMesh;
        var volumeMesh;
+       var intersetMesh;
        var lockxz = false;
        var sceney = null;
 
@@ -199,18 +226,24 @@ angular.module('angle').controller('worldCtrl',
          if (evt.button !== 0) return;
          // check if we are under a mesh
          var pickInfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) {
-           return (mesh !== ground) && (mesh !== skybox) && (mesh !== volumeMesh)});
+           return (mesh !== ground) && (mesh !== skybox) && (mesh !== volumeMesh) 
+             && (mesh !== intersetMesh)});
          if (pickInfo.hit) {
            currentMesh = pickInfo.pickedMesh;
+           console.warn(currentMesh);
            if(volumeMesh) volumeMesh.dispose();
            volumeMesh = createVolumeShadow(currentMesh, scene);
-           //determine position to move to improve bouding box;
-           var vectorsWorld = currentMesh.getBoundingInfo().boundingBox.vectorsWorld; // summits of the bounding box
-           var d = vectorsWorld[1].subtract(vectorsWorld[0]).length(); // distance between summit 0 and summit 1
-           currentMesh.position.addInPlace(new BABYLON.Vector3(0,d*0.3,0));
-           currentMesh.refreshBoundingInfo();
+           if(currentMesh.position.y < -8){//only move cube off ground
+             var vectorsWorld = currentMesh.getBoundingInfo().boundingBox.vectorsWorld; // summits of the bounding box
+             //determine position to move to improve bouding box;
+             var d = vectorsWorld[1].subtract(vectorsWorld[0]).length(); // distance between summit 0 and summit 1
+             currentMesh.position.addInPlace(new BABYLON.Vector3(0, d * 0.3, 0));
+           }
            startingPoint = pickInfo.pickedMesh.position;//getGroundPosition(evt);
 
+           if(intersetMesh) intersetMesh.dispose();
+           intersetMesh = createVolumeShadow(currentMesh, scene, true);
+           
            if (startingPoint) { // we need to disconnect camera from canvas
              setTimeout(function () {
                camera.detachControl(canvas);
@@ -226,6 +259,8 @@ angular.module('angle').controller('worldCtrl',
            sceney = null;
            if(volumeMesh) volumeMesh.dispose();
            volumeMesh = null;
+           if(intersetMesh) intersetMesh.dispose();
+           intersetMesh = null;
            currentMesh.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:4, friction:0.5, restitution:0.1});
            return;
          }
@@ -233,6 +268,8 @@ angular.module('angle').controller('worldCtrl',
 
        var onPointerMove = function (evt) {
          if (!startingPoint) return;
+         if(intersetMesh) intersetMesh.dispose();
+         intersetMesh = null;
          var current;
          var delta;
          if(lockxz){
@@ -281,11 +318,6 @@ angular.module('angle').controller('worldCtrl',
        window.addEventListener("keydown", function (evt) {
          console.warn(evt.keyCode);
          switch (evt.keyCode) {
-           case 87:
-             if(currentMesh){
-               
-             }
-             break;
            case 16:
              if(currentMesh){
                lockxz = true;
@@ -322,6 +354,16 @@ angular.module('angle').controller('worldCtrl',
        });
 
        var animate = function(){
+         if(intersetMesh){
+           cubeslist.forEach(function(c){
+             if(intersetMesh.intersectsMesh(c, true)){
+               c.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
+             } else{
+               c.material.emissiveColor = new BABYLON.Color3.Black();
+             }
+           })
+         }
+         
          /*if(currentMesh){
            var rayPick = new BABYLON.Ray(currentMesh.position, new BABYLON.Vector3(0, -1, 0));
            var meshFound = scene.pickWithRay(rayPick, function(item){
@@ -354,5 +396,5 @@ angular.module('angle').controller('worldCtrl',
      window.addEventListener("resize", function () {
        engine.resize();
      });
-
+     
    }])
