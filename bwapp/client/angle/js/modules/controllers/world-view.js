@@ -433,6 +433,7 @@ angular.module('angle').controller('worldCtrl',
        //handle drag and drop
        var startingPoint;
        var currentMesh;
+       var groupMesh = [];
        var volumeMesh;
        var intersetMesh;
        var lockxz = false;
@@ -460,20 +461,28 @@ angular.module('angle').controller('worldCtrl',
              && (mesh !== intersetMesh)});
          if (pickInfo.hit) {
            currentMesh = pickInfo.pickedMesh;
+           if(intersetMesh) intersetMesh.dispose();
+           intersetMesh = createVolumeShadow(currentMesh, scene, true);
            if(volumeMesh) volumeMesh.dispose();
            volumeMesh = createVolumeShadow(currentMesh, scene);
            console.warn(currentMesh);
-           if(currentMesh.position.y < -8){//only move cube off ground
-             var vectorsWorld = currentMesh.getBoundingInfo().boundingBox.vectorsWorld; // summits of the bounding box
-             //determine position to move to improve bouding box;
-             var d = vectorsWorld[1].subtract(vectorsWorld[0]).length(); // distance between summit 0 and summit 1
-             currentMesh.position.addInPlace(new BABYLON.Vector3(0, d*0.4, 0));
-           }
+           setTimeout(function () {
+             //if(currentMesh.position.y < -8)
+             {//only move cube off ground
+               console.warn('bm',groupMesh);
+               var vectorsWorld = currentMesh.getBoundingInfo().boundingBox.vectorsWorld; // summits of the bounding box
+               //determine position to move to improve bouding box;
+               var d = vectorsWorld[1].subtract(vectorsWorld[0]).length(); // distance between summit 0 and summit 1
+               var diff = new BABYLON.Vector3(0, d*0.4, 0);
+               currentMesh.position.addInPlace(diff);
+               if(groupMesh.length){
+                 groupMesh.forEach(function(m){
+                   m.position.addInPlace(diff);
+                 })
+               }
+             }
+           }, 10);
            startingPoint = pickInfo.pickedMesh.position;//getGroundPosition(evt);
-
-           if(intersetMesh) intersetMesh.dispose();
-           intersetMesh = createVolumeShadow(currentMesh, scene, true);
-           
            if (startingPoint) { // we need to disconnect camera from canvas
              setTimeout(function () {
                camera.detachControl(canvas);
@@ -491,7 +500,15 @@ angular.module('angle').controller('worldCtrl',
            volumeMesh = null;
            if(intersetMesh) intersetMesh.dispose();
            intersetMesh = null;
+           if(groupMesh)
+             groupMesh.forEach(function(c){
+               c.material.emissiveColor = new BABYLON.Color3.Black();
+               c.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:4, friction:0.5, restitution:0.1});
+             })
+           groupMesh.length = 0;
+           currentMesh.material.emissiveColor = new BABYLON.Color3.Black();
            currentMesh.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:4, friction:0.5, restitution:0.1});
+           currentMesh = null;
            return;
          }
        }
@@ -519,6 +536,13 @@ angular.module('angle').controller('worldCtrl',
          currentMesh.moveWithCollisions(diff);
          currentMesh.refreshBoundingInfo();
          volumeMesh.position = currentMesh.position.clone();
+         if(groupMesh.length){
+           groupMesh.forEach(function(m){
+             m.position.addInPlace(diff);
+             //m.moveWithCollisions(diff);
+           })
+         }
+
          //currentMesh.position.addInPlace(diff);
 
          /*cubeslist.forEach(function(c){
@@ -585,9 +609,11 @@ angular.module('angle').controller('worldCtrl',
 
        var animate = function(){
          if(intersetMesh){
+           groupMesh.length = 0;
            cubeslist.forEach(function(c){
              if(intersetMesh.intersectsMesh(c, true)){
                c.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
+               if(c != currentMesh) groupMesh.push(c);
              } else{
                c.material.emissiveColor = new BABYLON.Color3.Black();
              }

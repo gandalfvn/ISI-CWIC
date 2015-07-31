@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/less/custom/custom.less" afterPath="$PROJECT_DIR$/client/angle/less/custom/custom.less" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/worldview.ng.jade" afterPath="$PROJECT_DIR$/client/views/worldview.ng.jade" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,8 +26,8 @@
       <file leaf-file-name="world-view.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6771879">
-              <caret line="289" column="57" selection-start-line="289" selection-start-column="57" selection-end-line="289" selection-end-column="57" />
+            <state vertical-scroll-proportion="0.8493544">
+              <caret line="483" column="16" selection-start-line="483" selection-start-column="16" selection-end-line="483" selection-end-column="16" />
               <folding>
                 <element signature="e#0#178#0" expanded="false" />
               </folding>
@@ -1047,8 +1045,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6771879">
-          <caret line="289" column="57" selection-start-line="289" selection-start-column="57" selection-end-line="289" selection-end-column="57" />
+        <state vertical-scroll-proportion="0.8493544">
+          <caret line="483" column="16" selection-start-line="483" selection-start-column="16" selection-end-line="483" selection-end-column="16" />
           <folding>
             <element signature="e#0#178#0" expanded="false" />
           </folding>
