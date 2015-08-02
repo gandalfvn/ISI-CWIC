@@ -41,7 +41,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         templateUrl: helper.basepath('worldview.html'),
         resolve: angular.extend(
           {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
-          helper.resolveFor('babylonjs')
+          helper.resolveFor('babylonjs', 'circular-json')
         ),
         controller: 'worldCtrl'
     })
@@ -66,7 +66,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       templateUrl: helper.basepath('404.html'),
       resolve: helper.resolveFor('modernizr', 'icons'),
       controller: ["$rootScope", function($rootScope) {
-          $rootScope.app.layout.isBoxed = false;
+        $rootScope.app.layout.isBoxed = false;
       }]
     })
     .state('main', {

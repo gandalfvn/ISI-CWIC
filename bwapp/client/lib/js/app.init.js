@@ -26,6 +26,7 @@ angular.module('angle', [
     'cfp.loadingBar',
     'ngSanitize',
     'ngResource',
+    'ngCircularJSON',
     'ui.utils'
   ]);
 

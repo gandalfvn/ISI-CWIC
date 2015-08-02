@@ -2,6 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/lib/js/app.init.js" afterPath="$PROJECT_DIR$/client/lib/js/app.init.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/app.ng.html" afterPath="$PROJECT_DIR$/client/views/app.ng.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/bower.json" afterPath="$PROJECT_DIR$/public/bower.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/config.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/constants.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
     </list>
     <ignored path="bwapp.iws" />
@@ -26,8 +32,8 @@
       <file leaf-file-name="world-view.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8493544">
-              <caret line="483" column="16" selection-start-line="483" selection-start-column="16" selection-end-line="483" selection-end-column="16" />
+            <state vertical-scroll-proportion="0.80631274">
+              <caret line="731" column="22" selection-start-line="731" selection-start-column="22" selection-end-line="731" selection-end-column="22" />
               <folding>
                 <element signature="e#0#178#0" expanded="false" />
               </folding>
@@ -35,21 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="worldview.ng.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/views/worldview.ng.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.888889">
-              <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="constants.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/modules/constants.js">
+      <file leaf-file-name="config.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/angle/js/modules/config.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="23" column="30" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
+              <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -58,8 +54,8 @@
       <file leaf-file-name="world-view-simp.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-52.77778">
-              <caret line="95" column="36" selection-start-line="95" selection-start-column="36" selection-end-line="95" selection-end-column="36" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="125" column="21" selection-start-line="125" selection-start-column="21" selection-end-line="125" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -94,7 +90,6 @@
         <option value="$PROJECT_DIR$/client/views/singleview.ng.html" />
         <option value="$PROJECT_DIR$/client/views/singleview.ng.jade" />
         <option value="$PROJECT_DIR$/client/views/partials/top-navbar.ng.jade" />
-        <option value="$PROJECT_DIR$/client/views/app.ng.html" />
         <option value="$PROJECT_DIR$/client/views/partials/sidebar.ng.jade" />
         <option value="$PROJECT_DIR$/private/i18n/en.json" />
         <option value="$PROJECT_DIR$/.meteor/local/build/programs/server/assets/app/i18n/en.json" />
@@ -106,17 +101,20 @@
         <option value="$PROJECT_DIR$/server/sidebar.js" />
         <option value="$PROJECT_DIR$/public/vendor/babylonjs/bower.json" />
         <option value="$PROJECT_DIR$/start.sh" />
-        <option value="$PROJECT_DIR$/client/lib/js/app.init.js" />
         <option value="$PROJECT_DIR$/server/loadUsers.js" />
         <option value="lo-th.github.io/Oimo.js/" />
         <option value="$PROJECT_DIR$/public/shaders/grid.vertex.fx" />
         <option value="$PROJECT_DIR$/public/shaders/grid.fragment.fx" />
-        <option value="$PROJECT_DIR$/public/bower.json" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/config.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
         <option value="$PROJECT_DIR$/client/views/worldview.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/less/custom/custom.less" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.old.js" />
+        <option value="$USER_HOME$/Desktop/debug.log" />
+        <option value="$PROJECT_DIR$/client/lib/js/app.init.js" />
+        <option value="$PROJECT_DIR$/public/bower.json" />
+        <option value="$PROJECT_DIR$/client/views/app.ng.html" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/config.js" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
       </list>
     </option>
@@ -259,6 +257,72 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="vendor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="babylonjs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="babylonjs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="preview release - alpha" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="img" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -371,11 +435,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="angle" />
+              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="less" />
+              <option name="myItemId" value="js" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -394,14 +458,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="angle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="less" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="custom" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -469,7 +525,7 @@
     <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="HbShouldOpenHtmlAsHb" value="enabled" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/debug2.log" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
@@ -478,6 +534,7 @@
     <property name="FullScreen" value="false" />
     <property name="js.meteor.project" value="true" />
     <property name="js.meteor.library.was.enabled" value="true" />
+    <property name="two.files.diff.last.used.file" value="$USER_HOME$/Desktop/debug2.log" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -603,11 +660,13 @@
     <frame x="960" y="23" width="960" height="1173" extended-state="0" />
     <editor active="true" />
     <layout>
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" x="1060" y="123" width="760" height="973" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293247" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293247" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25346112" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25599128" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39962998" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3293247" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -615,7 +674,6 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293247" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293247" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -665,35 +723,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/bower.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="6.3333335">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/partials/footer.ng.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.0">
-          <caret line="0" column="40" selection-start-line="0" selection-start-column="40" selection-end-line="0" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/main.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6492537">
-          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.58208954">
@@ -769,14 +798,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.74303406">
           <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/app.ng.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.06686478">
-          <caret line="3" column="50" selection-start-line="3" selection-start-column="50" selection-end-line="3" selection-end-column="50" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -900,14 +921,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="11" column="79" selection-start-line="11" selection-start-column="79" selection-end-line="11" selection-end-column="79" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/loadUsers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.43041608">
@@ -938,14 +951,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.15555556">
           <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/bower.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6240713">
-          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -993,40 +998,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/lib/js/app.init.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1205165">
-          <caret line="61" column="21" selection-start-line="61" selection-start-column="10" selection-end-line="61" selection-end-column="21" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-52.77778">
-          <caret line="95" column="36" selection-start-line="95" selection-start-column="36" selection-end-line="95" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.71018654">
-          <caret line="47" column="25" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/constants.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="30" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/less/custom/custom.less">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.55727553">
@@ -1035,18 +1006,108 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/public/vendor/babylonjs/preview release - alpha/babylon.2.2.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/lib/js/app.init.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.36585367">
+          <caret line="24" column="18" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/vendor/ng-circular-json/dist/ng-circular-json.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.40889525">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/debug.log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24626866">
+          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/worldview.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.888889">
+        <state vertical-scroll-proportion="0.38059703">
           <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/vendor/circular-json/build/circular-json.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/bower.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5794948">
+          <caret line="26" column="27" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/app.ng.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.35661218">
+          <caret line="12" column="18" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3482972">
+          <caret line="11" column="183" selection-start-line="11" selection-start-column="177" selection-end-line="11" selection-end-column="183" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/constants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.22525108">
+          <caret line="17" column="33" selection-start-line="17" selection-start-column="33" selection-end-line="17" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="125" column="21" selection-start-line="125" selection-start-column="21" selection-end-line="125" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8493544">
-          <caret line="483" column="16" selection-start-line="483" selection-start-column="16" selection-end-line="483" selection-end-column="16" />
+        <state vertical-scroll-proportion="0.80631274">
+          <caret line="731" column="22" selection-start-line="731" selection-start-column="22" selection-end-line="731" selection-end-column="22" />
           <folding>
             <element signature="e#0#178#0" expanded="false" />
           </folding>
