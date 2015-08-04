@@ -252,7 +252,6 @@ angular.module('angle').controller('worldCtrl',
        var box = BABYLON.Mesh.CreateBox(objname, boxsize, data.scene);
        //box.position.y = 5;
        box.position = data.pos;
-       //box.rotation.y = Math.PI/4;
        box.visibility = 1;
        box.material = boxmat;
        box.showBoundingBox = false;
@@ -263,7 +262,10 @@ angular.module('angle').controller('worldCtrl',
        //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
        box.receiveShadows = true;
-       box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
+       box.rotation.y = Math.PI/4;
+       /*if(!box.rotationQuaternion)
+        box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
+        */
        if(hasPhysics) 
          box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.5, restitution:0.1});
        box.onCollide = function(a){
@@ -322,10 +324,11 @@ angular.module('angle').controller('worldCtrl',
        volmat.backFaceCulling = true;
        volumeMesh = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
        var myQuat = new BABYLON.Quaternion.Identity(); 
-       console.warn('myQuat', myQuat)
        if(mesh.rotationQuaternion) myQuat = mesh.rotationQuaternion.clone();
-       volumeMesh.rotationQuaternion = myQuat.clone();
-       var upaxis = findUpAxis(myQuat);
+       //volumeMesh.rotationQuaternion = myQuat.clone(); //skip this we only want rotation based on Y
+       //var upaxis = findUpAxis(myQuat);
+       var euler = myQuat.toEulerAngles(); //get rotation
+       volumeMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0,1,0), euler.y); //create rotation based on Y so OUR volume is always Y UP!!!!
        volumeMesh.material = volmat;
        var scaling = 80; //make it tall shadow
        if(isCollider) scaling = 30; //for collider needs to be as tall as 15 blocks
@@ -339,8 +342,8 @@ angular.module('angle').controller('worldCtrl',
        //pretransform the vertices so we can get the actual bounds box
        volumeMesh.bakeTransformIntoVertices(volumeMesh.getWorldMatrix(true));
        var transform = new BABYLON.Matrix.Scaling(1,scaling,1);
-       if(upaxis.axis === 'x') transform = new BABYLON.Matrix.Scaling(scaling,1,1);
-       if(upaxis.axis === 'z') transform = new BABYLON.Matrix.Scaling(1,1,scaling);
+       /*if(upaxis.axis === 'x') transform = new BABYLON.Matrix.Scaling(scaling,1,1);
+       if(upaxis.axis === 'z') transform = new BABYLON.Matrix.Scaling(1,1,scaling);*/
        volumeMesh.bakeTransformIntoVertices(transform);
        if(isCollider){
          var vectorsWorld = volumeMesh.getBoundingInfo().boundingBox.vectorsWorld;
@@ -355,29 +358,37 @@ angular.module('angle').controller('worldCtrl',
          //base vector from 0,0,0 to offset in local space
          //to translate position so bottom is on the ground
          //must determine which axis is up and whether that axis is upside down
-         var bvinlocalspace;
          var offset = volumeMesh.offset + 0.1;
-         if(upaxis.axis === 'y'){
-           if(upaxis.isInv) bvinlocalspace = new BABYLON.Vector3(0, -offset, 0);
+         var bvinlocalspace = new BABYLON.Vector3(0, offset , 0);
+         /*if(upaxis.axis === 'y'){
+           if(upaxis.isInv){
+             bvinlocalspace = new BABYLON.Vector3(0, -offset, 0);
+           }
            else bvinlocalspace = new BABYLON.Vector3(0, offset , 0);
          }
          if(upaxis.axis === 'x'){
-           if(upaxis.isInv) bvinlocalspace = new BABYLON.Vector3(-offset, 0, 0);
+           if(upaxis.isInv){
+             bvinlocalspace = new BABYLON.Vector3(-offset, 0, 0);
+           }
            else bvinlocalspace = new BABYLON.Vector3(offset, 0, 0);
          }
          if(upaxis.axis === 'z'){
-           if(upaxis.isInv) bvinlocalspace = new BABYLON.Vector3(0, 0, -offset);
+           if(upaxis.isInv){
+             bvinlocalspace = new BABYLON.Vector3(0, 0, -offset);
+           }
            else bvinlocalspace = new BABYLON.Vector3(0, 0, offset);
          }
-         volumeMesh.ellipsoid = new BABYLON.Vector3(volumeMesh.boxsize, volumeMesh.height/4, volumeMesh.boxsize);
+         //no need for this because we didn't rotate the volume - its always up right
          //get rotation matrix to turn the vector - already compensated for upsidedown
          var qm = new BABYLON.Matrix.Identity();
-         myQuat.toRotationMatrix(qm);
+          myQuat.toRotationMatrix(qm);
          //rotated right side up vector
          var bvinworldspace = BABYLON.Vector3.TransformCoordinates(bvinlocalspace, qm);
          //add to world mesh position
-         volumeMesh.position.addInPlace(bvinworldspace);
+         volumeMesh.position.addInPlace(bvinworldspace);*/
+         volumeMesh.position.addInPlace(bvinlocalspace);
 
+         volumeMesh.ellipsoid = new BABYLON.Vector3(volumeMesh.boxsize, volumeMesh.height/4, volumeMesh.boxsize);
          volumeMesh.backFaceCulling = false;
          volumeMesh.checkCollisions = true;
          volumeMesh.showBoundingBox = false;
@@ -490,10 +501,10 @@ angular.module('angle').controller('worldCtrl',
          createCube({pos: new BABYLON.Vector3((p+i)*2,cubesize.s*2,0), scene: scene, size: 's', color: cubecolors[i]});
        }
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3((p+i)*3,cubesize.m*1.1,3), scene: scene, size: 'm', color: cubecolors[i]});
+         createCube({pos: new BABYLON.Vector3((p+i)*3,cubesize.m*1.5,3), scene: scene, size: 'm', color: cubecolors[i]});
        }
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3((p+i)*6,cubesize.l*1.1,8), scene: scene, size: 'l', color: cubecolors[i]});
+         createCube({pos: new BABYLON.Vector3((p+i)*6,cubesize.l,8), scene: scene, size: 'l', color: cubecolors[i]});
        }
 
        //shadows
@@ -730,7 +741,7 @@ angular.module('angle').controller('worldCtrl',
              if(delta.x < 0.001 && delta.y < 0.001 && delta.z < 0.001){
                if(!c.zeromoveTicks) c.zeromoveTicks = 0;
                c.zeromoveTicks++;
-               if(c.isMoving && c.zeromoveTicks > 20){//only reset color if its went from moving to stopped
+               if(c.isMoving && c.zeromoveTicks > 40){//only reset color if its went from moving to stopped
                  c.material.emissiveColor = new BABYLON.Color3.Black();
                  c.isMoving = false;
                  c.zeromoveTicks = 0;
@@ -788,7 +799,7 @@ angular.module('angle').controller('worldCtrl',
        scene.render();
 
        // 2D
-       if(true){
+       if(false){
          clearCanvas2D();
          cubeslist.forEach(function(c){
            drawAxis(camera, c, true, true);

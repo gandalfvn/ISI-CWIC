@@ -18,16 +18,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
   // Application Routes
   // -----------------------------------   
   $stateProvider
-    .state('root', {
-      url: '/',
-      title: "Block World",
-      onEnter: ['$state', '$meteor', function($state, $meteor){
-        console.warn('root')
-        var usr = $meteor.requireUser();
-        if(usr) $state.go('app.worldview');
-        else $state.go('main');
-      }]
-    })
     .state('app', {
         // url: '/app',
         abstract: true,
@@ -76,6 +66,17 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       resolve: helper.resolveFor('modernizr', 'icons'),
       controller: ["$rootScope", function($rootScope) {
         $rootScope.app.layout.isBoxed = false;
+      }]
+    })
+    .state('root', {
+      url: '/',
+      title: "Block World",
+      //onEnter: ['$state', '$meteor', function($state, $meteor){
+      controller: ['$state', '$meteor', function($state, $meteor){
+        console.warn('root')
+        var usr = $meteor.requireUser();
+        if(usr) $state.go('app.worldview');
+        else $state.go('main');
       }]
     })
     //
