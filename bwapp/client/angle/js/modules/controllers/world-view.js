@@ -262,10 +262,12 @@ angular.module('angle').controller('worldCtrl',
        //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
        box.receiveShadows = true;
-       box.rotation.y = Math.PI/4;
-       /*if(!box.rotationQuaternion)
-        box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
-        */
+       if(false)
+         box.rotation.y = Math.PI/4;
+       else
+        if(!box.rotationQuaternion)
+          box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
+        
        if(hasPhysics) 
          box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.5, restitution:0.1});
        box.onCollide = function(a){
@@ -741,7 +743,7 @@ angular.module('angle').controller('worldCtrl',
              if(delta.x < 0.001 && delta.y < 0.001 && delta.z < 0.001){
                if(!c.zeromoveTicks) c.zeromoveTicks = 0;
                c.zeromoveTicks++;
-               if(c.isMoving && c.zeromoveTicks > 40){//only reset color if its went from moving to stopped
+               if(c.isMoving && c.zeromoveTicks > 25){//only reset color if its went from moving to stopped
                  c.material.emissiveColor = new BABYLON.Color3.Black();
                  c.isMoving = false;
                  c.zeromoveTicks = 0;
