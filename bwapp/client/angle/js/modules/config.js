@@ -19,18 +19,28 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
   // -----------------------------------   
   $stateProvider
     .state('app', {
-        // url: '/app',
-        abstract: true,
-        templateUrl: helper.basepath('app.ng.html'),
-        controller: 'AppController',
-        resolve: helper.resolveFor('modernizr', 'icons')
+      url: '',
+      abstract: true,
+      templateUrl: helper.basepath('app.ng.html'),
+      controller: 'AppController',
+      resolve: helper.resolveFor('modernizr', 'icons')
+    })
+    .state('app.root', {
+      url: '/',
+      title: "Block World",
+      onEnter: ['$state', '$meteor', function($state, $meteor){
+        $meteor.requireUser().then(function(usr){
+          if(usr) $state.go('app.worldview');
+          else $state.go('main');
+        });
+      }]
     })
     .state('app.worldview', {
         url: '/worldview',
         title: 'World View',
         templateUrl: helper.basepath('worldview.html'),
         resolve: angular.extend(
-          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();             console.warn('worldview')}]},
           helper.resolveFor('babylonjs', 'circular-json')
         ),
         controller: 'worldCtrl'
@@ -40,7 +50,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'World View',
       templateUrl: helper.basepath('worldview.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();
+          console.warn('simpworld')}]},
         helper.resolveFor('babylonjs')
       ),
       controller: 'worldSimpCtrl'
@@ -64,19 +75,11 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: "Block World",
       templateUrl: helper.basepath('main.html'),
       resolve: helper.resolveFor('modernizr', 'icons'),
-      controller: ["$rootScope", function($rootScope) {
+      onEnter: ["$rootScope","$state","$meteor", function($rootScope, $state, $meteor) {
         $rootScope.app.layout.isBoxed = false;
-      }]
-    })
-    .state('root', {
-      url: '/',
-      title: "Block World",
-      //onEnter: ['$state', '$meteor', function($state, $meteor){
-      controller: ['$state', '$meteor', function($state, $meteor){
-        console.warn('root')
-        var usr = $meteor.requireUser();
-        if(usr) $state.go('app.worldview');
-        else $state.go('main');
+        $meteor.requireUser().then(function(usr){
+          if(usr) $state.go('app.worldview');
+        });
       }]
     })
     //

@@ -89,10 +89,10 @@ angular.module('angle')
       //setup account callbacks
       accountsUIBootstrap3.logoutCallback = function(err){
         if(err) console.log("Error:" + err);
-        $state.go('root');
+        $state.go('main');
       }
       Accounts.config({forbidClientAccountCreation : true});
       Accounts.onLogin(function(user){
-        $state.go('root')
+        $state.go('app.root')
       })
 }]);
