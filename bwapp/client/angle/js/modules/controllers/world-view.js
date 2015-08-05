@@ -211,8 +211,7 @@ angular.module('angle').controller('worldCtrl',
      
      // Get the canvas element from our HTML above
      var canvas = document.getElementById("renderCanvasBab");
-     // Load the BABYLON 3D engine
-     var engine = new BABYLON.Engine(canvas);
+     var engine;
 
      var cubeslist = [];
      var numcubes = 0;
@@ -449,7 +448,7 @@ angular.module('angle').controller('worldCtrl',
        camera.keysDown = [83]; // s
        camera.keysLeft = [65]; //  a
        camera.keysRight = [68]; // d
-
+       
        scene.activeCamera = camera;
        scene.activeCamera.attachControl(canvas, true);
 
@@ -573,8 +572,7 @@ angular.module('angle').controller('worldCtrl',
            if(hasPhysics) oimo.unregisterMesh(currentMesh); //stop physics
            startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
            console.warn('picked ', currentMesh.name, currentMesh);
-           console.warn('pp', startingPoint);
-           if (startingPoint) { // we need to disconnect camera from canvas
+\           if (startingPoint) { // we need to disconnect camera from canvas
              setTimeout(function () {
                camera.detachControl(canvas);
              }, 0);
@@ -584,7 +582,6 @@ angular.module('angle').controller('worldCtrl',
            if(intersectMesh) intersectMesh.dispose();
            intersectMesh = createVolumeShadow(currentMesh, scene, true);
            intersectMesh.checkCollisions = true;
-           console.warn('im elp', intersectMesh.ellipsoid);
            setTimeout(function(){//give it 10 ms to propogate mesh updates
              if(intersectMesh){
                groupMesh.length = 0;
@@ -594,12 +591,12 @@ angular.module('angle').controller('worldCtrl',
                cubeslist.forEach(function(c){
                  if(intersectMesh.intersectsMesh(c, true)){
                    if(hasPhysics) oimo.unregisterMesh(c); //stop physics
-                   console.warn('c', c);
+                   /*console.warn('c', c);
                    console.warn('intersectMesh', intersectMesh);
-                   console.warn('cpa', c.position, intersectMesh.position);
+                   console.warn('cpa', c.position, intersectMesh.position);*/
                    c.parent = intersectMesh;
                    c.position = XformChildToParentRelPos(c, intersectMesh);
-                   console.warn('cpb', c.position);
+                   //console.warn('cpb', c.position);
                    if(isZeroVec(c.position)) isZeroPosition = true;
                    //c.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
                    //translate cube to intersetmesh local space 0,0,0
@@ -609,7 +606,7 @@ angular.module('angle').controller('worldCtrl',
                    //c.rotationQuaternion = intersectMesh.rotationQuaternion.multiply(BABYLON.Quaternion.Inverse(c.rotationQuaternion));
                    c.checkCollisions = false;
                    c.showBoundingBox = false;
-                   console.warn('me elp', c.ellipsoid);
+                   //console.warn('me elp', c.ellipsoid);
                    groupMesh.push(c);
                  } else{
                    outMesh.push(c);
@@ -813,22 +810,42 @@ angular.module('angle').controller('worldCtrl',
        // Leave this function
        return scene;
      };  // End of createScene function
-     
-     // Now, call the createScene function that you just finished creating
-     var scene = createScene();
 
-     // Register a render loop to repeatedly render the scene
-     engine.runRenderLoop(function () {
-       scene.render();
+     var updateRender = function (scene) {
+       return function(){
+         scene.render();
 
-       // 2D
-       if(false){
-         clearCanvas2D();
-         cubeslist.forEach(function(c){
-           drawAxis(camera, c, true, true);
-         })
+         // 2D
+         if(false){
+           clearCanvas2D();
+           cubeslist.forEach(function(c){
+             drawAxis(camera, c, true, true);
+           })
+         }
        }
-     });
+     }
+     
+     $scope.resetWorld = function(){
+       camera.dispose();
+       scene.dispose();
+       engine.dispose();
+       camera = null;
+       scene = null;
+       createWorld();
+     }
+
+     function createWorld(){
+       // Load the BABYLON 3D engine
+       engine = new BABYLON.Engine(canvas);
+       // Now, call the createScene function that you just finished creating
+       scene = createScene();
+       // Register a render loop to repeatedly render the scene
+       engine.runRenderLoop(updateRender(scene));
+     }
+
+     // Now, call the createScene function that you just finished creating
+     var scene = null;
+     createWorld();
 
      // Watch for browser/canvas resize events
      window.addEventListener("resize", function () {
