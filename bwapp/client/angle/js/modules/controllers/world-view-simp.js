@@ -215,11 +215,11 @@ angular.module('angle').controller('worldSimpCtrl',
      var numcubes = 0;
      var cubecolors = ['red', 'yellow', 'cyan', 'purple', 'green', 'orange'];
      var colorids = {};
-     colorids['red'] = (new BABYLON.Color3.FromInts(247,200,8));
-     colorids['yellow'] = (new BABYLON.Color3.FromInts(34,181,191));
-     colorids['cyan'] = (new BABYLON.Color3.FromInts(135,103,166));
-     colorids['purple'] = (new BABYLON.Color3.FromInts(136,193,52));
-     colorids['green'] = (new BABYLON.Color3.FromInts(210,49,93));
+     colorids['red'] = (new BABYLON.Color3.FromInts(210,49,93));
+     colorids['yellow'] = (new BABYLON.Color3.FromInts(247,200,8));
+     colorids['cyan'] = (new BABYLON.Color3.FromInts(34,181,191));
+     colorids['purple'] = (new BABYLON.Color3.FromInts(135,103,166));
+     colorids['green'] = (new BABYLON.Color3.FromInts(136,193,52));
      colorids['orange'] = (new BABYLON.Color3.FromInts(233,136,19));
      //['#d2315d', '#f7c808', '#22b5bf', '#8767a6', '#88c134', '#e98813'];
      var cubesize = {
@@ -249,6 +249,10 @@ angular.module('angle').controller('worldSimpCtrl',
        camera.speed = 1;
        camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); //bounding ellipse
        camera.checkCollisions = true;
+       camera.keysUp = [87]; // w
+       camera.keysDown = [83]; // s
+       camera.keysLeft = [65]; //  a
+       camera.keysRight = [68]; // d
        
        scene.activeCamera = camera;
        scene.activeCamera.attachControl(canvas, true);
@@ -280,33 +284,37 @@ angular.module('angle').controller('worldSimpCtrl',
        //add cube
        var objname = "cube1";
        var boxsize = 1;
-       var boxcolor = new BABYLON.Color3.FromInts(34,181,191);
        console.warn(objname);
        var boxmat = new BABYLON.StandardMaterial(objname, scene);
-       boxmat.diffuseColor = boxcolor;
+       boxmat.diffuseColor = colorids.cyan;
        // Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
        var box = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
        box.position = new BABYLON.Vector3(0,5,0);
        box.visibility = 1;
        box.material = boxmat;
-       box.showBoundingBox = true;
+       box.showBoundingBox = false;
        box.checkCollisions = true;
-       var halfelip = boxsize/3;
+       var halfelip = boxsize/2;
        box.ellipsoid = new BABYLON.Vector3(halfelip, halfelip, halfelip);
-       box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
+       //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
-       box.rotation.y = Math.PI/4;
+       //box.rotation.y = Math.PI/4;
        box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:4, friction:0.5, restitution:0.1});
        cubeslist.push(box);
-       var box = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
+
+       objname = "cube2";
+       boxsize = 2;
+       boxmat = new BABYLON.StandardMaterial(objname, scene);
+       boxmat.diffuseColor = colorids.orange;
+       box = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
        box.position = new BABYLON.Vector3(3,5,0);
        box.visibility = 1;
        box.material = boxmat;
-       box.showBoundingBox = true;
+       box.showBoundingBox = false;
        box.checkCollisions = true;
-       var halfelip = boxsize/3;
+       var halfelip = boxsize/2;
        box.ellipsoid = new BABYLON.Vector3(halfelip, halfelip, halfelip);
-       box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
+       //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
        box.rotation.y = Math.PI/4;
        box.rotation.x = Math.PI/2;
@@ -347,7 +355,7 @@ angular.module('angle').controller('worldSimpCtrl',
            return (mesh !== ground)});
          if (pickInfo.hit) {
            currentMesh = pickInfo.pickedMesh;
-           currentMesh.position.addInPlace(new BABYLON.Vector3(0,0.1,0));
+           currentMesh.position.addInPlace(new BABYLON.Vector3(0,0.3,0));
            startingPoint = currentMesh.position; //getGroundPosition(evt);
            sceney = scene.pointerY;
 
@@ -369,14 +377,20 @@ angular.module('angle').controller('worldSimpCtrl',
        }
 
        var onPointerMove = function (evt) {
-         if (!startingPoint || !sceney) return;
+         if (!startingPoint) return;
+         var current;
          var delta;
-         delta = (sceney - scene.pointerY);
-         if (!delta) {
-           return;
+         if(lockxz){
+           current = startingPoint.clone();
+           delta = (sceney - scene.pointerY) * 0.2;
+           current.y += delta;
+           sceney = scene.pointerY;
          }
+         else
+           current = getGroundPosition(evt);
+
          var diff;
-         diff = new BABYLON.Vector3(0, delta, 0);
+         diff = current.subtract(startingPoint);
          currentMesh.moveWithCollisions(diff);
          //currentMesh.position.addInPlace(diff);
 
@@ -400,6 +414,28 @@ angular.module('angle').controller('worldSimpCtrl',
          canvas.removeEventListener("pointerup", onPointerUp);
          canvas.removeEventListener("pointermove", onPointerMove);
        }
+
+       window.addEventListener("keydown", function (evt) {
+         switch (evt.keyCode) {
+           case 16:
+             if(currentMesh){
+               lockxz = true;
+               sceney = scene.pointerY;
+             }
+             break;
+           default: break;
+         }
+       });
+
+       window.addEventListener("keyup", function (evt) {
+         switch (evt.keyCode) {
+           case 16:
+             lockxz = false;
+             sceney = null;
+             break;
+           default: break;
+         }
+       });
 
        // Leave this function
        return scene;
