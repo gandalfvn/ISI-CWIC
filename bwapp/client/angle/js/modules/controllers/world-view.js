@@ -572,7 +572,7 @@ angular.module('angle').controller('worldCtrl',
            if(hasPhysics) oimo.unregisterMesh(currentMesh); //stop physics
            startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
            console.warn('picked ', currentMesh.name, currentMesh);
-\           if (startingPoint) { // we need to disconnect camera from canvas
+           if (startingPoint) { // we need to disconnect camera from canvas
              setTimeout(function () {
                camera.detachControl(canvas);
              }, 0);
