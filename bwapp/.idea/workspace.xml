@@ -26,8 +26,8 @@
       <file leaf-file-name="world-view.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.44476327">
-              <caret line="621" column="0" selection-start-line="621" selection-start-column="0" selection-end-line="621" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6987088">
+              <caret line="612" column="0" selection-start-line="612" selection-start-column="0" selection-end-line="612" selection-end-column="0" />
               <folding>
                 <element signature="e#0#178#0" expanded="false" />
               </folding>
@@ -1225,8 +1225,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44476327">
-          <caret line="621" column="0" selection-start-line="621" selection-start-column="0" selection-end-line="621" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.6987088">
+          <caret line="612" column="0" selection-start-line="612" selection-start-column="0" selection-end-line="612" selection-end-column="0" />
           <folding>
             <element signature="e#0#178#0" expanded="false" />
           </folding>

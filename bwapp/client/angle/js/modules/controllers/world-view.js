@@ -257,7 +257,7 @@ angular.module('angle').controller('worldCtrl',
        box.showBoundingBox = false;
        box.checkCollisions = true;
        box.boxsize = boxsize;
-       var elipbox = boxsize/2;
+       var elipbox = boxsize;
        box.ellipsoid = new BABYLON.Vector3(elipbox, elipbox, elipbox);
        //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
@@ -391,7 +391,7 @@ angular.module('angle').controller('worldCtrl',
          volumeMesh.position.addInPlace(bvinworldspace);*/
          volumeMesh.position.addInPlace(bvinlocalspace);
 
-         volumeMesh.ellipsoid = new BABYLON.Vector3(volumeMesh.boxsize/2, volumeMesh.height/4, volumeMesh.boxsize/2);
+         volumeMesh.ellipsoid = new BABYLON.Vector3(volumeMesh.boxsize, volumeMesh.height/4, volumeMesh.boxsize);
          volumeMesh.backFaceCulling = false;
          volumeMesh.checkCollisions = false;
          volumeMesh.showBoundingBox = false;
@@ -584,6 +584,7 @@ angular.module('angle').controller('worldCtrl',
            if(intersectMesh) intersectMesh.dispose();
            intersectMesh = createVolumeShadow(currentMesh, scene, true);
            intersectMesh.checkCollisions = true;
+           console.warn('im elp', intersectMesh.ellipsoid);
            setTimeout(function(){//give it 10 ms to propogate mesh updates
              if(intersectMesh){
                groupMesh.length = 0;
@@ -608,6 +609,7 @@ angular.module('angle').controller('worldCtrl',
                    //c.rotationQuaternion = intersectMesh.rotationQuaternion.multiply(BABYLON.Quaternion.Inverse(c.rotationQuaternion));
                    c.checkCollisions = false;
                    c.showBoundingBox = false;
+                   console.warn('me elp', c.ellipsoid);
                    groupMesh.push(c);
                  } else{
                    outMesh.push(c);
