@@ -257,7 +257,7 @@ angular.module('angle').controller('worldCtrl',
        box.showBoundingBox = false;
        box.checkCollisions = true;
        box.boxsize = boxsize;
-       var elipbox = boxsize;
+       var elipbox = boxsize/2;
        box.ellipsoid = new BABYLON.Vector3(elipbox, elipbox, elipbox);
        //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
@@ -269,7 +269,7 @@ angular.module('angle').controller('worldCtrl',
           box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
         
        if(hasPhysics) 
-         box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.5, restitution:0.1});
+         box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});
        box.onCollide = function(a){
          console.warn('oncollide', objname, this, a)
        }
@@ -327,6 +327,7 @@ angular.module('angle').controller('worldCtrl',
        volumeMesh = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
        var myQuat = new BABYLON.Quaternion.Identity(); 
        if(mesh.rotationQuaternion) myQuat = mesh.rotationQuaternion.clone();
+       else console.warn('mesh quaternion is identity ', mesh.name)
        //volumeMesh.rotationQuaternion = myQuat.clone(); //skip this we only want rotation based on Y
        //var upaxis = findUpAxis(myQuat);
        var euler = myQuat.toEulerAngles(); //get rotation
@@ -390,9 +391,9 @@ angular.module('angle').controller('worldCtrl',
          volumeMesh.position.addInPlace(bvinworldspace);*/
          volumeMesh.position.addInPlace(bvinlocalspace);
 
-         volumeMesh.ellipsoid = new BABYLON.Vector3(volumeMesh.boxsize, volumeMesh.height/4, volumeMesh.boxsize);
+         volumeMesh.ellipsoid = new BABYLON.Vector3(volumeMesh.boxsize/2, volumeMesh.height/4, volumeMesh.boxsize/2);
          volumeMesh.backFaceCulling = false;
-         volumeMesh.checkCollisions = true;
+         volumeMesh.checkCollisions = false;
          volumeMesh.showBoundingBox = false;
          volumeMesh.isVisible = true;
          volumeMesh.material.alpha = 0.3;
@@ -416,7 +417,14 @@ angular.module('angle').controller('worldCtrl',
        }
        return volumeMesh;
      }
-     
+
+     var isZeroVec = function(vect3){
+       if(vect3.x < -0.001 || vect3.x > 0.001) return false;
+       if(vect3.y < -0.001 || vect3.y > 0.001) return false;
+       if(vect3.z < -0.001 || vect3.z > 0.001) return false;
+       return true;
+     }
+
      // This begins the creation of a function that we will 'call' just after it's built
      var createScene = function () {
        // Now create a basic Babylon Scene object
@@ -562,8 +570,7 @@ angular.module('angle').controller('worldCtrl',
            //we clean up things first;
            //onPointerUp();
            currentMesh = pickInfo.pickedMesh;
-           if(hasPhysics)
-             oimo.unregisterMesh(currentMesh); //stop physics
+           if(hasPhysics) oimo.unregisterMesh(currentMesh); //stop physics
            startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
            console.warn('picked ', currentMesh.name, currentMesh);
            console.warn('pp', startingPoint);
@@ -582,15 +589,18 @@ angular.module('angle').controller('worldCtrl',
                groupMesh.length = 0;
                outMesh.length = 0;
                var InvQ = BABYLON.Quaternion.Inverse(intersectMesh.rotationQuaternion);
+               var isZeroPosition = false; //check if we have a screwed up invworldmatrix - if we do then one of the mesh will move to 0,0,0 instead of the bottom of the volume mesh.
                cubeslist.forEach(function(c){
                  if(intersectMesh.intersectsMesh(c, true)){
-                   c.parent = intersectMesh;
-                   c.position = XformChildToParentRelPos(c, intersectMesh);
-                   console.warn('cpb', c.position);
-                   //c.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
+                   if(hasPhysics) oimo.unregisterMesh(c); //stop physics
                    console.warn('c', c);
                    console.warn('intersectMesh', intersectMesh);
                    console.warn('cpa', c.position, intersectMesh.position);
+                   c.parent = intersectMesh;
+                   c.position = XformChildToParentRelPos(c, intersectMesh);
+                   console.warn('cpb', c.position);
+                   if(isZeroVec(c.position)) isZeroPosition = true;
+                   //c.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
                    //translate cube to intersetmesh local space 0,0,0
                    //this formula gets fractional rotation from mesh rotation based on
                    //the bottom cube
@@ -607,6 +617,13 @@ angular.module('angle').controller('worldCtrl',
                    c.material.emissiveColor = new BABYLON.Color3.Black();
                  }
                })
+               if(isZeroPosition){
+                 console.warn('FIXED BAD MESH OFFSET')
+                 var offset = new BABYLON.Vector3(0, -intersectMesh.offset , 0);
+                 groupMesh.forEach(function(c){
+                   c.position.addInPlace(offset);
+                 })
+               }
              }
            }, 10)
          }
@@ -638,7 +655,7 @@ angular.module('angle').controller('worldCtrl',
                  if(v.y < miny || !miny) miny = v.y;
                })
                //only enable physics if its actually off the ground.
-               if(hasPhysics && miny > 1) c.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass: c.boxsize, friction:0.5, restitution:0.1});
+               if(hasPhysics && miny > 1) c.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass: c.boxsize, friction:0.6, restitution:0.1});
              })
            groupMesh.length = 0;
            if(intersectMesh) intersectMesh.dispose();
@@ -779,9 +796,9 @@ angular.module('angle').controller('worldCtrl',
          mesh.actionManager = new BABYLON.ActionManager(scene);
          mesh.actionManager.registerAction(new BABYLON.SetValueAction(BABYLON.ActionManager.OnPointerOutTrigger, mesh.material, "emissiveColor", mesh.material.emissiveColor));
          mesh.actionManager.registerAction(new BABYLON.SetValueAction(BABYLON.ActionManager.OnPointerOverTrigger, mesh.material, "emissiveColor", new BABYLON.Color3(0.3, 0.3, 0.3)));
-         mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function() {
+         /*mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function() {
            //oimo.unregisterMesh(mesh); //stop physics
-         }));
+         }));*/
          //mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function() {cameraFly.restart();}));
          //mesh.actionManager.registerAction(new BABYLON.StopAnimationAction(BABYLON.ActionManager.OnPointerOverTrigger, mesh));
        }
