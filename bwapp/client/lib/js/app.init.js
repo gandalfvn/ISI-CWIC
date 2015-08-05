@@ -92,7 +92,4 @@ angular.module('angle')
         $state.go('main');
       }
       Accounts.config({forbidClientAccountCreation : true});
-      Accounts.onLogin(function(user){
-        $state.go('app.root')
-      })
 }]);

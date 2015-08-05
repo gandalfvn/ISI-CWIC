@@ -80,6 +80,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         $meteor.requireUser().then(function(usr){
           if(usr) $state.go('app.worldview');
         });
+        Accounts.onLogin(function(user){
+          $state.go('app.root')
+        })
       }]
     })
     //

@@ -554,13 +554,13 @@ angular.module('angle').controller('worldCtrl',
        
        var onPointerDown = function (evt) {
          if (evt.button !== 0) return;
-         //we clean up things first;
-         onPointerUp();
          // check if we are under a mesh
          var pickInfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) {
            return (mesh !== ground) && (mesh !== skybox) && (mesh !== volumeMesh) 
              && (mesh !== intersectMesh)});
          if (pickInfo.hit && !pickInfo.pickedMesh.isMoving) {
+           //we clean up things first;
+           onPointerUp();
            currentMesh = pickInfo.pickedMesh;
            startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
            console.warn('picked ', currentMesh.name, currentMesh);
