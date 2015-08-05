@@ -771,7 +771,7 @@ angular.module('angle').controller('worldCtrl',
                }
              }
              else{
-               c.material.emissiveColor = new BABYLON.Color3(0.5, 0, 0);
+               c.material.emissiveColor = new BABYLON.Color3(0.176, 0.85, 0.76);
                c.isMoving = true;
              }
            }
