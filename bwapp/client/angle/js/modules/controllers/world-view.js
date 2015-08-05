@@ -560,8 +560,10 @@ angular.module('angle').controller('worldCtrl',
              && (mesh !== intersectMesh)});
          if (pickInfo.hit && !pickInfo.pickedMesh.isMoving) {
            //we clean up things first;
-           onPointerUp();
+           //onPointerUp();
            currentMesh = pickInfo.pickedMesh;
+           if(hasPhysics)
+             oimo.unregisterMesh(currentMesh); //stop physics
            startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
            console.warn('picked ', currentMesh.name, currentMesh);
            console.warn('pp', startingPoint);
@@ -743,7 +745,7 @@ angular.module('angle').controller('worldCtrl',
              if(delta.x < 0.001 && delta.y < 0.001 && delta.z < 0.001){
                if(!c.zeromoveTicks) c.zeromoveTicks = 0;
                c.zeromoveTicks++;
-               if(c.isMoving && c.zeromoveTicks > 25){//only reset color if its went from moving to stopped
+               if(c.isMoving && c.zeromoveTicks > 20){//only reset color if its went from moving to stopped
                  c.material.emissiveColor = new BABYLON.Color3.Black();
                  c.isMoving = false;
                  c.zeromoveTicks = 0;
