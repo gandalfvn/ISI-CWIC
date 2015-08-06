@@ -484,16 +484,17 @@ angular.module('angle').controller('worldCtrl',
        /** GROUND **/
        // Material
        var mat = new BABYLON.StandardMaterial("ground", scene);
-       var t = new BABYLON.Texture("img/textures/plasticwhite.jpg", scene);
-        t.uScale = t.vScale = 10;
+       mat.diffuseColor = BABYLON.Color3.Gray();
+       /*var t = new BABYLON.Texture("img/textures/wood.jpg", scene);
+        t.uScale = t.vScale = 5;
         mat.diffuseTexture = t;
-        mat.specularColor = BABYLON.Color3.Black();
+        mat.specularColor = BABYLON.Color3.Black();*/
        //var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {}); //shader grid
 
        // Object
        var ground = BABYLON.Mesh.CreateBox("ground", 300, scene);
        ground.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-       ground.position.y = 0;
+       ground.position.y = -0.5;
        ground.scaling.y = 0.001;
        ground.onCollide = function(a,b){
          console.warn('oncollide ground', a, b)
@@ -504,10 +505,31 @@ angular.module('angle').controller('worldCtrl',
        ground.checkCollisions = true;
        ground.receiveShadows = true;
 
+       //** table
+       // Material
+       var tablemat = new BABYLON.StandardMaterial("table", scene);
+       var twood = new BABYLON.Texture("img/textures/plasticwhite.jpg", scene);
+       twood.uScale = twood.vScale = 1;
+       tablemat.diffuseTexture = twood;
+       tablemat.specularColor = BABYLON.Color3.Black();
+       //var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {}); //shader grid
+       var table = BABYLON.Mesh.CreateBox("table", 30, scene);
+       table.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
+       table.position.y = 0;
+       table.scaling.y = 0.001;
+       table.onCollide = function(a,b){
+         console.warn('oncollide table', a, b)
+       }
+       table.material = tablemat; //gridshader;
+       if(hasPhysics)
+         table.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
+       table.checkCollisions = true;
+       table.receiveShadows = true;
+       
        var gridmat = new BABYLON.StandardMaterial("grid", scene);
        gridmat.wireframe = true; //create wireframe
        gridmat.diffuseColor = BABYLON.Color3.Gray();
-       grid = BABYLON.Mesh.CreateGround("grid", 300, 300, 100, scene, false); //used to show grid
+       grid = BABYLON.Mesh.CreateGround("grid", 30, 30, 10, scene, false); //used to show grid
        grid.position.y = 0.16;
        grid.scaling.y = 0.001;
        grid.material = gridmat;
@@ -572,7 +594,7 @@ angular.module('angle').controller('worldCtrl',
          // check if we are under a mesh
          var pickInfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) {
            return (mesh !== ground) && (mesh !== skybox) && (mesh !== volumeMesh) 
-             && (mesh !== intersectMesh) && (mesh !== grid)});
+             && (mesh !== intersectMesh) && (mesh !== grid) && (mesh !== table)});
          if (pickInfo.hit && !pickInfo.pickedMesh.isMoving) {
            //we clean up things first;
            //onPointerUp();

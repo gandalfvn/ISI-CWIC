@@ -21,7 +21,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     .state('app', {
       url: '',
       abstract: true,
-      templateUrl: helper.basepath('app.ng.html'),
+      templateUrl: helper.basepath('app.html'),
       controller: 'AppController',
       resolve: helper.resolveFor('modernizr', 'icons')
     })
