@@ -37,7 +37,7 @@ angular.module('angle')
                               //'vendor/babylonjs/preview release - alpha/babylon.2.2.js',
                               'vendor/babylonjs/Oimo.js',
                               'vendor/handjs/hand.js'],
-      'circular-json':   ['vendor/circular-json/build/circular-json.js']
+      'circular-json':      ['vendor/circular-json/build/circular-json.js']
     },
     // Angular based script (use the right module name)
     modules: [

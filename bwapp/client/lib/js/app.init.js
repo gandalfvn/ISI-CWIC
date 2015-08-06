@@ -26,8 +26,7 @@ angular.module('angle', [
     'cfp.loadingBar',
     'ngSanitize',
     'ngResource',
-    'ui.utils',
-    'ngCircularJSON'
+    'ui.utils'
   ]);
 
 if (Meteor.isCordova)

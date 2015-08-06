@@ -4,11 +4,12 @@
  =========================================================*/
 
 angular.module('angle').controller('worldCtrl',
-  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', 'CircularJSON',
-   function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, CircularJSON){
+  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout',
+   function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout){
      "use strict";
 
      var hasPhysics = true;
+     var showGrid = true;
      
      //*****draw axis
      var canvas2D = document.getElementById("canvas_2D");
@@ -455,7 +456,7 @@ angular.module('angle').controller('worldCtrl',
        // This creates a light, aiming 0,1,0 - to the sky.
        var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
        // Dim the light a small amount
-       light.intensity = 0.7;
+       light.intensity = 0.6;
        // this creates dir. light for shadows
        var dirlight = new BABYLON.DirectionalLight("dir1", new BABYLON.Vector3(-0.4, -2, -0.4), scene);
        // Dim the light a small amount
@@ -484,25 +485,32 @@ angular.module('angle').controller('worldCtrl',
        // Material
        var mat = new BABYLON.StandardMaterial("ground", scene);
        var t = new BABYLON.Texture("img/textures/plasticwhite.jpg", scene);
-       t.uScale = t.vScale = 10;
-       mat.diffuseTexture = t;
-       mat.specularColor = BABYLON.Color3.Black();
-       var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {});
+        t.uScale = t.vScale = 10;
+        mat.diffuseTexture = t;
+        mat.specularColor = BABYLON.Color3.Black();
+       //var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {}); //shader grid
 
        // Object
        var ground = BABYLON.Mesh.CreateBox("ground", 300, scene);
        ground.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-       /*ground.position.y = -10;*/
-       ground.scaling.y = 0.01;
+       ground.position.y = 0;
+       ground.scaling.y = 0.001;
        ground.onCollide = function(a,b){
          console.warn('oncollide ground', a, b)
        }
-
-       ground.material = mat; //gridshader; //mat;
+       ground.material = mat; //gridshader;
        if(hasPhysics)
          ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
        ground.checkCollisions = true;
        ground.receiveShadows = true;
+
+       var gridmat = new BABYLON.StandardMaterial("grid", scene);
+       gridmat.wireframe = true; //create wireframe
+       gridmat.diffuseColor = BABYLON.Color3.Gray();
+       grid = BABYLON.Mesh.CreateGround("grid", 300, 300, 100, scene, false); //used to show grid
+       grid.position.y = 0.16;
+       grid.scaling.y = 0.001;
+       grid.material = gridmat;
        
        //add cube
        var p = -2;
@@ -564,7 +572,7 @@ angular.module('angle').controller('worldCtrl',
          // check if we are under a mesh
          var pickInfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) {
            return (mesh !== ground) && (mesh !== skybox) && (mesh !== volumeMesh) 
-             && (mesh !== intersectMesh)});
+             && (mesh !== intersectMesh) && (mesh !== grid)});
          if (pickInfo.hit && !pickInfo.pickedMesh.isMoving) {
            //we clean up things first;
            //onPointerUp();
@@ -829,9 +837,15 @@ angular.module('angle').controller('worldCtrl',
        camera.dispose();
        scene.dispose();
        engine.dispose();
+       engine = null;
        camera = null;
        scene = null;
        createWorld();
+     }
+
+     $scope.toggleGrid = function(){
+       showGrid = !showGrid;
+       grid.isVisible = showGrid;
      }
 
      function createWorld(){
@@ -844,8 +858,10 @@ angular.module('angle').controller('worldCtrl',
      }
 
      // Now, call the createScene function that you just finished creating
-     var scene = null;
+     var scene;
+     var grid;
      createWorld();
+     //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
 
      // Watch for browser/canvas resize events
      window.addEventListener("resize", function () {
