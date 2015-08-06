@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/vendor/ng-circular-json/dist/ng-circular-json.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/lib/js/app.init.js" afterPath="$PROJECT_DIR$/client/lib/js/app.init.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/bwapp.iml" afterPath="$PROJECT_DIR$/.idea/bwapp.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/constants.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/shaders/grid.fragment.fx" afterPath="$PROJECT_DIR$/public/shaders/grid.fragment.fx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/worldview.ng.jade" afterPath="$PROJECT_DIR$/client/views/worldview.ng.jade" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/start.sh" afterPath="$PROJECT_DIR$/start.sh" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,14 +23,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="world-view.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="world-view.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.16189112">
+            <state vertical-scroll-proportion="0.0">
               <caret line="836" column="24" selection-start-line="836" selection-start-column="24" selection-end-line="836" selection-end-column="24" />
               <folding>
                 <element signature="e#0#178#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="start.sh" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/start.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.06446991">
+              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -131,7 +134,6 @@
         <option value="$PROJECT_DIR$/public/shaders/gradient.fragment.fx" />
         <option value="$PROJECT_DIR$/server/sidebar.js" />
         <option value="$PROJECT_DIR$/public/vendor/babylonjs/bower.json" />
-        <option value="$PROJECT_DIR$/start.sh" />
         <option value="$PROJECT_DIR$/server/loadUsers.js" />
         <option value="lo-th.github.io/Oimo.js/" />
         <option value="$PROJECT_DIR$/public/shaders/grid.vertex.fx" />
@@ -151,6 +153,7 @@
         <option value="$PROJECT_DIR$/public/bower.json" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
         <option value="$PROJECT_DIR$/client/views/worldview.ng.jade" />
+        <option value="$PROJECT_DIR$/start.sh" />
       </list>
     </option>
   </component>
@@ -983,13 +986,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/start.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.06456241">
-          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.55236727">
@@ -1186,11 +1182,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.16189112">
+        <state vertical-scroll-proportion="0.0">
           <caret line="836" column="24" selection-start-line="836" selection-start-column="24" selection-end-line="836" selection-end-column="24" />
           <folding>
             <element signature="e#0#178#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/start.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.06446991">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
