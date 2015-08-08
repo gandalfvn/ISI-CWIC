@@ -42,6 +42,24 @@ nav.navbar.topnavbar(role="navigation")
               a(ng-click="language.set(localeId, $event)") {{langName}}
       // END Language list
       // START Offsidebar button
+      li.dropdown
+        a.dropdown-toggle(data-toggle="dropdown", href="#")
+          //-i.glyphicon.glyphicon-search
+          | View&nbsp;
+          b.caret
+        ul.dropdown-menu(role="menu")
+          li
+            a(href="/worldview")
+              .fa.fa-globe
+              | &nbsp;World
+          li
+            a(href="/simpworld")
+              .fa.fa-codepen
+              | &nbsp;Simple
+          li
+            a(href="/replay")
+              .fa.fa-video-camera
+              | &nbsp;Replay
       li
         a
           meteor-include(src="_loginButtons")

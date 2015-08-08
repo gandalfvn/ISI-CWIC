@@ -55,6 +55,16 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       ),
       controller: 'worldSimpCtrl'
     })
+    .state('app.replay', {
+      url: '/replay',
+      title: 'Replay View',
+      templateUrl: helper.basepath('replay.html'),
+      resolve: angular.extend(
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables')
+      ),
+      controller: 'replayCtrl'
+    })
     .state('app.submenu', {
         url: '/submenu',
         title: 'Submenu',

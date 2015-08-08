@@ -25,6 +25,7 @@
     "simple-line-icons": "0.1.1",
     "handjs": "*",
     "ng-circular-json": "*",
-    "ngDialog": "0.3.11"
+    "ngDialog": "0.3.11",
+    "angular-datatables": "0.4.3"
   }
 }

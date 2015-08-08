@@ -44,14 +44,24 @@ angular.module('angle')
                               'vendor/babylonjs/Oimo.js',
                               'vendor/handjs/hand.js'],
       'circular-json':      ['vendor/circular-json/build/circular-json.js'],
-      'ngDialog':           ['vendor/ngDialog/js/ngDialog.min.js',
-        'vendor/ngDialog/css/ngDialog.min.css',
-        'vendor/ngDialog/css/ngDialog-theme-default.min.css'
-      ],
+      /*'ngDatatables':           [
+        //'vendor/jquery/dist/jquery.min.js',
+        'vendor/datatables/media/js/jquery.dataTables.min.js',
+        'vendor/angular-datatables/dist/angular-datatables.min.js',
+        'vendor/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
+        'vendor/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css',
+      ],*/
     },
     // Angular based script (use the right module name)
     modules: [
       // { name: 'toaster', files: ['vendor/angularjs-toaster/toaster.js','vendor/angularjs-toaster/toaster.css'] }
+      {name: 'ngDialog', files: ['vendor/ngDialog/js/ngDialog.min.js',
+        'vendor/ngDialog/css/ngDialog.min.css',
+        'vendor/ngDialog/css/ngDialog-theme-default.min.css'] },
+      {name: 'datatables', files: [
+        'vendor/datatables/media/css/jquery.dataTables.css',
+        'vendor/datatables/media/js/jquery.dataTables.js',
+        'vendor/angular-datatables/dist/angular-datatables.js'], serie: true},
     ]
 
   })
