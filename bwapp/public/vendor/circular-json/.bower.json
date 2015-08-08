@@ -1,0 +1,13 @@
+{
+  "name": "circular-json",
+  "homepage": "https://github.com/WebReflection/circular-json",
+  "_release": "fe4a6d152a",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "fe4a6d152a0eacce4362d922ad0bf6039a47a9cb"
+  },
+  "_source": "git://github.com/WebReflection/circular-json.git",
+  "_target": "*",
+  "_originalSource": "circular-json"
+}

@@ -21,9 +21,10 @@
   ],
   "dependencies": {
     "modernizr": "2.8.3",
-    "fontawesome": "4.3.0",
+    "fontawesome": "*",
     "simple-line-icons": "0.1.1",
     "handjs": "*",
-    "ng-circular-json": "*"
+    "ng-circular-json": "*",
+    "ngDialog": "0.3.11"
   }
 }

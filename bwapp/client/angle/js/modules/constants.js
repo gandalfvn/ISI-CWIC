@@ -33,11 +33,21 @@ angular.module('angle')
       'modernizr':          ['vendor/modernizr/modernizr.js'],
       'icons':              ['vendor/fontawesome/css/font-awesome.min.css',
                              'vendor/simple-line-icons/css/simple-line-icons.css'],
+      'glyphiconspro':      [
+        'vendor/glyphicons-pro/glyphicons_halflings/web/html_css/css/halflings.css',
+        'vendor/glyphicons-pro/glyphicons/web/html_css/css/glyphicons.css',
+        'vendor/glyphicons-pro/glyphicons_social/web/html_css/css/social.css',
+        'vendor/glyphicons-pro/glyphicons_filetypes/web/html_css/css/filetypes.css'
+      ],
       'babylonjs':          [ 'vendor/babylonjs/babylon.2.1.debug.js',
                               //'vendor/babylonjs/preview release - alpha/babylon.2.2.js',
                               'vendor/babylonjs/Oimo.js',
                               'vendor/handjs/hand.js'],
-      'circular-json':      ['vendor/circular-json/build/circular-json.js']
+      'circular-json':      ['vendor/circular-json/build/circular-json.js'],
+      'ngDialog':           ['vendor/ngDialog/js/ngDialog.min.js',
+        'vendor/ngDialog/css/ngDialog.min.css',
+        'vendor/ngDialog/css/ngDialog-theme-default.min.css'
+      ],
     },
     // Angular based script (use the right module name)
     modules: [

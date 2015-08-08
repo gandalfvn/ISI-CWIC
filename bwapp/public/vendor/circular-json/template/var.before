@@ -1,0 +1,1 @@
+var CircularJSON = (function(JSON, RegExp){

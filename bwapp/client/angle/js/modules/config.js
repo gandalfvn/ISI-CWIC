@@ -40,8 +40,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         title: 'World View',
         templateUrl: helper.basepath('worldview.html'),
         resolve: angular.extend(
-          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();             console.warn('worldview')}]},
-          helper.resolveFor('babylonjs', 'circular-json')
+          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+          helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog')
         ),
         controller: 'worldCtrl'
     })
@@ -50,8 +50,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'World View',
       templateUrl: helper.basepath('worldview.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();
-          console.warn('simpworld')}]},
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
         helper.resolveFor('babylonjs')
       ),
       controller: 'worldSimpCtrl'
