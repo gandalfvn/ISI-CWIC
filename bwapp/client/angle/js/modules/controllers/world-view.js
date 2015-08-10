@@ -815,7 +815,7 @@ angular.module('angle').controller('worldCtrl',
                c.material.emissiveColor = new BABYLON.Color3(0, 0.5, 0.5);
                c.tchecked = true;
                console.warn('stored', c.name, c.boxsize, c.position, c.rotationQuaternion);
-               if(!$scope.replaydata.visible[c.name]) //store keyframe for when cube first appear
+               if(_.isUndefined($scope.replaydata.visible[c.name])) //store keyframe for when cube first appear
                  $scope.replaydata.visible[c.name] = $scope.replaydata.act.length;
                    $scope.replaydata.act.push({name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()});
                console.warn($scope.replaydata.act.length);
