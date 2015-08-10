@@ -6,6 +6,7 @@
   | Welcome to {{app.name}}
   small
   //-small {{ "dashboard.WELCOME" | translate:{ appName: } }} !
+toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row
   div(style="position: absolute; z-index: 10;" class="col-sm-12")
     div(style='margin-top: 14px')
@@ -27,17 +28,17 @@
           span.caret
         ul.dropdown-menu(role="menu")
           li(ng-show='recstatus === "s"')
-            a(ng-click='recstatus="r"')
-              .glyphicons.record(ng-show='!replaydata.length') Record
-              .glyphicons.record(ng-show='replaydata.length') Cont' Record
+            a(ng-click='setRecStat("r")')
+              .glyphicons.record(ng-show='!replaydata.act.length') Record
+              .glyphicons.record(ng-show='replaydata.act.length') Cont' Record
           li(ng-show='recstatus === "r"')
-            a(ng-click='recstatus="s"')
+            a(ng-click='setRecStat("s")')
               .glyphicons.stop Stop
-          li(ng-show='replaydata.length && recstatus === "s"')
-            a(ng-click='replaydata.length = 0')
+          li(ng-show='replaydata.act.length && recstatus === "s"')
+            a(ng-click='setRecStat("d")')
               .glyphicons.remove_2 Clear
-          li.divider(ng-show='replaydata.length && recstatus === "s"')
-          li(ng-show='replaydata.length && recstatus === "s"')
+          li.divider(ng-show='replaydata.act.length && recstatus === "s"')
+          li(ng-show='replaydata.act.length && recstatus === "s"')
             a(ng-click='saveReplay()')
               .glyphicons.floppy_save Save
       .pull-right &nbsp;&nbsp;

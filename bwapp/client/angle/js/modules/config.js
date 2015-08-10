@@ -23,7 +23,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       abstract: true,
       templateUrl: helper.basepath('app.html'),
       controller: 'AppController',
-      resolve: helper.resolveFor('modernizr', 'icons')
+      resolve: helper.resolveFor('modernizr', 'icons', 'toaster')
     })
     .state('app.root', {
       url: '/',
@@ -40,8 +40,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         title: 'World View',
         templateUrl: helper.basepath('worldview.html'),
         resolve: angular.extend(
-          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
-          helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog')
+          helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog'),
+          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
         ),
         controller: 'worldCtrl'
     })
@@ -50,8 +50,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'World View',
       templateUrl: helper.basepath('worldview.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
-        helper.resolveFor('babylonjs')
+        helper.resolveFor('babylonjs'),
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
       ),
       controller: 'worldSimpCtrl'
     })
@@ -60,8 +60,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'Replay View',
       templateUrl: helper.basepath('replay.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
-        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables')
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables'),
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
       ),
       controller: 'replayCtrl'
     })

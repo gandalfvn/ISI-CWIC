@@ -54,15 +54,19 @@ angular.module('angle')
     },
     // Angular based script (use the right module name)
     modules: [
-      // { name: 'toaster', files: ['vendor/angularjs-toaster/toaster.js','vendor/angularjs-toaster/toaster.css'] }
-      {name: 'ngDialog', files: ['vendor/ngDialog/js/ngDialog.min.js',
+      {name: 'toaster',                   files: [
+        'vendor/angularjs-toaster/toaster.js',
+        'vendor/angularjs-toaster/toaster.css'
+      ]},
+      {name: 'ngDialog', files: [
         'vendor/ngDialog/css/ngDialog.min.css',
-        'vendor/ngDialog/css/ngDialog-theme-default.min.css'] },
+        'vendor/ngDialog/css/ngDialog-theme-default.min.css',
+        'vendor/ngDialog/js/ngDialog.min.js'
+      ]},
       {name: 'datatables', files: [
         'vendor/datatables/media/css/jquery.dataTables.css',
         'vendor/datatables/media/js/jquery.dataTables.js',
-        'vendor/angular-datatables/dist/angular-datatables.js'], serie: true},
+        'vendor/angular-datatables/dist/angular-datatables.min.js'], serie: true},
     ]
-
   })
 ;

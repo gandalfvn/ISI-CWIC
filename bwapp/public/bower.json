@@ -26,6 +26,10 @@
     "handjs": "*",
     "ng-circular-json": "*",
     "ngDialog": "0.3.11",
-    "angular-datatables": "0.4.3"
+    "angular-datatables": "0.4.3",
+    "angularjs-toaster": "0.4.8"
+  },
+  "resolutions": {
+    "angular": ">=1.3.0"
   }
 }

@@ -4,8 +4,8 @@
  =========================================================*/
 
 angular.module('angle').controller('worldCtrl',
-  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog',
-   function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog){
+  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster',
+   function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster){
      "use strict";
 
      var hasPhysics = true;
@@ -563,7 +563,7 @@ angular.module('angle').controller('worldCtrl',
          createCube({pos: new BABYLON.Vector3(17,cubesize.m*1.5,(p+i)*3), scene: scene, size: 'm', color: cubecolors[i]});
        }
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 18), scene: scene, size: 'l', color: cubecolors[i]});
+         createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 19), scene: scene, size: 'l', color: cubecolors[i]});
        }
 
        //shadows
@@ -812,8 +812,10 @@ angular.module('angle').controller('worldCtrl',
                c.material.emissiveColor = new BABYLON.Color3(0, 0.5, 0.5);
                c.tchecked = true;
                console.warn('stored', c.name, c.boxsize, c.position, c.rotationQuaternion);
-               $scope.replaydata.push({name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()});
-               console.warn($scope.replaydata.length);
+               if(!$scope.replaydata.visible[c.name]) //store keyframe for when cube first appear
+                 $scope.replaydata.visible[c.name] = $scope.replaydata.act.length;
+                   $scope.replaydata.act.push({name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()});
+               console.warn($scope.replaydata.act.length);
              } else{
                c.material.emissiveColor = new BABYLON.Color3.Black();
              }
@@ -889,7 +891,7 @@ angular.module('angle').controller('worldCtrl',
      });
 
      //**start app
-     $scope.replaydata = [];
+     $scope.replaydata = {visible: {}, act: []};
      $scope.blockreplays = $meteor.collection(BlockReplays).subscribe('blockreplays');
 
      $scope.resetWorld = function(){
@@ -909,29 +911,52 @@ angular.module('angle').controller('worldCtrl',
 
      $scope.recstatus = 's';
 
+     $scope.setRecStat = function(type){
+       $scope.recstatus = type;
+       switch(type){
+         case 'r':
+           toaster.pop('info', 'Recording Started');
+           break;
+         case 's':
+           toaster.pop('info', 'Recording Stopped', 'To continue recording where you left off select Record.');
+           break;
+         case 'd':
+           $scope.recstatus = 's';
+           $scope.replaydata.act.length = 0;
+           $scope.replaydata.visible = {};
+           toaster.pop('info', 'Recording Deleted');
+           break;
+       }
+     }
+
      $scope.saveReplay = function(){
-       console.warn('saveReplay');
-       var dialog = ngDialog.open({
-         template: 'didReplayName', 
-         controller: ['$scope', function($scope){
-           camera.detachControl(canvas);
-         }]
-       });
-       dialog.closePromise.then(function (data) {
-         camera.attachControl(canvas, true);
-         console.log('ngDialog closed', data);
-         if(data.value){
-           var replaydb = {
-             name: data.value,
-             owner: $rootScope.currentUser._id,
-             created: new Date().getTime(),
-             data: angular.copy($scope.replaydata)
-           };
-           $scope.blockreplays.push(replaydb);
-           console.warn('saved', $scope.blockreplays);
-           $scope.replaydata.length = 0;
-         }
-       });
+       if($scope.replaydata.act.length){
+         console.warn('saveReplay');
+         var dialog = ngDialog.open({
+           template: 'didReplayName',
+           controller: ['$scope', function($scope){
+             camera.detachControl(canvas);
+           }]
+         });
+         dialog.closePromise.then(function(data){
+           camera.attachControl(canvas, true);
+           console.log('ngDialog closed', data);
+           if(data.value){
+             var replaydb = {
+               name: data.value,
+               owner: $rootScope.currentUser._id,
+               created: new Date().getTime(),
+               data: angular.copy($scope.replaydata)
+             };
+             $scope.blockreplays.push(replaydb);
+             console.warn('saved', $scope.blockreplays);
+             $scope.replaydata.act.length = 0;
+             $scope.replaydata.visible = {};
+           }
+         });
+       }
+       else
+         toaster.pop('warning', 'No Recording', 'Please record something before save.');
      }
 
      // Now, call the createScene function that you just finished creating
