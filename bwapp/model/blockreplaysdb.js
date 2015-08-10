@@ -10,7 +10,7 @@ BlockReplays.allow({
     return userId && replay.owner === userId;
   },
   update: function(userId, replay, fields, modifier){
-    return userId && party.owner === userId;
+    return userId && replay.owner === userId;
   },
   remove: function(userId, replay){
     return userId && replay.owner === userId;

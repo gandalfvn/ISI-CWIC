@@ -801,36 +801,6 @@ angular.module('angle').controller('replayCtrl',
               c.material.emissiveColor = new BABYLON.Color3.Black();
             }
           }
-          if(tableIMesh && $scope.recstatus === 'r'){
-            if(tableIMesh.intersectsMesh(c, true) && !c.tchecked && !c.isMoving && !pointerActive){
-              c.material.emissiveColor = new BABYLON.Color3(0, 0.5, 0.5);
-              c.tchecked = true;
-              console.warn('stored', c.name, c.boxsize, c.position, c.rotationQuaternion);
-              $scope.replaydata.push({name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()});
-              console.warn($scope.replaydata.length);
-            } else{
-              c.material.emissiveColor = new BABYLON.Color3.Black();
-            }
-          }
-          //count the number of 0 move ticks
-          if(c.oldpos){
-            var delta = c.oldpos.subtract(c.position);
-            if(isZeroVec(delta)){
-              if(!c.zeromoveTicks) c.zeromoveTicks = 0;
-              c.zeromoveTicks++;
-              if(c.isMoving && c.zeromoveTicks > 10){//only reset color if it was moving
-                c.material.emissiveColor = new BABYLON.Color3.Black();
-                c.isMoving = false;
-                c.zeromoveTicks = 0;
-                c.tchecked = false;
-              }
-            }
-            else{
-              c.material.emissiveColor = new BABYLON.Color3(0.176, 0.85, 0.76);
-              c.isMoving = true;
-            }
-          }
-          c.oldpos = c.position.clone();
         })
       }
 
@@ -941,8 +911,52 @@ angular.module('angle').controller('replayCtrl',
         }
       });
     }
+
+    $scope.startReplay = function(){
+      //find the highest frame where all is visible
+      var maxframe = 0;
+      _.each($scope.myreplay.data.visible, function(c, idx){
+        if(c > maxframe) maxframe = c;
+      })
+      for(var i = 0; i <= maxframe; i++){
+        showReplay(i);
+      }
+      $scope.frameid = maxframe;
+    }
+
+    $scope.endReplay = function(){
+      //find the highest frame where all is visible
+      for(var i = 0; i < $scope.myreplay.data.act.length; i++){
+        showReplay(i);
+      }
+      $scope.frameid = $scope.myreplay.data.act.length-1;
+    }
       
-    $scope.updateReplay = function(val){
+    $scope.markReplay = function(isStart){
+      if(isStart){
+        $scope.myreplay.start = $scope.frameid;
+        BlockReplays.update({_id: $scope.myreplay._id},
+          {$set: {start: $scope.frameid}})
+      }
+      else{
+        $scope.myreplay.end = $scope.frameid;
+        BlockReplays.update({_id: $scope.myreplay._id},
+          {$set: {end: $scope.frameid}})
+      }
+    }
+
+      $scope.gotoMarkReplay = function(isStart){
+        if(isStart){
+          for(var i = 0; i <= $scope.myreplay.start; i++){showReplay(i);}
+          $scope.frameid = $scope.myreplay.start;
+        }
+        else{
+          for(var i = 0; i <= $scope.myreplay.end; i++){showReplay(i);}
+          $scope.frameid = $scope.myreplay.end;
+        }
+      }
+
+      $scope.updateReplay = function(val){
       var actlen = $scope.myreplay.data.act.length;
       if(val < 0 && $scope.frameid > 0){
         //remove cubes when playing backwards
