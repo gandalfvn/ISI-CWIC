@@ -2,23 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/angular.min.js.gzip" afterPath="$PROJECT_DIR$/public/vendor/angular/angular.min.js.gzip" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/.bower.json" afterPath="$PROJECT_DIR$/public/vendor/angular/.bower.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/angular-csp.css" afterPath="$PROJECT_DIR$/public/vendor/angular/angular-csp.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/angular.js" afterPath="$PROJECT_DIR$/public/vendor/angular/angular.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/angular.min.js.map" afterPath="$PROJECT_DIR$/public/vendor/angular/angular.min.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/angular.min.js" afterPath="$PROJECT_DIR$/public/vendor/angular/angular.min.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/bower.json" afterPath="$PROJECT_DIR$/public/bower.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/bower.json" afterPath="$PROJECT_DIR$/public/vendor/angular/bower.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/constants.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/less/custom/custom.less" afterPath="$PROJECT_DIR$/client/angle/less/custom/custom.less" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/vendor/angular/package.json" afterPath="$PROJECT_DIR$/public/vendor/angular/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/replay-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/replay-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/replay.ng.jade" afterPath="$PROJECT_DIR$/client/views/replay.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/worldview.ng.jade" afterPath="$PROJECT_DIR$/client/views/worldview.ng.jade" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,13 +23,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="replay-view.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="replay-view.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/replay-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7317437">
-              <caret line="931" column="28" selection-start-line="931" selection-start-column="28" selection-end-line="931" selection-end-column="28" />
+            <state vertical-scroll-proportion="-194.2963">
+              <caret line="930" column="10" selection-start-line="930" selection-start-column="10" selection-end-line="930" selection-end-column="10" />
               <folding>
                 <element signature="e#26032#27543#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="world-view.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.63323784">
+              <caret line="594" column="0" selection-start-line="594" selection-start-column="0" selection-end-line="594" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#178#0" expanded="false" />
+                <element signature="e#26989#28525#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -175,9 +172,9 @@
         <option value="$PROJECT_DIR$/public/bower.json" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/config.js" />
         <option value="$PROJECT_DIR$/client/views/worldview.ng.jade" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
         <option value="$PROJECT_DIR$/client/views/replay.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/replay-view.js" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
       </list>
     </option>
   </component>
@@ -755,7 +752,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js</url>
-          <line>619</line>
+          <line>622</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
@@ -1116,17 +1113,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="13.3010435">
-          <caret line="574" column="51" selection-start-line="574" selection-start-column="51" selection-end-line="574" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#178#0" expanded="false" />
-            <element signature="e#26819#28355#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/replay.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.7407408">
@@ -1137,10 +1123,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/replay-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7317437">
-          <caret line="931" column="28" selection-start-line="931" selection-start-column="28" selection-end-line="931" selection-end-column="28" />
+        <state vertical-scroll-proportion="-194.2963">
+          <caret line="930" column="10" selection-start-line="930" selection-start-column="10" selection-end-line="930" selection-end-column="10" />
           <folding>
             <element signature="e#26032#27543#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.63323784">
+          <caret line="594" column="0" selection-start-line="594" selection-start-column="0" selection-end-line="594" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#178#0" expanded="false" />
+            <element signature="e#26989#28525#0" expanded="false" />
           </folding>
         </state>
       </provider>

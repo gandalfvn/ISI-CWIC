@@ -591,6 +591,9 @@ angular.module('angle').controller('worldCtrl',
            if(startingPoint){
              var current = pickinfo.pickedPoint.clone();
              current.y = startingPoint.y;
+             //move by step n
+             current.x = ( Math.round(current.x * 5) / 5).toFixed(2);
+             current.z = ( Math.round(current.z * 5) / 5).toFixed(2);
              return current;
            }
            else return pickinfo.pickedPoint;
