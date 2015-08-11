@@ -263,11 +263,10 @@ angular.module('angle').controller('replayCtrl',
       //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
       box.applyGravity = true;
       box.receiveShadows = true;
-      if(false)
-        box.rotation.y = Math.PI/4;
-      else
+      box.rotation.y = 0; //Math.PI/4;
+      /*else
       if(!box.rotationQuaternion)
-        box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
+        box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics*/
 
       if(hasPhysics)
         box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});

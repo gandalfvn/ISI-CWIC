@@ -129,7 +129,7 @@ angular.module('angle').controller('worldCtrl',
        drawLine(startLine, endLine, color);
 
        return startLine;
-     };
+     }
 
      var _startEndLine = function (startVector, endVector, camera) {
 
@@ -264,10 +264,10 @@ angular.module('angle').controller('worldCtrl',
        //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
        box.receiveShadows = true;
-       if(true) box.rotation.y = Math.PI/4;
-       else
+       box.rotation.y = 0; //Math.PI/4;
+       /*else
         if(!box.rotationQuaternion)
-          box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
+          box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics*/
         
        if(hasPhysics) 
          box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});
@@ -766,31 +766,25 @@ angular.module('angle').controller('worldCtrl',
          else if(!rotxy) current = getGroundPosition(evt);
          else{
            current = null; //skip translating mesh below
-           //delta = (scenerot.x - scene.pointerX) * 0.2;
-           //intersectMesh.rotation.y += 0.025;
-           //intersectMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0,1,0), 0.025); //create rotation based on Y so OUR volume is always Y UP!!!!
-
-           console.warn('move rotxy', intersectMesh.rotation);
+           var euler = intersectMesh.rotationQuaternion.toEulerAngles();
+           delta = (scenerot.x - scene.pointerX);
+           var rotRad = 0.087266; //5 deg. in radian
+           var rotval;
+           if(delta < 0) rotval = euler.y - rotRad;
+           else rotval = euler.y + rotRad;
+           if(rotval > Math.PI) rotval = 0;
+           if(rotval < 0) rotval = Math.PI;
+           rotval = (Math.round(rotval / rotRad)) * rotRad; //round to nearest 5 deg
+           //snap rotval to 5 degree increments
+           intersectMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0,1,0), rotval); //Y is UP in intersect mesh
+           volumeMesh.rotationQuaternion = intersectMesh.rotationQuaternion.clone();
            scenerot.x = scene.pointerX;
-           scenerot.y = scene.pointerY;
          }
 
          if(!current) return;
          var diff;
          diff = current.subtract(startingPoint);
          intersectMesh.moveWithCollisions(diff);
-         /*intersectMesh.position.addInPlace(diff);
-          var hasCollided = false;
-          for(var i = 0; i < outMesh.length; i++){
-          if(intersectMesh.intersectsMesh(outMesh[i], true)){
-          console.warn('collided with ', outMesh[i].name);
-          hasCollided = true;
-          i = outMesh.length+1; //bail
-          }
-          }
-          if(hasCollided){
-          intersectMesh.position.addInPlace(diff.scale(1.5).negate());
-          }*/
          volumeMesh.position = intersectMesh.position.clone();
          startingPoint = current;
        };
@@ -808,7 +802,7 @@ angular.module('angle').controller('worldCtrl',
 
        window.addEventListener("keydown", function (evt) {
          switch (evt.keyCode) {
-           case 17:
+           case 18:
              if(currentMesh){
                rotxy = true;
                scenerot = {x: scene.pointerX, y: scene.pointerY};
@@ -826,7 +820,7 @@ angular.module('angle').controller('worldCtrl',
 
        window.addEventListener("keyup", function (evt) {
          switch (evt.keyCode) {
-           case 17:
+           case 18:
              rotxy = false;
              scenerot = null;
              break;
