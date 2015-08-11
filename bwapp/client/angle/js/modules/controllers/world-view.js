@@ -10,7 +10,8 @@ angular.module('angle').controller('worldCtrl',
 
      var hasPhysics = true;
      var showGrid = true;
-     
+     var showAxis = true;
+
      //*****draw axis
      var canvas2D = document.getElementById("canvas_2D");
      var context2D = canvas2D.getContext("2d");
@@ -128,7 +129,7 @@ angular.module('angle').controller('worldCtrl',
        drawLine(startLine, endLine, color);
 
        return startLine;
-     }
+     };
 
      var _startEndLine = function (startVector, endVector, camera) {
 
@@ -210,6 +211,7 @@ angular.module('angle').controller('worldCtrl',
      };
      //*****end draw axis
      
+     //******Start of Scene
      // Get the canvas element from our HTML above
      var canvas = document.getElementById("renderCanvasBab");
      var engine;
@@ -262,8 +264,7 @@ angular.module('angle').controller('worldCtrl',
        //box.ellipsoidOffset = new BABYLON.Vector3(0, 0.1, 0);
        box.applyGravity = true;
        box.receiveShadows = true;
-       if(false)
-         box.rotation.y = Math.PI/4;
+       if(true) box.rotation.y = Math.PI/4;
        else
         if(!box.rotationQuaternion)
           box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics
@@ -272,38 +273,41 @@ angular.module('angle').controller('worldCtrl',
          box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});
        box.onCollide = function(a){
          console.warn('oncollide', objname, this, a)
-       }
+       };
        //box.updatePhysicsBodyPosition();
        //box.refreshBoundingInfo();
        //box.moveWithCollisions(new BABYLON.Vector3(-1, 0, 0));
        numcubes++;
        cubeslist.push(box);
-     }
+     };
 
      /**
       * provide a quaternion and will return the current letter of up axis
       * return letter of up axis and direction based on positive or neg
       * neg = inverse
       * @param quat
+      * @param axis
+      * @returns {{axis: string, isInv: boolean}}
       */
-     var findUpAxis = function(quat){
+     var findAxis = function(quat, axis){
        var qm = new BABYLON.Matrix.Identity();
        quat.toRotationMatrix(qm);
-       var axis = ['x','y','z'];
+       var axisd = ['x','y','z'];
        var vect = [new BABYLON.Vector3(1,0,0), new BABYLON.Vector3(0,1,0), new BABYLON.Vector3(0,0,1)];
+       var matchaxis = axisd.indexOf(axis);
        var maxmag = 0, idx = -1;
        var isInv = false;
        vect.forEach(function(v, i){
-         var angdif = BABYLON.Vector3.Dot(vect[1], BABYLON.Vector3.TransformCoordinates(v, qm));
+         var angdif = BABYLON.Vector3.Dot(vect[matchaxis], BABYLON.Vector3.TransformCoordinates(v, qm));
          var mag = Math.abs(angdif);
          if(mag > maxmag){
            maxmag = mag;
            isInv = (angdif < 0);
            idx = i;
          }
-       })
-       return {axis: axis[idx], isInv: isInv};
-     }
+       });
+       return {axis: axisd[idx], isInv: isInv};
+     };
 
      /**
       * Receives a mesh cube to create volume from
@@ -337,7 +341,7 @@ angular.module('angle').controller('worldCtrl',
        volumeMesh = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
        var myQuat = new BABYLON.Quaternion.Identity(); 
        if(mesh.rotationQuaternion) myQuat = mesh.rotationQuaternion.clone();
-       else console.warn('mesh quaternion is identity ', mesh.name)
+       else console.warn('mesh quaternion is identity ', mesh.name);
        //volumeMesh.rotationQuaternion = myQuat.clone(); //skip this we only want rotation based on Y
        //var upaxis = findUpAxis(myQuat);
        var euler = myQuat.toEulerAngles(); //get rotation
@@ -362,7 +366,7 @@ angular.module('angle').controller('worldCtrl',
          vectorsWorld.forEach(function(v){
            if(v.y < miny || !miny) miny = v.y;
            if(v.y > maxy || !maxy) maxy = v.y;
-         })
+         });
          volumeMesh.height = maxy-miny;
          volumeMesh.boxsize = opt.size;
          volumeMesh.offset = volumeMesh.height/2 - volumeMesh.boxsize/2;
@@ -410,7 +414,7 @@ angular.module('angle').controller('worldCtrl',
 
          volumeMesh.onCollide = function(a){
            console.warn('vol oncollide', this.name, a.name)
-         }
+         };
 
 
          /*var matPlan = new BABYLON.StandardMaterial("matPlan1", scene);
@@ -424,14 +428,14 @@ angular.module('angle').controller('worldCtrl',
          origin.material = matPlan;*/
        }
        return volumeMesh;
-     }
+     };
 
      var isZeroVec = function(vect3){
        if(vect3.x < -0.001 || vect3.x > 0.001) return false;
        if(vect3.y < -0.001 || vect3.y > 0.001) return false;
        if(vect3.z < -0.001 || vect3.z > 0.001) return false;
        return true;
-     }
+     };
 
      // This begins the creation of a function that we will 'call' just after it's built
      var createScene = function () {
@@ -506,7 +510,7 @@ angular.module('angle').controller('worldCtrl',
        ground.scaling.y = 0.001;
        ground.onCollide = function(a,b){
          console.warn('oncollide ground', a, b)
-       }
+       };
        ground.material = mat; //gridshader;
        if(hasPhysics)
          ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
@@ -529,7 +533,7 @@ angular.module('angle').controller('worldCtrl',
        table.scaling.y = 0.001;
        table.onCollide = function(a,b){
          console.warn('oncollide table', a, b)
-       }
+       };
        table.material = tablemat; //gridshader;
        if(hasPhysics)
          table.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
@@ -557,13 +561,28 @@ angular.module('angle').controller('worldCtrl',
        //add cube
        var p = -2;
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3(-16,cubesize.s*2,(p+i)*2), scene: scene, size: 's', color: cubecolors[i]});
+         createCube({
+           pos: new BABYLON.Vector3(-16, cubesize.s * 2, (p + i) * 2),
+           scene: scene,
+           size: 's',
+           color: cubecolors[i]
+         });
        }
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3(17,cubesize.m*1.5,(p+i)*3), scene: scene, size: 'm', color: cubecolors[i]});
+         createCube({
+           pos: new BABYLON.Vector3(17, cubesize.m * 2, (p + i) * 4),
+           scene: scene,
+           size: 'm',
+           color: cubecolors[i]
+         });
        }
        for(var i = 0; i < 5; i++){
-         createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 19), scene: scene, size: 'l', color: cubecolors[i]});
+         createCube({
+           pos: new BABYLON.Vector3((p + i) * 6, cubesize.l * 2, 20),
+           scene: scene,
+           size: 'l',
+           color: cubecolors[i]
+         });
        }
 
        //shadows
@@ -583,6 +602,8 @@ angular.module('angle').controller('worldCtrl',
        var intersectMesh;
        var lockxz = false;
        var sceney = null;
+       var rotxy = false;
+       var scenerot = null;
 
        var getGroundPosition = function () {
          // Use a predicate to get position on the ground
@@ -599,7 +620,7 @@ angular.module('angle').controller('worldCtrl',
            else return pickinfo.pickedPoint;
          }
          return null;
-       }
+       };
 
        /**
         * Transform a child mesh A world position to a parent relative (local) position
@@ -610,7 +631,7 @@ angular.module('angle').controller('worldCtrl',
        var XformChildToParentRelPos = function(meshchild, meshparent){
          var invWorldMatrix = meshparent.getWorldMatrix().clone().invert();
          return BABYLON.Vector3.TransformCoordinates(meshchild.position.clone(),invWorldMatrix);
-       }
+       };
        
        var pointerActive = false;
        var onPointerDown = function (evt) {
@@ -687,9 +708,9 @@ angular.module('angle').controller('worldCtrl',
                    c.showBoundingBox = false;
                    c.material.emissiveColor = new BABYLON.Color3.Black();
                  }
-               })
+               });
                if(isZeroPosition){
-                 console.warn('FIXED BAD MESH OFFSET')
+                 console.warn('FIXED BAD MESH OFFSET');
                  var offset = new BABYLON.Vector3(0, -intersectMesh.offset , 0);
                  groupMesh.forEach(function(c){
                    c.position.addInPlace(offset);
@@ -698,7 +719,7 @@ angular.module('angle').controller('worldCtrl',
              }
            }, 10)
          }
-       }
+       };
 
        var onPointerUp = function () {
          if (startingPoint) {
@@ -724,13 +745,13 @@ angular.module('angle').controller('worldCtrl',
                c.material.emissiveColor = new BABYLON.Color3.Black();
                //must add physics no matter if its off the ground fo collisions to tork
                if(hasPhysics) c.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass: c.boxsize, friction:0.6, restitution:0.1});
-             })
+             });
            groupMesh.length = 0;
            if(intersectMesh) intersectMesh.dispose();
            intersectMesh = null;
            currentMesh = null;
          }
-       }
+       };
 
        var onPointerMove = function (evt){
          if(!startingPoint) return;
@@ -742,30 +763,37 @@ angular.module('angle').controller('worldCtrl',
            current.y += delta;
            sceney = scene.pointerY;
          }
-         else
-           current = getGroundPosition(evt);
-         if(!current){
-           return;
+         else if(!rotxy) current = getGroundPosition(evt);
+         else{
+           current = null; //skip translating mesh below
+           //delta = (scenerot.x - scene.pointerX) * 0.2;
+           //intersectMesh.rotation.y += 0.025;
+           //intersectMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0,1,0), 0.025); //create rotation based on Y so OUR volume is always Y UP!!!!
+
+           console.warn('move rotxy', intersectMesh.rotation);
+           scenerot.x = scene.pointerX;
+           scenerot.y = scene.pointerY;
          }
 
+         if(!current) return;
          var diff;
          diff = current.subtract(startingPoint);
          intersectMesh.moveWithCollisions(diff);
          /*intersectMesh.position.addInPlace(diff);
-         var hasCollided = false;
-         for(var i = 0; i < outMesh.length; i++){
-           if(intersectMesh.intersectsMesh(outMesh[i], true)){
-             console.warn('collided with ', outMesh[i].name);
-             hasCollided = true;
-             i = outMesh.length+1; //bail
-           }
-         }
-         if(hasCollided){
-           intersectMesh.position.addInPlace(diff.scale(1.5).negate());
-         }*/
+          var hasCollided = false;
+          for(var i = 0; i < outMesh.length; i++){
+          if(intersectMesh.intersectsMesh(outMesh[i], true)){
+          console.warn('collided with ', outMesh[i].name);
+          hasCollided = true;
+          i = outMesh.length+1; //bail
+          }
+          }
+          if(hasCollided){
+          intersectMesh.position.addInPlace(diff.scale(1.5).negate());
+          }*/
          volumeMesh.position = intersectMesh.position.clone();
          startingPoint = current;
-       }
+       };
 
        //require hand.js from ms
        canvas.addEventListener("pointerdown", onPointerDown, false);
@@ -776,11 +804,16 @@ angular.module('angle').controller('worldCtrl',
          canvas.removeEventListener("pointerdown", onPointerDown);
          canvas.removeEventListener("pointerup", onPointerUp);
          canvas.removeEventListener("pointermove", onPointerMove);
-       }
-
+       };
 
        window.addEventListener("keydown", function (evt) {
          switch (evt.keyCode) {
+           case 17:
+             if(currentMesh){
+               rotxy = true;
+               scenerot = {x: scene.pointerX, y: scene.pointerY};
+             }
+             break;
            case 16:
              if(currentMesh){
                lockxz = true;
@@ -793,6 +826,10 @@ angular.module('angle').controller('worldCtrl',
 
        window.addEventListener("keyup", function (evt) {
          switch (evt.keyCode) {
+           case 17:
+             rotxy = false;
+             scenerot = null;
+             break;
            case 16:
              lockxz = false;
              sceney = null;
@@ -843,7 +880,7 @@ angular.module('angle').controller('worldCtrl',
            }
            c.oldpos = c.position.clone();
          })
-       }
+       };
 
        var prepareButton = function (mesh) {
          mesh.actionManager = new BABYLON.ActionManager(scene);
@@ -854,11 +891,11 @@ angular.module('angle').controller('worldCtrl',
          }));*/
          //mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function() {cameraFly.restart();}));
          //mesh.actionManager.registerAction(new BABYLON.StopAnimationAction(BABYLON.ActionManager.OnPointerOverTrigger, mesh));
-       }
+       };
        
        cubeslist.forEach(function(c){
          prepareButton(c);
-       })
+       });
 
        scene.registerBeforeRender(animate);
        // Leave this function
@@ -870,14 +907,14 @@ angular.module('angle').controller('worldCtrl',
          scene.render();
 
          // 2D
-         if(false){
+         if(showAxis){
            clearCanvas2D();
            cubeslist.forEach(function(c){
              drawAxis(camera, c, true, true);
            })
          }
        }
-     }
+     };
 
      function createWorld(){
        // Load the BABYLON 3D engine
@@ -905,12 +942,12 @@ angular.module('angle').controller('worldCtrl',
        camera = null;
        scene = null;
        createWorld();
-     }
+     };
 
      $scope.toggleGrid = function(){
        showGrid = !showGrid;
        grid.isVisible = showGrid;
-     }
+     };
 
      $scope.recstatus = 's';
 
@@ -930,7 +967,7 @@ angular.module('angle').controller('worldCtrl',
            toaster.pop('info', 'Recording Deleted');
            break;
        }
-     }
+     };
 
      $scope.saveReplay = function(){
        if($scope.replaydata.act.length){
@@ -960,7 +997,7 @@ angular.module('angle').controller('worldCtrl',
        }
        else
          toaster.pop('warning', 'No Recording', 'Please record something before save.');
-     }
+     };
 
      // Now, call the createScene function that you just finished creating
      var scene;
@@ -968,4 +1005,4 @@ angular.module('angle').controller('worldCtrl',
      createWorld();
      //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
      
-   }])
+   }]);
