@@ -10,7 +10,7 @@ angular.module('angle').controller('worldCtrl',
 
      var hasPhysics = true;
      var showGrid = true;
-     var showAxis = true;
+     var showAxis = false;
 
      //*****draw axis
      var canvas2D = document.getElementById("canvas_2D");
