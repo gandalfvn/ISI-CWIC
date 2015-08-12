@@ -980,6 +980,7 @@ angular.module('angle').controller('worldCtrl',
                name: data.value,
                owner: $rootScope.currentUser._id,
                created: new Date().getTime(),
+               creator: $rootScope.currentUser.username,
                data: angular.copy($scope.replaydata)
              };
              $scope.blockreplays.push(replaydb);
@@ -997,6 +998,7 @@ angular.module('angle').controller('worldCtrl',
      var scene;
      var grid;
      createWorld();
+     console.warn($rootScope.currentUser, $scope);
      //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
      
    }]);

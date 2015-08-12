@@ -870,9 +870,8 @@ angular.module('angle').controller('replayCtrl',
       showGrid = !showGrid;
       grid.isVisible = showGrid;
     }
-
-      $scope.selectReplay = function(){
-      console.warn('selectReplay');
+      
+    $scope.selectReplay = function(){
       var repdata = {replays: $scope.blockreplays};
       var dcon = {
         disableAnimation: true,
@@ -909,7 +908,7 @@ angular.module('angle').controller('replayCtrl',
           }
         }
       });
-    }
+    };
 
     $scope.startReplay = function(){
       //find the highest frame where all is visible
@@ -921,7 +920,7 @@ angular.module('angle').controller('replayCtrl',
         showReplay(i);
       }
       $scope.frameid = maxframe;
-    }
+    };
 
     $scope.endReplay = function(){
       //find the highest frame where all is visible
@@ -929,7 +928,7 @@ angular.module('angle').controller('replayCtrl',
         showReplay(i);
       }
       $scope.frameid = $scope.myreplay.data.act.length-1;
-    }
+    };
       
     $scope.markReplay = function(isStart){
       if(isStart){
@@ -942,20 +941,27 @@ angular.module('angle').controller('replayCtrl',
         BlockReplays.update({_id: $scope.myreplay._id},
           {$set: {end: $scope.frameid}})
       }
+    };
+      
+    $scope.togglePublic = function(){
+      if($scope.myreplay.public) $scope.myreplay.public = !$scope.myreplay.public;
+      else $scope.myreplay.public = true;
+      BlockReplays.update({_id: $scope.myreplay._id},
+        {$set: {public: $scope.myreplay.public}})
     }
-
-      $scope.gotoMarkReplay = function(isStart){
-        if(isStart){
-          for(var i = 0; i <= $scope.myreplay.start; i++){showReplay(i);}
-          $scope.frameid = $scope.myreplay.start;
-        }
-        else{
-          for(var i = 0; i <= $scope.myreplay.end; i++){showReplay(i);}
-          $scope.frameid = $scope.myreplay.end;
-        }
+      
+    $scope.gotoMarkReplay = function(isStart){
+      if(isStart){
+        for(var i = 0; i <= $scope.myreplay.start; i++){showReplay(i);}
+        $scope.frameid = $scope.myreplay.start;
       }
+      else{
+        for(var i = 0; i <= $scope.myreplay.end; i++){showReplay(i);}
+        $scope.frameid = $scope.myreplay.end;
+      }
+    };
 
-      $scope.updateReplay = function(val){
+    $scope.updateReplay = function(val){
       var actlen = $scope.myreplay.data.act.length;
       if(val < 0 && $scope.frameid > 0){
         //remove cubes when playing backwards
@@ -967,13 +973,12 @@ angular.module('angle').controller('replayCtrl',
       if($scope.frameid >= actlen) $scope.frameid = actlen;
       if($scope.frameid < 0) $scope.frameid = 0;
       showReplay($scope.frameid);
-    }
+    };
 
     $scope.myreplay = null;
     $scope.frameid = -1;
     var showReplay = function(idx){
       var frame = $scope.myreplay.data.act[idx];
-      console.warn('frame', frame);
       var cube = cubesnamed[frame.name];
       cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
       cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);

@@ -42,7 +42,7 @@ nav.navbar.topnavbar(role="navigation")
               a(ng-click="language.set(localeId, $event)") {{langName}}
       // END Language list
       // START Offsidebar button
-      li.dropdown
+      li.dropdown(ng-show='currentUser.profile.roles.indexOf("admin") >= 0')
         a.dropdown-toggle(data-toggle="dropdown", href="#")
           //-i.glyphicon.glyphicon-search
           | View&nbsp;
@@ -60,6 +60,11 @@ nav.navbar.topnavbar(role="navigation")
             a(href="/replay")
               .fa.fa-video-camera
               | &nbsp;Replay
+          li
+            a(href="/tasks")
+              .fa.fa-inbox
+              | &nbsp;Tasks
+
       li
         a
           meteor-include(src="_loginButtons")
@@ -69,7 +74,7 @@ nav.navbar.topnavbar(role="navigation")
     // END Right Navbar
   // END Nav wrapper
   // START Search form
-  form.navbar-form(role="search", action="search.html")
+  //-form.navbar-form(role="search", action="search.html")
     .form-group.has-feedback
       input.form-control(type="text", placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}")
       .fa.fa-times.form-control-feedback(search-dismiss="search-dismiss")

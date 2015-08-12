@@ -1,0 +1,37 @@
+//-**=========================================================
+  * Module: tasks.ng.jade
+  * Created by wjwong on 8/11/15.
+  =========================================================*/
+toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
+.row
+accordion
+  accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+    accordion-heading
+      h4.panel-title
+        i.fa.fa-inbox
+        | &nbsp; Available Tasks
+    table.table.table-condensed(ng-if='blockreplays', datatable="ng", dt-options="dtOptions")
+      thead
+        tr
+          th
+          th Name
+          th Created
+          th By
+      tbody
+        tr(ng-repeat='replay in blockreplays')
+          td(ng-click='remove(replay._id)')
+            .fa.fa-remove
+          td(title='{{replay._id}}', ng-click='selectAgent(replay._id)') {{ replay.name}}
+          td {{replay.created | date: 'yyyy-MM-dd h:mm:ss'}}
+          td {{replay.creator}}
+
+script#didAgents(type="text/ng-template")
+  h3 Choose an Agent
+  div
+    table.row-border.hover(datatable='ng', dt-options='dtOptions')
+      thead
+        tr
+          th Name
+      tbody
+        tr(ng-repeat='agent in ngDialogData.agents', ng-if='agent.profile.roles.indexOf("agent") > -1')
+          td(title='{{agent._id}}', ng-click='closeThisDialog(agent._id)') {{agent.username}}

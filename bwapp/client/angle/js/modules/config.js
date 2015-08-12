@@ -65,10 +65,15 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       ),
       controller: 'replayCtrl'
     })
-    .state('app.submenu', {
-        url: '/submenu',
-        title: 'Submenu',
-        templateUrl: helper.basepath('submenu.ng.html')
+    .state('app.tasks', {
+      url: '/tasks',
+      title: 'Tasks View',
+      templateUrl: helper.basepath('tasks.html'),
+      resolve: angular.extend(
+        helper.resolveFor('ngDialog','datatables'),
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
+      ),
+      controller: 'tasksCtrl'
     })
     .state('404', {
       url: '/404',
