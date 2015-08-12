@@ -43,7 +43,7 @@ angular.module('angle')
       $rootScope.$state = $state;
       $rootScope.$stateParams = $stateParams;
       $rootScope.$storage = $window.localStorage;
-
+      
       // Uncomment this to disable template cache
       /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
           if (typeof(toState) !== 'undefined'){
@@ -71,11 +71,15 @@ angular.module('angle')
         hiddenFooter: false,
         viewAnimation: 'ng-fadeInUp'
       };
-      $rootScope.user = {
+      /*$rootScope.user = {
         name:     'William',
         job:      'ng-developer',
         picture:  'app/img/user/02.jpg'
-      };
+      };*/
+
+      $rootScope.isRole = function(usr){
+        return (usr.profile.roles.indexOf('agent') > -1)
+      }
 
       $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
         // We can catch the error thrown when the $requireUser promise is rejected

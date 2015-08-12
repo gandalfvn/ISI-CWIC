@@ -12,7 +12,8 @@ Jobs.allow({
   },
   remove: function(userId, job){
     return userId && job.owner === userId;
-  }
+  },
+  fetch: ['owner']
 });
 
 Meteor.publish('jobs', function(){
@@ -24,3 +25,11 @@ Meteor.publish('jobs', function(){
   });
 });
 
+Meteor.publish('agentjobs', function(){
+  return Jobs.find({
+    $and: [
+      {agent: this.userId},
+      {agent: {$exists: true}}
+    ]
+  });
+});

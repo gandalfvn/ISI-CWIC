@@ -1,18 +1,24 @@
 /**========================================================
- * Module: replay-view.js
- * Created by wjwong on 8/7/15.
+ * Module: game-view.js
+ * Created by wjwong on 8/12/15.
  =========================================================*/
-angular.module('angle').controller('replayCtrl',
-  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteorCollection, ngDialog, toaster){
+
+angular.module('angle').controller('gameCtrl',
+  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster){
   "use strict";
 
   //check for agent role
-  if($rootScope.isRole($rootScope.currentUser, 'agent')){
+  if(!$rootScope.isRole($rootScope.currentUser, 'agent')){
     return $state.go('app.root');
   }
 
-    var hasPhysics = true;
+  var hasPhysics = true;
   var showGrid = true;
+  var showAxis = false;
+
+  //check for admin user
+  console.warn($rootScope.currentUser);
+
 
   //*****draw axis
   var canvas2D = document.getElementById("canvas_2D");
@@ -171,7 +177,7 @@ angular.module('angle').controller('replayCtrl',
     return res;
   };
 
-// inspiration from Blender
+  // inspiration from Blender
   var _intersectionPoint = function(p0, p1, pointOfPlane, normalOfPlane) {
     /*
      p0, p1: define the line
@@ -213,12 +219,12 @@ angular.module('angle').controller('replayCtrl',
   };
   //*****end draw axis
 
+  //******Start of Scene
   // Get the canvas element from our HTML above
   var canvas = document.getElementById("renderCanvasBab");
   var engine;
 
   var cubeslist = [];
-  var cubesnamed = {};
   var numcubes = 0;
   var cubecolors = ['red', 'yellow', 'cyan', 'purple', 'green', 'orange'];
   var colorids = {};
@@ -260,7 +266,6 @@ angular.module('angle').controller('replayCtrl',
     box.material = boxmat;
     box.showBoundingBox = false;
     box.checkCollisions = true;
-    box.isVisible = data.isVisible;
     box.boxsize = boxsize;
     var elipbox = boxsize;
     box.ellipsoid = new BABYLON.Vector3(elipbox, elipbox, elipbox);
@@ -269,46 +274,48 @@ angular.module('angle').controller('replayCtrl',
     box.receiveShadows = true;
     box.rotation.y = 0; //Math.PI/4;
     /*else
-    if(!box.rotationQuaternion)
-      box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics*/
+     if(!box.rotationQuaternion)
+     box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics*/
 
     if(hasPhysics)
       box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});
     box.onCollide = function(a){
       console.warn('oncollide', objname, this, a)
-    }
+    };
     //box.updatePhysicsBodyPosition();
     //box.refreshBoundingInfo();
     //box.moveWithCollisions(new BABYLON.Vector3(-1, 0, 0));
     numcubes++;
     cubeslist.push(box);
-    cubesnamed[objname] = box;
-  }
+  };
 
   /**
    * provide a quaternion and will return the current letter of up axis
    * return letter of up axis and direction based on positive or neg
    * neg = inverse
    * @param quat
+   * @param axis
+   * @returns {{axis: string, isInv: boolean}}
    */
-  var findUpAxis = function(quat){
+  var findAxis = function(quat, axis){
     var qm = new BABYLON.Matrix.Identity();
     quat.toRotationMatrix(qm);
-    var axis = ['x','y','z'];
+    var axisd = ['x','y','z'];
     var vect = [new BABYLON.Vector3(1,0,0), new BABYLON.Vector3(0,1,0), new BABYLON.Vector3(0,0,1)];
+    var matchaxis = axisd.indexOf(axis);
     var maxmag = 0, idx = -1;
     var isInv = false;
     vect.forEach(function(v, i){
-      var angdif = BABYLON.Vector3.Dot(vect[1], BABYLON.Vector3.TransformCoordinates(v, qm));
+      var angdif = BABYLON.Vector3.Dot(vect[matchaxis], BABYLON.Vector3.TransformCoordinates(v, qm));
       var mag = Math.abs(angdif);
       if(mag > maxmag){
         maxmag = mag;
         isInv = (angdif < 0);
         idx = i;
       }
-    })
-    return {axis: axis[idx], isInv: isInv};
-  }
+    });
+    return {axis: axisd[idx], isInv: isInv};
+  };
 
   /**
    * Receives a mesh cube to create volume from
@@ -342,7 +349,7 @@ angular.module('angle').controller('replayCtrl',
     volumeMesh = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
     var myQuat = new BABYLON.Quaternion.Identity();
     if(mesh.rotationQuaternion) myQuat = mesh.rotationQuaternion.clone();
-    else console.warn('mesh quaternion is identity ', mesh.name)
+    else console.warn('mesh quaternion is identity ', mesh.name);
     //volumeMesh.rotationQuaternion = myQuat.clone(); //skip this we only want rotation based on Y
     //var upaxis = findUpAxis(myQuat);
     var euler = myQuat.toEulerAngles(); //get rotation
@@ -367,7 +374,7 @@ angular.module('angle').controller('replayCtrl',
       vectorsWorld.forEach(function(v){
         if(v.y < miny || !miny) miny = v.y;
         if(v.y > maxy || !maxy) maxy = v.y;
-      })
+      });
       volumeMesh.height = maxy-miny;
       volumeMesh.boxsize = opt.size;
       volumeMesh.offset = volumeMesh.height/2 - volumeMesh.boxsize/2;
@@ -415,7 +422,7 @@ angular.module('angle').controller('replayCtrl',
 
       volumeMesh.onCollide = function(a){
         console.warn('vol oncollide', this.name, a.name)
-      }
+      };
 
 
       /*var matPlan = new BABYLON.StandardMaterial("matPlan1", scene);
@@ -429,14 +436,14 @@ angular.module('angle').controller('replayCtrl',
        origin.material = matPlan;*/
     }
     return volumeMesh;
-  }
+  };
 
   var isZeroVec = function(vect3){
     if(vect3.x < -0.001 || vect3.x > 0.001) return false;
     if(vect3.y < -0.001 || vect3.y > 0.001) return false;
     if(vect3.z < -0.001 || vect3.z > 0.001) return false;
     return true;
-  }
+  };
 
   // This begins the creation of a function that we will 'call' just after it's built
   var createScene = function () {
@@ -511,7 +518,7 @@ angular.module('angle').controller('replayCtrl',
     ground.scaling.y = 0.001;
     ground.onCollide = function(a,b){
       console.warn('oncollide ground', a, b)
-    }
+    };
     ground.material = mat; //gridshader;
     if(hasPhysics)
       ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
@@ -534,7 +541,7 @@ angular.module('angle').controller('replayCtrl',
     table.scaling.y = 0.001;
     table.onCollide = function(a,b){
       console.warn('oncollide table', a, b)
-    }
+    };
     table.material = tablemat; //gridshader;
     if(hasPhysics)
       table.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
@@ -561,15 +568,38 @@ angular.module('angle').controller('replayCtrl',
 
     //add cube
     var p = -2;
-     for(var i = 0; i < 5; i++){
-     createCube({pos: new BABYLON.Vector3(-16,cubesize.s*2,(p+i)*2), scene: scene, size: 's', color: cubecolors[i], isVisible: false});
-     }
-     for(var i = 0; i < 5; i++){
-     createCube({pos: new BABYLON.Vector3(17,cubesize.m*1.5,(p+i)*3), scene: scene, size: 'm', color: cubecolors[i], isVisible: false});
-     }
-     for(var i = 0; i < 5; i++){
-     createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 18), scene: scene, size: 'l', color: cubecolors[i], isVisible: false});
-     }
+    for(var i = 0; i < 5; i++){
+      createCube({
+        pos: new BABYLON.Vector3(-16, cubesize.s * 2, (p + i) * 2),
+        scene: scene,
+        size: 's',
+        color: cubecolors[i]
+      });
+    }
+    for(var i = 0; i < 5; i++){
+      createCube({
+        pos: new BABYLON.Vector3(17, cubesize.m * 2, (p + i) * 4),
+        scene: scene,
+        size: 'm',
+        color: cubecolors[i]
+      });
+    }
+    for(var i = 0; i < 5; i++){
+      createCube({
+        pos: new BABYLON.Vector3((p + i) * 6, cubesize.l * 2, 20),
+        scene: scene,
+        size: 'l',
+        color: cubecolors[i]
+      });
+    }
+
+    //shadows
+    /*var shadowGenerator = new BABYLON.ShadowGenerator(1024, dirlight);
+     cubeslist.forEach(function(c){
+     shadowGenerator.getShadowMap().renderList.push(c);
+     });
+     //shadowGenerator.useVarianceShadowMap = true;
+     shadowGenerator.usePoissonSampling = true;*/
 
     //handle drag and drop
     var startingPoint;
@@ -580,6 +610,8 @@ angular.module('angle').controller('replayCtrl',
     var intersectMesh;
     var lockxz = false;
     var sceney = null;
+    var rotxy = false;
+    var scenerot = null;
 
     var getGroundPosition = function () {
       // Use a predicate to get position on the ground
@@ -588,12 +620,15 @@ angular.module('angle').controller('replayCtrl',
         if(startingPoint){
           var current = pickinfo.pickedPoint.clone();
           current.y = startingPoint.y;
+          //move by step n
+          current.x = ( Math.round(current.x * 5) / 5).toFixed(2);
+          current.z = ( Math.round(current.z * 5) / 5).toFixed(2);
           return current;
         }
         else return pickinfo.pickedPoint;
       }
       return null;
-    }
+    };
 
     /**
      * Transform a child mesh A world position to a parent relative (local) position
@@ -604,7 +639,7 @@ angular.module('angle').controller('replayCtrl',
     var XformChildToParentRelPos = function(meshchild, meshparent){
       var invWorldMatrix = meshparent.getWorldMatrix().clone().invert();
       return BABYLON.Vector3.TransformCoordinates(meshchild.position.clone(),invWorldMatrix);
-    }
+    };
 
     var pointerActive = false;
     var onPointerDown = function (evt) {
@@ -681,9 +716,9 @@ angular.module('angle').controller('replayCtrl',
                 c.showBoundingBox = false;
                 c.material.emissiveColor = new BABYLON.Color3.Black();
               }
-            })
+            });
             if(isZeroPosition){
-              console.warn('FIXED BAD MESH OFFSET')
+              console.warn('FIXED BAD MESH OFFSET');
               var offset = new BABYLON.Vector3(0, -intersectMesh.offset , 0);
               groupMesh.forEach(function(c){
                 c.position.addInPlace(offset);
@@ -692,7 +727,7 @@ angular.module('angle').controller('replayCtrl',
           }
         }, 10)
       }
-    }
+    };
 
     var onPointerUp = function () {
       if (startingPoint) {
@@ -718,13 +753,13 @@ angular.module('angle').controller('replayCtrl',
             c.material.emissiveColor = new BABYLON.Color3.Black();
             //must add physics no matter if its off the ground fo collisions to tork
             if(hasPhysics) c.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass: c.boxsize, friction:0.6, restitution:0.1});
-          })
+          });
         groupMesh.length = 0;
         if(intersectMesh) intersectMesh.dispose();
         intersectMesh = null;
         currentMesh = null;
       }
-    }
+    };
 
     var onPointerMove = function (evt){
       if(!startingPoint) return;
@@ -736,30 +771,31 @@ angular.module('angle').controller('replayCtrl',
         current.y += delta;
         sceney = scene.pointerY;
       }
-      else
-        current = getGroundPosition(evt);
-      if(!current){
-        return;
+      else if(!rotxy) current = getGroundPosition(evt);
+      else{
+        current = null; //skip translating mesh below
+        var euler = intersectMesh.rotationQuaternion.toEulerAngles();
+        delta = (scenerot.x - scene.pointerX);
+        var rotRad = 0.087266; //5 deg. in radian
+        var rotval;
+        if(delta < 0) rotval = euler.y - rotRad;
+        else rotval = euler.y + rotRad;
+        if(rotval > Math.PI) rotval = 0;
+        if(rotval < 0) rotval = Math.PI;
+        rotval = (Math.round(rotval / rotRad)) * rotRad; //round to nearest 5 deg
+        //snap rotval to 5 degree increments
+        intersectMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0,1,0), rotval); //Y is UP in intersect mesh
+        volumeMesh.rotationQuaternion = intersectMesh.rotationQuaternion.clone();
+        scenerot.x = scene.pointerX;
       }
 
+      if(!current) return;
       var diff;
       diff = current.subtract(startingPoint);
       intersectMesh.moveWithCollisions(diff);
-      /*intersectMesh.position.addInPlace(diff);
-       var hasCollided = false;
-       for(var i = 0; i < outMesh.length; i++){
-       if(intersectMesh.intersectsMesh(outMesh[i], true)){
-       console.warn('collided with ', outMesh[i].name);
-       hasCollided = true;
-       i = outMesh.length+1; //bail
-       }
-       }
-       if(hasCollided){
-       intersectMesh.position.addInPlace(diff.scale(1.5).negate());
-       }*/
       volumeMesh.position = intersectMesh.position.clone();
       startingPoint = current;
-    }
+    };
 
     //require hand.js from ms
     canvas.addEventListener("pointerdown", onPointerDown, false);
@@ -770,11 +806,16 @@ angular.module('angle').controller('replayCtrl',
       canvas.removeEventListener("pointerdown", onPointerDown);
       canvas.removeEventListener("pointerup", onPointerUp);
       canvas.removeEventListener("pointermove", onPointerMove);
-    }
-
+    };
 
     window.addEventListener("keydown", function (evt) {
       switch (evt.keyCode) {
+        case 18:
+          if(currentMesh){
+            rotxy = true;
+            scenerot = {x: scene.pointerX, y: scene.pointerY};
+          }
+          break;
         case 16:
           if(currentMesh){
             lockxz = true;
@@ -787,6 +828,10 @@ angular.module('angle').controller('replayCtrl',
 
     window.addEventListener("keyup", function (evt) {
       switch (evt.keyCode) {
+        case 18:
+          rotxy = false;
+          scenerot = null;
+          break;
         case 16:
           lockxz = false;
           sceney = null;
@@ -804,8 +849,40 @@ angular.module('angle').controller('replayCtrl',
             c.material.emissiveColor = new BABYLON.Color3.Black();
           }
         }
+        if(tableIMesh && $scope.recstatus === 'r'){
+          if(tableIMesh.intersectsMesh(c, true) && !c.tchecked && !c.isMoving && !pointerActive){
+            c.material.emissiveColor = new BABYLON.Color3(0, 0.5, 0.5);
+            c.tchecked = true;
+            //console.warn('stored', c.name, c.boxsize, c.position, c.rotationQuaternion);
+            if(_.isUndefined($scope.replaydata.visible[c.name])) //store keyframe for when cube first appear
+              $scope.replaydata.visible[c.name] = $scope.replaydata.act.length;
+            $scope.replaydata.act.push({name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()});
+            //console.warn($scope.replaydata.act.length);
+          } else{
+            c.material.emissiveColor = new BABYLON.Color3.Black();
+          }
+        }
+        //count the number of 0 move ticks
+        if(c.oldpos){
+          var delta = c.oldpos.subtract(c.position);
+          if(isZeroVec(delta)){
+            if(!c.zeromoveTicks) c.zeromoveTicks = 0;
+            c.zeromoveTicks++;
+            if(c.isMoving && c.zeromoveTicks > 10){//only reset color if it was moving
+              c.material.emissiveColor = new BABYLON.Color3.Black();
+              c.isMoving = false;
+              c.zeromoveTicks = 0;
+              c.tchecked = false;
+            }
+          }
+          else{
+            c.material.emissiveColor = new BABYLON.Color3(0.176, 0.85, 0.76);
+            c.isMoving = true;
+          }
+        }
+        c.oldpos = c.position.clone();
       })
-    }
+    };
 
     var prepareButton = function (mesh) {
       mesh.actionManager = new BABYLON.ActionManager(scene);
@@ -816,11 +893,11 @@ angular.module('angle').controller('replayCtrl',
        }));*/
       //mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function() {cameraFly.restart();}));
       //mesh.actionManager.registerAction(new BABYLON.StopAnimationAction(BABYLON.ActionManager.OnPointerOverTrigger, mesh));
-    }
+    };
 
     cubeslist.forEach(function(c){
       prepareButton(c);
-    })
+    });
 
     scene.registerBeforeRender(animate);
     // Leave this function
@@ -832,14 +909,14 @@ angular.module('angle').controller('replayCtrl',
       scene.render();
 
       // 2D
-      if(false){
+      if(showAxis){
         clearCanvas2D();
         cubeslist.forEach(function(c){
           drawAxis(camera, c, true, true);
         })
       }
     }
-  }
+  };
 
   function createWorld(){
     // Load the BABYLON 3D engine
@@ -856,11 +933,10 @@ angular.module('angle').controller('replayCtrl',
   });
 
   //**start app
-  $scope.replaydata = [];
+  $scope.replaydata = {visible: {}, act: []};
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
 
   $scope.resetWorld = function(){
-    $scope.myreplay = null;
     camera.dispose();
     scene.dispose();
     engine.dispose();
@@ -868,130 +944,72 @@ angular.module('angle').controller('replayCtrl',
     camera = null;
     scene = null;
     createWorld();
-  }
+  };
 
   $scope.toggleGrid = function(){
     showGrid = !showGrid;
     grid.isVisible = showGrid;
-  }
-    
-  $scope.selectReplay = function(){
-    var repdata = {replays: $scope.blockreplays};
-    var dcon = {
-      disableAnimation: true,
-      template: 'didReplayList',
-      data: repdata,
-      controller: ['$scope', function($scope){
-        camera.detachControl(canvas);
-        $scope.dtOptions = {
-          "lengthMenu": [[8], [8]],
-          "order": [[ 1, "asc" ]],
-          "language": {"paginate": {"next": '>', "previous": '<'}},
-          "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-        };
-        $scope.remove = function(id){
-          $scope.ngDialogData.replays.remove(id);
-        }
-      }],
-      className: 'ngdialog-theme-default width50perc'
-    };
-    var dialog = ngDialog.open(dcon);
-    dialog.closePromise.then(function (data) {
-      camera.attachControl(canvas, true);
-      if(data && data.value){
-        if(data.value.open){
-          //hide all cubes
-          cubeslist.forEach(function(c){
-            c.isVisible = false;
-          })
-          $scope.myreplay = BlockReplays.findOne({_id: data.value.open});
-          $scope.frameid = 0;
-          showReplay($scope.frameid);
-        }
-      }
-    });
   };
 
-  $scope.startReplay = function(){
-    //find the highest frame where all is visible
-    var maxframe = 0;
-    _.each($scope.myreplay.data.visible, function(c, idx){
-      if(c > maxframe) maxframe = c;
-    })
-    for(var i = 0; i <= maxframe; i++){
-      showReplay(i);
+  $scope.recstatus = 's';
+
+  $scope.setRecStat = function(type){
+    $scope.recstatus = type;
+    switch(type){
+      case 'r':
+        toaster.pop('info', 'Recording Started');
+        break;
+      case 's':
+        toaster.pop('info', 'Recording Stopped', 'To continue recording where you left off select Record.');
+        break;
+      case 'd':
+        $scope.recstatus = 's';
+        $scope.replaydata.act.length = 0;
+        $scope.replaydata.visible = {};
+        toaster.pop('info', 'Recording Deleted');
+        break;
     }
-    $scope.frameid = maxframe;
   };
 
-  $scope.endReplay = function(){
-    //find the highest frame where all is visible
-    for(var i = 0; i < $scope.myreplay.data.act.length; i++){
-      showReplay(i);
+  $scope.saveReplay = function(){
+    if($scope.replaydata.act.length){
+      console.warn('saveReplay');
+      var dialog = ngDialog.open({
+        template: 'didReplayName',
+        controller: ['$scope', function($scope){
+          camera.detachControl(canvas);
+        }]
+      });
+      dialog.closePromise.then(function(data){
+        camera.attachControl(canvas, true);
+        console.log('ngDialog closed', data);
+        if(data.value){
+          var replaydb = {
+            name: data.value,
+            owner: $rootScope.currentUser._id,
+            created: new Date().getTime(),
+            creator: $rootScope.currentUser.username,
+            data: angular.copy($scope.replaydata)
+          };
+          $scope.blockreplays.save(replaydb).then(function(val){
+            toaster.pop('info', 'Replay '+replaydb.name+' Saved');
+          }, function(err){
+            toaster.pop('error', 'Replay '+replaydb.name, err.reason);
+          });
+          $scope.replaydata.act.length = 0;
+          $scope.replaydata.visible = {};
+        }
+      });
     }
-    $scope.frameid = $scope.myreplay.data.act.length-1;
-  };
-    
-  $scope.markReplay = function(isStart){
-    if(isStart)
-      BlockReplays.update({_id: $scope.myreplay._id},
-        {$set: {start: $scope.frameid}}, function(err,num){
-          if(err) toaster.pop('error', 'Cannot set mark', err.reason);
-          else $scope.myreplay.start = $scope.frameid;
-        })
     else
-      BlockReplays.update({_id: $scope.myreplay._id},
-        {$set: {end: $scope.frameid}}, function(err,num){
-          if(err) toaster.pop('error', 'Cannot set mark', err.reason);
-          else $scope.myreplay.end = $scope.frameid;
-        })
-  };
-    
-  $scope.togglePublic = function(){
-    if($scope.myreplay.public) $scope.myreplay.public = !$scope.myreplay.public;
-    else $scope.myreplay.public = true;
-    BlockReplays.update({_id: $scope.myreplay._id},
-      {$set: {public: $scope.myreplay.public}})
-  }
-    
-  $scope.gotoMarkReplay = function(isStart){
-    if(isStart){
-      for(var i = 0; i <= $scope.myreplay.start; i++){showReplay(i);}
-      $scope.frameid = $scope.myreplay.start;
-    }
-    else{
-      for(var i = 0; i <= $scope.myreplay.end; i++){showReplay(i);}
-      $scope.frameid = $scope.myreplay.end;
-    }
+      toaster.pop('warning', 'No Recording', 'Please record something before save.');
   };
 
-  $scope.updateReplay = function(val){
-    var actlen = $scope.myreplay.data.act.length;
-    if(val < 0 && $scope.frameid > 0){
-      //remove cubes when playing backwards
-      _.each($scope.myreplay.data.visible, function(c, idx){
-        if(c === $scope.frameid) cubesnamed[idx].isVisible = false;
-      })
-    }
-    $scope.frameid += val;
-    if($scope.frameid >= actlen) $scope.frameid = actlen;
-    if($scope.frameid < 0) $scope.frameid = 0;
-    showReplay($scope.frameid);
-  };
-
-  $scope.myreplay = null;
-  $scope.frameid = -1;
-  var showReplay = function(idx){
-    var frame = $scope.myreplay.data.act[idx];
-    var cube = cubesnamed[frame.name];
-    cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
-    cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
-    cube.isVisible = true;
-  }
   // Now, call the createScene function that you just finished creating
   var scene;
   var grid;
   createWorld();
+  console.warn($rootScope.currentUser, $scope);
   //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
 
-}])
+}]);

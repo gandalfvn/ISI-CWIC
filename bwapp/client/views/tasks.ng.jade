@@ -4,26 +4,48 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row
-accordion
-  accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
-    accordion-heading
-      h4.panel-title
-        i.fa.fa-inbox
-        | &nbsp; Available Tasks
-    table.table.table-condensed(ng-if='blockreplays', datatable="ng", dt-options="dtOptions")
-      thead
-        tr
-          th
-          th Name
-          th Created
-          th By
-      tbody
-        tr(ng-repeat='replay in blockreplays')
-          td(ng-click='remove(replay._id)')
-            .fa.fa-remove
-          td(title='{{replay._id}}', ng-click='selectAgent(replay._id)') {{ replay.name}}
-          td {{replay.created | date: 'yyyy-MM-dd h:mm:ss'}}
-          td {{replay.creator}}
+  accordion
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; Available Games
+      table.table.table-condensed(ng-if='blockreplays', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Name
+            th Created
+            th By
+        tbody
+          tr(ng-repeat='replay in blockreplays', ng-if='replay.public')
+            td(ng-click='remove(replay._id)')
+              .fa.fa-remove
+            td(title='{{replay._id}}', ng-click='selectAgent(replay._id)') {{ replay.name}}
+            td {{replay.created | date: 'yyyy-MM-dd h:mm:ss'}}
+            td {{replay.creator}}
+.row
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; Assigned Games
+      table.table.table-condensed(ng-if='jobs', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Game
+            th Player
+            th Assigned
+        tbody
+          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}')
+            td(ng-click='removeJob(job._id)')
+              .fa.fa-remove
+            td {{TaskName(job.task)}}
+            td {{AgentName(job.agent)}}
+            td {{job.assigned | date: 'yyyy-MM-dd h:mm'}}
+
 
 script#didAgents(type="text/ng-template")
   h3 Choose an Agent

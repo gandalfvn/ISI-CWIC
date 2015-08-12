@@ -26,7 +26,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           .fa.fa-chevron-left
         button.btn.btn-default.pull-left(title='previous', ng-show='frameid > 0', ng-click='updateReplay(-1)')
           .fa.fa-chevron-left
-        .btn(disabled='true') Step
+        .btn(disabled='true') Step {{frameid}}
         .btn.pull-right(disabled='true', ng-show='!(frameid < myreplay.data.act.length-1)')
           .fa.fa-chevron-right
         button.btn.btn-default.pull-right(title='next', ng-show='frameid < myreplay.data.act.length-1', ng-click='updateReplay(1)')
@@ -44,20 +44,20 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         button.btn.btn-default.pull-right(ng-click='markReplay(false)')
           .fa.fa-trophy &nbsp;Goal&nbsp;
         br
-        div(ng-show='myreplay.start || myreplay.end')
-          .btn.pull-left(disabled='true', ng-show='!myreplay.start || myreplay.start < 0')
+        div(ng-show='myreplay.start !== undefined || myreplay.end !== undefined')
+          .btn.pull-left(disabled='true', ng-show='myreplay.start === undefined || myreplay.start < 0')
             .fa.fa-flag &nbsp;Start&nbsp;
           button.btn.btn-default.pull-left(ng-show='myreplay.start > -1', ng-click='gotoMarkReplay(true)')
             .fa.fa-flag &nbsp;Start&nbsp;
           .btn(title='Go to mark', disabled='true') Go To
-          .btn.pull-right(disabled='true', ng-show='!myreplay.end || myreplay.end < 0')
+          .btn.pull-right(disabled='true', ng-show='myreplay.end === undefined || myreplay.end < 0')
             .fa.fa-trophy &nbsp;Goal&nbsp;
           button.btn.btn-default.pull-right(ng-show='myreplay.end > -1', ng-click='gotoMarkReplay(false)')
             .fa.fa-trophy &nbsp;Goal&nbsp;
           br
-        button.btn.btn-default.pull-left(ng-show='myreplay.start && myreplay.end && !myreplay.public', ng-click='togglePublic()')
+        button.btn.btn-default.pull-left(ng-show='myreplay.start !== undefined && myreplay.end !== undefined && !myreplay.public', ng-click='togglePublic()')
           .fa.fa-unlock &nbsp;Make Public&nbsp;
-        button.btn.btn-default.pull-left(ng-show='myreplay.start && myreplay.end && myreplay.public', ng-click='togglePublic()')
+        button.btn.btn-default.pull-left(ng-show='myreplay.start !== undefined && myreplay.end !== undefined && myreplay.public', ng-click='togglePublic()')
           .fa.fa-lock &nbsp;Make Private&nbsp;
     div.notouch
       strong Instructions:

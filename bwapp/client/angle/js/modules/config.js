@@ -13,7 +13,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
 
   // default route
   $urlRouterProvider.otherwise('404');
-
+  
   // 
   // Application Routes
   // -----------------------------------   
@@ -28,9 +28,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     .state('app.root', {
       url: '/',
       title: "Block World",
-      onEnter: ['$state', '$meteor', function($state, $meteor){
+      onEnter: ['$rootScope','$state', '$meteor', function($rootScope, $state, $meteor){
         $meteor.requireUser().then(function(usr){
-          if(usr) $state.go('app.worldview');
+          if(usr){
+            if($rootScope.isRole(usr, 'agent')) $state.go('app.games');
+            else $state.go('app.worldview');
+          }
           else $state.go('main');
         });
       }]
@@ -74,6 +77,16 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
       ),
       controller: 'tasksCtrl'
+    })
+    .state('app.games', {
+      url: '/games',
+      title: 'Games List',
+      templateUrl: helper.basepath('games.html'),
+      resolve: angular.extend(
+        helper.resolveFor('ngDialog','datatables'),
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
+      ),
+      controller: 'gamesCtrl'
     })
     .state('404', {
       url: '/404',

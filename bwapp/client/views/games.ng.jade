@@ -1,0 +1,37 @@
+//-**=========================================================
+  * Module: games.ng.jade
+  * Created by wjwong on 8/12/15.
+  =========================================================*/
+toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
+.row
+  .col-sm-3
+    br
+  .col-sm-6
+    accordion
+      accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+        accordion-heading
+          h4.panel-title
+            i.fa.fa-inbox
+            | &nbsp; Available Games
+        table.table.table-condensed(ng-if='jobs', datatable="ng", dt-options="dtOptions")
+          thead
+            tr
+              //-th
+              th Game
+              th Assigned
+          tbody
+            tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}')
+              //-td(ng-click='remove(job._id)')
+                .fa.fa-remove
+              td {{TaskName(job.task)}}
+              td {{job.assigned | date: 'yyyy-MM-dd h:mm'}}
+script#didAgents(type="text/ng-template")
+  h3 Choose an Agent
+  div
+    table.row-border.hover(datatable='ng', dt-options='dtOptions')
+      thead
+        tr
+          th Name
+      tbody
+        tr(ng-repeat='agent in ngDialogData.agents', ng-if='agent.profile.roles.indexOf("agent") > -1')
+          td(title='{{agent._id}}', ng-click='closeThisDialog(agent._id)') {{agent.username}}
