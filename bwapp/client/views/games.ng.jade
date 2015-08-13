@@ -20,7 +20,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               th Game
               th Assigned
           tbody
-            tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}')
+            tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-click='gotoGame(job._id, job.task)')
               //-td(ng-click='remove(job._id)')
                 .fa.fa-remove
               td {{TaskName(job.task)}}

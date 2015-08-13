@@ -19,27 +19,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             a(ng-click='toggleGrid();')
               .fa.fa-th-large  Grid
       .pull-right &nbsp;&nbsp;
-      button.btn.btn-default.pull-right(ng-show='recstatus === "s" && !replaydata.act.length', ng-click='setRecStat("r")')
-        .glyphicons.record Record
-      button.btn.btn-default.pull-right(ng-show='recstatus === "r" && replaydata.act.length',ng-click='setRecStat("s")')
-        .glyphicons.stop Stop
-      .btn-group.mb-sm.pull-right(ng-show='recstatus === "s" && replaydata.act.length',dropdown="dropdown")
-        button.btn.dropdown-toggle.btn-default(type="button", ng-disabled="disabled", dropdown-toggle="", aria-haspopup="true", aria-expanded="true")
-          .fa.fa-video-camera &nbsp;Capture&nbsp;
-          span.caret
-        ul.dropdown-menu(role="menu")
-          li(ng-show='recstatus === "s"')
-            a(ng-click='setRecStat("r")')
-              .glyphicons.record(ng-show='!replaydata.act.length') Record
-              .glyphicons.record(ng-show='replaydata.act.length') Cont' Record
-          li(ng-show='replaydata.act.length && recstatus === "s"')
-            a(ng-click='setRecStat("d")')
-              .glyphicons.remove_2 Clear
-          li.divider(ng-show='replaydata.act.length && recstatus === "s"')
-          li(ng-show='replaydata.act.length && recstatus === "s"')
-            a(ng-click='saveReplay()')
-              .glyphicons.floppy_save Save
+      a.btn.btn-default.pull-right(ng-if='myreplay', href="goal/{{gameid}}", target="_blank")
+        .fa.fa-flag-checkered &nbsp;View Goal&nbsp;
       .pull-right &nbsp;&nbsp;
+      button.btn.btn-success.pull-right
+        .fa.fa-send &nbsp;Submit&nbsp;
     div.notouch
       strong Navigation:
       br

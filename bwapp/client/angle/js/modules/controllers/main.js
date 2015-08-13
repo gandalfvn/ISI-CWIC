@@ -14,17 +14,23 @@ angular.module('angle').controller('AppController',
     // Loading bar transition
     // ----------------------------------- 
     var thBar;
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+      console.warn('$statechangestart',toState);
+      var noloadbar = ['app.root'];
+      if(noloadbar.indexOf(toState.name) < 0){
+        console.warn('here')
         if($('.wrapper > section').length) // check if bar container exists
-          thBar = $timeout(function() {
+          console.warn('here22')
+          thBar = $timeout(function(){
             cfpLoadingBar.start();
           }, 0); // sets a latency Threshold
+      }
     });
-    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-        event.targetScope.$watch("$viewContentLoaded", function () {
-          $timeout.cancel(thBar);
-          cfpLoadingBar.complete();
-        });
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+      event.targetScope.$watch("$viewContentLoaded", function () {
+        $timeout.cancel(thBar);
+        cfpLoadingBar.complete();
+      });
     });
 
 

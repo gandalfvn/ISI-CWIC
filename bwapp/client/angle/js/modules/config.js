@@ -37,6 +37,16 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           else $state.go('main');
         });
       }]
+      /*resolve: {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+      controller: ["$rootScope",'$state', function($rootScope, $state){
+        if($rootScope.currentUser){
+          //check for agent role
+          if($rootScope.isRole($rootScope.currentUser, 'agent'))
+            $state.go('app.games');
+          else $state.go('app.worldview');
+        }
+        else $state.go('main');
+      }]*/
     })
     .state('app.worldview', {
         url: '/worldview',
@@ -87,6 +97,26 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
       ),
       controller: 'gamesCtrl'
+    })
+    .state('app.game', {
+      url: '/game/:jobid',
+      title: 'Game View',
+      templateUrl: helper.basepath('gameview.html'),
+      resolve: angular.extend(
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog'),
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
+      ),
+      controller: 'gameCtrl'
+    })
+    .state('goal', {
+      url: '/goal/:gameid',
+      title: 'Goal View',
+      templateUrl: helper.basepath('goalview.html'),
+      resolve: angular.extend(
+        helper.resolveFor('modernizr', 'icons', 'toaster', 'babylonjs', 'glyphiconspro','circular-json','ngDialog'),
+        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]}
+      ),
+      controller: 'goalCtrl'
     })
     .state('404', {
       url: '/404',
@@ -169,8 +199,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     cfpLoadingBarProvider.latencyThreshold = 500;
     cfpLoadingBarProvider.parentSelector = '.wrapper > section';
 }]).config(['$tooltipProvider', function ($tooltipProvider) {
-
     $tooltipProvider.options({appendToBody: true});
-
 }])
 ;

@@ -933,18 +933,20 @@ angular.module('angle').controller('worldCtrl',
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
   
   $scope.resetWorld = function(){
-   camera.dispose();
-   scene.dispose();
-   engine.dispose();
-   engine = null;
-   camera = null;
-   scene = null;
-   createWorld();
+    $scope.replaydata.act.length = 0;
+    $scope.replaydata.visible = {};
+    camera.dispose();
+    scene.dispose();
+    engine.dispose();
+    engine = null;
+    camera = null;
+    scene = null;
+    createWorld();
   };
   
   $scope.toggleGrid = function(){
-   showGrid = !showGrid;
-   grid.isVisible = showGrid;
+    showGrid = !showGrid;
+    grid.isVisible = showGrid;
   };
   
   $scope.recstatus = 's';

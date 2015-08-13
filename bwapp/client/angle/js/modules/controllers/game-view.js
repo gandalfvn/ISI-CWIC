@@ -4,13 +4,15 @@
  =========================================================*/
 
 angular.module('angle').controller('gameCtrl',
-  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster){
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster){
   "use strict";
 
   //check for agent role
   if(!$rootScope.isRole($rootScope.currentUser, 'agent')){
     return $state.go('app.root');
   }
+
+  console.warn('$stateParams', $stateParams);
 
   var hasPhysics = true;
   var showGrid = true;
@@ -225,6 +227,7 @@ angular.module('angle').controller('gameCtrl',
   var engine;
 
   var cubeslist = [];
+  var cubesnamed = {};
   var numcubes = 0;
   var cubecolors = ['red', 'yellow', 'cyan', 'purple', 'green', 'orange'];
   var colorids = {};
@@ -266,6 +269,7 @@ angular.module('angle').controller('gameCtrl',
     box.material = boxmat;
     box.showBoundingBox = false;
     box.checkCollisions = true;
+    box.isVisible = data.isVisible;
     box.boxsize = boxsize;
     var elipbox = boxsize;
     box.ellipsoid = new BABYLON.Vector3(elipbox, elipbox, elipbox);
@@ -277,8 +281,8 @@ angular.module('angle').controller('gameCtrl',
      if(!box.rotationQuaternion)
      box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics*/
 
-    if(hasPhysics)
-      box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});
+    /*if(hasPhysics)
+      box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});*/
     box.onCollide = function(a){
       console.warn('oncollide', objname, this, a)
     };
@@ -287,6 +291,7 @@ angular.module('angle').controller('gameCtrl',
     //box.moveWithCollisions(new BABYLON.Vector3(-1, 0, 0));
     numcubes++;
     cubeslist.push(box);
+    cubesnamed[objname] = box;
   };
 
   /**
@@ -570,26 +575,29 @@ angular.module('angle').controller('gameCtrl',
     var p = -2;
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3(-16, cubesize.s * 2, (p + i) * 2),
+        pos: new BABYLON.Vector3(-16, cubesize.s, (p + i) * 2),
         scene: scene,
         size: 's',
-        color: cubecolors[i]
+        color: cubecolors[i],
+        isVisible: false
       });
     }
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3(17, cubesize.m * 2, (p + i) * 4),
+        pos: new BABYLON.Vector3(17, cubesize.m, (p + i) * 4),
         scene: scene,
         size: 'm',
-        color: cubecolors[i]
+        color: cubecolors[i],
+        isVisible: false
       });
     }
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3((p + i) * 6, cubesize.l * 2, 20),
+        pos: new BABYLON.Vector3((p + i) * 6, cubesize.l, 20),
         scene: scene,
         size: 'l',
-        color: cubecolors[i]
+        color: cubecolors[i],
+        isVisible: false
       });
     }
 
@@ -649,7 +657,8 @@ angular.module('angle').controller('gameCtrl',
         return (mesh !== ground) && (mesh !== skybox) && (mesh !== volumeMesh)
           && (mesh !== intersectMesh) && (mesh !== grid) && (mesh !== table)
           && (mesh !== tableIMesh)});
-      if (pickInfo.hit && !pickInfo.pickedMesh.isMoving) {
+      if (pickInfo.hit && !pickInfo.pickedMesh.isMoving 
+        && pickInfo.pickedMesh.isVisible) {
         pointerActive = true;
         //we clean up things first;
         //onPointerUp();
@@ -856,7 +865,9 @@ angular.module('angle').controller('gameCtrl',
             //console.warn('stored', c.name, c.boxsize, c.position, c.rotationQuaternion);
             if(_.isUndefined($scope.replaydata.visible[c.name])) //store keyframe for when cube first appear
               $scope.replaydata.visible[c.name] = $scope.replaydata.act.length;
-            $scope.replaydata.act.push({name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()});
+            var myQuat = new BABYLON.Quaternion.Identity();
+            if(c.rotationQuaternion) myQuat = c.rotationQuaternion.clone();
+            $scope.replaydata.act.push({name: c.name, position: c.position.clone(), rotquat: myQuat});
             //console.warn($scope.replaydata.act.length);
           } else{
             c.material.emissiveColor = new BABYLON.Color3.Black();
@@ -934,16 +945,18 @@ angular.module('angle').controller('gameCtrl',
 
   //**start app
   $scope.replaydata = {visible: {}, act: []};
-  $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
+  //start the db connection
+  var blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
+  var jobs = $meteorCollection(Jobs).subscribe('agentjobs');
 
   $scope.resetWorld = function(){
-    camera.dispose();
-    scene.dispose();
-    engine.dispose();
-    engine = null;
-    camera = null;
-    scene = null;
-    createWorld();
+    $scope.replaydata.act.length = 0;
+    $scope.replaydata.visible = {};
+    camera.position.x =0;
+    camera.position.y = 15;
+    camera.position.z = -46;
+    camera.setTarget(new BABYLON.Vector3(0,12,0));
+    gotoStart();
   };
 
   $scope.toggleGrid = function(){
@@ -952,60 +965,74 @@ angular.module('angle').controller('gameCtrl',
   };
 
   $scope.recstatus = 's';
-
-  $scope.setRecStat = function(type){
-    $scope.recstatus = type;
-    switch(type){
-      case 'r':
-        toaster.pop('info', 'Recording Started');
-        break;
-      case 's':
-        toaster.pop('info', 'Recording Stopped', 'To continue recording where you left off select Record.');
-        break;
-      case 'd':
-        $scope.recstatus = 's';
-        $scope.replaydata.act.length = 0;
-        $scope.replaydata.visible = {};
-        toaster.pop('info', 'Recording Deleted');
-        break;
-    }
-  };
-
-  $scope.saveReplay = function(){
+    
+  $scope.submit = function(){
     if($scope.replaydata.act.length){
-      console.warn('saveReplay');
-      var dialog = ngDialog.open({
-        template: 'didReplayName',
-        controller: ['$scope', function($scope){
-          camera.detachControl(canvas);
-        }]
+      console.warn('submit');
+      BlockReplays.update({_id: $scope.myreplay._id},
+        {$set: {start: $scope.frameid}}, function(err,num){
+          if(err) toaster.pop('error', 'Cannot set mark', err.reason);
+          else $scope.myreplay.start = $scope.frameid;
+        })
+      var replaydb = {
+        name: data.value,
+        owner: $rootScope.currentUser._id,
+        created: new Date().getTime(),
+        creator: $rootScope.currentUser.username,
+        data: angular.copy($scope.replaydata)
+      };
+      $scope.blockreplays.save(replaydb).then(function(val){
+        toaster.pop('info', 'Game Recording Submitted');
+      }, function(err){
+        toaster.pop('error', 'Game Error'+replaydb.name, err.reason);
       });
-      dialog.closePromise.then(function(data){
-        camera.attachControl(canvas, true);
-        console.log('ngDialog closed', data);
-        if(data.value){
-          var replaydb = {
-            name: data.value,
-            owner: $rootScope.currentUser._id,
-            created: new Date().getTime(),
-            creator: $rootScope.currentUser.username,
-            data: angular.copy($scope.replaydata)
-          };
-          $scope.blockreplays.save(replaydb).then(function(val){
-            toaster.pop('info', 'Replay '+replaydb.name+' Saved');
-          }, function(err){
-            toaster.pop('error', 'Replay '+replaydb.name, err.reason);
-          });
-          $scope.replaydata.act.length = 0;
-          $scope.replaydata.visible = {};
-        }
-      });
+      $scope.replaydata.act.length = 0;
+      $scope.replaydata.visible = {};
     }
     else
       toaster.pop('warning', 'No Recording', 'Please record something before save.');
   };
 
-  // Now, call the createScene function that you just finished creating
+  $scope.myreplay = null;
+  $scope.gameid = null;
+  $scope.jobid = $stateParams.jobid;
+  var myjob = null;
+  setTimeout(function(){
+    //must wait until BlockReplay and Jobs are connected
+    myjob = Jobs.findOne({_id: $scope.jobid});
+    console.warn('start ',Jobs, $scope.jobid, jobs, myjob);
+    $scope.gameid = myjob.task;
+    $scope.myreplay = BlockReplays.findOne({_id: myjob.task});
+    console.warn('BlockReplays', $scope.myreplay);
+    if($scope.myreplay) gotoStart();
+    else toaster.pop('warning','Replay not found');
+  },0);
+
+  var gotoStart = function(){
+    if($scope.myreplay){
+      for(var i = 0; i <= $scope.myreplay.start; i++){
+        showReplay(i);
+      }
+      if(hasPhysics){
+        cubeslist.forEach(function(c){
+          if(c.isVisible)
+            c.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass: c.boxsize, friction:0.6, restitution:0.1});
+        })
+      }
+      $scope.recstatus = 'r';
+      toaster.pop('info', 'Recording Started');
+    }
+  };
+
+  var showReplay = function(idx){
+    var frame = $scope.myreplay.data.act[idx];
+    var cube = cubesnamed[frame.name];
+    cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
+    cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
+    cube.isVisible = true;
+  };
+
+    // Now, call the createScene function that you just finished creating
   var scene;
   var grid;
   createWorld();

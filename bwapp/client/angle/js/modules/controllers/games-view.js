@@ -27,32 +27,7 @@ angular.module('angle').controller('gamesCtrl', ['$rootScope', '$scope', '$state
     $scope.blockreplays.remove(id);
     toaster.pop('error', 'Task Deleted');
   }
-
-  $scope.selectAgent = function(repid){
-    var repdata = {agents: $scope.agents};
-    var dcon = {
-      disableAnimation: true,
-      template: 'didAgents',
-      data: repdata,
-      controller: ['$scope', function($scope){
-        $scope.dtOptions = {
-          "lengthMenu": [[8], [8]],
-          "order": [[0, "asc"]],
-          "language": {"paginate": {"next": '>', "previous": '<'}},
-          "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-        };
-      }],
-      className: 'ngdialog-theme-default width50perc'
-    };
-    var dialog = ngDialog.open(dcon);
-    dialog.closePromise.then(function(data){
-      if(data && data.value){
-        console.warn('choose', repid, data.value);
-        assignJob(repid, data.value);
-      }
-    });
-  }
-
+  
   $scope.TaskName = function(id){
     var res = _.find($scope.blockreplays, function(a){
       return id === a._id
@@ -61,21 +36,8 @@ angular.module('angle').controller('gamesCtrl', ['$rootScope', '$scope', '$state
     return id;
   }
 
-  var assignJob = function(taskid, agentid){
-    var job = {
-      owner: $rootScope.currentUser._id,
-      created: new Date().getTime(),
-      creator: $rootScope.currentUser.username,
-      agent: agentid,
-      assigned: new Date().getTime(),
-      task: taskid
-    };
-    $scope.jobs.save(job).then(
-      function(val){
-        toaster.pop('info', 'Job Created');
-      }, function(err){
-        toaster.pop('error', 'Job Error', err.reason);
-      }
-    );
+  $scope.gotoGame = function(jobid, gameid){
+    $window.open('goal/'+gameid);
+    $state.go('app.game', {jobid: jobid});
   }
 }]);

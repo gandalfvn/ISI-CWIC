@@ -93,9 +93,14 @@ script#didReplayList(type="text/ng-template")
           th
           th Name
           th Created
+          th Public
       tbody
         tr(ng-repeat='replay in ngDialogData.replays')
           td(ng-click='remove(replay._id)')
             .fa.fa-remove
           td(title='{{replay._id}}', ng-click='closeThisDialog({open: replay._id})') {{ replay.name}}
           td(ng-click='closeThisDialog({open: replay._id})') {{replay.created | date: 'yyyy-MM-dd h:mm:ss'}}
+          td(ng-if='replay.public')
+            .fa.fa-globe
+          td(ng-if='!replay.public')
+            .fa.fa-lock

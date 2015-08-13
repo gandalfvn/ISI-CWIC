@@ -10,8 +10,8 @@ angular.module('angle').controller('replayCtrl',
   if($rootScope.isRole($rootScope.currentUser, 'agent')){
     return $state.go('app.root');
   }
-
-    var hasPhysics = true;
+  
+  var hasPhysics = true;
   var showGrid = true;
 
   //*****draw axis
@@ -272,8 +272,8 @@ angular.module('angle').controller('replayCtrl',
     if(!box.rotationQuaternion)
       box.rotationQuaternion = new BABYLON.Quaternion.Identity(); //make a quaternion available if no physics*/
 
-    if(hasPhysics)
-      box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});
+    /*if(hasPhysics)
+      box.setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:true, mass:boxsize, friction:0.6, restitution:0.1});*/
     box.onCollide = function(a){
       console.warn('oncollide', objname, this, a)
     }
@@ -565,10 +565,10 @@ angular.module('angle').controller('replayCtrl',
      createCube({pos: new BABYLON.Vector3(-16,cubesize.s*2,(p+i)*2), scene: scene, size: 's', color: cubecolors[i], isVisible: false});
      }
      for(var i = 0; i < 5; i++){
-     createCube({pos: new BABYLON.Vector3(17,cubesize.m*1.5,(p+i)*3), scene: scene, size: 'm', color: cubecolors[i], isVisible: false});
+     createCube({pos: new BABYLON.Vector3(17,cubesize.m*2,(p+i)*4), scene: scene, size: 'm', color: cubecolors[i], isVisible: false});
      }
      for(var i = 0; i < 5; i++){
-     createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 18), scene: scene, size: 'l', color: cubecolors[i], isVisible: false});
+     createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 20), scene: scene, size: 'l', color: cubecolors[i], isVisible: false});
      }
 
     //handle drag and drop
@@ -893,7 +893,7 @@ angular.module('angle').controller('replayCtrl',
           $scope.ngDialogData.replays.remove(id);
         }
       }],
-      className: 'ngdialog-theme-default width50perc'
+      className: 'ngdialog-theme-default width70perc'
     };
     var dialog = ngDialog.open(dcon);
     dialog.closePromise.then(function (data) {
