@@ -8,12 +8,12 @@ Jobs.allow({
     return userId && job.owner === userId;
   },
   update: function(userId, job, fields, modifier){
-    return userId && job.owner === userId;
+    return userId && (job.owner === userId || job.agent === userId);
   },
   remove: function(userId, job){
     return userId && job.owner === userId;
   },
-  fetch: ['owner']
+  fetch: ['owner', 'agent']
 });
 
 Meteor.publish('jobs', function(){

@@ -3,7 +3,7 @@
  * Created by wjwong on 8/7/15.
  =========================================================*/
 angular.module('angle').controller('replayCtrl',
-  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteorCollection, ngDialog, toaster){
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteorCollection, ngDialog, toaster){
   "use strict";
 
   //check for agent role
@@ -858,6 +858,7 @@ angular.module('angle').controller('replayCtrl',
   //**start app
   $scope.replaydata = [];
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
+  var jobs = $meteorCollection(Jobs).subscribe('jobs');
 
   $scope.resetWorld = function(){
     $scope.myreplay = null;
@@ -913,15 +914,25 @@ angular.module('angle').controller('replayCtrl',
   };
 
   $scope.startReplay = function(){
-    //find the highest frame where all is visible
-    var maxframe = 0;
-    _.each($scope.myreplay.data.visible, function(c, idx){
-      if(c > maxframe) maxframe = c;
-    })
-    for(var i = 0; i <= maxframe; i++){
-      showReplay(i);
+    if($scope.jobid){ //start with frame 0 for jobs
+      //hide all cubes
+      cubeslist.forEach(function(c){
+        c.isVisible = false;
+      })
+      showReplay(0);
+      $scope.frameid = 0;
     }
-    $scope.frameid = maxframe;
+    else{
+      //find the highest frame where all is visible
+      var maxframe = 0;
+      _.each($scope.myreplay.data.visible, function(c, idx){
+        if(c > maxframe) maxframe = c;
+      })
+      for(var i = 0; i <= maxframe; i++){
+        showReplay(i);
+      }
+      $scope.frameid = maxframe;
+    }
   };
 
   $scope.endReplay = function(){
@@ -929,7 +940,7 @@ angular.module('angle').controller('replayCtrl',
     for(var i = 0; i < $scope.myreplay.data.act.length; i++){
       showReplay(i);
     }
-    $scope.frameid = $scope.myreplay.data.act.length-1;
+    $scope.frameid = $scope.myreplay.data.act.length - 1;
   };
     
   $scope.markReplay = function(isStart){
@@ -987,11 +998,27 @@ angular.module('angle').controller('replayCtrl',
     cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
     cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
     cube.isVisible = true;
-  }
+  };
+
   // Now, call the createScene function that you just finished creating
   var scene;
   var grid;
   createWorld();
   //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
+  var myjob;
+  if($stateParams.jobid){
+    $scope.jobid = $stateParams.jobid;    
+    setTimeout(function(){
+      //must wait until Jobs are connected
+      myjob = Jobs.findOne({_id: $scope.jobid});
+      //console.warn('start ',Jobs, $stateParams.jobid, jobs, myjob);
+      if(myjob){
+        console.warn(myjob.replay);
+        $scope.myreplay = myjob;
+        $scope.frameid = 0;
+        showReplay(0);
+      }
+    }, 0);
+  }
 
-}])
+}]);

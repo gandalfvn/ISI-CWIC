@@ -4,8 +4,6 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row
-  .col-sm-3
-    br
   .col-sm-6
     accordion
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
@@ -20,11 +18,29 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               th Game
               th Assigned
           tbody
-            tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-click='gotoGame(job._id, job.task)')
+            tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-click='gotoGame(job._id, job.task)', ng-show='!job.submitted')
               //-td(ng-click='remove(job._id)')
                 .fa.fa-remove
               td {{TaskName(job.task)}}
               td {{job.assigned | date: 'yyyy-MM-dd h:mm'}}
+  .col-sm-6
+    accordion
+      accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+        accordion-heading
+          h4.panel-title
+            i.fa.fa-inbox
+            | &nbsp; Submitted Games
+        table.table.table-condensed(ng-if='jobs', datatable="ng", dt-options="dtOptions")
+          thead
+            tr
+              th Game
+              th Submitted
+          tbody
+            tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-show='job.submitted')
+              //-ng-click='gotoGame(job._id, job.task)', 
+              td {{TaskName(job.task)}}
+              td {{job.submitted | date: 'yyyy-MM-dd h:mm'}}
+
 script#didAgents(type="text/ng-template")
   h3 Choose an Agent
   div

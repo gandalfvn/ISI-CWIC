@@ -39,12 +39,32 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Player
             th Assigned
         tbody
-          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}')
+          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-if='!job.submitted')
             td(ng-click='removeJob(job._id)')
               .fa.fa-remove
             td {{TaskName(job.task)}}
             td {{AgentName(job.agent)}}
             td {{job.assigned | date: 'yyyy-MM-dd h:mm'}}
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; Submitted Games
+      table.table.table-condensed(ng-if='jobs', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Game
+            th Player
+            th Submitted
+        tbody
+          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-if='job.submitted')
+            td(ng-click='removeJob(job._id)')
+              .fa.fa-remove
+            td(ng-click='$state.go("app.replay", {jobid: job._id})') {{TaskName(job.task)}}
+            td(ng-click='$state.go("app.replay", {jobid: job._id})') {{AgentName(job.agent)}}
+            td(ng-click='$state.go("app.replay", {jobid: job._id})') {{job.submitted | date: 'yyyy-MM-dd h:mm'}}
 
 
 script#didAgents(type="text/ng-template")

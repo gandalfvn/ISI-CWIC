@@ -6,7 +6,8 @@ Meteor.startup(function () {
     {username: 'wjwong@gmail.com', roles: ['admin'], pwd: 'WeAreWeaver'},
     {username: 'marcu@isi.edu', roles: ['admin'], pwd: 'WeAreWeaver'},
     {username: 'wjwong+agent@gmail.com', roles: ['agent'], pwd: 'testtest'},
-    {username: 'wjwong+super@gmail.com', roles: ['super'], pwd: 'testtest'}
+    {username: 'wjwong+super@gmail.com', roles: ['super'], pwd: 'testtest'},
+    {username: 'marcu+agent@isi.edu', roles: ['agent'], pwd: 'WeAreWeaver'}
   ]
 
   _.each(userlist, function(usr){
@@ -18,7 +19,7 @@ Meteor.startup(function () {
           password: usr.pwd,
           profile: {roles: usr.roles}
         });
-        console.warn(userid)
+        console.warn(usr.username, userid)
       }
       catch(err){
         console.warn(err)

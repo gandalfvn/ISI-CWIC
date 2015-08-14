@@ -12,8 +12,6 @@ angular.module('angle').controller('gameCtrl',
     return $state.go('app.root');
   }
 
-  console.warn('$stateParams', $stateParams);
-
   var hasPhysics = true;
   var showGrid = true;
   var showAxis = false;
@@ -868,7 +866,7 @@ angular.module('angle').controller('gameCtrl',
             var myQuat = new BABYLON.Quaternion.Identity();
             if(c.rotationQuaternion) myQuat = c.rotationQuaternion.clone();
             $scope.replaydata.act.push({name: c.name, position: c.position.clone(), rotquat: myQuat});
-            //console.warn($scope.replaydata.act.length);
+            console.warn($scope.replaydata.act.length);
           } else{
             c.material.emissiveColor = new BABYLON.Color3.Black();
           }
@@ -969,44 +967,20 @@ angular.module('angle').controller('gameCtrl',
   $scope.submit = function(){
     if($scope.replaydata.act.length){
       console.warn('submit');
-      BlockReplays.update({_id: $scope.myreplay._id},
-        {$set: {start: $scope.frameid}}, function(err,num){
-          if(err) toaster.pop('error', 'Cannot set mark', err.reason);
-          else $scope.myreplay.start = $scope.frameid;
-        })
-      var replaydb = {
-        name: data.value,
-        owner: $rootScope.currentUser._id,
-        created: new Date().getTime(),
-        creator: $rootScope.currentUser.username,
-        data: angular.copy($scope.replaydata)
-      };
-      $scope.blockreplays.save(replaydb).then(function(val){
-        toaster.pop('info', 'Game Recording Submitted');
-      }, function(err){
-        toaster.pop('error', 'Game Error'+replaydb.name, err.reason);
+      Jobs.update({_id: $scope.jobid},
+        {$set: {
+          data: angular.copy($scope.replaydata),
+          submitted: new Date().getTime()
+        }}, function(err,num){
+          if(err) toaster.pop('error', 'Cannot update job', err.reason);
       });
       $scope.replaydata.act.length = 0;
       $scope.replaydata.visible = {};
+      $state.go('app.games')
     }
     else
-      toaster.pop('warning', 'No Recording', 'Please record something before save.');
+      toaster.pop('warning', 'No Activity', 'Please do something before submitting.');
   };
-
-  $scope.myreplay = null;
-  $scope.gameid = null;
-  $scope.jobid = $stateParams.jobid;
-  var myjob = null;
-  setTimeout(function(){
-    //must wait until BlockReplay and Jobs are connected
-    myjob = Jobs.findOne({_id: $scope.jobid});
-    console.warn('start ',Jobs, $scope.jobid, jobs, myjob);
-    $scope.gameid = myjob.task;
-    $scope.myreplay = BlockReplays.findOne({_id: myjob.task});
-    console.warn('BlockReplays', $scope.myreplay);
-    if($scope.myreplay) gotoStart();
-    else toaster.pop('warning','Replay not found');
-  },0);
 
   var gotoStart = function(){
     if($scope.myreplay){
@@ -1032,11 +1006,24 @@ angular.module('angle').controller('gameCtrl',
     cube.isVisible = true;
   };
 
-    // Now, call the createScene function that you just finished creating
+  $scope.myreplay = null;
+  // Now, call the createScene function that you just finished creating
   var scene;
   var grid;
   createWorld();
-  console.warn($rootScope.currentUser, $scope);
-  //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
 
+  $scope.gameid = null;
+  $scope.jobid = $stateParams.jobid;
+  var myjob = null;
+  setTimeout(function(){
+    //must wait until BlockReplay and Jobs are connected
+    myjob = Jobs.findOne({_id: $scope.jobid});
+    console.warn('start ',Jobs, $scope.jobid, jobs, myjob);
+    $scope.gameid = myjob.task;
+    $scope.myreplay = BlockReplays.findOne({_id: myjob.task});
+    console.warn('BlockReplays', $scope.myreplay);
+    if($scope.myreplay) gotoStart();
+    else toaster.pop('warning','Replay not found');
+  },0);
+    
 }]);

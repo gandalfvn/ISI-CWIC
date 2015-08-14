@@ -69,7 +69,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       controller: 'worldSimpCtrl'
     })
     .state('app.replay', {
-      url: '/replay',
+      url: '/replay?gameid&jobid',
       title: 'Replay View',
       templateUrl: helper.basepath('replay.html'),
       resolve: angular.extend(

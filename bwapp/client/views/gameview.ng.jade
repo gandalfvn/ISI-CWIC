@@ -22,7 +22,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       a.btn.btn-default.pull-right(ng-if='myreplay', href="goal/{{gameid}}", target="_blank")
         .fa.fa-flag-checkered &nbsp;View Goal&nbsp;
       .pull-right &nbsp;&nbsp;
-      button.btn.btn-success.pull-right
+      button.btn.btn-success.pull-right(ng-click='submit()')
         .fa.fa-send &nbsp;Submit&nbsp;
     div.notouch
       strong Navigation:
