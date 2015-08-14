@@ -25,6 +25,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       button.btn.btn-success.pull-right(ng-click='submit()')
         .fa.fa-send &nbsp;Submit&nbsp;
     div.notouch
+      h3 Click 
+        a(ng-if='myreplay', href="goal/{{gameid}}", target="_blank") 
+          |  View Goal 
+        | To See Design
       strong Navigation:
       br
       strong Move Camera: 

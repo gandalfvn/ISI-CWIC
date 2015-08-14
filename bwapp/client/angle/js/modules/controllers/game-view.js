@@ -848,6 +848,8 @@ angular.module('angle').controller('gameCtrl',
     });
 
     var animate = function(){
+      var frameScene = [];
+      var saveFrame = false; //save content at every frame but not all saved content is stored
       cubeslist.forEach(function(c){
         if(intersectMesh){
           if(intersectMesh.intersectsMesh(c, true)){
@@ -856,20 +858,25 @@ angular.module('angle').controller('gameCtrl',
             c.material.emissiveColor = new BABYLON.Color3.Black();
           }
         }
-        if(tableIMesh && $scope.recstatus === 'r'){
-          if(tableIMesh.intersectsMesh(c, true) && !c.tchecked && !c.isMoving && !pointerActive){
-            c.material.emissiveColor = new BABYLON.Color3(0, 0.5, 0.5);
-            c.tchecked = true;
-            //console.warn('stored', c.name, c.boxsize, c.position, c.rotationQuaternion);
-            if(_.isUndefined($scope.replaydata.visible[c.name])) //store keyframe for when cube first appear
-              $scope.replaydata.visible[c.name] = $scope.replaydata.act.length;
-            var myQuat = new BABYLON.Quaternion.Identity();
-            if(c.rotationQuaternion) myQuat = c.rotationQuaternion.clone();
-            $scope.replaydata.act.push({name: c.name, position: c.position.clone(), rotquat: myQuat});
-            console.warn($scope.replaydata.act.length);
-          } else{
+        if(tableIMesh && $scope.recstatus === 'r' && c.isVisible){
+          if(tableIMesh.intersectsMesh(c, true) && !c.isMoving && !pointerActive){
+            if(!c.tchecked){
+              //only store content where something changed on the table
+              c.material.emissiveColor = new BABYLON.Color3(0, 0.5, 0.5);
+              c.tchecked = true;
+              saveFrame = true;
+              if(_.isUndefined($scope.replaydata.visible[c.name])) //keyframe for cube appear
+                $scope.replaydata.visible[c.name] = $scope.replaydata.act.length;
+            }
+            else c.material.emissiveColor = new BABYLON.Color3.Black();
+            frameScene.push({
+              name: c.name,
+              position: c.position.clone(),
+              rotquat: c.rotationQuaternion.clone()
+            });
+            //console.warn($scope.replaydata.act.length);
+          } else
             c.material.emissiveColor = new BABYLON.Color3.Black();
-          }
         }
         //count the number of 0 move ticks
         if(c.oldpos){
@@ -891,6 +898,7 @@ angular.module('angle').controller('gameCtrl',
         }
         c.oldpos = c.position.clone();
       })
+      if(frameScene.length && saveFrame) $scope.replaydata.act.push(frameScene);
     };
 
     var prepareButton = function (mesh) {
@@ -999,11 +1007,13 @@ angular.module('angle').controller('gameCtrl',
   };
 
   var showReplay = function(idx){
-    var frame = $scope.myreplay.data.act[idx];
-    var cube = cubesnamed[frame.name];
-    cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
-    cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
-    cube.isVisible = true;
+    var frameScene = $scope.myreplay.data.act[idx];
+    frameScene.forEach(function(frame){
+      var cube = cubesnamed[frame.name];
+      cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
+      cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
+      cube.isVisible = true;
+    })
   };
 
   $scope.myreplay = null;

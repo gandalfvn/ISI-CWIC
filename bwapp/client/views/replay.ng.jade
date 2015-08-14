@@ -42,13 +42,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         button.btn.btn-default.pull-right(ng-click='endReplay()')
           .fa.fa-angle-double-right End
         div(ng-if='!jobid')
-          br
           button.btn.btn-default.pull-left(ng-click='markReplay(true)')
             .fa.fa-flag &nbsp;Start&nbsp;
           .btn(title='Fast Forward', disabled='true') Mark
           button.btn.btn-default.pull-right(ng-click='markReplay(false)')
             .fa.fa-trophy &nbsp;Goal&nbsp;
-        br
         div(ng-show='myreplay.start !== undefined || myreplay.end !== undefined')
           .btn.pull-left(disabled='true', ng-show='myreplay.start === undefined || myreplay.start < 0')
             .fa.fa-flag &nbsp;Start&nbsp;
@@ -59,7 +57,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             .fa.fa-trophy &nbsp;Goal&nbsp;
           button.btn.btn-default.pull-right(ng-show='myreplay.end > -1', ng-click='gotoMarkReplay(false)')
             .fa.fa-trophy &nbsp;Goal&nbsp;
-          br
         button.btn.btn-default.pull-left(ng-show='myreplay.start !== undefined && myreplay.end !== undefined && !myreplay.public', ng-click='togglePublic()')
           .fa.fa-unlock &nbsp;Make Public&nbsp;
         button.btn.btn-default.pull-left(ng-show='myreplay.start !== undefined && myreplay.end !== undefined && myreplay.public', ng-click='togglePublic()')
@@ -67,17 +64,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     div.notouch
       strong Instructions:
       div(ng-if='!jobid')
-        br
         strong Replay: 
         | Choose a replay to view
-      br
       strong Step &lt; &gt;: 
       | Use the &lt; and &gt; arrows to step through replay
       br
       strong Fast Forward: 
       | Click on Start or End to fast forward the replay
       div(ng-if='!jobid')
-        br
         strong Mark Start &amp; Goal: 
         | Mark the Start and Goal to enable publication
         br
@@ -86,7 +80,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         br
         strong Public: 
         | Make this assignable to agents
-        br
 
   canvas(id="renderCanvasBab" style='width: 100%; height: 800px;')
   canvas(id="canvas_2D")

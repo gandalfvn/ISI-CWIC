@@ -494,11 +494,13 @@ angular.module('angle').controller('goalCtrl',
   };
 
   var showReplay = function(idx){
-    var frame = $scope.myreplay.data.act[idx];
-    var cube = cubesnamed[frame.name];
-    cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
-    cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
-    cube.isVisible = true;
+    var frameScene = $scope.myreplay.data.act[idx];
+    frameScene.forEach(function(frame){
+      var cube = cubesnamed[frame.name];
+      cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
+      cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
+      cube.isVisible = true;
+    })
   };
 
     // Now, call the createScene function that you just finished creating

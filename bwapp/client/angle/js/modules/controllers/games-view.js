@@ -37,7 +37,7 @@ angular.module('angle').controller('gamesCtrl', ['$rootScope', '$scope', '$state
   }
 
   $scope.gotoGame = function(jobid, gameid){
-    $window.open('goal/'+gameid);
+    //$window.open('goal/'+gameid);
     $state.go('app.game', {jobid: jobid});
   }
 }]);
