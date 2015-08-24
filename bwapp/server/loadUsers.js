@@ -7,7 +7,11 @@ Meteor.startup(function () {
     {username: 'marcu@isi.edu', roles: ['admin'], pwd: 'WeAreWeaver'},
     {username: 'wjwong+agent@gmail.com', roles: ['agent'], pwd: 'testtest'},
     {username: 'wjwong+super@gmail.com', roles: ['super'], pwd: 'testtest'},
-    {username: 'marcu+agent@isi.edu', roles: ['agent'], pwd: 'WeAreWeaver'}
+    {username: 'marcu+agent@isi.edu', roles: ['agent'], pwd: 'WeAreWeaver'},
+    {username: 'gwen@example.com', roles: ['agent'], pwd: 'wongwong'},
+    {username: 'ethan@example.com', roles: ['agent'], pwd: 'wongwong'},
+    {username: 'maya@example.com', roles: ['agent'], pwd: 'marcumarcu'},
+    {username: 'zara@example.com', roles: ['agent'], pwd: 'marcumarcu'}
   ]
 
   _.each(userlist, function(usr){

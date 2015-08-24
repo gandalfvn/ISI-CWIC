@@ -35,6 +35,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
             else $state.go('app.worldview');
           }
           else $state.go('main');
+        }, function(err){
+            $state.go('main');
         });
       }]
       /*resolve: {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
