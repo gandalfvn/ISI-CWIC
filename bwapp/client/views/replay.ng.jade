@@ -61,7 +61,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           .fa.fa-unlock &nbsp;Make Public&nbsp;
         button.btn.btn-default.pull-left(ng-show='myreplay.start !== undefined && myreplay.end !== undefined && myreplay.public', ng-click='togglePublic()')
           .fa.fa-lock &nbsp;Make Private&nbsp;
-    div.notouch
+    .well.notouch.col-sm-4.shadowbox(style='background-color: rgba(255,255,255,0.5)')
       strong Instructions:
       div(ng-if='!jobid')
         strong Replay: 

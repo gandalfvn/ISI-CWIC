@@ -482,7 +482,7 @@ angular.module('angle').controller('goalCtrl',
     console.warn('BlockReplays', $scope.myreplay);
     if($scope.myreplay) gotoGoal();
     else toaster.pop('warning','Replay not found');
-  },0);
+  },500);
   
 
   var gotoGoal = function(){

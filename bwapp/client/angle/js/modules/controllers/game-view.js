@@ -4,7 +4,7 @@
  =========================================================*/
 
 angular.module('angle').controller('gameCtrl',
-  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster){
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', '$location', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster, $location){
   "use strict";
 
   //check for agent role
@@ -16,8 +16,6 @@ angular.module('angle').controller('gameCtrl',
   var showGrid = true;
   var showAxis = false;
 
-  //check for admin user
-  console.warn($rootScope.currentUser);
 
 
   //*****draw axis
@@ -1022,18 +1020,24 @@ angular.module('angle').controller('gameCtrl',
   var grid;
   createWorld();
 
-  $scope.gameid = null;
-  $scope.jobid = $stateParams.jobid;
   var myjob = null;
-  setTimeout(function(){
-    //must wait until BlockReplay and Jobs are connected
-    myjob = Jobs.findOne({_id: $scope.jobid});
-    console.warn('start ',Jobs, $scope.jobid, jobs, myjob);
-    $scope.gameid = myjob.task;
-    $scope.myreplay = BlockReplays.findOne({_id: myjob.task});
-    console.warn('BlockReplays', $scope.myreplay);
-    if($scope.myreplay) gotoStart();
-    else toaster.pop('warning','Replay not found');
-  },0);
-    
+  $scope.gameid = null;
+  if($stateParams.jobid){
+    $scope.jobid = $stateParams.jobid;
+    setTimeout(function(){
+      //must wait until BlockReplay and Jobs are connected
+      myjob = Jobs.findOne({_id: $scope.jobid});
+      if(myjob.task){
+        console.warn('start ', Jobs, $scope.jobid, jobs, myjob);
+        $scope.gameid = myjob.task;
+        $scope.myreplay = BlockReplays.findOne({_id: myjob.task});
+        console.warn('BlockReplays', $scope.myreplay);
+        if($scope.myreplay) $scope.$apply(function(){gotoStart()}); //ensure view goal is updated
+        else toaster.pop('warning', 'Replay not found');
+      }
+      else toaster.pop('warning', 'Game not found');
+    },400);
+  }
+  else toaster.pop('warning', 'Game not found');
+
 }]);
