@@ -567,6 +567,8 @@ angular.module('angle').controller('worldCtrl',
     grid.material = gridmat;
 
     //add cube
+    cubeslist.length = 0;
+    numcubes = 0;
     var p = -2;
     for(var i = 0; i < 5; i++){
       createCube({
@@ -903,6 +905,7 @@ angular.module('angle').controller('worldCtrl',
         c.oldpos = c.position.clone();
       });
       if(frameScene.length && saveFrame){
+        console.warn('frame', frameScene);
         $scope.$apply(function(){$scope.replaydata.act.push(frameScene);});
       }
     };

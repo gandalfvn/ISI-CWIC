@@ -568,6 +568,8 @@ angular.module('angle').controller('gameCtrl',
     grid.material = gridmat;
 
     //add cube
+    cubeslist.length = 0;
+    cubesnamed = {};
     var p = -2;
     for(var i = 0; i < 5; i++){
       createCube({

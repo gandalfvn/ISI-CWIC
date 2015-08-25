@@ -406,6 +406,7 @@ angular.module('angle').controller('goalCtrl',
     grid.material = gridmat;
 
     //add cube
+    numcubes = 0;
     var p = -2;
     for(var i = 0; i < 5; i++){
       createCube({
