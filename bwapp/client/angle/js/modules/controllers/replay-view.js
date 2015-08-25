@@ -903,13 +903,11 @@ angular.module('angle').controller('replayCtrl',
       camera.attachControl(canvas, true);
       if(data && data.value){
         if(data.value.open){
-          console.warn('dlg',data.value);
           //hide all cubes
           cubeslist.forEach(function(c){
             c.isVisible = false;
           })
           $scope.myreplay = BlockReplays.findOne({_id: data.value.open});
-          console.warn($scope.myreplay);
           $scope.frameid = 0;
           showReplay($scope.frameid);
         }
@@ -1000,7 +998,6 @@ angular.module('angle').controller('replayCtrl',
     var frameScene = $scope.myreplay.data.act[idx];
     frameScene.forEach(function(frame){
       var cube = cubesnamed[frame.name];
-      console.warn(frame);
       cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
       cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
       cube.isVisible = true;
