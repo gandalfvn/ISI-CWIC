@@ -902,7 +902,9 @@ angular.module('angle').controller('worldCtrl',
         }
         c.oldpos = c.position.clone();
       });
-      if(frameScene.length && saveFrame) $scope.replaydata.act.push(frameScene);
+      if(frameScene.length && saveFrame){
+        $scope.$apply(function(){$scope.replaydata.act.push(frameScene);});
+      }
     };
 
     var prepareButton = function(mesh){

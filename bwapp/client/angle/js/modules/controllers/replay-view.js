@@ -948,13 +948,13 @@ angular.module('angle').controller('replayCtrl',
       BlockReplays.update({_id: $scope.myreplay._id},
         {$set: {start: $scope.frameid}}, function(err,num){
           if(err) toaster.pop('error', 'Cannot set mark', err.reason);
-          else $scope.myreplay.start = $scope.frameid;
+          else $scope.$apply(function(){$scope.myreplay.start = $scope.frameid;})
         })
     else
       BlockReplays.update({_id: $scope.myreplay._id},
         {$set: {end: $scope.frameid}}, function(err,num){
           if(err) toaster.pop('error', 'Cannot set mark', err.reason);
-          else $scope.myreplay.end = $scope.frameid;
+          else $scope.$apply(function(){$scope.myreplay.end = $scope.frameid;})
         })
   };
     
