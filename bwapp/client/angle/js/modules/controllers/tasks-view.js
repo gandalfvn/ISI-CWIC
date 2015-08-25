@@ -23,13 +23,8 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
   };
 
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
-  console.warn($scope.blockreplays);
-
   $scope.agents = $meteorCollection(Meteor.users, false).subscribe('agents');
-  console.warn('agents', $scope.agents);
-  
   $scope.jobs = $meteorCollection(Jobs).subscribe('jobs');
-  console.warn('jobs', $scope.jobs);
 
   $scope.remove = function(id){
     $scope.blockreplays.remove(id);

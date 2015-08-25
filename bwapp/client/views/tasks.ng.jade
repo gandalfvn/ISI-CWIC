@@ -10,7 +10,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-inbox
           | &nbsp; Available Games
-      table.table.table-condensed(ng-if='blockreplays', datatable="ng", dt-options="dtOptions")
+      table.table.table-condensed#listgames(ng-if='blockreplays.length', datatable="ng")
         thead
           tr
             th
@@ -31,7 +31,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-inbox
           | &nbsp; Assigned Games
-      table.table.table-condensed(ng-if='jobs', datatable="ng", dt-options="dtOptions")
+      table.table.table-condensed#asngames(ng-if='jobs.length', datatable="ng", dt-options="dtOptions")
         thead
           tr
             th
@@ -51,7 +51,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-inbox
           | &nbsp; Submitted Games
-      table.table.table-condensed(ng-if='jobs', datatable="ng", dt-options="dtOptions")
+      table.table.table-condensed#subgames(ng-if='jobs.length', datatable="ng", dt-options="dtOptions")
         thead
           tr
             th

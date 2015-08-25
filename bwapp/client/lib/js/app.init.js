@@ -91,6 +91,7 @@ angular.module('angle')
 
       //setup account callbacks
       accountsUIBootstrap3.logoutCallback = function(err){
+        console.warn('logout');
         if(err) console.log("Error:" + err);
         $state.go('main');
       }
