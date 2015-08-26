@@ -140,6 +140,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           if(usr) $state.go('app.worldview');
         });
         Accounts.onLogin(function(user){
+          
           $state.go('app.root')
         })
       }]

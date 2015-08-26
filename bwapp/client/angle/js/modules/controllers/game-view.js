@@ -954,26 +954,19 @@ angular.module('angle').controller('gameCtrl',
   $scope.replaydata = {visible: {}, act: []};
   //start the db connection
   var blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
+  var jobs = $meteorCollection(Jobs).subscribe('agentjobs');
   Meteor.subscribe("blockreplays", {
-    onReady: function () {
-      //console.log("onReady And the Items actually Arrive", arguments);
-      dataReady('blockreplays');
-    },
+    onReady: function () {dataReady('blockreplays');},
     onError: function () { console.log("onError", arguments); }
   });
-    
-  var jobs = $meteorCollection(Jobs).subscribe('agentjobs');
   Meteor.subscribe("agentjobs", {
-    onReady: function () {
-      //console.log("onReady And the Items actually Arrive", arguments);
-      dataReady('jobs');
-    },
+    onReady: function () {dataReady('jobs');},
     onError: function () { console.log("onError", arguments); }
   });
 
   var readydat = [];
   var dataReady = function(data){
-    console.warn('redy ', data);
+    console.warn('ready ', data);
     readydat.push(data);
     if(readydat.length > 1){
       myjob = Jobs.findOne({_id: $scope.jobid});
