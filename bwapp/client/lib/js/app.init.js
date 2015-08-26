@@ -77,8 +77,9 @@ angular.module('angle')
         picture:  'app/img/user/02.jpg'
       };*/
 
-      $rootScope.isRole = function(usr){
-        return (usr.profile.roles.indexOf('agent') > -1)
+      $rootScope.isRole = function(usr, role){
+        console.warn('user is ', role, (usr.profile.roles.indexOf(role) > -1));
+        return (usr.profile.roles.indexOf(role) > -1)
       }
 
       $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
