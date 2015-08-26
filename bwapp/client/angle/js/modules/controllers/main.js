@@ -18,9 +18,7 @@ angular.module('angle').controller('AppController',
       console.warn('$statechangestart',toState);
       var noloadbar = ['app.root'];
       if(noloadbar.indexOf(toState.name) < 0){
-        console.warn('here')
         if($('.wrapper > section').length) // check if bar container exists
-          console.warn('here22')
           thBar = $timeout(function(){
             cfpLoadingBar.start();
           }, 0); // sets a latency Threshold

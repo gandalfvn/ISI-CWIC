@@ -78,7 +78,6 @@ angular.module('angle')
       };*/
 
       $rootScope.isRole = function(usr, role){
-        console.warn('user is ', role, (usr.profile.roles.indexOf(role) > -1));
         return (usr.profile.roles.indexOf(role) > -1)
       }
 
