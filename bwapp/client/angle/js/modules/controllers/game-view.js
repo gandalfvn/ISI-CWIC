@@ -953,7 +953,25 @@ angular.module('angle').controller('gameCtrl',
   $scope.replaydata = {visible: {}, act: []};
   //start the db connection
   var blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
+    
   var jobs = $meteorCollection(Jobs).subscribe('agentjobs');
+  Meteor.subscribe("agentjobs", {
+    onReady: function () {
+      //console.log("onReady And the Items actually Arrive", arguments);
+      //must wait until BlockReplay has a connection to the db.
+      myjob = Jobs.findOne({_id: $scope.jobid});
+      if(myjob.task){
+        console.warn('start ', Jobs, $scope.jobid, jobs, myjob);
+        $scope.gameid = myjob.task;
+        $scope.myreplay = BlockReplays.findOne({_id: myjob.task});
+        console.warn('BlockReplays', $scope.myreplay);
+        if($scope.myreplay) $scope.$apply(function(){gotoStart()}); //ensure view goal is updated
+        else toaster.pop('warning', 'Replay not found');
+      }
+      else toaster.pop('warning', 'Game not found');
+    },
+    onError: function () { console.log("onError", arguments); }
+  });
 
   $scope.resetWorld = function(){
     $scope.replaydata.act.length = 0;
@@ -1024,22 +1042,8 @@ angular.module('angle').controller('gameCtrl',
 
   var myjob = null;
   $scope.gameid = null;
-  if($stateParams.jobid){
+  if($stateParams.jobid)
     $scope.jobid = $stateParams.jobid;
-    setTimeout(function(){
-      //must wait until BlockReplay and Jobs are connected
-      myjob = Jobs.findOne({_id: $scope.jobid});
-      if(myjob.task){
-        console.warn('start ', Jobs, $scope.jobid, jobs, myjob);
-        $scope.gameid = myjob.task;
-        $scope.myreplay = BlockReplays.findOne({_id: myjob.task});
-        console.warn('BlockReplays', $scope.myreplay);
-        if($scope.myreplay) $scope.$apply(function(){gotoStart()}); //ensure view goal is updated
-        else toaster.pop('warning', 'Replay not found');
-      }
-      else toaster.pop('warning', 'Game not found');
-    },400);
-  }
   else toaster.pop('warning', 'Game not found');
 
 }]);

@@ -470,21 +470,24 @@ angular.module('angle').controller('goalCtrl',
 
   //**start app
   var blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
-
+  Meteor.subscribe("blockreplays", {
+    onReady: function () {
+      //console.log("onReady And the Items actually Arrive", arguments);
+      //must wait until BlockReplay has a connection to the db.
+      $scope.myreplay = BlockReplays.findOne({_id: $stateParams.gameid});
+      console.warn('BlockReplays', $scope.myreplay);
+      if($scope.myreplay) gotoGoal();
+      else toaster.pop('warning','Replay not found');
+    },
+    onError: function () { console.log("onError", arguments); }
+  });
+    
   $scope.toggleGrid = function(){
     showGrid = !showGrid;
     grid.isVisible = showGrid;
   };
 
   $scope.myreplay = null;
-  setTimeout(function(){
-    //must wait until BlockReplay has a connection to the db.
-    $scope.myreplay = BlockReplays.findOne({_id: $stateParams.gameid});
-    console.warn('BlockReplays', $scope.myreplay);
-    if($scope.myreplay) gotoGoal();
-    else toaster.pop('warning','Replay not found');
-  },500);
-  
 
   var gotoGoal = function(){
     if($scope.myreplay){

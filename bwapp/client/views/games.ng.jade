@@ -41,13 +41,3 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               td {{TaskName(job.task)}}
               td {{job.submitted | date: 'yyyy-MM-dd h:mm'}}
 
-script#didAgents(type="text/ng-template")
-  h3 Choose an Agent
-  div
-    table.row-border.hover(datatable='ng', dt-options='dtOptions')
-      thead
-        tr
-          th Name
-      tbody
-        tr(ng-repeat='agent in ngDialogData.agents', ng-if='agent.profile.roles.indexOf("agent") > -1')
-          td(title='{{agent._id}}', ng-click='closeThisDialog(agent._id)') {{agent.username}}
