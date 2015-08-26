@@ -570,6 +570,7 @@ angular.module('angle').controller('gameCtrl',
     //add cube
     cubeslist.length = 0;
     cubesnamed = {};
+    numcubes = 0;
     var p = -2;
     for(var i = 0; i < 5; i++){
       createCube({
@@ -953,12 +954,28 @@ angular.module('angle').controller('gameCtrl',
   $scope.replaydata = {visible: {}, act: []};
   //start the db connection
   var blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
+  Meteor.subscribe("blockreplays", {
+    onReady: function () {
+      //console.log("onReady And the Items actually Arrive", arguments);
+      dataReady('blockreplays');
+    },
+    onError: function () { console.log("onError", arguments); }
+  });
     
   var jobs = $meteorCollection(Jobs).subscribe('agentjobs');
   Meteor.subscribe("agentjobs", {
     onReady: function () {
       //console.log("onReady And the Items actually Arrive", arguments);
-      //must wait until BlockReplay has a connection to the db.
+      dataReady('jobs');
+    },
+    onError: function () { console.log("onError", arguments); }
+  });
+
+  var readydat = [];
+  var dataReady = function(data){
+    console.warn('redy ', data);
+    readydat.push(data);
+    if(readydat.length > 1){
       myjob = Jobs.findOne({_id: $scope.jobid});
       if(myjob.task){
         console.warn('start ', Jobs, $scope.jobid, jobs, myjob);
@@ -969,10 +986,9 @@ angular.module('angle').controller('gameCtrl',
         else toaster.pop('warning', 'Replay not found');
       }
       else toaster.pop('warning', 'Game not found');
-    },
-    onError: function () { console.log("onError", arguments); }
-  });
-
+    }
+  }
+    
   $scope.resetWorld = function(){
     $scope.replaydata.act.length = 0;
     $scope.replaydata.visible = {};
