@@ -25,6 +25,30 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
   $scope.agents = $meteorCollection(Meteor.users, false).subscribe('agents');
   $scope.jobs = $meteorCollection(Jobs).subscribe('jobs');
+  Meteor.subscribe("blockreplays", {
+    onReady: function () {dataReady('blockreplays');},
+    onError: function () { console.log("onError", arguments); }
+  });
+  Meteor.subscribe("agents", {
+    onReady: function () {dataReady('agents');},
+    onError: function () { console.log("onError", arguments); }
+  });
+  Meteor.subscribe("jobs", {
+    onReady: function () {dataReady('jobs');},
+    onError: function () { console.log("onError", arguments); }
+  });
+
+  $scope.dataready = false;
+  var readydat = [];
+  var dataReady = function(data){
+    console.warn('data ready ', data);
+    readydat.push(data);
+    if(readydat.length > 2)
+      $scope.$apply(function(){
+        $scope.dataready = true;
+      })
+  }
+
 
   $scope.remove = function(id){
     $scope.blockreplays.remove(id);
