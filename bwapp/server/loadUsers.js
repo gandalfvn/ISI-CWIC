@@ -11,7 +11,8 @@ Meteor.startup(function () {
     {username: 'gwen@example.com', roles: ['agent'], pwd: 'wongwong'},
     {username: 'ethan@example.com', roles: ['agent'], pwd: 'wongwong'},
     {username: 'maya@example.com', roles: ['agent'], pwd: 'marcumarcu'},
-    {username: 'zara@example.com', roles: ['agent'], pwd: 'marcumarcu'}
+    {username: 'zara@example.com', roles: ['agent'], pwd: 'marcumarcu'},
+    {username: 'kate@example.com', roles: ['agent'], pwd: 'katekate'}
   ]
 
   _.each(userlist, function(usr){
