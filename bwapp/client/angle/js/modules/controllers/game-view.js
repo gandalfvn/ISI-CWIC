@@ -641,7 +641,7 @@ angular.module('angle').controller('gameCtrl',
         if(startingPoint){
           var current = startingPoint.clone();
           //get by mouse position instead of ground so no warping of objects.
-          var speed = 0.15;
+          var speed = 0.16;
           var pos = new BABYLON.Vector2(startingPoint.x + (scene.pointerX - pointerxy.x)*speed, startingPoint.z + (pointerxy.y - scene.pointerY)*speed);
           current.x = Number(( Math.round(pos.x * 10) / 10).toFixed(2));
           current.z = Number(( Math.round(pos.y * 10) / 10).toFixed(2));
