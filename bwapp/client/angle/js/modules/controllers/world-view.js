@@ -10,6 +10,7 @@ angular.module('angle').controller('worldCtrl',
   var hasPhysics = true;
   var showGrid = true;
   var showAxis = false;
+  var pickGround = false;
 
   //check for agent role
   if($rootScope.isRole($rootScope.currentUser, 'agent')){
@@ -353,7 +354,7 @@ angular.module('angle').controller('worldCtrl',
     //volumeMesh.rotationQuaternion = myQuat.clone(); //skip this we only want rotation based on Y
     //var upaxis = findUpAxis(myQuat);
     var euler = myQuat.toEulerAngles(); //get rotation
-    volumeMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), euler.y); //create rotation based on Y so OUR volume is always Y UP!!!!
+    volumeMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, -1, 0), euler.y); //create rotation based on Y so OUR volume is always Y UP!!!!
     volumeMesh.material = volmat;
     volumeMesh.isPickable = false;
     volumeMesh.backFaceCulling = true;
@@ -605,6 +606,7 @@ angular.module('angle').controller('worldCtrl',
 
     //handle drag and drop
     var startingPoint;
+    var pointerxy;
     var currentMesh;
     var groupMesh = [];
     var outMesh = [];
@@ -615,21 +617,36 @@ angular.module('angle').controller('worldCtrl',
     var rotxy = false;
     var scenerot = null;
 
+   
     var getGroundPosition = function(){
-      // Use a predicate to get position on the ground
-      var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function(mesh){
-        return mesh == ground;
-      });
-      if(pickinfo.hit){
+      if(pickGround){
+        // Use a predicate to get position on the ground
+        var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
+        if(pickinfo.hit) {
+          if(startingPoint){
+            var current = pickinfo.pickedPoint.clone();
+            current.y = startingPoint.y;
+            //move by step n
+            current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
+            current.z = Number(( Math.round(current.z * 10) / 10).toFixed(2));
+            return current;
+          }
+          else return pickinfo.pickedPoint;
+        }
+      }
+      else{
         if(startingPoint){
-          var current = pickinfo.pickedPoint.clone();
-          current.y = startingPoint.y;
-          //move by step n
-          current.x = ( Math.round(current.x * 5) / 5).toFixed(2);
-          current.z = ( Math.round(current.z * 5) / 5).toFixed(2);
+          var current = startingPoint.clone();
+          //get by mouse position instead of ground so no warping of objects.
+          var speed = 0.15;
+          var pos = new BABYLON.Vector2(startingPoint.x + (scene.pointerX - pointerxy.x)*speed, startingPoint.z + (pointerxy.y - scene.pointerY)*speed);
+          current.x = Number(( Math.round(pos.x * 10) / 10).toFixed(2));
+          current.z = Number(( Math.round(pos.y * 10) / 10).toFixed(2));
+          pointerxy.x = scene.pointerX;
+          pointerxy.y = scene.pointerY;
           return current;
         }
-        else return pickinfo.pickedPoint;
+        else console.warn('missing starting point');
       }
       return null;
     };
@@ -660,9 +677,9 @@ angular.module('angle').controller('worldCtrl',
         //onPointerUp();
         currentMesh = pickInfo.pickedMesh;
         if(hasPhysics) oimo.unregisterMesh(currentMesh); //stop physics
-        startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
         console.warn('picked ', currentMesh.name, currentMesh);
-        if(startingPoint){ // we need to disconnect camera from canvas
+        //startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
+        if(pickInfo.pickedMesh.position){ // we need to disconnect camera from canvas
           setTimeout(function(){
             camera.detachControl(canvas);
           }, 0);
@@ -708,7 +725,8 @@ angular.module('angle').controller('worldCtrl',
                 //translate cube to intersetmesh local space 0,0,0
                 //this formula gets fractional rotation from mesh rotation based on
                 //the bottom cube
-                c.rotationQuaternion = InvQ.multiply(c.rotationQuaternion);
+                if(c.rotationQuaternion) c.rotationQuaternion = InvQ.multiply(c.rotationQuaternion);
+                else console.warn('object contains no rotationQuaternion');
                 //c.rotationQuaternion = intersectMesh.rotationQuaternion.multiply(BABYLON.Quaternion.Inverse(c.rotationQuaternion));
                 c.checkCollisions = false;
                 c.showBoundingBox = false;
@@ -729,8 +747,10 @@ angular.module('angle').controller('worldCtrl',
                 c.position.addInPlace(offset);
               })
             }
+            startingPoint = intersectMesh.position.clone();//getGroundPosition(evt);
+            pointerxy = new BABYLON.Vector2(scene.pointerX, scene.pointerY);
           }
-        }, 10)
+        }, 50)
       }
     };
 

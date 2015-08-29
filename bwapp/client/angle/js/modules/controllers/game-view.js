@@ -15,8 +15,7 @@ angular.module('angle').controller('gameCtrl',
   var hasPhysics = true;
   var showGrid = true;
   var showAxis = false;
-
-
+  var pickGround = false;
 
   //*****draw axis
   var canvas2D = document.getElementById("canvas_2D");
@@ -354,7 +353,7 @@ angular.module('angle').controller('gameCtrl',
     //volumeMesh.rotationQuaternion = myQuat.clone(); //skip this we only want rotation based on Y
     //var upaxis = findUpAxis(myQuat);
     var euler = myQuat.toEulerAngles(); //get rotation
-    volumeMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0,1,0), euler.y); //create rotation based on Y so OUR volume is always Y UP!!!!
+    volumeMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0,-1,0), euler.y); //create rotation based on Y so OUR volume is always -Y UP!!!!
     volumeMesh.material = volmat;
     volumeMesh.isPickable = false;
     volumeMesh.backFaceCulling = true;
@@ -572,9 +571,10 @@ angular.module('angle').controller('gameCtrl',
     cubesnamed = {};
     numcubes = 0;
     var p = -2;
+    //move them 100 z away so they don't get in way of selection or interactions
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3(-16, cubesize.s, (p + i) * 2),
+        pos: new BABYLON.Vector3(-16, cubesize.s, (p + i) * 2+100),
         scene: scene,
         size: 's',
         color: cubecolors[i],
@@ -583,7 +583,7 @@ angular.module('angle').controller('gameCtrl',
     }
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3(17, cubesize.m, (p + i) * 4),
+        pos: new BABYLON.Vector3(17, cubesize.m, (p + i) * 4+100),
         scene: scene,
         size: 'm',
         color: cubecolors[i],
@@ -592,7 +592,7 @@ angular.module('angle').controller('gameCtrl',
     }
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3((p + i) * 6, cubesize.l, 20),
+        pos: new BABYLON.Vector3((p + i) * 6, cubesize.l, 20+100),
         scene: scene,
         size: 'l',
         color: cubecolors[i],
@@ -610,6 +610,7 @@ angular.module('angle').controller('gameCtrl',
 
     //handle drag and drop
     var startingPoint;
+    var pointerxy;
     var currentMesh;
     var groupMesh = [];
     var outMesh = [];
@@ -620,23 +621,39 @@ angular.module('angle').controller('gameCtrl',
     var rotxy = false;
     var scenerot = null;
 
-    var getGroundPosition = function () {
-      // Use a predicate to get position on the ground
-      var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
-      if(pickinfo.hit) {
+    var getGroundPosition = function(){
+      if(pickGround){
+        // Use a predicate to get position on the ground
+        var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
+        if(pickinfo.hit) {
+          if(startingPoint){
+            var current = pickinfo.pickedPoint.clone();
+            current.y = startingPoint.y;
+            //move by step n
+            current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
+            current.z = Number(( Math.round(current.z * 10) / 10).toFixed(2));
+            return current;
+          }
+          else return pickinfo.pickedPoint;
+        }
+      }
+      else{
         if(startingPoint){
-          var current = pickinfo.pickedPoint.clone();
-          current.y = startingPoint.y;
-          //move by step n
-          current.x = ( Math.round(current.x * 5) / 5).toFixed(2);
-          current.z = ( Math.round(current.z * 5) / 5).toFixed(2);
+          var current = startingPoint.clone();
+          //get by mouse position instead of ground so no warping of objects.
+          var speed = 0.15;
+          var pos = new BABYLON.Vector2(startingPoint.x + (scene.pointerX - pointerxy.x)*speed, startingPoint.z + (pointerxy.y - scene.pointerY)*speed);
+          current.x = Number(( Math.round(pos.x * 10) / 10).toFixed(2));
+          current.z = Number(( Math.round(pos.y * 10) / 10).toFixed(2));
+          pointerxy.x = scene.pointerX;
+          pointerxy.y = scene.pointerY;
           return current;
         }
-        else return pickinfo.pickedPoint;
+        else console.warn('missing starting point');
       }
       return null;
     };
-
+    
     /**
      * Transform a child mesh A world position to a parent relative (local) position
      * @param meshchild
@@ -663,9 +680,10 @@ angular.module('angle').controller('gameCtrl',
         //onPointerUp();
         currentMesh = pickInfo.pickedMesh;
         if(hasPhysics) oimo.unregisterMesh(currentMesh); //stop physics
-        startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
         console.warn('picked ', currentMesh.name, currentMesh);
-        if (startingPoint) { // we need to disconnect camera from canvas
+        //startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
+        //console.warn('picked sp', JSON.stringify(startingPoint));
+        if(pickInfo.pickedMesh.position) { // we need to disconnect camera from canvas
           setTimeout(function () {
             camera.detachControl(canvas);
           }, 0);
@@ -691,18 +709,25 @@ angular.module('angle').controller('gameCtrl',
           difcolor: BABYLON.Color3.Red()
         });
         intersectMesh.checkCollisions = true;
+        //intersectMesh.showBoundingBox = true;
+        //console.warn('imesh bbox', JSON.stringify(intersectMesh.getBoundingInfo().boundingBox.vectorsWorld));
+
         setTimeout(function(){//give it 10 ms to propogate mesh updates
           if(intersectMesh){
             groupMesh.length = 0;
             outMesh.length = 0;
             var InvQ = BABYLON.Quaternion.Inverse(intersectMesh.rotationQuaternion);
             var isZeroPosition = false; //check if we have a screwed up invworldmatrix - if we do then one of the mesh will move to 0,0,0 instead of the bottom of the volume mesh.
+            //console.warn('imesh bbox', JSON.stringify(intersectMesh.getBoundingInfo().boundingBox.vectorsWorld));
             cubeslist.forEach(function(c){
               if(intersectMesh.intersectsMesh(c, true)){
                 if(hasPhysics) oimo.unregisterMesh(c); //stop physics
-                /*console.warn('c', c);
+                /*
+                 console.warn('intersect', c.name);
+                 console.warn('c', c);
                  console.warn('intersectMesh', intersectMesh);
-                 console.warn('cpa', c.position, intersectMesh.position);*/
+                 console.warn('cpa', c.position, intersectMesh.position);
+                 */
                 c.parent = intersectMesh;
                 c.position = XformChildToParentRelPos(c, intersectMesh);
                 //console.warn('cpb', c.position);
@@ -711,7 +736,8 @@ angular.module('angle').controller('gameCtrl',
                 //translate cube to intersetmesh local space 0,0,0
                 //this formula gets fractional rotation from mesh rotation based on
                 //the bottom cube
-                c.rotationQuaternion = InvQ.multiply(c.rotationQuaternion);
+                if(c.rotationQuaternion) c.rotationQuaternion = InvQ.multiply(c.rotationQuaternion);
+                else console.warn('object contains no rotationQuaternion');
                 //c.rotationQuaternion = intersectMesh.rotationQuaternion.multiply(BABYLON.Quaternion.Inverse(c.rotationQuaternion));
                 c.checkCollisions = false;
                 c.showBoundingBox = false;
@@ -732,8 +758,10 @@ angular.module('angle').controller('gameCtrl',
                 c.position.addInPlace(offset);
               })
             }
+            startingPoint = intersectMesh.position.clone();//getGroundPosition(evt);
+            pointerxy = new BABYLON.Vector2(scene.pointerX, scene.pointerY);
           }
-        }, 10)
+        }, 50)
       }
     };
 
@@ -802,7 +830,7 @@ angular.module('angle').controller('gameCtrl',
       diff = current.subtract(startingPoint);
       intersectMesh.moveWithCollisions(diff);
       volumeMesh.position = intersectMesh.position.clone();
-      startingPoint = current;
+      startingPoint = current.clone();
     };
 
     //require hand.js from ms
