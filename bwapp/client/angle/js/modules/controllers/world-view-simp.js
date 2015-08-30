@@ -1,6 +1,7 @@
 /**========================================================
  * Module: world-view.js
  * Created by wjwong on 7/27/15.
+ * http://www.babylonjs-playground.com/#BTHKN
  =========================================================*/
 
 angular.module('angle').controller('worldSimpCtrl',
@@ -330,23 +331,43 @@ angular.module('angle').controller('worldSimpCtrl',
        
        //handle drag and drop
        var startingPoint;
+       var pointerxy;
        var currentMesh;
        var lockxz = false;
        var sceney = null;
 
-       var getGroundPosition = function () {
-         // Use a predicate to get position on the ground
-         var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
-         if (pickinfo.hit) {
+       var getGroundPosition = function(){
+         if(false){
+           // Use a predicate to get position on the ground
+           var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
+           if(pickinfo.hit) {
+             if(startingPoint){
+               var current = pickinfo.pickedPoint.clone();
+               current.y = startingPoint.y;
+               //move by step n
+               current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
+               current.z = Number(( Math.round(current.z * 10) / 10).toFixed(2));
+               return current;
+             }
+             else return pickinfo.pickedPoint;
+           }
+         }
+         else{
            if(startingPoint){
-             var current = pickinfo.pickedPoint.clone();
-             current.y = startingPoint.y;
+             var current = startingPoint.clone();
+             //get by mouse position instead of ground so no warping of objects.
+             var speed = 0.16;
+             var pos = new BABYLON.Vector2(startingPoint.x + (scene.pointerX - pointerxy.x)*speed, startingPoint.z + (pointerxy.y - scene.pointerY)*speed);
+             current.x = Number(( Math.round(pos.x * 10) / 10).toFixed(2));
+             current.z = Number(( Math.round(pos.y * 10) / 10).toFixed(2));
+             pointerxy.x = scene.pointerX;
+             pointerxy.y = scene.pointerY;
              return current;
            }
-           else return pickinfo.pickedPoint;
+           else console.warn('missing starting point');
          }
          return null;
-       }
+       };
        
        var onPointerDown = function (evt) {
          if (evt.button !== 0) return;
@@ -357,6 +378,7 @@ angular.module('angle').controller('worldSimpCtrl',
            currentMesh = pickInfo.pickedMesh;
            currentMesh.position.addInPlace(new BABYLON.Vector3(0,0.3,0));
            startingPoint = currentMesh.position; //getGroundPosition(evt);
+           pointerxy = new BABYLON.Vector2(scene.pointerX, scene.pointerY);
            sceney = scene.pointerY;
 
            if (startingPoint) { // we need to disconnect camera from canvas

@@ -10,7 +10,7 @@ angular.module('angle').controller('worldCtrl',
   var hasPhysics = true;
   var showGrid = true;
   var showAxis = false;
-  var pickGround = false;
+  var pickGround = true;
 
   //check for agent role
   if($rootScope.isRole($rootScope.currentUser, 'agent')){
