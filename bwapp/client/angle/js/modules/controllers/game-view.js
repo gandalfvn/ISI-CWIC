@@ -15,7 +15,7 @@ angular.module('angle').controller('gameCtrl',
   var hasPhysics = true;
   var showGrid = true;
   var showAxis = false;
-  var pickGround = false;
+  var pickGround = true;
 
   //*****draw axis
   var canvas2D = document.getElementById("canvas_2D");
@@ -610,6 +610,7 @@ angular.module('angle').controller('gameCtrl',
 
     //handle drag and drop
     var startingPoint;
+    var OGDelta; //origin ground delta
     var pointerxy;
     var currentMesh;
     var groupMesh = [];
@@ -628,6 +629,7 @@ angular.module('angle').controller('gameCtrl',
         if(pickinfo.hit) {
           if(startingPoint){
             var current = pickinfo.pickedPoint.clone();
+            if(OGDelta) current.subtractInPlace(OGDelta);
             current.y = startingPoint.y;
             //move by step n
             current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
@@ -679,10 +681,7 @@ angular.module('angle').controller('gameCtrl',
         //we clean up things first;
         //onPointerUp();
         currentMesh = pickInfo.pickedMesh;
-        if(hasPhysics) oimo.unregisterMesh(currentMesh); //stop physics
         console.warn('picked ', currentMesh.name, currentMesh);
-        //startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
-        //console.warn('picked sp', JSON.stringify(startingPoint));
         if(pickInfo.pickedMesh.position) { // we need to disconnect camera from canvas
           setTimeout(function () {
             camera.detachControl(canvas);
@@ -759,6 +758,8 @@ angular.module('angle').controller('gameCtrl',
               })
             }
             startingPoint = intersectMesh.position.clone();//getGroundPosition(evt);
+            OGDelta = getGroundPosition(evt);
+            OGDelta.subtractInPlace(startingPoint);
             pointerxy = new BABYLON.Vector2(scene.pointerX, scene.pointerY);
           }
         }, 50)
@@ -770,6 +771,7 @@ angular.module('angle').controller('gameCtrl',
         pointerActive = false;
         camera.attachControl(canvas, true);
         startingPoint = null;
+        OGDelta = null;
         sceney = null;
         //must remove collision check prior to dispose or you get invisible mesh collisions!!!
         intersectMesh.checkCollisions = false;

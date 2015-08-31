@@ -623,9 +623,7 @@ angular.module('angle').controller('worldCtrl',
       if(pickinfo.hit) {
         if(startingPoint){
           var current = pickinfo.pickedPoint.clone();
-          if(OGDelta){
-            current.subtractInPlace(OGDelta);
-          }
+          if(OGDelta) current.subtractInPlace(OGDelta);
           current.y = startingPoint.y;
           //move by step n
           current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
