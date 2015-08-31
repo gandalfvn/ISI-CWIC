@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
     </list>
     <ignored path="bwapp.iws" />
@@ -28,8 +26,8 @@
       <file leaf-file-name="game-view.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/game-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.9259257">
-              <caret line="643" column="26" selection-start-line="643" selection-start-column="26" selection-end-line="643" selection-end-column="26" />
+            <state vertical-scroll-proportion="-14.148149">
+              <caret line="655" column="4" selection-start-line="655" selection-start-column="4" selection-end-line="655" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -38,18 +36,8 @@
       <file leaf-file-name="world-view.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.2638701">
-              <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="world-view-simp.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.6666666">
-              <caret line="3" column="37" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="45" />
+            <state vertical-scroll-proportion="2.971698">
+              <caret line="683" column="27" selection-start-line="683" selection-start-column="27" selection-end-line="683" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -136,7 +124,7 @@
     <option name="x" value="1152" />
     <option name="y" value="23" />
     <option name="width" value="1536" />
-    <option name="height" value="1280" />
+    <option name="height" value="1067" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -472,20 +460,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value=".meteor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scratches" />
@@ -659,7 +633,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1152" y="23" width="1536" height="1280" extended-state="0" />
+    <frame x="1152" y="23" width="1536" height="1067" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32871652" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -669,7 +643,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21782178" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39962998" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32941177" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40122825" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293247" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1061,15 +1035,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/game-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.9259257">
-          <caret line="643" column="26" selection-start-line="643" selection-start-column="26" selection-end-line="643" selection-end-column="26" />
+        <state vertical-scroll-proportion="-14.148149">
+          <caret line="655" column="4" selection-start-line="655" selection-start-column="4" selection-end-line="655" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view-simp.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.6666666">
+        <state vertical-scroll-proportion="0.08490566">
           <caret line="3" column="37" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="45" />
           <folding />
         </state>
@@ -1077,8 +1051,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2638701">
-          <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+        <state vertical-scroll-proportion="2.971698">
+          <caret line="683" column="27" selection-start-line="683" selection-start-column="27" selection-end-line="683" selection-end-column="27" />
           <folding />
         </state>
       </provider>

@@ -10,7 +10,6 @@ angular.module('angle').controller('worldCtrl',
   var hasPhysics = true;
   var showGrid = true;
   var showAxis = false;
-  var pickGround = true;
 
   //check for agent role
   if($rootScope.isRole($rootScope.currentUser, 'agent')){
@@ -606,7 +605,7 @@ angular.module('angle').controller('worldCtrl',
 
     //handle drag and drop
     var startingPoint;
-    var pointerxy;
+    var OGDelta; //origin ground delta
     var currentMesh;
     var groupMesh = [];
     var outMesh = [];
@@ -619,34 +618,21 @@ angular.module('angle').controller('worldCtrl',
 
    
     var getGroundPosition = function(){
-      if(pickGround){
-        // Use a predicate to get position on the ground
-        var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
-        if(pickinfo.hit) {
-          if(startingPoint){
-            var current = pickinfo.pickedPoint.clone();
-            current.y = startingPoint.y;
-            //move by step n
-            current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
-            current.z = Number(( Math.round(current.z * 10) / 10).toFixed(2));
-            return current;
-          }
-          else return pickinfo.pickedPoint;
-        }
-      }
-      else{
+      // Use a predicate to get position on the ground
+      var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
+      if(pickinfo.hit) {
         if(startingPoint){
-          var current = startingPoint.clone();
-          //get by mouse position instead of ground so no warping of objects.
-          var speed = 0.16;
-          var pos = new BABYLON.Vector2(startingPoint.x + (scene.pointerX - pointerxy.x)*speed, startingPoint.z + (pointerxy.y - scene.pointerY)*speed);
-          current.x = Number(( Math.round(pos.x * 10) / 10).toFixed(2));
-          current.z = Number(( Math.round(pos.y * 10) / 10).toFixed(2));
-          pointerxy.x = scene.pointerX;
-          pointerxy.y = scene.pointerY;
+          var current = pickinfo.pickedPoint.clone();
+          if(OGDelta){
+            current.subtractInPlace(OGDelta);
+          }
+          current.y = startingPoint.y;
+          //move by step n
+          current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
+          current.z = Number(( Math.round(current.z * 10) / 10).toFixed(2));
           return current;
         }
-        else console.warn('missing starting point');
+        else return pickinfo.pickedPoint;
       }
       return null;
     };
@@ -676,7 +662,6 @@ angular.module('angle').controller('worldCtrl',
         //we clean up things first;
         //onPointerUp();
         currentMesh = pickInfo.pickedMesh;
-        if(hasPhysics) oimo.unregisterMesh(currentMesh); //stop physics
         console.warn('picked ', currentMesh.name, currentMesh);
         //startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
         if(pickInfo.pickedMesh.position){ // we need to disconnect camera from canvas
@@ -709,11 +694,11 @@ angular.module('angle').controller('worldCtrl',
           if(intersectMesh){
             groupMesh.length = 0;
             outMesh.length = 0;
+            
             var InvQ = BABYLON.Quaternion.Inverse(intersectMesh.rotationQuaternion);
             var isZeroPosition = false; //check if we have a screwed up invworldmatrix - if we do then one of the mesh will move to 0,0,0 instead of the bottom of the volume mesh.
             cubeslist.forEach(function(c){
               if(intersectMesh.intersectsMesh(c, true)){
-                if(hasPhysics) oimo.unregisterMesh(c); //stop physics
                 /*console.warn('c', c);
                  console.warn('intersectMesh', intersectMesh);
                  console.warn('cpa', c.position, intersectMesh.position);*/
@@ -731,6 +716,7 @@ angular.module('angle').controller('worldCtrl',
                 c.checkCollisions = false;
                 c.showBoundingBox = false;
                 //console.warn('me elp', c.ellipsoid);
+                if(hasPhysics) oimo.unregisterMesh(c); //stop physics
                 groupMesh.push(c);
               } else{
                 outMesh.push(c);
@@ -748,7 +734,8 @@ angular.module('angle').controller('worldCtrl',
               })
             }
             startingPoint = intersectMesh.position.clone();//getGroundPosition(evt);
-            pointerxy = new BABYLON.Vector2(scene.pointerX, scene.pointerY);
+            OGDelta = getGroundPosition(evt);
+            OGDelta.subtractInPlace(startingPoint);
           }
         }, 50)
       }
@@ -759,12 +746,13 @@ angular.module('angle').controller('worldCtrl',
         pointerActive = false;
         camera.attachControl(canvas, true);
         startingPoint = null;
+        OGDelta = null;
         sceney = null;
         //must remove collision check prior to dispose or you get invisible mesh collisions!!!
         intersectMesh.checkCollisions = false;
         if(volumeMesh) volumeMesh.dispose();
         volumeMesh = null;
-        if(groupMesh)
+        if(groupMesh.length)
           groupMesh.forEach(function(c){
             c.parent = null;
             c.tchecked = false;
