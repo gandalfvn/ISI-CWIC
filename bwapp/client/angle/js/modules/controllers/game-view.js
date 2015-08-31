@@ -16,8 +16,9 @@ angular.module('angle').controller('gameCtrl',
   var showGrid = true;
   var showAxis = false;
   var pickGround = true;
+  var showObjAxis = false;
 
-  //*****draw axis
+  //*****draw axis===================
   var canvas2D = document.getElementById("canvas_2D");
   var context2D = canvas2D.getContext("2d");
 
@@ -214,7 +215,53 @@ angular.module('angle').controller('gameCtrl',
     context2D.stroke();
     context2D.strokeStyle= prevStrokeStyle;
   };
-  //*****end draw axis
+  //*****end draw axis====================
+    
+  // object axis function =====================================
+  var objAxis = function(size, mesh, scene) {
+    var makeTextPlane = function(text, color, size, name) {
+      var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
+      dynamicTexture.hasAlpha = true;
+      dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color , "transparent", true);
+      var plane = BABYLON.Mesh.CreatePlane(name, size * 3, scene, true);
+      plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
+      plane.material.backFaceCulling = false;
+      plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
+      plane.material.diffuseTexture = dynamicTexture;
+      return plane;
+    };
+
+    // X AXIS
+    var axisX = BABYLON.Mesh.CreateLines("axisX", [BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0)], scene);
+    axisX.isVisible = false;
+    axisX.parent = mesh;
+    axisX.color = new BABYLON.Color3(1, 0, 0);
+    var xChar = makeTextPlane("X", "red", size / 10, "X");
+    xChar.isVisible = false;
+    xChar.parent = mesh;
+    xChar.position = new BABYLON.Vector3(0.9 * size, 0, 0);
+
+    // Y AXIS
+    var axisY = BABYLON.Mesh.CreateLines("axisY", [BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0)], scene);
+    axisY.isVisible = false;
+    axisY.parent = mesh;
+    axisY.color = new BABYLON.Color3(0, 1, 0);
+    var yChar = makeTextPlane("Y", "green", size / 10, "Y");
+    yChar.isVisible = false;
+    yChar.parent = mesh;
+    yChar.position = new BABYLON.Vector3(0, 1.1 * size, 0);
+
+    // Z AXIS
+    var axisZ = BABYLON.Mesh.CreateLines("axisZ", [BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size)], scene);
+    axisZ.isVisible = false;
+    axisZ.parent = mesh;
+    axisZ.color = new BABYLON.Color3(0, 0, 1);
+    var zChar = makeTextPlane("Z", "blue", size / 10, "Z");
+    zChar.isVisible = false;
+    zChar.parent = mesh;
+    zChar.position = new BABYLON.Vector3(0, 0, 0.9 * size);
+  };
+  // end object axis ===================================     
 
   //******Start of Scene
   // Get the canvas element from our HTML above
@@ -600,6 +647,10 @@ angular.module('angle').controller('gameCtrl',
       });
     }
 
+    // Add axis to meshes. This should be an iteration process through all meshes with a specific flag maybe.
+    cubeslist.forEach(function(c){
+      objAxis(c.boxsize, c, scene);
+    });
     //shadows
     /*var shadowGenerator = new BABYLON.ShadowGenerator(1024, dirlight);
      cubeslist.forEach(function(c){
@@ -608,11 +659,29 @@ angular.module('angle').controller('gameCtrl',
      //shadowGenerator.useVarianceShadowMap = true;
      shadowGenerator.usePoissonSampling = true;*/
 
+    function clickMesh(lastMesh, currentMesh){
+      // If we click again the already selected mesh then there is no reason to remove axis and add them again
+      if(lastMesh == currentMesh)
+        return;
+
+      // Show axis for the current mesh
+      for(var i = 0; i < currentMesh.getChildren().length; i++)
+        currentMesh.getChildren()[i].isVisible = true;
+
+      // Remove axis for the previous mesh
+      if(lastMesh != null){
+        if(lastMesh.getChildren().length > 0)
+          for(var i = 0; i < lastMesh.getChildren().length; i++)
+            lastMesh.getChildren()[i].isVisible = false;
+      }
+    }
+
     //handle drag and drop
     var startingPoint;
     var OGDelta; //origin ground delta
     var pointerxy;
     var currentMesh;
+    var lastMesh;
     var groupMesh = [];
     var outMesh = [];
     var volumeMesh;
@@ -681,6 +750,10 @@ angular.module('angle').controller('gameCtrl',
         //we clean up things first;
         //onPointerUp();
         currentMesh = pickInfo.pickedMesh;
+        if(showObjAxis){
+          clickMesh(lastMesh, pickInfo.pickedMesh);
+          lastMesh = pickInfo.pickedMesh;
+        }
         console.warn('picked ', currentMesh.name, currentMesh);
         if(pickInfo.pickedMesh.position) { // we need to disconnect camera from canvas
           setTimeout(function () {
