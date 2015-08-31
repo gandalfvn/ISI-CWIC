@@ -832,7 +832,7 @@ angular.module('angle').controller('gameCtrl',
             }
             startingPoint = intersectMesh.position.clone();//getGroundPosition(evt);
             OGDelta = getGroundPosition(evt);
-            OGDelta.subtractInPlace(startingPoint);
+            if(OGDelta) OGDelta.subtractInPlace(startingPoint);
             pointerxy = new BABYLON.Vector2(scene.pointerX, scene.pointerY);
           }
         }, 50)
@@ -882,7 +882,14 @@ angular.module('angle').controller('gameCtrl',
         current.y += delta;
         sceney = scene.pointerY;
       }
-      else if(!rotxy) current = getGroundPosition(evt);
+      else if(!rotxy){
+        current = getGroundPosition(evt);
+        if(!OGDelta && current){
+          //if ogdelta does not exist during on pointer down that means we have to keep checking until mouse hits the ground and get the ground to obj origin delta
+          OGDelta = current.clone();
+          if(OGDelta) OGDelta.subtractInPlace(startingPoint);
+        }
+      }
       else{
         current = null; //skip translating mesh below
         var euler = intersectMesh.rotationQuaternion.toEulerAngles();
@@ -905,6 +912,9 @@ angular.module('angle').controller('gameCtrl',
       diff = current.subtract(startingPoint);
       intersectMesh.moveWithCollisions(diff);
       volumeMesh.position = intersectMesh.position.clone();
+      setTimeout(function(c){ //catchup update so that we don't ahve a moved intereset volume with a previous location shadown volume
+        volumeMesh.position = intersectMesh.position.clone();
+      }, 50);
       startingPoint = current.clone();
     };
 

@@ -805,10 +805,56 @@ angular.module('angle').controller('worldCtrl',
             }
             startingPoint = intersectMesh.position.clone();//getGroundPosition(evt);
             OGDelta = getGroundPosition(evt);
-            OGDelta.subtractInPlace(startingPoint);
+            if(OGDelta) OGDelta.subtractInPlace(startingPoint);
           }
         }, 50)
       }
+    };
+
+    var onPointerMove = function(evt){
+      if(!startingPoint) return;
+      var current;
+      var delta;
+      if(lockxz){
+        current = startingPoint.clone();
+        delta = (sceney - scene.pointerY) * 0.2;
+        current.y += delta;
+        sceney = scene.pointerY;
+      }
+      else if(!rotxy){
+        current = getGroundPosition(evt);
+        if(!OGDelta && current){ 
+          //if ogdelta does not exist during on pointer down that means we have to keep checking until mouse hits the ground and get the ground to obj origin delta
+          OGDelta = current.clone();
+          if(OGDelta) OGDelta.subtractInPlace(startingPoint);
+        }
+      }
+      else{
+        current = null; //skip translating mesh below
+        var euler = intersectMesh.rotationQuaternion.toEulerAngles();
+        delta = (scenerot.x - scene.pointerX);
+        var rotRad = 0.087266; //5 deg. in radian
+        var rotval;
+        if(delta < 0) rotval = euler.y - rotRad;
+        else rotval = euler.y + rotRad;
+        if(rotval > Math.PI) rotval = 0;
+        if(rotval < 0) rotval = Math.PI;
+        rotval = (Math.round(rotval / rotRad)) * rotRad; //round to nearest 5 deg
+        //snap rotval to 5 degree increments
+        intersectMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), rotval); //Y is UP in intersect mesh
+        volumeMesh.rotationQuaternion = intersectMesh.rotationQuaternion.clone();
+        scenerot.x = scene.pointerX;
+      }
+
+      if(!current) return;
+      var diff;
+      diff = current.subtract(startingPoint);
+      intersectMesh.moveWithCollisions(diff);
+      volumeMesh.position = intersectMesh.position.clone();
+      setTimeout(function(c){ //catchup update so that we don't ahve a moved intereset volume with a previous location shadown volume
+        volumeMesh.position = intersectMesh.position.clone();
+      }, 50);
+      startingPoint = current;
     };
 
     var onPointerUp = function(){
@@ -848,42 +894,6 @@ angular.module('angle').controller('worldCtrl',
         intersectMesh = null;
         currentMesh = null;
       }
-    };
-
-    var onPointerMove = function(evt){
-      if(!startingPoint) return;
-      var current;
-      var delta;
-      if(lockxz){
-        current = startingPoint.clone();
-        delta = (sceney - scene.pointerY) * 0.2;
-        current.y += delta;
-        sceney = scene.pointerY;
-      }
-      else if(!rotxy) current = getGroundPosition(evt);
-      else{
-        current = null; //skip translating mesh below
-        var euler = intersectMesh.rotationQuaternion.toEulerAngles();
-        delta = (scenerot.x - scene.pointerX);
-        var rotRad = 0.087266; //5 deg. in radian
-        var rotval;
-        if(delta < 0) rotval = euler.y - rotRad;
-        else rotval = euler.y + rotRad;
-        if(rotval > Math.PI) rotval = 0;
-        if(rotval < 0) rotval = Math.PI;
-        rotval = (Math.round(rotval / rotRad)) * rotRad; //round to nearest 5 deg
-        //snap rotval to 5 degree increments
-        intersectMesh.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), rotval); //Y is UP in intersect mesh
-        volumeMesh.rotationQuaternion = intersectMesh.rotationQuaternion.clone();
-        scenerot.x = scene.pointerX;
-      }
-
-      if(!current) return;
-      var diff;
-      diff = current.subtract(startingPoint);
-      intersectMesh.moveWithCollisions(diff);
-      volumeMesh.position = intersectMesh.position.clone();
-      startingPoint = current;
     };
 
     //require hand.js from ms
