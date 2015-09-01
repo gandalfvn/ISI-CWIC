@@ -1124,5 +1124,6 @@ angular.module('angle').controller('worldCtrl',
   var scene;
   var grid;
   createWorld();
+  $rootScope.dataloaded = true;
   //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
 }]);

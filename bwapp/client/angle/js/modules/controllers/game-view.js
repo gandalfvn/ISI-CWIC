@@ -1079,9 +1079,10 @@ angular.module('angle').controller('gameCtrl',
 
   var readydat = [];
   var dataReady = function(data){
-    console.warn('ready ', data);
+    console.warn('ready ', data, (new Date).getTime());
     readydat.push(data);
     if(readydat.length > 1){
+      $rootScope.dataloaded = true;
       myjob = Jobs.findOne({_id: $scope.jobid});
       if(myjob.task){
         console.warn('start ', Jobs, $scope.jobid, jobs, myjob);

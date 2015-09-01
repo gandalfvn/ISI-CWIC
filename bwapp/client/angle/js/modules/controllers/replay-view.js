@@ -861,6 +861,36 @@ angular.module('angle').controller('replayCtrl',
   $scope.replaydata = [];
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
   var jobs = $meteorCollection(Jobs).subscribe('jobs');
+  Meteor.subscribe("blockreplays", {
+    onReady: function () {dataReady('blockreplays');},
+    onError: function () { console.log("onError", arguments); }
+  });
+  Meteor.subscribe("jobs", {
+    onReady: function () {dataReady('jobs');},
+    onError: function () { console.log("onError", arguments); }
+  });
+
+  var readydat = [];
+  var myjob;
+  var dataReady = function(data){
+    console.warn('ready ', data, (new Date).getTime());
+    readydat.push(data);
+    if(readydat.length > 2){
+      $rootScope.dataloaded = true;
+      if($stateParams.jobid){
+        $scope.jobid = $stateParams.jobid;
+        //must wait until Jobs are connected
+        myjob = Jobs.findOne({_id: $scope.jobid});
+        //console.warn('start ',Jobs, $stateParams.jobid, jobs, myjob);
+        if(myjob){
+          console.warn('myjob',myjob.replay);
+          $scope.myreplay = myjob;
+          $scope.frameid = 0;
+          showReplay(0);
+        }
+      }
+    }
+  }
 
   $scope.resetWorld = function(){
     $scope.myreplay = null;
@@ -1008,21 +1038,5 @@ angular.module('angle').controller('replayCtrl',
   var scene;
   var grid;
   createWorld();
-  //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
-  var myjob;
-  if($stateParams.jobid){
-    $scope.jobid = $stateParams.jobid;    
-    setTimeout(function(){
-      //must wait until Jobs are connected
-      myjob = Jobs.findOne({_id: $scope.jobid});
-      //console.warn('start ',Jobs, $stateParams.jobid, jobs, myjob);
-      if(myjob){
-        console.warn('myjob',myjob.replay);
-        $scope.myreplay = myjob;
-        $scope.frameid = 0;
-        showReplay(0);
-      }
-    }, 0);
-  }
-
+  dataReady('world created');
 }]);

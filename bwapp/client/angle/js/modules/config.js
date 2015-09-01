@@ -197,7 +197,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     $translateProvider.usePostCompiling(true);
 
 }]).config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
-    cfpLoadingBarProvider.includeBar = true;
+    cfpLoadingBarProvider.includeBar = false; //wjw no loading bar
     cfpLoadingBarProvider.includeSpinner = false;
     cfpLoadingBarProvider.latencyThreshold = 500;
     cfpLoadingBarProvider.parentSelector = '.wrapper > section';

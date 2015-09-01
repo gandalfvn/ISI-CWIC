@@ -51,6 +51,7 @@ angular.module('angle').controller('AppController',
         $window.scrollTo(0, 0);
         // Save the route title
         $rootScope.currTitle = $state.current.title;
+        $rootScope.dataloaded = false;
       });
 
     $rootScope.currTitle = $state.current.title;

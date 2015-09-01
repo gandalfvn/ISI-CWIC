@@ -45,6 +45,7 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
     readydat.push(data);
     if(readydat.length > 2){
       $scope.$apply(function(){
+        $rootScope.dataloaded = true;
         $scope.dataready = true;
       })
     }

@@ -18,11 +18,30 @@ angular.module('angle').controller('gamesCtrl', ['$rootScope', '$scope', '$state
   };
 
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
-  console.warn($scope.blockreplays);
-
   $scope.jobs = $meteorCollection(Jobs).subscribe('agentjobs');
-  console.warn('jobs', $scope.jobs);
+  Meteor.subscribe("blockreplays", {
+    onReady: function () {dataReady('blockreplays');},
+    onError: function () { console.log("onError", arguments); }
+  });
+  Meteor.subscribe("agentjobs", {
+    onReady: function () {dataReady('agentjobs');},
+    onError: function () { console.log("onError", arguments); }
+  });
 
+  $scope.dataready = false;
+  var readydat = [];
+  var dataReady = function(data){
+    console.warn('data ready ', data, (new Date).getTime());
+    readydat.push(data);
+    if(readydat.length > 1){
+      $scope.$apply(function(){
+        $rootScope.dataloaded = true;
+        $scope.dataready = true;
+      })
+    }
+  }
+
+  
   $scope.remove = function(id){
     $scope.blockreplays.remove(id);
     toaster.pop('error', 'Task Deleted');
