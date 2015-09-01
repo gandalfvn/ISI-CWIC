@@ -12,10 +12,6 @@ angular.module('angle').controller('worldCtrl',
   var showAxis = false;
   var showObjAxis = false;
 
-  //check for agent role
-  if($rootScope.isRole($rootScope.currentUser, 'agent')){
-    return $state.go('app.root');
-  }
   //*****draw axis=====================
   var canvas2D = document.getElementById("canvas_2D");
   var context2D = canvas2D.getContext("2d");

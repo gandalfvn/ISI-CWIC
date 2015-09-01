@@ -7,11 +7,6 @@ angular.module('angle').controller('goalCtrl',
   ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster){
   "use strict";
 
-  //check for agent role
-  if(!$rootScope.isRole($rootScope.currentUser, 'agent')){
-    return $state.go('app.root');
-  }
-
   console.warn('$stateParams', $stateParams);
 
   var hasPhysics = false;

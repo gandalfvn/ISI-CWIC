@@ -6,11 +6,6 @@ angular.module('angle').controller('replayCtrl',
   ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteorCollection, ngDialog, toaster){
   "use strict";
 
-  //check for agent role
-  if($rootScope.isRole($rootScope.currentUser, 'agent')){
-    return $state.go('app.root');
-  }
-  
   var hasPhysics = true;
   var showGrid = true;
 

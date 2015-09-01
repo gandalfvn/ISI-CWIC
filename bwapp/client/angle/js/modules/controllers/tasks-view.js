@@ -10,11 +10,6 @@
 angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', '$meteorCollection', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, $meteorCollection){
   "use strict";
 
-  //check for agent role
-  if($rootScope.isRole($rootScope.currentUser, 'agent')){
-    return $state.go('app.root');
-  }
-
   $scope.dtOptions = {
     "lengthMenu": [[10], [10]],
     "order": [[ 1, "asc" ]],

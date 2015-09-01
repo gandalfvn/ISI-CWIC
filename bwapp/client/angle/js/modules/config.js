@@ -13,7 +13,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
 
   // default route
   $urlRouterProvider.otherwise('404');
-  
+
   // 
   // Application Routes
   // -----------------------------------   
@@ -55,7 +55,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         title: 'World View',
         templateUrl: helper.basepath('worldview.html'),
         resolve: angular.extend(
-          {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},  //simple functions appear first so data is loaded
+          {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+            return !$rootScope.isRole(user, 'agent');});
+            }]},  //simple functions appear first so data is loaded
           helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog')
         ),
         controller: 'worldCtrl'
@@ -65,7 +67,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'World View',
       templateUrl: helper.basepath('worldview.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return !$rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
         helper.resolveFor('babylonjs')
       ),
       controller: 'worldSimpCtrl'
@@ -75,7 +79,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'Replay View',
       templateUrl: helper.basepath('replay.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return !$rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
         helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables')
       ),
       controller: 'replayCtrl'
@@ -85,7 +91,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'Tasks View',
       templateUrl: helper.basepath('tasks.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return !$rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
         helper.resolveFor('ngDialog','datatables')
       ),
       controller: 'tasksCtrl'
@@ -95,7 +103,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'Games List',
       templateUrl: helper.basepath('games.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return $rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
         helper.resolveFor('ngDialog','datatables')
       ),
       controller: 'gamesCtrl'
@@ -105,7 +115,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'Game View',
       templateUrl: helper.basepath('gameview.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return $rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
         helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog')
       ),
       controller: 'gameCtrl'
@@ -115,7 +127,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       title: 'Goal View',
       templateUrl: helper.basepath('goalview.html'),
       resolve: angular.extend(
-        {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return $rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
         helper.resolveFor('modernizr', 'icons', 'toaster', 'babylonjs', 'glyphiconspro','circular-json','ngDialog')
       ),
       controller: 'goalCtrl'
@@ -140,7 +154,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           if(usr) $state.go('app.worldview');
         });
         Accounts.onLogin(function(user){
-          
           $state.go('app.root')
         })
       }]

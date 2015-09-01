@@ -87,6 +87,10 @@ angular.module('angle')
         if (error === "AUTH_REQUIRED") {
           $state.go('main');
         }
+        else if(error === "FORBIDDEN"){
+          $state.go('app.root');
+        }
+        else console.warn(error);
       });
 
       //setup account callbacks
