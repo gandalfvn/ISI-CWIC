@@ -2,10 +2,6 @@
  * Module: agents.js
  * Created by wjwong on 8/11/15.
  =========================================================*/
-/**========================================================
- * Module: blockreplays
- * Created by wjwong on 8/7/15.
- =========================================================*/
 
 Meteor.publish("agents", function(){
   return Meteor.users.find(

@@ -16,7 +16,6 @@ angular.module('angle').controller('worldCtrl',
   if($rootScope.isRole($rootScope.currentUser, 'agent')){
     return $state.go('app.root');
   }
-
   //*****draw axis=====================
   var canvas2D = document.getElementById("canvas_2D");
   var context2D = canvas2D.getContext("2d");
@@ -1125,7 +1124,5 @@ angular.module('angle').controller('worldCtrl',
   var scene;
   var grid;
   createWorld();
-  console.warn($rootScope.currentUser, $scope);
   //console.warn('cjson', CircularJSON.stringify(scene, null, 2));
-
 }]);

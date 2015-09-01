@@ -41,12 +41,13 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
   $scope.dataready = false;
   var readydat = [];
   var dataReady = function(data){
-    console.warn('data ready ', data);
+    console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
-    if(readydat.length > 2)
+    if(readydat.length > 2){
       $scope.$apply(function(){
         $scope.dataready = true;
       })
+    }
   }
 
 

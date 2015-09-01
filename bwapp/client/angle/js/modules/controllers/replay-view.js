@@ -1017,7 +1017,7 @@ angular.module('angle').controller('replayCtrl',
       myjob = Jobs.findOne({_id: $scope.jobid});
       //console.warn('start ',Jobs, $stateParams.jobid, jobs, myjob);
       if(myjob){
-        console.warn(myjob.replay);
+        console.warn('myjob',myjob.replay);
         $scope.myreplay = myjob;
         $scope.frameid = 0;
         showReplay(0);
