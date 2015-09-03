@@ -6,7 +6,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .row
   div(style="position: absolute; z-index: 10;" class="col-sm-12")
     div(style='margin-top: 14px')
-      div(ng-if='!jobid')
+      div
         .btn-group.mb-sm.pull-right(dropdown="dropdown")
           button.btn.dropdown-toggle.btn-default(type="button", ng-disabled="disabled", dropdown-toggle="", aria-haspopup="true", aria-expanded="true")
             .fa.fa-cog &nbsp;Settings&nbsp;
@@ -18,12 +18,24 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             li
               a(ng-click='toggleGrid();')
                 .fa.fa-th-large  Grid
+        //-.pull-right &nbsp;&nbsp;
+        //-button.btn.btn-default.pull-right(ng-click='selectTasks()')
+          .fa.fa-video-camera &nbsp;Tasks&nbsp;
+        //-.btn-group.mb-sm.pull-right(dropdown="dropdown")
+          button.btn.dropdown-toggle.btn-default(type="button", ng-disabled="disabled", dropdown-toggle="", aria-haspopup="true", aria-expanded="true")
+            .fa.fa-video-camera &nbsp;Replays&nbsp;
+            span.caret
+          ul.dropdown-menu(role="menu")
+            li
+              a(ng-click='selectTasks();')
+                .fa.fa-file-image-o  Tasks
+            li
+              a(ng-click='selectGames();')
+                .fa.fa-trophy  Games
+      div(ng-if='gameid')
         .pull-right &nbsp;&nbsp;
-        button.btn.btn-default.pull-right(ng-click='selectReplay()')
-          .fa.fa-video-camera &nbsp;Replay&nbsp;
-      div(ng-if='jobid')
-        button.btn.btn-default.pull-right(ng-click='toggleGrid();')
-          .fa.fa-th-large  Grid
+        button.btn.btn-success.pull-right(ng-click='submit()')
+          .fa.fa-send &nbsp;Submit&nbsp;
       .pull-right &nbsp;&nbsp;
       .panel.pull-right(ng-show='myreplay.data.act.length')
         .btn.pull-left(disabled='true', ng-show='!(frameid > 0)')
@@ -41,7 +53,18 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         .btn(title='Fast Forward', disabled='true') FF
         button.btn.btn-default.pull-right(ng-click='endReplay()')
           .fa.fa-angle-double-right End
-        div(ng-if='!jobid')
+        div(ng-if='gameid')
+          button.btn.btn-default.pull-left(ng-show='!isKeyframe()',title='Mark This as Key Frame', ng-click='markKeyframe(true)')
+            .fa.fa-plus &nbsp;Add Key Frame
+          button.btn.btn-default.pull-left(ng-show='isKeyframe()',title='Mark This as Key Frame', ng-click='markKeyframe(false)')
+            .fa.fa-minus &nbsp;Remove Key Frame
+          div(ng-show='myreplay.keyframes.length > 0')
+            button.btn.btn-default.pull-left(ng-click='showKeyframe(true)')
+              .fa.fa-chevron-left
+            .btn(title='Key Frame', disabled='true') Key Frame
+            button.btn.btn-default.pull-right(ng-click='showKeyframe(false)')
+              .fa.fa-chevron-right
+        div(ng-if='!gameid')
           button.btn.btn-default.pull-left(ng-click='markReplay(true)')
             .fa.fa-flag &nbsp;Start&nbsp;
           .btn(title='Fast Forward', disabled='true') Mark
@@ -63,7 +86,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           .fa.fa-lock &nbsp;Make Private&nbsp;
     .well.notouch.col-sm-4.shadowbox(style='background-color: rgba(255,255,255,0.5)')
       strong Instructions:
-      div(ng-if='!jobid')
+      div(ng-if='!gameid')
         strong Replay: 
         | Choose a replay to view
       strong Step &lt; &gt;: 
@@ -71,7 +94,16 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       br
       strong Fast Forward: 
       | Click on Start or End to fast forward the replay
-      div(ng-if='!jobid')
+      div(ng-if='gameid')
+        strong Add/Remove Key Frame:
+        |  Click to add or remove a keyframe from game recording
+        br
+        strong Key Frame &lt; &gt:
+        |  Step through the key frames
+        br
+        strong Submit:
+        |  Submit key frame review of game replay
+      div(ng-if='!gameid')
         strong Mark Start &amp; Goal: 
         | Mark the Start and Goal to enable publication
         br
@@ -84,8 +116,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   canvas(id="renderCanvasBab" style='width: 100%; height: 800px;')
   canvas(id="canvas_2D")
 
-script#didReplayList(type="text/ng-template")
-  h3 Available Replays
+//-script#didTaskList(type="text/ng-template")
+  h3 Available Tasks
   div
     table.row-border.hover(datatable='ng', dt-options='dtOptions')
       thead
@@ -104,3 +136,20 @@ script#didReplayList(type="text/ng-template")
             .fa.fa-globe
           td(ng-if='!replay.public')
             .fa.fa-lock
+//-script#didGameList(type="text/ng-template")
+  h3 Available Games
+  div
+    table.row-border.hover(datatable='ng', dt-options='dtOptions')
+      thead
+        tr
+          th
+          th Name
+          th Agent
+          th Submitted
+      tbody
+        tr(ng-repeat='replay in ngDialogData.replays')
+          td(ng-click='remove(replay._id)')
+            .fa.fa-remove
+          td(title='{{replay._id}}', ng-click='closeThisDialog({open: replay._id})') {{replay.taskname}}
+          td(ng-click='closeThisDialog({open: replay._id})') {{replay.agentname}}
+          td(ng-click='closeThisDialog({open: replay._id})') {{replay.submitted | date: 'yyyy-MM-dd h:mm:ss'}}

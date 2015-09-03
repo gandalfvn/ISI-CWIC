@@ -18,8 +18,9 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
   };
 
   $scope.blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
-  $scope.agents = $meteorCollection(Meteor.users, false).subscribe('agents');
+  var agents = $meteorCollection(Meteor.users, false).subscribe('agents');
   $scope.jobs = $meteorCollection(Jobs).subscribe('jobs');
+  $scope.annotations = $meteorCollection(Annotations).subscribe('annotations');
   Meteor.subscribe("blockreplays", {
     onReady: function () {dataReady('blockreplays');},
     onError: function () { console.log("onError", arguments); }
@@ -32,13 +33,17 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
     onReady: function () {dataReady('jobs');},
     onError: function () { console.log("onError", arguments); }
   });
+  Meteor.subscribe("annotations", {
+    onReady: function () {dataReady('annotations');},
+    onError: function () { console.log("onError", arguments); }
+  });
 
   $scope.dataready = false;
   var readydat = [];
   var dataReady = function(data){
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
-    if(readydat.length > 2){
+    if(readydat.length > 3){
       $scope.$apply(function(){
         $rootScope.dataloaded = true;
         $scope.dataready = true;
@@ -57,8 +62,8 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
     toaster.pop('error', 'Job Deleted');
   }
 
-  $scope.selectAgent = function(repid){
-    var repdata = {agents: $scope.agents};
+  $scope.selectAgent = function(uid, type){
+    var repdata = {agents: agents};
     var dcon = {
       disableAnimation: true,
       template: 'didAgents',
@@ -75,23 +80,35 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
     };
     var dialog = ngDialog.open(dcon);
     dialog.closePromise.then(function (data) {
-      if(data && data.value){
-        console.warn('choose', repid, data.value);
-        assignJob(repid, data.value);
+      if(data && data.value !== '$closeButton'){
+        console.warn('choose', uid, data.value, type);
+        switch(type){
+          case 'job':
+            assignJob(uid, data.value);
+            break;
+          case 'desc':
+          case 'act':
+            assignAnnot(uid, data.value, type);
+            break;
+        }
       }
     });
   }
 
   $scope.AgentName = function(id){
-    var res = _.find($scope.agents, function(a){return id === a._id});
+    var res = $scope.findById(agents, id);
     if(res) return res.username;
     return 'N/A';
   }
 
   $scope.TaskName = function(id){
-    var res = _.find($scope.blockreplays, function(a){return id === a._id});
+    var res = $scope.findById($scope.blockreplays, id);
     if(res) return res.name;
     return 'N/A';
+  }
+
+  $scope.findById = function(collection, id){
+    return _.find(collection, function(a){return id === a._id});
   }
 
   var assignJob = function(taskid, agentid){
@@ -111,4 +128,30 @@ angular.module('angle').controller('tasksCtrl', ['$rootScope', '$scope', '$state
       }
     );
   }
+
+  var assignAnnot = function(jobid, agentid, type){
+    var annot = {
+      owner: $rootScope.currentUser._id,
+      created: new Date().getTime(),
+      creator: $rootScope.currentUser.username,
+      agent: agentid,
+      assigned: new Date().getTime(),
+      job: jobid,
+      type: type
+    };
+    $scope.annotations.save(annot).then(
+      function(val){
+        var myjob = $scope.findById($scope.jobs, jobid);
+        var key = 'kfannot_'+type;
+        if(!myjob[key]) myjob[key] = [];
+        myjob[key].push(val[0]._id);
+        myjob[key] = _.uniq(myjob[key]);
+        console.warn('created', val[0], myjob);
+        toaster.pop('info', 'Annotation type: '+type+' created.');
+      }, function(err){
+        toaster.pop('error', 'Annotation Error', err.reason);
+      }
+    );
+  }
+
 }]);

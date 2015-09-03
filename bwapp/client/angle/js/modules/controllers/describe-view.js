@@ -1,15 +1,49 @@
 /**========================================================
- * Module: replay-view.js
- * Created by wjwong on 8/7/15.
+ * Module: describe-view
+ * Created by wjwong on 9/1/15.
  =========================================================*/
-angular.module('angle').controller('replayCtrl',
+angular.module('angle').controller('describeCtrl',
   ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteorCollection, ngDialog, toaster){
     "use strict";
 
     var hasPhysics = true;
     var showGrid = true;
 
-    //*****draw axis========================
+    var screenshotCanvas;
+    BABYLON.Tools.DumpFramebuffer = function (width, height, engine) {
+      console.log("MY version of DumpFramebuffer - Activated!", screenshotCanvas);
+      // Read the contents of the framebuffer
+      var numberOfChannelsByLine = width * 4;
+      var halfHeight = height / 2;
+      //Reading datas from WebGL
+      var data = engine.readPixels(0, 0, width, height);
+      for (var i = 0; i < halfHeight; i++) {
+        for (var j = 0; j < numberOfChannelsByLine; j++) {
+          var currentCell = j + i * numberOfChannelsByLine;
+          var targetLine = height - i - 1;
+          var targetCell = j + targetLine * numberOfChannelsByLine;
+          var temp = data[currentCell];
+          data[currentCell] = data[targetCell];
+          data[targetCell] = temp;
+        }
+      }
+      // Create a 2D canvas to store the result
+      if (!screenshotCanvas) {
+        screenshotCanvas = document.createElement('canvas');
+      }
+      screenshotCanvas.width = width;
+      screenshotCanvas.height = height;
+      var context = screenshotCanvas.getContext('2d');
+      // Copy the pixels to a 2D canvas
+      var imageData = context.createImageData(width, height);
+      //cast is due to ts error in lib.d.ts, see here - https://github.com/Microsoft/TypeScript/issues/949
+      var castData = imageData.data;
+      castData.set(data);
+      context.putImageData(imageData, 0, 0);
+      return imageData.data;
+    };
+
+    //*****draw axis
     var canvas2D = document.getElementById("canvas_2D");
     var context2D = canvas2D.getContext("2d");
 
@@ -206,7 +240,7 @@ angular.module('angle').controller('replayCtrl',
       context2D.stroke();
       context2D.strokeStyle= prevStrokeStyle;
     };
-    //*****end draw axis==============
+    //*****end draw axis
 
     // Get the canvas element from our HTML above
     var canvas = document.getElementById("renderCanvasBab");
@@ -444,19 +478,23 @@ angular.module('angle').controller('replayCtrl',
       scene.collisionsEnabled = true;
       scene.workerCollisions = true;
 
+      //  Create an ArcRotateCamera aimed at 0,0,0, with no alpha, beta or radius, so be careful.  It will look broken.
+      camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 0, 20, BABYLON.Vector3(0, 25, 0), scene);
+      // Quick, let's use the setPosition() method... with a common Vector3 position, to make our camera better aimed.
+      camera.setPosition(new BABYLON.Vector3(0, 15, -30));
       // This creates and positions a free camera
-      camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 15, -46), scene);
+      //camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 15, -46), scene);
       // This targets the camera to scene origin
-      camera.setTarget(new BABYLON.Vector3(0,12,0));
+      //camera.setTarget(new BABYLON.Vector3(0,12,0));
       // This attaches the camera to the canvas
       //camera.attachControl(canvas, true);
-      camera.speed = 1;
+      /*camera.speed = 1;
       camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); //bounding ellipse
       camera.checkCollisions = true;
       camera.keysUp = [87]; // w
       camera.keysDown = [83]; // s
       camera.keysLeft = [65]; //  a
-      camera.keysRight = [68]; // d
+      camera.keysRight = [68]; // d*/
 
       scene.activeCamera = camera;
       scene.activeCamera.attachControl(canvas, true);
@@ -553,7 +591,7 @@ angular.module('angle').controller('replayCtrl',
       grid.position.y = 0.02;
       grid.scaling.y = 0.001;
       grid.material = gridmat;
-
+      
       //add cube
       cubeslist.length = 0;
       numcubes = 0;
@@ -852,48 +890,85 @@ angular.module('angle').controller('replayCtrl',
       engine.resize();
     });
 
-    //**start app=============
+    var textplane;
+    var textplaneTexture;
+    var textUpdate = function(text, pos) {
+      //data reporter
+      if(textplane) textplane.dispose();
+      textplane = BABYLON.Mesh.CreatePlane("textplane", 20, scene, false);
+      textplane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+      textplane.material = new BABYLON.StandardMaterial("textplane", scene);
+      textplane.position = pos.clone();
+      textplane.scaling.y = 0.4;
+
+      if(textplaneTexture) textplaneTexture.dispose;
+      textplaneTexture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
+      textplane.material.diffuseTexture = textplaneTexture;
+      textplane.material.specularColor = new BABYLON.Color3(0, 0, 0);
+      textplane.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+      textplane.material.backFaceCulling = false;
+      var context2D = textplaneTexture.getContext();
+
+      //context2D.clearRect(0, 0, 512, 512);
+      textplaneTexture.drawText(text, null, 256, "bold 140px verdana", "black", "#aaaaaa");
+    }
+
+    //**start app
     $scope.replaydata = [];
-    var blockreplays = $meteorCollection(BlockReplays).subscribe('blockreplays');
-    var jobs = $meteorCollection(Jobs).subscribe('jobs');
-    Meteor.subscribe("blockreplays", {
-      onReady: function () {dataReady('blockreplays');},
-      onError: function () { console.log("onError", arguments); }
-    });
     Meteor.subscribe("jobs", {
       onReady: function () {dataReady('jobs');},
       onError: function () { console.log("onError", arguments); }
     });
 
+    $scope.showTime = function(){
+      return (new Date).getTime();
+    };
+    
     var readydat = [];
     var myjob;
     var dataReady = function(data){
       console.warn('ready ', data, (new Date).getTime());
       readydat.push(data);
-      if(readydat.length > 2){
+      if(readydat.length > 1){
         if($stateParams.gameid){
           $scope.gameid = $stateParams.gameid;
           //must wait until Jobs are connected
           myjob = Jobs.findOne({_id: $scope.gameid});
           if(myjob){
-            $rootScope.dataloaded = true;
             console.warn('myjob',$scope.gameid, myjob);
             $scope.myreplay = myjob;
-            $scope.frameid = 0;
-            showReplay(0);
-          }
-        }
-        else if($stateParams.taskid){
-          $scope.taskid = $stateParams.taskid;
-          //must wait until Jobs are connected
-          myjob = BlockReplays.findOne({_id: $scope.taskid});
-          if(myjob){
-            $rootScope.dataloaded = true;
-            console.warn('myjob',$scope.taskid, myjob);
-            $scope.myreplay = myjob;
-            $scope.frameid = 0;
-            showReplay(0);
-            $rootScope.dataloaded = true;
+            
+            if($scope.myreplay.keyframes.length){
+              function itKeyframes(idx, kfs, cb){
+                if(_.isUndefined(kfs[idx])) return cb();
+                console.warn(kfs[idx]);
+                $scope.frameid = kfs[idx];
+                showReplay(kfs[idx]);
+                setTimeout(function(){
+                  var doneDump = _.after($scope.renderviewdata.length, function(){
+                    itKeyframes(idx+1, kfs, cb);
+                  })
+                  $scope.renderviewdata.forEach(function(r){
+                    setTimeout(function(){
+                      console.warn(kfs[idx]+'_'+r.name);
+                      screenshotCanvas = document.getElementById(kfs[idx]+'_'+r.name);
+                      camera.setPosition(r.campos);
+                      //textUpdate(r.name, r.billb);
+                      var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
+                      doneDump();
+                    },0);
+                  });
+                }, 0);
+              };
+
+              setTimeout(function(){
+                itKeyframes(0, $scope.myreplay.keyframes, function(){
+                  $('#renderCanvasBab').css('display', 'none');
+                  $scope.$apply(function(){$rootScope.dataloaded = true;})
+                })
+              }, 500);
+            }
+            else toaster.pop('error', 'Game Missing Key Frames');
           }
         }
       }
@@ -910,48 +985,7 @@ angular.module('angle').controller('replayCtrl',
       createWorld();
     }
 
-    $scope.toggleGrid = function(){
-      showGrid = !showGrid;
-      grid.isVisible = showGrid;
-    }
 
-    /*$scope.selectTasks = function(){
-      var repdata = {replays: blockreplays};
-      var dcon = {
-        disableAnimation: true,
-        template: 'didTaskList',
-        data: repdata,
-        controller: ['$scope', function($scope){
-          camera.detachControl(canvas);
-          $scope.dtOptions = {
-            "lengthMenu": [[8], [8]],
-            "order": [[ 1, "asc" ]],
-            "language": {"paginate": {"next": '>', "previous": '<'}},
-            "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-          };
-          $scope.remove = function(id){
-            $scope.ngDialogData.replays.remove(id);
-          }
-        }],
-        className: 'ngdialog-theme-default width70perc'
-      };
-      var dialog = ngDialog.open(dcon);
-      dialog.closePromise.then(function (data) {
-        camera.attachControl(canvas, true);
-        if(data && data.value){
-          if(data.value.open){
-            //hide all cubes
-            cubeslist.forEach(function(c){
-              c.isVisible = false;
-            });
-            $scope.myreplay = BlockReplays.findOne({_id: data.value.open});
-            $scope.frameid = 0;
-            showReplay($scope.frameid);
-          }
-        }
-      });
-    };*/
-    
     $scope.startReplay = function(){
       if($scope.gameid){ //start with frame 0 for jobs
         //hide all cubes
@@ -995,67 +1029,6 @@ angular.module('angle').controller('replayCtrl',
             if(err) toaster.pop('error', 'Cannot set mark', err.reason);
             else $scope.$apply(function(){$scope.myreplay.end = $scope.frameid;})
           })
-    };
-
-    $scope.isKeyframe = function(){
-      if($scope.myreplay.keyframes){
-        return (_.indexOf($scope.myreplay.keyframes, $scope.frameid, true) > -1);
-      }
-      else return false;
-    };
-
-    $scope.markKeyframe = function(isAdd){
-      if(isAdd){
-        if(!$scope.myreplay.keyframes)
-          $scope.myreplay.keyframes = [];
-        $scope.myreplay.keyframes.push($scope.frameid);
-        $scope.myreplay.keyframes.sort(function(a,b){return a-b});
-        $scope.myreplay.keyframes = _.uniq($scope.myreplay.keyframes, true);
-      }
-      else{
-        if(!$scope.myreplay.keyframes) return;
-        var idx = _.indexOf($scope.myreplay.keyframes, $scope.frameid, true);
-        if(idx < 0) return;
-        $scope.myreplay.keyframes.splice(idx, 1);
-      }
-      console.warn($scope.myreplay);
-      Jobs.update({_id: $scope.myreplay._id},
-        {$set: {keyframes: $scope.myreplay.keyframes}}, function(err,num){
-          if(err) toaster.pop('error', 'Cannot update keyframe', err.reason);
-        }
-      )
-    };
-
-    $scope.showKeyframe = function(prev){
-      if(!$scope.myreplay.keyframes) return;
-      var idx = _.indexOf($scope.myreplay.keyframes, $scope.frameid, true);
-      if(idx < 0) return;
-      if(prev){
-        if(idx > 0) idx--;
-        else return;
-      }
-      else{
-        idx++;
-        if(idx >= $scope.myreplay.keyframes.length) return;
-      }
-      $scope.frameid = $scope.myreplay.keyframes[idx];
-      showReplay($scope.frameid);
-    };
-
-    $scope.submit = function(){
-      if($scope.myreplay.keyframes.length){
-        console.warn('submit');
-        Jobs.update({_id: $scope.gameid},
-          {$set: {
-            kfsubmitted: new Date().getTime()
-          }}, function(err,num){
-            if(err) toaster.pop('error', 'Cannot update job', err.reason);
-            else $state.go('app.tasks');
-          }
-        );
-      }
-      else
-        toaster.pop('warning', 'No Key Frames', 'Please mark some key frames before submitting');
     };
 
     $scope.togglePublic = function(){
@@ -1102,6 +1075,28 @@ angular.module('angle').controller('replayCtrl',
       })
     };
 
+    $scope.renderviewdata = [
+      {
+        name: 'Front',
+        campos: new BABYLON.Vector3(0, 15, -30),
+        billb: new BABYLON.Vector3(0, 10, 40)
+      },
+      /*{
+        name: 'Back',
+        campos: new BABYLON.Vector3(25, 15, 25),
+        billb: new BABYLON.Vector3(-20, 10, -20)
+      },
+      {
+        name: 'Left',
+        campos: new BABYLON.Vector3(-35, 15, 0),
+        billb: new BABYLON.Vector3(40, 10, 0)
+      },
+      {
+        name: 'Right',
+        campos: new BABYLON.Vector3(35, 15, 0),
+        billb: new BABYLON.Vector3(-40, 10, 0)
+      }*/
+    ];
     // Now, call the createScene function that you just finished creating
     var scene;
     var grid;

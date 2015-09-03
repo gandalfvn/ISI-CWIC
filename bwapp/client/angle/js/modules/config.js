@@ -75,7 +75,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       controller: 'worldSimpCtrl'
     })
     .state('app.replay', {
-      url: '/replay?gameid&jobid',
+      url: '/replay?taskid&gameid',
       title: 'Replay View',
       templateUrl: helper.basepath('replay.html'),
       resolve: angular.extend(
@@ -85,6 +85,18 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables')
       ),
       controller: 'replayCtrl'
+    })
+    .state('app.describe', {
+      url: '/describe?taskid&gameid',
+      title: 'Describe View',
+      templateUrl: helper.basepath('describe.html'),
+      resolve: angular.extend(
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return !$rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables')
+      ),
+      controller: 'describeCtrl'
     })
     .state('app.tasks', {
       url: '/tasks',
