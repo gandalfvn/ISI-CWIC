@@ -87,7 +87,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       controller: 'replayCtrl'
     })
     .state('app.describe', {
-      url: '/describe?taskid&gameid',
+      url: '/describe?annotid',
       title: 'Describe View',
       templateUrl: helper.basepath('describe.html'),
       resolve: angular.extend(

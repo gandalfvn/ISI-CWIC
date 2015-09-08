@@ -146,9 +146,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr(ng-repeat='annot in annotations', title='ID: {{annot._id}} Created By: {{annot.creator}}', ng-if='!annot.submitted')
             td(ng-click='removeAnnot(annot._id)')
               .fa.fa-remove
-            td(ng-click='$state.go("app.replay", {gameid: annot._id})') {{TaskName(findById(jobs, annot.job).task)}}
-            td(ng-click='$state.go("app.replay", {gameid: annot._id})') {{AgentName(annot.agent)}}
-            td(ng-click='$state.go("app.replay", {gameid: annot._id})') {{annot.type}}
+            td(ng-click='$state.go("app.describe", {annotid: annot._id})') {{TaskName(findById(jobs, annot.job).task)}}
+            td(ng-click='$state.go("app.describe", {annotid: annot._id})') {{AgentName(annot.agent)}}
+            td(ng-click='$state.go("app.describe", {annotid: annot._id})') {{annot.type}}
 
 
 

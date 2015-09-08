@@ -9,12 +9,17 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   hr
   canvas(id="renderCanvasBab" style='width: 320px; height: 220px;')
   canvas(id="canvas_2D")
-div(ng-show='myreplay.keyframes.length', ng-repeat = 'kf in myreplay.keyframes')
-  .row-fluid.col-sm-12(style='border-bottom:solid 2px #eee;')
-    h2 Frame {{kf}}
-    .col-sm-4
-      span(ng-repeat='r in renderviewdata')
-        canvas(id="{{kf + '_' + r.name}}" style='width: 320px; height: 220px;')
-        //-pre {{showTime()}}
-    .col-sm-8
-      textarea.form-control.custom-control(rows="3")
+form(name='annotform')
+  div(ng-show='myreplay.keyframes.length', ng-repeat = 'kf in myreplay.keyframes')
+    .row-fluid.col-sm-12(style='border-bottom:solid 2px #eee;')
+      h2 Frame {{kf}}
+      .col-sm-5(style='overflow:hidden;')
+        span(ng-repeat='r in renderviewdata')
+          canvas(id="{{kf + '_' + r.name}}" style='width: 320px; height: 220px;')
+          //-pre {{showTime()}}
+      .col-sm-7
+        span(ng-repeat='note in annot.notes[kf] track by $index')
+          textarea.form-control.custom-control(rows="3", name='textblock[{{kf}}][{{$index}}]', ng-model='annot.notes[kf][$index]')
+        button.btn.btn-xs.btn-primary(ng-click='addAnnot(kf)')
+          .fa.fa-pencil &nbsp;Add Annotation
+        //-textarea.form-control.custom-control(rows="3", name='textblock[{{kf}}]', ng-model='textannot[kf]')
