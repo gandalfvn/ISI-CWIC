@@ -2,20 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/angle/js/modules/directives/clearicon.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/genstates.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/genstatesdb.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/views/genworld.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/lib/js/app.init.js" afterPath="$PROJECT_DIR$/client/lib/js/app.init.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/bower.json" afterPath="$PROJECT_DIR$/public/bower.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/constants.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/describe-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/describe-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/describe.ng.jade" afterPath="$PROJECT_DIR$/client/views/describe.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/tasks-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/tasks-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/world-view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genworld.ng.jade" afterPath="$PROJECT_DIR$/client/views/genworld.ng.jade" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -70,7 +57,7 @@
         <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.34320322">
-              <caret line="17" column="60" selection-start-line="17" selection-start-column="60" selection-end-line="17" selection-end-column="60" />
+              <caret line="17" column="46" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -1158,7 +1145,7 @@
     <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34320322">
-          <caret line="17" column="60" selection-start-line="17" selection-start-column="60" selection-end-line="17" selection-end-column="60" />
+          <caret line="17" column="46" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="46" />
           <folding />
         </state>
       </provider>

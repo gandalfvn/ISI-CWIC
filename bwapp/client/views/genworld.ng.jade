@@ -13,9 +13,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       label &nbsp;&nbsp;&nbsp;
       .form-group
         label Generate Iterations:
-        -var opt = [20,40,80,160]
         select.form-control
-          option(ng-repeat='i in cubeprops track by $index', ng-model='ccnt', value='{{$index+1}}') {{$index+1}}
+          each v in [20,40,80,160]
+            option(ng-model='itr', value='#{v}') #{v}
 
   hr
   h3 Render for: {{dbid}}
