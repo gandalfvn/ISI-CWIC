@@ -50,6 +50,18 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         else $state.go('main');
       }]*/
     })
+    .state('app.genworld', {
+      url: '/genworld',
+      title: 'Generate World',
+      templateUrl: helper.basepath('genworld.html'),
+      resolve: angular.extend(
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return !$rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'ngMd5')
+      ),
+      controller: 'genWorldCtrl'
+    })
     .state('app.worldview', {
         url: '/worldview',
         title: 'World View',

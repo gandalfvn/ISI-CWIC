@@ -4,10 +4,12 @@
  =========================================================*/
 
 angular.module('angle').controller('worldCtrl',
-  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster){
+  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', '$meteorCollection', 'ngDialog', 'toaster', 'APP_CONST', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, $meteorCollection, ngDialog, toaster, appConst){
   "use strict";
 
   var hasPhysics = true;
+  var fric = 1;
+  var rest = 0.0000001;
   var showGrid = true;
   var showAxis = false;
   var showObjAxis = false;
@@ -318,8 +320,8 @@ angular.module('angle').controller('worldCtrl',
         impostor: BABYLON.PhysicsEngine.BoxImpostor,
         move: true,
         mass: boxsize,
-        friction: 0.6,
-        restitution: 0.1
+        friction: fric,
+        restitution: rest
       });
     box.onCollide = function(a){
       console.warn('oncollide', objname, this, a)
@@ -556,7 +558,7 @@ angular.module('angle').controller('worldCtrl',
     // Object
     var ground = BABYLON.Mesh.CreateBox("ground", 300, scene);
     ground.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-    ground.position.y = -0.5;
+    ground.position.y = -0.15;
     ground.scaling.y = 0.001;
     ground.onCollide = function(a, b){
       console.warn('oncollide ground', a, b)
@@ -575,7 +577,7 @@ angular.module('angle').controller('worldCtrl',
     tablemat.diffuseTexture = twood;
     tablemat.specularColor = BABYLON.Color3.Black();
     //var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {}); //shader grid
-    var tableboxsize = 30;
+    var tableboxsize = appConst.fieldsize;
     var table = BABYLON.Mesh.CreateBox("table", tableboxsize, scene);
     table.boxsize = tableboxsize;
     table.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
@@ -603,7 +605,7 @@ angular.module('angle').controller('worldCtrl',
     var gridmat = new BABYLON.StandardMaterial("grid", scene);
     gridmat.wireframe = true; //create wireframe
     gridmat.diffuseColor = BABYLON.Color3.Gray();
-    grid = BABYLON.Mesh.CreateGround("grid", 30, 30, 10, scene, false); //used to show grid
+    grid = BABYLON.Mesh.CreateGround("grid", appConst.fieldsize, appConst.fieldsize, 6, scene, false); //used to show grid
     grid.position.y = 0.02;
     grid.scaling.y = 0.001;
     grid.material = gridmat;
@@ -614,7 +616,7 @@ angular.module('angle').controller('worldCtrl',
     var p = -2;
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3(-16, cubesize.s * 2, (p + i) * 2),
+        pos: new BABYLON.Vector3((p + i) * 2, cubesize.s * 2, appConst.fieldsize - 5),
         scene: scene,
         size: 's',
         color: cubecolors[i]
@@ -622,7 +624,7 @@ angular.module('angle').controller('worldCtrl',
     }
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3(17, cubesize.m * 2, (p + i) * 4),
+        pos: new BABYLON.Vector3((appConst.fieldsize/2)+1.5, cubesize.m * 2, (p + i) * 4),
         scene: scene,
         size: 'm',
         color: cubecolors[i]
@@ -630,7 +632,7 @@ angular.module('angle').controller('worldCtrl',
     }
     for(var i = 0; i < 5; i++){
       createCube({
-        pos: new BABYLON.Vector3((p + i) * 6, cubesize.l * 2, 20),
+        pos: new BABYLON.Vector3(-(appConst.fieldsize/2)-2, cubesize.l * 2, ((p + i) * 6)+4),
         scene: scene,
         size: 'l',
         color: cubecolors[i]
@@ -880,8 +882,8 @@ angular.module('angle').controller('worldCtrl',
               impostor: BABYLON.PhysicsEngine.BoxImpostor,
               move: true,
               mass: c.boxsize,
-              friction: 0.6,
-              restitution: 0.1
+              friction: fric,
+              restitution: rest
             });
           });
         groupMesh.length = 0;

@@ -79,8 +79,8 @@ angular.module('angle')
 
       $rootScope.isRole = function(usr, role){
         return (usr.profile.roles.indexOf(role) > -1)
-      }
-
+      };
+      
       $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
         // We can catch the error thrown when the $requireUser promise is rejected
         // and redirect the user back to the main page
@@ -98,6 +98,6 @@ angular.module('angle')
         console.warn('logout');
         if(err) console.log("Error:" + err);
         $state.go('main');
-      }
+      };
       Accounts.config({forbidClientAccountCreation : true});
 }]);

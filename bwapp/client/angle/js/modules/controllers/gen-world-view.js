@@ -1,12 +1,14 @@
 /**========================================================
- * Module: describe-view
- * Created by wjwong on 9/1/15.
+ * Module: gen-world-view.js
+ * Created by wjwong on 9/9/15.
  =========================================================*/
-angular.module('angle').controller('describeCtrl',
-  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteorCollection', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteorCollection, ngDialog, toaster){
+angular.module('angle').controller('genWorldCtrl',
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteorCollection', 'ngDialog', 'toaster', 'APP_CONST', 'md5', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteorCollection, ngDialog, toaster, appConst, md5){
     "use strict";
 
-    var hasPhysics = false;
+    var hasPhysics = true;
+    var fric = 0.1;
+    var rest = 0.2;
     var showGrid = true;
 
     var screenshotCanvas;
@@ -115,6 +117,14 @@ angular.module('angle').controller('describeCtrl',
       cubesnamed[objname] = box;
     };
 
+    var isZeroVec = function(vect3){
+      if(vect3.x < -0.001 || vect3.x > 0.001) return false;
+      if(vect3.y < -0.001 || vect3.y > 0.001) return false;
+      if(vect3.z < -0.001 || vect3.z > 0.001) return false;
+      return true;
+    };
+
+    var isSteadyState;
     // This begins the creation of a function that we will 'call' just after it's built
     var createScene = function () {
       // Now create a basic Babylon Scene object
@@ -129,7 +139,7 @@ angular.module('angle').controller('describeCtrl',
       //  Create an ArcRotateCamera aimed at 0,0,0, with no alpha, beta or radius, so be careful.  It will look broken.
       camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 0, 20, new BABYLON.Vector3(0, 4, 0), scene);
       // Quick, let's use the setPosition() method... with a common Vector3 position, to make our camera better aimed.
-      camera.setPosition(new BABYLON.Vector3(0, 15, -30));
+      camera.setPosition(new BABYLON.Vector3(0, 15, -23));
       // This creates and positions a free camera
       //camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 15, -46), scene);
       // This targets the camera to scene origin
@@ -137,12 +147,12 @@ angular.module('angle').controller('describeCtrl',
       // This attaches the camera to the canvas
       //camera.attachControl(canvas, true);
       /*camera.speed = 1;
-      camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); //bounding ellipse
-      camera.checkCollisions = true;
-      camera.keysUp = [87]; // w
-      camera.keysDown = [83]; // s
-      camera.keysLeft = [65]; //  a
-      camera.keysRight = [68]; // d*/
+       camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); //bounding ellipse
+       camera.checkCollisions = true;
+       camera.keysUp = [87]; // w
+       camera.keysDown = [83]; // s
+       camera.keysLeft = [65]; //  a
+       camera.keysRight = [68]; // d*/
 
       scene.activeCamera = camera;
       scene.activeCamera.attachControl(canvas, true);
@@ -207,7 +217,7 @@ angular.module('angle').controller('describeCtrl',
       tablemat.diffuseTexture = twood;
       tablemat.specularColor = BABYLON.Color3.Black();
       //var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {}); //shader grid
-      var tableboxsize = 30;
+      var tableboxsize = appConst.fieldsize;
       var table = BABYLON.Mesh.CreateBox("table", tableboxsize, scene);
       table.boxsize = tableboxsize;
       table.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
@@ -225,11 +235,11 @@ angular.module('angle').controller('describeCtrl',
       var gridmat = new BABYLON.StandardMaterial("grid", scene);
       gridmat.wireframe = true; //create wireframe
       gridmat.diffuseColor = BABYLON.Color3.Gray();
-      grid = BABYLON.Mesh.CreateGround("grid", 30, 30, 10, scene, false); //used to show grid
+      grid = BABYLON.Mesh.CreateGround("grid", appConst.fieldsize, appConst.fieldsize, 6, scene, false); //used to show grid
       grid.position.y = 0.02;
       grid.scaling.y = 0.001;
       grid.material = gridmat;
-      
+
       //add cube
       cubeslist.length = 0;
       numcubes = 0;
@@ -244,6 +254,34 @@ angular.module('angle').controller('describeCtrl',
         createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 20), scene: scene, size: 'l', color: cubecolors[i], isVisible: false});
       }
 
+      var animate = function(){
+        isSteadyState = true;
+        cubeslist.forEach(function(c){
+          //count the number of 0 move ticks
+          if(c.oldpos){
+            var delta = c.oldpos.subtract(c.position);
+            if(isZeroVec(delta)){
+              if(!c.zeromoveTicks) c.zeromoveTicks = 0;
+              c.zeromoveTicks++;
+              if(c.isMoving && c.zeromoveTicks > 10){//only reset color if it was moving
+                c.material.emissiveColor = new BABYLON.Color3.Black();
+                c.isMoving = false;
+                c.zeromoveTicks = 0;
+                c.tchecked = false;
+              }
+              else if(c.isMoving) isSteadyState = false;
+            }
+            else{
+              c.material.emissiveColor = new BABYLON.Color3(0.176, 0.85, 0.76);
+              c.isMoving = true;
+              isSteadyState = false;
+            }
+          }
+          c.oldpos = c.position.clone();
+        });
+      };
+      
+      scene.registerBeforeRender(animate);
       // Leave this function
       return scene;
     };  // End of createScene function
@@ -268,7 +306,7 @@ angular.module('angle').controller('describeCtrl',
       engine.resize();
     });
 
-    var textplane;
+    /*var textplane;
     var textplaneTexture;
     var textUpdate = function(text, pos) {
       //data reporter
@@ -289,79 +327,26 @@ angular.module('angle').controller('describeCtrl',
 
       //context2D.clearRect(0, 0, 512, 512);
       textplaneTexture.drawText(text, null, 256, "bold 140px verdana", "black", "#aaaaaa");
-    };
+    };*/
 
-    //**start app
-    $scope.replaydata = [];
-    var annotations = $meteorCollection(Annotations).subscribe('annotations');
-    Meteor.subscribe("jobs", {
-      onReady: function () {dataReady('jobs');},
-      onError: function () { console.log("onError", arguments); }
-    });
-    Meteor.subscribe("annotations", {
-      onReady: function () {dataReady('annotations');},
-      onError: function () { console.log("onError", arguments); }
-    });
+    //**start app========
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-    $scope.showTime = function(){
-      return (new Date).getTime();
-    };
-    
-    var readydat = [];
-    var myannot, myjob;
-    var dataReady = function(data){
-      console.warn('ready ', data, (new Date).getTime());
-      readydat.push(data);
-      if(readydat.length > 2){
-        if($stateParams.annotid){
-          $scope.annotid = $stateParams.annotid;
-          $scope.annot = $scope.findById(annotations, $scope.annotid);
-          myannot = Annotations.findOne({_id: $scope.annotid});
-          $scope.jobid = myannot.job;
-          //must wait until Jobs are connected
-          myjob = Jobs.findOne({_id: $scope.jobid});
-          if(myjob){
-            console.warn('myjob',$scope.jobid, myjob);
-            $scope.myreplay = myjob;
-            
-            if($scope.myreplay.keyframes.length){
-              var itKeyframes = function(idx, kfs, cb){
-                if(_.isUndefined(kfs[idx])) return cb();
-                console.warn(kfs[idx]);
-                $scope.frameid = kfs[idx];
-                showReplay(kfs[idx]);
-                setTimeout(function(){
-                  var doneDump = _.after($scope.renderviewdata.length, function(){
-                    itKeyframes(idx+1, kfs, cb);
-                  });
-                  $scope.renderviewdata.forEach(function(r){
-                    setTimeout(function(){
-                      console.warn(kfs[idx]+'_'+r.name);
-                      screenshotCanvas = document.getElementById(kfs[idx]+'_'+r.name);
-                      camera.setPosition(r.campos);
-                      //textUpdate(r.name, r.billb);
-                      var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
-                      doneDump();
-                    },0);
-                  });
-                }, 0);
-              };
-
-              setTimeout(function(){
-                itKeyframes(0, $scope.myreplay.keyframes, function(){
-                  $('#renderCanvasBab').css('display', 'none');
-                  $scope.$apply(function(){$rootScope.dataloaded = true;})
-                })
-              }, 700);
-            }
-            else toaster.pop('error', 'Game Missing Key Frames');
-          }
-        }
+    var cubecolors = ['red', 'yellow', 'cyan', 'purple', 'green', 'orange'];
+    $scope.cubeprops = [];
+    for(var s = 1; s < 4; s++){
+      for(var i = 0; i < 5; i++){
+        $scope.cubeprops.push({color: i, size: s, cid: (s-1)*5+i});
       }
-    };
+    }
 
     $scope.resetWorld = function(){
-      $scope.myreplay = null;
       camera.dispose();
       scene.dispose();
       engine.dispose();
@@ -371,57 +356,169 @@ angular.module('angle').controller('describeCtrl',
       createWorld();
     };
 
-    $scope.findById = function(collection, id){
-      return _.find(collection, function(a){return id === a._id});
+    var genstates = $meteorCollection(GenStates).subscribe('genstates');
+    Meteor.subscribe("genstates", {
+      onReady: function () {dataReady('genstates');},
+      onError: function () { console.log("onError", arguments); }
+    });
+
+    $scope.showTime = function(){
+      return (new Date).getTime();
     };
 
-    $scope.addAnnot = function(frameid){
-      console.warn('addAnnot', frameid);
-      if($scope.annot){
-        if(!$scope.annot.notes) $scope.annot.notes = {};
-        if(!$scope.annot.notes[frameid]) $scope.annot.notes[frameid] = [];
-        console.warn('obj',$scope.annot);
-        if($scope.annot.notes[frameid].length){
-          console.warn($scope.annot.notes[frameid][$scope.annot.notes[frameid].length-1].length);
-          if(!$scope.annot.notes[frameid][$scope.annot.notes[frameid].length-1].length){
-            toaster.pop('info', 'Fill in the Current Note');
-            return;
-          }
-        }
-        $scope.annot.notes[frameid].push('');
+    var readydat = [];
+    var dataReady = function(data){
+      console.warn('ready ', data, (new Date).getTime());
+      readydat.push(data);
+      if(readydat.length > 1){
+        console.warn($rootScope);
+        startGen();
+        $scope.$apply(function(){$rootScope.dataloaded = true;});
       }
-      else toaster.pop('error', 'Missing Annotation','For id '+ $scope.annotid);
     };
 
-    $scope.removeNote = function(frameid, idx){
-      console.warn('rem note', frameid, idx, $scope.annot.notes[frameid]);
-      $scope.annot.notes[frameid].splice(idx,1);
-      console.warn('rem note', frameid, idx, $scope.annot.notes[frameid]);
+    /**
+     * Overlap check for mesh in the x z footprint
+     * @param src
+     * @param tgt
+     * @returns {boolean}
+     */
+    var intersectsMeshXZ = function(src, tgt){
+      var s = (src.prop.size/2)-0.01; //slightly small
+      var a = {
+        max: {x: src.pos.x+s, y: src.pos.z+s},
+        min: {x: src.pos.x-s, y: src.pos.z-s}
+      };
+      s = tgt.prop.size/2;
+      var b = {
+        max: {x: tgt.pos.x+s, y: tgt.pos.z+s},
+        min: {x: tgt.pos.x-s, y: tgt.pos.z-s}
+      }
+
+      if (a.max.x < b.min.x) return false; // a is left of b
+      if (a.min.x > b.max.x) return false; // a is right of b
+      if (a.max.y < b.min.y) return false; // a is above b
+      if (a.min.y > b.max.y) return false; // a is below b
+      return true; // boxes overlap
+    };
+
+    /**
+     * Check for cube overlap and increase height based on in order cube creation
+     * @param mycube - current cube
+     * @param used - list of cubes already created in fifo order
+     * @param idxdata - index associative array to get prev cube positions
+     */
+    var checkYCube = function(mycube, used, idxdata){
+      //set cube to position
+      var ypos = mycube.pos.y;
+      used.forEach(function(cid){
+        var c = idxdata[cid];
+        if(intersectsMeshXZ(mycube, c)){
+          console.warn('intersect', mycube.prop.cid, mycube.pos.y, c.prop.cid, c.pos.y, ypos);
+          ypos += c.prop.size;
+        }
+      });
+      mycube.pos.y = ypos;
+    };
+
+    var genCube = function(used, idxdata){
+      var cid = getRandomInt(0,14);
+      while(used.has(cid)){
+        cid = getRandomInt(0,14);
+      }
+      var data = {prop: $scope.cubeprops[cid]};
+      var min = -(appConst.fieldsize/2) + (data.prop.size/2);
+      var max = (appConst.fieldsize/2) - (data.prop.size/2);
+      data.pos = new BABYLON.Vector3(getRandomInt(min, max), (data.prop.size/2), getRandomInt(min, max));
+      console.warn(data.pos);
+      checkYCube(data, used, idxdata);
+      used.add(cid);
+      idxdata[cid] = data;
+      return data;
+    };
+
+    $scope.showFrame = function(){
+      $scope.resetWorld();
+      state.forEach(function(s){
+        var c = cubeslist[s.prop.cid]; 
+        c.position = s.pos.clone();
+        c.isVisible = true;
+        if(hasPhysics) c.setPhysicsState({
+          impostor: BABYLON.PhysicsEngine.BoxImpostor,
+          move: true,
+          mass: c.boxsize,
+          friction: fric,
+          restitution: rest
+        });
+      })
+    };
+
+    var findByIdkey = function(collection, idkey){
+      return _.find(collection, function(a){return idkey === a.idkey});
+    };
+
+    var insertGen = function(init, used){
+      var str = '';
+      init.forEach(function(s){
+        str += s.prop.cid + ':' + s.pos.x + ':' + s.pos.y + ':' + s.pos.z+'\n';
+      })
+      var idkey = md5.createHash(str);
+      var mygstate = findByIdkey(genstates, idkey);
+      if(!mygstate){
+        console.warn('new state 0');
+        var frame = [];
+        used.forEach(function(cid){
+          var c = cubeslist[cid];
+          var dat = {cid: cid, name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()};
+          frame.push(dat);
+        });
+        var mystate = {
+          idkey: idkey,
+          init: init,
+          cubecnt: state.length,
+          frame: frame,
+          next: null,
+          prev: null,
+          public: true
+        };
+        genstates.save(mystate).then(function(val){
+          console.warn(val);
+          $scope.dbid = val[0]._id;
+          toaster.pop('info', 'State ' + idkey + ' Saved');
+          return false;
+        }, function(err){
+          toaster.pop('error', 'State ' + idkey, err.reason);
+          return false;
+        });
+      }
+      else{
+        console.warn('old state 0');
+        return true;
+      }
     };
     
-    $scope.submit = function(){
-      var kflen = $scope.myreplay.keyframes.length;
-      var len = Object.keys($scope.annot.notes).length;
-      console.warn(kflen, len);
-      if(kflen != len)
-        toaster.pop('error', 'All Frames must have a Note');
-      else{
-        var isValid = true;
-        _.each($scope.annot.notes, function(framenote, idx){
-          if(!framenote[framenote.length - 1].length){
-            //check for no text
-            toaster.pop('error', 'Frame ' + idx, 'Please fill in the notes');
-            isValid = false;
-          } 
-        });
-        if(isValid){
-          $scope.annot.submitted = new Date().getTime();
-          toaster.pop('info', 'Description Annotations Submitted');
-          //todo: submit should redirect to task view
-        }
+    var state = [];
+    var savedSS; //save steady state
+    var checkFnSS; //store steady state check
+    var startGen = function(){
+      savedSS = false;
+      var cubeidxdata = {};
+      var cubesused = new Set();
+      state.length = 0;
+      for(var i = 0; i < 10; i++){
+        var dat = genCube(cubesused, cubeidxdata);
+        state.push(dat);
       }
+      $scope.showFrame();
+      checkFnSS = setInterval(function(){
+        if(isSteadyState){
+          insertGen(state, cubesused);
+          savedSS = true;
+          clearInterval(checkFnSS);
+        }
+      }, 200);
     };
-
+    
     $scope.myreplay = null;
     $scope.frameid = -1;
     var showReplay = function(idx){
@@ -441,20 +538,20 @@ angular.module('angle').controller('describeCtrl',
         billb: new BABYLON.Vector3(0, 10, 40)
       }
       /*,{
-        name: 'Back',
-        campos: new BABYLON.Vector3(25, 15, 25),
-        billb: new BABYLON.Vector3(-20, 10, -20)
-      },
-      {
-        name: 'Left',
-        campos: new BABYLON.Vector3(-35, 15, 0),
-        billb: new BABYLON.Vector3(40, 10, 0)
-      },
-      {
-        name: 'Right',
-        campos: new BABYLON.Vector3(35, 15, 0),
-        billb: new BABYLON.Vector3(-40, 10, 0)
-      }*/
+       name: 'Back',
+       campos: new BABYLON.Vector3(25, 15, 25),
+       billb: new BABYLON.Vector3(-20, 10, -20)
+       },
+       {
+       name: 'Left',
+       campos: new BABYLON.Vector3(-35, 15, 0),
+       billb: new BABYLON.Vector3(40, 10, 0)
+       },
+       {
+       name: 'Right',
+       campos: new BABYLON.Vector3(35, 15, 0),
+       billb: new BABYLON.Vector3(-40, 10, 0)
+       }*/
     ];
     // Now, call the createScene function that you just finished creating
     var scene;

@@ -1,15 +1,42 @@
 //-**=========================================================
-  * Module: describe.ng.jade
-  * Created by wjwong on 9/1/15.
+  * Module: genworld.ng.jade
+  * Created by wjwong on 9/9/15.
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
   div(style='margin-top: 14px')
-    h2 Frame Descriptions
-  button.btn.btn-sm.btn-success(ng-click='submit()')
-    .fa.fa-send &nbsp;Submit
+    form.form-inline.ng-pristine.ng-valid(name='myform')
+      .form-group
+        label Cube Count: 
+        select.form-control 
+          option(ng-repeat='i in cubeprops track by $index', ng-model='ccnt', value='{{$index+1}}') {{$index+1}}
+      label &nbsp;&nbsp;&nbsp;
+      .form-group
+        label Generate Iterations:
+        -var opt = [20,40,80,160]
+        select.form-control
+          option(ng-repeat='i in cubeprops track by $index', ng-model='ccnt', value='{{$index+1}}') {{$index+1}}
+
   hr
-  canvas(id="renderCanvasBab" style='width: 320px; height: 220px;')
+  h3 Render for: {{dbid}}
+  div(style="position: absolute; z-index: 10;" class="col-sm-12")
+    div(style='margin-top: 14px')
+      button.btn.btn-sm(ng-click='resetWorld();')
+        .fa.fa-refresh(style='color:#fff') 
+          strong Reset
+      button.btn.btn-sm(ng-click='showFrame();')
+        .fa.fa-image(style='color:#fff') 
+          strong Show
+
+  div(ng-repeat='state in states track by $index')
+    .well {{$index}}
+      br
+      div(ng-repeat='s in state')
+        strong {{s.prop}}
+        | &nbsp;&nbsp;
+        i {{s.pos}}
+        br
+  canvas(id="renderCanvasBab" style='width: 640px; height: 440px;')
   canvas(id="canvas_2D")
 form(name='annotform')
   div(ng-show='myreplay.keyframes.length', ng-repeat = 'kf in myreplay.keyframes')

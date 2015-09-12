@@ -39,8 +39,8 @@ angular.module('angle')
         'vendor/glyphicons-pro/glyphicons_social/web/html_css/css/social.css',
         'vendor/glyphicons-pro/glyphicons_filetypes/web/html_css/css/filetypes.css'
       ],
-      'babylonjs':          [ 'vendor/babylonjs/babylon.2.1.debug.js',
-                              //'vendor/babylonjs/preview release - alpha/babylon.2.2.js',
+      'babylonjs':          [ //'vendor/babylonjs/babylon.2.1.debug.js',
+                              'vendor/babylonjs/preview release - alpha/babylon.2.2.js',
                               'vendor/babylonjs/Oimo.js',
                               'vendor/handjs/hand.js'],
       'circular-json':      ['vendor/circular-json/build/circular-json.js'],
@@ -58,6 +58,9 @@ angular.module('angle')
         'vendor/angularjs-toaster/toaster.js',
         'vendor/angularjs-toaster/toaster.css'
       ]},
+      {name: 'ngMd5',                   files: [
+        'vendor/angular-md5/angular-md5.min.js'
+      ]},
       {name: 'ngDialog', files: [
         'vendor/ngDialog/css/ngDialog.min.css',
         'vendor/ngDialog/css/ngDialog-theme-default.min.css',
@@ -68,5 +71,8 @@ angular.module('angle')
         'vendor/datatables/media/js/jquery.dataTables.js',
         'vendor/angular-datatables/dist/angular-datatables.min.js'], serie: true},
     ]
+  })
+  .constant('APP_CONST', {
+    'fieldsize': 18
   })
 ;
