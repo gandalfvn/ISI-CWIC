@@ -11,7 +11,7 @@ angular.module('angle').controller('genWorldCtrl',
     var rest = 0.2;
     var showGrid = true;
 
-    var screenshotCanvas;
+    var screenshotCanvas = document.getElementById('screencap');
     BABYLON.Tools.DumpFramebuffer = function (width, height, engine) {
       console.log("MY version of DumpFramebuffer - Activated!", screenshotCanvas);
       // Read the contents of the framebuffer
@@ -528,6 +528,7 @@ angular.module('angle').controller('genWorldCtrl',
         if(isSteadyState){
           clearInterval(checkFnSS);
           insertGen(state, cubesused);
+          var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
           if(itr > 1) $scope.startGen(ccnt, itr-1);
         }
       }, 200);
