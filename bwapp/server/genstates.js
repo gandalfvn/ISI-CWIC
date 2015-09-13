@@ -5,12 +5,12 @@
 
 GenStates.allow({
   insert: function(userId, replay){
-    var fcheck = _.without(_.keys(replay), 'idkey', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init');
+    var fcheck = _.without(_.keys(replay), '_id','idkey', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init', 'screencap');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },
   update: function(userId, replay, fields, modifier){
-    var fcheck = _.without(_.keys(replay), 'idkey', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init');
+    var fcheck = _.without(_.keys(replay), '_id', 'idkey', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init', 'screencap');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },

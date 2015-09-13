@@ -125,11 +125,12 @@ angular.module('angle').controller('genWorldCtrl',
     };
 
     var isSteadyState;
+    var oimo;
     // This begins the creation of a function that we will 'call' just after it's built
     var createScene = function () {
       // Now create a basic Babylon Scene object
       var scene = new BABYLON.Scene(engine);
-      var oimo = new BABYLON.OimoJSPlugin();
+      oimo = new BABYLON.OimoJSPlugin();
       scene.enablePhysics(new BABYLON.Vector3(0, -10, 0), oimo);
       // Change the scene background color to green.
       scene.clearColor = new BABYLON.Color3(0, 0, 0.5);
@@ -245,13 +246,13 @@ angular.module('angle').controller('genWorldCtrl',
       numcubes = 0;
       var p = -2;
       for(var i = 0; i < 5; i++){
-        createCube({pos: new BABYLON.Vector3(-16,cubesize.s*2,(p+i)*2), scene: scene, size: 's', color: cubecolors[i], isVisible: false});
+        createCube({pos: new BABYLON.Vector3((p+i)*2,cubesize.s*2, 28), scene: scene, size: 's', color: cubecolors[i], isVisible: false});
       }
       for(var i = 0; i < 5; i++){
-        createCube({pos: new BABYLON.Vector3(17,cubesize.m*2,(p+i)*4), scene: scene, size: 'm', color: cubecolors[i], isVisible: false});
+        createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.m*2, 30), scene: scene, size: 'm', color: cubecolors[i], isVisible: false});
       }
       for(var i = 0; i < 5; i++){
-        createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 20), scene: scene, size: 'l', color: cubecolors[i], isVisible: false});
+        createCube({pos: new BABYLON.Vector3((p+i)*4,cubesize.l, 40), scene: scene, size: 'l', color: cubecolors[i], isVisible: false});
       }
 
       var animate = function(){
@@ -347,13 +348,29 @@ angular.module('angle').controller('genWorldCtrl',
     }
 
     $scope.resetWorld = function(){
-      camera.dispose();
-      scene.dispose();
-      engine.dispose();
-      engine = null;
-      camera = null;
-      scene = null;
-      createWorld();
+      var c;
+      var p = -2;
+      for(var i = 0; i < 5; i++){
+        c = cubeslist[i];
+        if(hasPhysics) oimo.unregisterMesh(c); //stop physics
+        c.position = new BABYLON.Vector3((p+i)*2,cubesize.s*2, 28);
+        c.rotationQuaternion = BABYLON.Quaternion.Identity().clone();
+        c.isVisible = false;
+      }
+      for(var i = 0; i < 5; i++){
+        c = cubeslist[i+5];
+        if(hasPhysics) oimo.unregisterMesh(c); //stop physics
+        c.position = new BABYLON.Vector3((p+i)*4,cubesize.m*2, 30);
+        c.rotationQuaternion = BABYLON.Quaternion.Identity().clone();
+        c.isVisible = false;
+      }
+      for(var i = 0; i < 5; i++){
+        c = cubeslist[i+10];
+        if(hasPhysics) oimo.unregisterMesh(c); //stop physics
+        c.position = new BABYLON.Vector3((p+i)*4,cubesize.l, 40);
+        c.rotationQuaternion = BABYLON.Quaternion.Identity().clone();
+        c.isVisible = false;
+      }
     };
 
     var genstates = $meteorCollection(GenStates).subscribe('genstates');
@@ -371,8 +388,6 @@ angular.module('angle').controller('genWorldCtrl',
       console.warn('ready ', data, (new Date).getTime());
       readydat.push(data);
       if(readydat.length > 1){
-        console.warn($rootScope);
-        startGen();
         $scope.$apply(function(){$rootScope.dataloaded = true;});
       }
     };
@@ -498,23 +513,22 @@ angular.module('angle').controller('genWorldCtrl',
     };
     
     var state = [];
-    var savedSS; //save steady state
     var checkFnSS; //store steady state check
-    var startGen = function(){
-      savedSS = false;
+    $scope.startGen = function(ccnt, itr){
       var cubeidxdata = {};
       var cubesused = new Set();
       state.length = 0;
-      for(var i = 0; i < 10; i++){
+      for(var i = 0; i < ccnt; i++){
         var dat = genCube(cubesused, cubeidxdata);
         state.push(dat);
       }
+      $scope.curitr = itr;
       $scope.showFrame();
       checkFnSS = setInterval(function(){
         if(isSteadyState){
-          insertGen(state, cubesused);
-          savedSS = true;
           clearInterval(checkFnSS);
+          insertGen(state, cubesused);
+          if(itr > 1) $scope.startGen(ccnt, itr-1);
         }
       }, 200);
     };
