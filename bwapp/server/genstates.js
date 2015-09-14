@@ -7,11 +7,13 @@ GenStates.allow({
   insert: function(userId, replay){
     var fcheck = _.without(_.keys(replay), '_id','idkey', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init', 'screencap');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
+    console.warn('gsi', replay);
     return userId;
   },
   update: function(userId, replay, fields, modifier){
     var fcheck = _.without(_.keys(replay), '_id', 'idkey', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init', 'screencap');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
+    console.warn('gsu', replay);
     return userId;
   },
   remove: function(userId, replay){

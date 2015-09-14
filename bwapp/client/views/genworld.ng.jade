@@ -14,7 +14,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       .form-group
         label Generate Iterations:
         select.form-control(ng-model='itr')
-          each v in [10,40,80,160,320]
+          each v in [1, 2, 10,40,80,160,320]
             option(value='#{v}') #{v}
       button.btn.btn-default(type='submit') Go
   hr
@@ -39,6 +39,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   canvas(id="renderCanvasBab" style='width: 640px; height: 440px;')
   canvas(id="canvas_2D")
   canvas(id="screencap", style='width: 640px; height: 440px;')
+  canvas(id="screendisp", style='width: 640px; height: 440px;')
 form(name='annotform')
   div(ng-show='myreplay.keyframes.length', ng-repeat = 'kf in myreplay.keyframes')
     .row-fluid.col-sm-12(style='border-bottom:solid 2px #eee;')

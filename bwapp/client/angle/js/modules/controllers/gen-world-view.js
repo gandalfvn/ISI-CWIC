@@ -12,21 +12,23 @@ angular.module('angle').controller('genWorldCtrl',
     var showGrid = true;
 
     var screenshotCanvas = document.getElementById('screencap');
+    var imageData;
+    var screenRaw;
     BABYLON.Tools.DumpFramebuffer = function (width, height, engine) {
       console.log("MY version of DumpFramebuffer - Activated!", screenshotCanvas);
       // Read the contents of the framebuffer
       var numberOfChannelsByLine = width * 4;
       var halfHeight = height / 2;
       //Reading datas from WebGL
-      var data = engine.readPixels(0, 0, width, height);
+      screenRaw = engine.readPixels(0, 0, width, height);
       for (var i = 0; i < halfHeight; i++) {
         for (var j = 0; j < numberOfChannelsByLine; j++) {
           var currentCell = j + i * numberOfChannelsByLine;
           var targetLine = height - i - 1;
           var targetCell = j + targetLine * numberOfChannelsByLine;
-          var temp = data[currentCell];
-          data[currentCell] = data[targetCell];
-          data[targetCell] = temp;
+          var temp = screenRaw[currentCell];
+          screenRaw[currentCell] = screenRaw[targetCell];
+          screenRaw[targetCell] = temp;
         }
       }
       // Create a 2D canvas to store the result
@@ -37,10 +39,10 @@ angular.module('angle').controller('genWorldCtrl',
       screenshotCanvas.height = height;
       var context = screenshotCanvas.getContext('2d');
       // Copy the pixels to a 2D canvas
-      var imageData = context.createImageData(width, height);
+      imageData = context.createImageData(width, height);
       //cast is due to ts error in lib.d.ts, see here - https://github.com/Microsoft/TypeScript/issues/949
       var castData = imageData.data;
-      castData.set(data);
+      castData.set(screenRaw);
       context.putImageData(imageData, 0, 0);
       return imageData.data;
     };
@@ -471,6 +473,15 @@ angular.module('angle').controller('genWorldCtrl',
       return _.find(collection, function(a){return idkey === a.idkey});
     };
 
+    var Uint8ToString = function(u8a){
+      var CHUNK_SZ = 0x8000;
+      var c = [];
+      for (var i=0; i < u8a.length; i+=CHUNK_SZ) {
+        c.push(String.fromCharCode.apply(null, u8a.subarray(i, i+CHUNK_SZ)));
+      }
+      return c.join("");
+    }
+    
     var insertGen = function(init, used){
       var str = '';
       init.forEach(function(s){
@@ -479,18 +490,35 @@ angular.module('angle').controller('genWorldCtrl',
       var idkey = md5.createHash(str);
       var mygstate = findByIdkey(genstates, idkey);
       if(!mygstate){
-        console.warn('new state 0');
         var frame = [];
         used.forEach(function(cid){
           var c = cubeslist[cid];
           var dat = {cid: cid, name: c.name, position: c.position.clone(), rotquat: c.rotationQuaternion.clone()};
           frame.push(dat);
         });
+        var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
+        /*var buffer = new ArrayBuffer(screenRaw.length);
+        var myscap = new Uint8Array(buffer);
+        myscap.set(screenRaw, 0, screenRaw.length);
+        console.warn('myscap',myscap.length, myscap);*/
+        /*setTimeout(function(){
+          var screenshotCanvas = document.getElementById('screencap');
+          var context = screenshotCanvas.getContext('2d');
+          var imageData = context.getImageData(0, 0, 640,440);
+          var myscreendisp = document.getElementById('screendisp');
+          myscreendisp.width = 640;
+          myscreendisp.height = 440;
+          var mydispctx = myscreendisp.getContext('2d');
+          mydispctx.putImageData(imageData, 0, 0);
+          console.warn('imgdata', imageData.data.length, imageData.height, imageData.width, imageData.data);
+        }, 100)*/
+        var b64encoded = btoa(Uint8ToString(screenRaw));
         var mystate = {
           idkey: idkey,
           init: init,
           cubecnt: state.length,
           frame: frame,
+          screencap: b64encoded,
           next: null,
           prev: null,
           public: true
@@ -499,6 +527,7 @@ angular.module('angle').controller('genWorldCtrl',
           console.warn(val);
           $scope.dbid = val[0]._id;
           toaster.pop('info', 'State ' + idkey + ' Saved');
+          showImage(b64encoded);
           return false;
         }, function(err){
           toaster.pop('error', 'State ' + idkey, err.reason);
@@ -511,6 +540,24 @@ angular.module('angle').controller('genWorldCtrl',
       }
     };
     
+    var showImage = function(b64){
+      var u8_2 = new Uint8Array(atob(b64).split("").map(function(c) {
+        return c.charCodeAt(0); }));
+      console.warn('u8_2', u8_2);
+      var screenshotCanvas = document.getElementById('screendisp');
+      screenshotCanvas.width = canvas.width;
+      screenshotCanvas.height = canvas.height;
+      var context = screenshotCanvas.getContext('2d');
+      // Copy the pixels to a 2D canvas
+      var imageData = context.createImageData(640,440);
+      var data = imageData.data;
+      for (var i = 0, len = u8_2.length; i < len; i++) {
+        data[i] = u8_2[i];
+      }
+      console.warn('siid',imageData);
+      context.putImageData(imageData, 0, 0);
+    };
+
     var state = [];
     var checkFnSS; //store steady state check
     $scope.startGen = function(ccnt, itr){
@@ -527,7 +574,6 @@ angular.module('angle').controller('genWorldCtrl',
         if(isSteadyState){
           clearInterval(checkFnSS);
           insertGen(state, cubesused);
-          var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
           if(itr > 1) $scope.startGen(ccnt, itr-1);
         }
       }, 200);
