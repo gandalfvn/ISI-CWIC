@@ -77,7 +77,6 @@ angular.module('angle').controller('genWorldCtrl',
       var boxsize = cubesize[data.size];
       var objname = "cube_"+ boxsize + '_' + data.color + '_' +numcubes;
       var boxcolor = colorids[data.color];
-      console.warn(objname);
       var boxmat = new BABYLON.StandardMaterial(objname, data.scene);
       /*var boxt = new BABYLON.Texture("img/textures/wood.jpg", scene);
        boxt.uScale = boxt.vScale = 1;
