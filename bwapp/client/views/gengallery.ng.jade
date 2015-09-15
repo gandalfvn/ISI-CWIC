@@ -1,0 +1,17 @@
+//-**=========================================================
+  * Module: gengallery.ng.jade
+  * Created by wjwong on 9/14/15.
+  =========================================================*/
+toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
+
+.row-fluid.col-sm-4
+  div
+    h4(ng-show='dbid') Iteration: {{curitr}}  Render for: {{dbid}}
+    canvas(id="renderCanvasBab", style='width: 320px; height: 220px;')
+    canvas(id="canvas_2D")
+.row-fluid.col-sm-12
+  hr
+  .well.row
+    h3 Gallery
+    br
+    #galleryarea
