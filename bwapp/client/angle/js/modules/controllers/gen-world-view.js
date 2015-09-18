@@ -265,7 +265,7 @@ angular.module('angle').controller('genWorldCtrl',
             if(isZeroVec(delta)){
               if(!c.zeromoveTicks) c.zeromoveTicks = 0;
               c.zeromoveTicks++;
-              if(c.isMoving && c.zeromoveTicks > 10){//only reset color if it was moving
+              if(c.isMoving && c.zeromoveTicks > 20){//only reset color if it was moving
                 c.material.emissiveColor = new BABYLON.Color3.Black();
                 c.isMoving = false;
                 c.zeromoveTicks = 0;
@@ -693,7 +693,7 @@ angular.module('angle').controller('genWorldCtrl',
      * @param ltype
      */
     $scope.startGen = function(ccnt, itr, ltype, cstate){
-      console.warn('startGen',ltype, cstate, itr, ccnt);
+      console.warn('startGen',itr, ltype, cstate, ccnt);
       var cubeidxdata = {};
       var cubesused = new Set();
       if(cstate == 0){
@@ -704,12 +704,15 @@ angular.module('angle').controller('genWorldCtrl',
           var dat = genCubeState0(cubesused, cubeidxdata, ltype);
           state.push(dat);
         }
+        console.warn('done state', state);
         $scope.curitr = itr;
         $scope.showInitFrame(state);
         checkFnSS = setInterval(function(){
           if(isSteadyState){
+            console.warn('isSteadystate');
             clearInterval(checkFnSS);
             var insRet = insertGen(state, cubesused, ltype, cstate);
+            console.warn('insRet', insRet);
             if(insRet){
               if(itr > 1) $scope.startGen(ccnt, itr-1, ltype, cstate);
               else{
@@ -723,7 +726,7 @@ angular.module('angle').controller('genWorldCtrl',
               $scope.startGen(ccnt, itr, ltype, cstate);
             }
           }
-        }, 2000);
+        }, 200);
       }
       else{
         //todo: check itr value - may not be undefined
@@ -737,8 +740,9 @@ angular.module('angle').controller('genWorldCtrl',
             var myframe = GenStates.findOne({_id: sid});
             console.warn('frame',myframe);
             showImage(myframe.screencap, sid);
-            //$scope.showInitFrame(myframe.init);
-            showFrame(myframe.frame);
+            if(myframe.init.length)
+              $scope.showInitFrame(myframe.init);
+            else showFrame(myframe.frame);
             checkFnSS = setInterval(function(){
               if(isSteadyState){
                 clearInterval(checkFnSS);
@@ -750,6 +754,34 @@ angular.module('angle').controller('genWorldCtrl',
       }
     };
     
+    $scope.showState = function(sid){
+      console.warn('showState', sid); //tkLBwtYvZ7ndYSheM
+      //we must get the state for this sid
+      $scope.$meteorSubscribe("genstates", sid).then(
+        function(sub){
+          var myframe = GenStates.findOne({_id: sid});
+          showImage(myframe.screencap, sid);
+          if(myframe.init.length)
+            $scope.showInitFrame(myframe.init);
+          else showFrame(myframe.frame);
+        }
+      )
+    };
+
+    $scope.testState = function(sid){
+      console.warn('testState', sid); //tkLBwtYvZ7ndYSheM
+      //we must get the state for this sid
+      $scope.$meteorSubscribe("genstates", sid).then(
+        function(sub){
+          var myframe = GenStates.findOne({_id: sid});
+          showImage(myframe.screencap, sid);
+          if(myframe.init.length)
+            $scope.showInitFrame(myframe.init);
+          else showFrame(myframe.frame);
+        }
+      )
+    };
+
     $scope.myreplay = null;
     $scope.frameid = -1;
     var showReplay = function(idx){
