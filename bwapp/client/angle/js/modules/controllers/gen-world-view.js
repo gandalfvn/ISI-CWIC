@@ -710,9 +710,7 @@ angular.module('angle').controller('genWorldCtrl',
           if(isSteadyState){
             clearInterval(checkFnSS);
             var insRet = insertGen(state, cubesused, ltype, cstate);
-            if(insRet && true){
-              console.warn('vals:', itr);
-              state.forEach(function(s){console.warn(s.prop.name, s.position)});
+            if(insRet){
               if(itr > 1) $scope.startGen(ccnt, itr-1, ltype, cstate);
               else{
                 $scope.dbid = null;
