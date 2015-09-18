@@ -4,27 +4,35 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
-  h3 Generate Initial State
+  h3 Generate State
   .row-fluid.col-sm-3
     div(style='margin-top: 14px', ng-if='!isgen')
-      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, itr, ltyp)')
+      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, itr, ltyp, cstate)')
         .form-group
-          label Cube Count: 
-          select.form-control(ng-model='ccnt')
-            option(ng-repeat='i in cubeprops track by $index', value='{{$index+1}}') {{$index+1}}
-        label &nbsp;&nbsp;&nbsp;
-        br
-        .form-group
+          label Create State: 
+          select.form-control(ng-model='cstate', ng-init='cstate=0')
+            option(ng-repeat='i in statenum', value='{{i}}', ng-selected='cstate==(i)') {{i}}
+            option(ng-show='!statenum.length', value='0', ng-selected='cstate==0') 0
+            option(ng-show='statenum.length', value='{{statenum[statenum.length-1]+1}}') {{statenum[statenum.length-1]+1}}
+        .form-group(ng-show='cstate==0')
+          label Cube Count min: 
+          select.form-control(ng-model='ccnt.min', ng-init='ccnt.min=1')
+            option(ng-repeat='i in cubeprops track by $index', value='{{$index+1}}', ng-selected='ccnt.min==($index+1)') {{$index+1}}
+          label &nbsp;&nbsp;max:
+          select.form-control(ng-model='ccnt.max', ng-init='ccnt.max=1')
+            option(ng-show='($index+1) >= ccnt.min', ng-repeat='i in cubeprops track by $index', value='{{$index+1}}', ng-selected='ccnt.max==($index+1)') {{$index+1}}
+          br
+        .form-group(ng-show='cstate==0')
           label Generate Iterations:
           select.form-control(ng-model='itr')
-            each v in [1, 2, 10,40,80,160,320,640]
-              option(value='#{v}') #{v}
-        br
+            each v in [1, 2, 10,40,80,160,320,500, 640]
+              option(value='#{v}', ng-selected='itr==#{v}') #{v}
+          br
         .form-group
           label Layout Type:
-          select.form-control(ng-model='ltyp')
+          select.form-control(ng-model='ltyp', ng-init='ltyp="near"')
             each v in ['near', 'far']
-              option(value='#{v}') #{v}
+              option(value='#{v}', ng-selected='ltyp==#{v}') #{v}
         br
         button.btn.btn-default(type='submit') Go
   .row-fluid.col-sm-4
