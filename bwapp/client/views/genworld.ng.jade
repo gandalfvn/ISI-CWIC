@@ -42,10 +42,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           input(type='text', ng-model='sid')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
       br
-      form.form-inline.ng-pristine.ng-valid(name='mytestform', ng-submit='testState(sid)')
+      form.form-inline.ng-pristine.ng-valid(name='mytestform', ng-submit='genStateN({sid: tsid})')
         .form-group
           label Test State Move:
-          input(type='text', ng-model='sid')
+          input(type='text', ng-model='tsid')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
 
   .row-fluid.col-sm-4
