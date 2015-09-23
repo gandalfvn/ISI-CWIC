@@ -637,7 +637,10 @@ angular.module('angle').controller('genWorldCtrl',
                 var myframe = findBy('_id', previd, genstates);
                 if(!myframe.next) myframe.next = [];
                 myframe.next.push($scope.dbid);
-                saveState();
+                console.warn('myframe next', myframe._id, JSON.stringify(myframe.next));
+                genstates.save(myframe).then(function(sub){
+                  saveState();
+                }, function(err){console.error('error:'+err)})
               }
             )
           }
@@ -858,7 +861,7 @@ angular.module('angle').controller('genWorldCtrl',
           });
           var cubeDat;
           if(params.ltype){
-            console.warn(params.ltype);
+            //let gencube choose a cube and create a position based on it
             if(params.ltype == 'near'){
               cubeDat = genCubeNear(0, cidlist, cubeInWorld);
             }
@@ -867,8 +870,13 @@ angular.module('angle').controller('genWorldCtrl',
             }
           }
           else cubeDat = genCubeNear(0, cidlist,cubeInWorld); //we use size 0 here since we will use the anchor cube size later
-          var acube = cubeInWorld[cubeDat.anchorCid];
-          var cubeStack = getStackCubes(acube, used, cubeDat.anchorCid);
+          //now we randomly choose a cube outside of the anchor cube id to move to the new position
+          var mycid = cubeDat.anchorCid;
+          while(mycid == cubeDat.anchorCid && myframe.frame.length>1){//choose a cube not the anchor cube
+            mycid = myframe.frame[getRandomInt(0, myframe.frame.length-1)].cid;
+          }
+          var acube = cubeInWorld[mycid];
+          var cubeStack = getStackCubes(acube, used, mycid);
           //get the cubes left in the world
           cidlist.splice(_.indexOf(cidlist, acube.prop.cid), 1);
           cubeStack.forEach(function(c){cidlist.splice(_.indexOf(cidlist, c.prop.cid), 1)});

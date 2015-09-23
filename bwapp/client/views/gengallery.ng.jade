@@ -4,14 +4,31 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 
-.row-fluid.col-sm-4
-  div
-    h4(ng-show='dbid') Iteration: {{curitr}}  Render for: {{dbid}}
-    canvas(id="renderCanvasBab", style='width: 320px; height: 220px;')
-    canvas(id="canvas_2D")
+.row-fluid.col-sm-12.mb
+  h3 State Gallery
+  .row-fluid.col-sm-12
+    div(style='margin-top: 14px')
+      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='showGallery(cstate, ltyp, shonext)')
+        .form-group
+          label Show State:
+          select.form-control(ng-model='cstate', ng-init='cstate=0')
+            option(ng-repeat='i in statenum', value='{{i}}', ng-selected='cstate==(i)') {{i}}
+          | &nbsp;&nbsp;
+          label Layout Type:
+          select.form-control(ng-model='ltyp', ng-init='ltyp="both"')
+            each v in ['both','near', 'far']
+              option(value='#{v}', ng-selected='ltyp==#{v}') #{v}
+          | &nbsp;&nbsp;
+          label Show Next State
+          input(type='checkbox', ng-model='shonext')
+          | &nbsp;&nbsp;
+          button.btn.btn-default(type='submit') Go
+
+  //-.row-fluid.col-sm-4
+    div
+      h4(ng-show='dbid') Iteration: {{curitr}}  Render for: {{dbid}}
+      canvas(id="renderCanvasBab", style='width: 320px; height: 220px;')
+      canvas(id="canvas_2D")
 .row-fluid.col-sm-12
-  hr
   .well.row
-    h3 Gallery
-    br
     #galleryarea
