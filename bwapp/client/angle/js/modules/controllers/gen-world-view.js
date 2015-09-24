@@ -498,18 +498,21 @@ angular.module('angle').controller('genWorldCtrl',
       return null
     };
     
-    var genCubeState0 = function(used, idxdata, ltype){
+    var genCubeState0 = function(used, idxdata){
       var cid = getRandomInt(0,14);
       while(used.has(cid)){
         cid = getRandomInt(0,14);
       }
       var data = {prop: $scope.cubeprops[cid]};
       if(used.size){
-        if(ltype == 'near'){
+        var ltype = getRandomInt(0, 9);
+        if(ltype < 5){
+          console.warn('state0 near');
           var cubeDat = genCubeNear(data.prop.size, used, idxdata);
           if(cubeDat) data.position = cubeDat.position;
         }
         else{
+          console.warn('state0 far');
           var cubeDat = genCubeFar(data.prop.size, used, idxdata);
           if(cubeDat) data.position = cubeDat.position;
         }
@@ -577,7 +580,7 @@ angular.module('angle').controller('genWorldCtrl',
         return c.charCodeAt(0); }));
     };
     
-    var insertGen = function(used, ltype, curstate, previd, prevscreen){
+    var insertGen = function(used, curstate, previd, prevscreen){
       var str = '';
       used.forEach(function(cid){
         var c = cubeslist[cid];
@@ -618,7 +621,6 @@ angular.module('angle').controller('genWorldCtrl',
           cubecnt: cnt,
           frame: frame,
           screencap: b64encoded,
-          ltype: ltype,
           public: true,
           created: (new Date).getTime()
         };
@@ -650,33 +652,43 @@ angular.module('angle').controller('genWorldCtrl',
           function saveState(){
             var statelobj = findBy('stateid', curstate, stateslist);
             if(statelobj){
-              if(!statelobj.near) statelobj.near = [];
-              if(!statelobj.far) statelobj.far = [];
               var listidx = _.indexOf(statelobj.list, $scope.dbid);
               console.warn('listidx', listidx);
               if(listidx < 0){
                 statelobj.list.push($scope.dbid);
-                statelobj[ltype].push($scope.dbid);
+                statelobj.updated = (new Date).getTime();
               }
               else console.warn('found in state list ', curstate, $scope.dbid);
-              toaster.pop('info', 'State ' + $scope.dbid + ' Saved');
               if(previd){
+                if(!statelobj.listtrans) statelobj.listtrans = {};
+                statelobj.listtrans[previd + '_' + $scope.dbid] = {ids: {prev: previd, cur: $scope.dbid}};
+                statelobj.updated = (new Date).getTime();
                 showImage(prevscreen, previd, '&nbsp;Before');
                 showImage(b64encoded, $scope.dbid, '&nbspAfter');
               }
               else
                 showImage(b64encoded, $scope.dbid);
+              toaster.pop('info', 'State ' + $scope.dbid + ' Saved');
             }
             else{
               var state = {
                 stateid: curstate,
                 list: [$scope.dbid],
                 public: true,
-                created: (new Date).getTime()
+                created: (new Date).getTime(),
+                updated: (new Date).getTime()
+              };
+              if(previd){
+                if(!state.listtrans) state.listtrans = {};
+                state.listtrans[previd + '_' + $scope.dbid] = {ids: {prev: previd, cur: $scope.dbid}};
               }
-              state[ltype] = [$scope.dbid];
               stateslist.save(state).then(function(val){
                 toaster.pop('info', 'State ' + $scope.dbid + ' Saved');
+                console.warn('stateslist saved', stateslist);
+                $scope.statenum = [];
+                stateslist.forEach(function(s){
+                  $scope.statenum.push(Number(s.stateid));
+                });
                 if(previd){
                   showImage(prevscreen, previd, '&nbsp;Before');
                   showImage(b64encoded, $scope.dbid, '&nbspAfer');
@@ -735,10 +747,10 @@ angular.module('angle').controller('genWorldCtrl',
         if(isSteadyState){
           console.warn('isSteadystate');
           clearInterval(checkFnSS);
-          var insRet = insertGen(params.cubesused, params.ltype, params.cstate, params.prev, params.prevscreen);
+          var insRet = insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen);
           console.warn('insRet', insRet);
           if(insRet){
-            if(params.itr > 0) $scope.startGen(params.ccnt, params.itr-1, params.ltype, params.cstate);
+            if(params.itr > 0) $scope.startGen(params.ccnt, params.itr-1, params.cstate);
             else{
               $scope.dbid = null;
               $scope.curitr = 0;
@@ -747,7 +759,7 @@ angular.module('angle').controller('genWorldCtrl',
           else{
             //don't iterate since we had error with previous insert
             //which means we need to make a new init state
-            $scope.startGen(params.ccnt, params.itr, params.ltype, params.cstate);
+            $scope.startGen(params.ccnt, params.itr, params.cstate);
           }
         }
       }, 200);
@@ -755,38 +767,43 @@ angular.module('angle').controller('genWorldCtrl',
     
     /**
      * start generation of cubes based on number of buces, iterations, and layout type
+     * 
      * @param ccnt
      * @param itr
-     * @param ltype
+     * @param cstate
      */
-    $scope.startGen = function(ccnt, itr, ltype, cstate){
-      console.warn('startGen',itr, ltype, cstate, ccnt);
+    $scope.startGen = function(ccnt, itr, cstate){
+      console.warn('startGen',itr, cstate, ccnt);
       var cubeidxdata = {};
       var cubesused = new Set();
       if(cstate == 0){
-        if(itr){
+        if(itr > 0){
           state.length = 0;
           var myccnt = getRandomInt(Number(ccnt.min), Number(ccnt.max));
           console.warn('cstate', myccnt, ccnt);
           for(var i = 0; i < myccnt; i++){
-            var dat = genCubeState0(cubesused, cubeidxdata, ltype);
+            var dat = genCubeState0(cubesused, cubeidxdata);
             state.push(dat);
           }
           console.warn('done state', state);
           $scope.curitr = itr;
           $scope.showInitFrame(state);
-          var params = {ccnt: ccnt, itr: itr, ltype: ltype, cstate: cstate, cubesused: cubesused};
-          waitForSSAndSave(params);
+          var params = {ccnt: ccnt, itr: itr, cstate: cstate, cubesused: cubesused};
+          //we need to set a timeout before checking steading states or we get bad block layouts
+          setTimeout(function(){waitForSSAndSave(params);}, 500);
         }
-        else toaster.pop('error','Please set Iterations');
+        if(itr === undefined) toaster.pop('error','Please set Iterations');
       }
       else{
         var statel = findBy('stateid', cstate - 1, stateslist);
-        if(itr === undefined || itr < 0) itr = statel.list.length - 1; //if first run for state n+1
+        if(itr === undefined || itr < 0){
+          itr = statel.list.length - 1; //if first run for state n+1
+          console.warn('in length', itr);
+        }
         $scope.curitr = itr;
-        console.warn(statel.list[itr], itr);
+        console.warn('pic', stateslist, statel.list, statel.list.length, statel.list[itr], itr);
         var sid = statel.list[itr];
-        var params = {ccnt: ccnt, itr: itr, ltype: ltype, cstate: cstate, sid: sid};
+        var params = {ccnt: ccnt, itr: itr, cstate: cstate, sid: sid};
         $scope.genStateN(params);
         //we must get the state for this sid
         /*$scope.$meteorSubscribe("genstates", sid).then(
@@ -844,7 +861,7 @@ angular.module('angle').controller('genWorldCtrl',
         function(sub){
           var myframe = GenStates.findOne({_id: params.sid});
           console.warn(myframe.frame);
-          if(!params.ltype) //show when we use 'show state' input
+          if(!params.cstate) //show when we use 'show state' input
             showImage(myframe.screencap, params.sid, '&nbsp;Show');
           //showFrame(myframe.frame);
           //create a munge of cube position rotate and props
@@ -860,9 +877,10 @@ angular.module('angle').controller('genWorldCtrl',
             cubesused.add(p.cid);
           });
           var cubeDat;
-          if(params.ltype){
+          if(params.cstate){
             //let gencube choose a cube and create a position based on it
-            if(params.ltype == 'near'){
+            var ltype = getRandomInt(0,9);
+            if(ltype < 5){
               cubeDat = genCubeNear(0, cidlist, cubeInWorld);
             }
             else{
@@ -905,7 +923,7 @@ angular.module('angle').controller('genWorldCtrl',
             params.cubesused = cubesused;
             params.prev = params.sid;
             params.prevscreen = myframe.screencap;
-            waitForSSAndSave(params);
+            setTimeout(function(){waitForSSAndSave(params);}, 500);
           }
         }
       )

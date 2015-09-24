@@ -1,0 +1,139 @@
+//-**=========================================================
+  * Module: gentasks.ng.jade
+  * Created by wjwong on 9/23/15.
+  =========================================================*/
+toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
+.row-fluid
+  h2 Tasks for States
+.row
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; 1. States to Assign
+      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th Annotate
+            th State
+        tbody
+          tr(ng-repeat='state in stateslist', ng-if='state.public')
+            td
+              button.btn.btn-xs.btn-info(title='Remove', ng-click='remove(state._id)')
+                .fa.fa-eye &nbsp; Describe
+              button.btn.btn-xs.btn-info(title='Review Replay', ng-click='$state.go("app.replay", {taskid: state._id})')
+                .fa.fa-eye &nbsp; Action
+            td(title='{{state._id}}', ng-click='selectAgent(state._id, "job")') {{ state.stateid}}
+.row
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; 3. Assigned Games
+      table.table.table-condensed#asngames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Game
+            th Player
+            th Assigned
+        tbody
+          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-if='!job.submitted')
+            td(ng-click='removeJob(job._id)')
+              .fa.fa-remove
+            td {{TaskName(job.task)}}
+            td {{AgentName(job.agent)}}
+            td {{job.assigned | date: 'yyyy-MM-dd h:mm'}}
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; 4. Submitted Games
+      table.table.table-condensed#subgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Game
+            th Player
+            th Submitted
+        tbody
+          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-if='job.submitted && !job.kfsubmitted')
+            td(ng-click='removeJob(job._id)')
+              .fa.fa-remove
+            td(ng-click='$state.go("app.replay", {gameid: job._id})') {{TaskName(job.task)}}
+            td(ng-click='$state.go("app.replay", {gameid: job._id})') {{AgentName(job.agent)}}
+            td(ng-click='$state.go("app.replay", {gameid: job._id})') {{job.submitted | date: 'yyyy-MM-dd h:mm'}}
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; 5. Assign Description Annotations
+      table.table.table-condensed#subgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Game
+            th Player
+            th Submitted
+        tbody
+          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-if='job.kfsubmitted')
+            td(ng-click='removeJob(job._id)')
+              .fa.fa-remove
+            td(title='{{job._id}}', ng-click='selectAgent(job._id, "desc")') {{TaskName(job.task)}}
+            td(ng-click='$state.go("app.describe", {gameid: job._id})') {{AgentName(job.agent)}}
+            td(ng-click='$state.go("app.describe", {gameid: job._id})') {{job.submitted | date: 'yyyy-MM-dd h:mm'}}
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; 6. Assign Action Annotations
+      table.table.table-condensed#subgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Game
+            th Player
+            th Submitted
+        tbody
+          tr(ng-repeat='job in jobs', title='ID: {{job._id}} Created By: {{job.creator}}', ng-if='job.kfsubmitted')
+            td(ng-click='removeJob(job._id)')
+              .fa.fa-remove
+            td(title='{{job._id}}', ng-click='selectAgent(job._id, "act")') {{TaskName(job.task)}}
+            td(ng-click='$state.go("app.describe", {gameid: job._id})') {{AgentName(job.agent)}}
+            td(ng-click='$state.go("app.describe", {gameid: job._id})') {{job.submitted | date: 'yyyy-MM-dd h:mm'}}
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-inbox
+          | &nbsp; 7. Working Annotations
+      table.table.table-condensed#subgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th
+            th Game
+            th Agent
+            th Type
+        tbody
+          tr(ng-repeat='annot in annotations', title='ID: {{annot._id}} Created By: {{annot.creator}}', ng-if='!annot.submitted')
+            td(ng-click='removeAnnot(annot._id)')
+              .fa.fa-remove
+            td(ng-click='$state.go("app.describe", {annotid: annot._id})') {{TaskName(findById(jobs, annot.job).task)}}
+            td(ng-click='$state.go("app.describe", {annotid: annot._id})') {{AgentName(annot.agent)}}
+            td(ng-click='$state.go("app.describe", {annotid: annot._id})') {{annot.type}}
+script#didAgents(type="text/ng-template")
+  h3 Choose an Agent
+  div
+    table.row-border.hover(datatable='ng', dt-options='dtOptions')
+      thead
+        tr
+          th Name
+      tbody
+        tr(ng-repeat='agent in ngDialogData.agents', ng-if='agent.profile.roles.indexOf("agent") > -1')
+          td(title='{{agent._id}}', ng-click='closeThisDialog(agent._id)') {{agent.username}}
+

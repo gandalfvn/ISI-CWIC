@@ -45,25 +45,9 @@ nav.navbar.topnavbar(role="navigation")
       li.dropdown(ng-show='currentUser.profile.roles.indexOf("admin") >= 0')
         a.dropdown-toggle(data-toggle="dropdown", href="#")
           //-i.glyphicon.glyphicon-search
-          | View&nbsp;
+          | States&nbsp;
           b.caret
         ul.dropdown-menu(role="menu")
-          li
-            a(href="/worldview")
-              .fa.fa-globe
-              | &nbsp;World
-          //-li
-            a(href="/simpworld")
-              .fa.fa-codepen
-              | &nbsp;Simple
-          //-li
-            a(href="/replay")
-              .fa.fa-video-camera
-              | &nbsp;Replay
-          li
-            a(href="/tasks")
-              .fa.fa-inbox
-              | &nbsp;Tasks
           li
             a(href="/genworld")
               .fa.fa-cubes
@@ -71,7 +55,33 @@ nav.navbar.topnavbar(role="navigation")
           li
             a(href="/gengallery")
               .fa.fa-sitemap
-              | &nbsp;States
+              | &nbsp;Gallery
+          li
+            a(href="/gentasks")
+              .fa.fa-inbox
+              | &nbsp;Tasks
+        li.dropdown(ng-show='currentUser.profile.roles.indexOf("admin") >= 0')
+          a.dropdown-toggle(data-toggle="dropdown", href="#")
+            //-i.glyphicon.glyphicon-search
+            | Create&nbsp;
+            b.caret
+          ul.dropdown-menu(role="menu")
+            li
+              a(href="/worldview")
+                .fa.fa-globe
+                | &nbsp;World
+            //-li
+              a(href="/simpworld")
+                .fa.fa-codepen
+                | &nbsp;Simple
+            //-li
+              a(href="/replay")
+                .fa.fa-video-camera
+                | &nbsp;Replay
+            li
+              a(href="/tasks")
+                .fa.fa-inbox
+                | &nbsp;Tasks
       li
         a
           meteor-include(src="_loginButtons")

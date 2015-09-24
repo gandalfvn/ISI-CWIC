@@ -7,7 +7,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   h3 Generate State
   .row-fluid.col-sm-3
     div(style='margin-top: 14px', ng-if='!isgen')
-      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, itr, ltyp, cstate)')
+      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, (cstate)?undefined:itr, cstate)')
         .form-group
           label Create State: 
           select.form-control(ng-model='cstate', ng-init='cstate=0')
@@ -28,7 +28,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             each v in [1, 2, 10,40,80,160,320,500, 640]
               option(value='#{v}', ng-selected='itr==#{v}') #{v}
           br
-        .form-group
+        //-.form-group
           label Layout Type:
           select.form-control(ng-model='ltyp', ng-init='ltyp="near"')
             each v in ['near', 'far']
