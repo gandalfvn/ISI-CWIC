@@ -5,6 +5,7 @@ Meteor.startup(function () {
   var userlist = [
     {username: 'wjwong@gmail.com', roles: ['admin'], pwd: 'WeAreWeaver'},
     {username: 'marcu@isi.edu', roles: ['admin'], pwd: 'WeAreWeaver'},
+    {username: 'ybisk@isi.edu', roles: ['admin'], pwd: 'biskbisk'},
     {username: 'wjwong+agent@gmail.com', roles: ['agent'], pwd: 'testtest'},
     {username: 'wjwong+super@gmail.com', roles: ['super'], pwd: 'testtest'},
     {username: 'marcu+agent@isi.edu', roles: ['agent'], pwd: 'WeAreWeaver'},

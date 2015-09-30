@@ -8,18 +8,13 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   h3 State Gallery
   .row-fluid.col-sm-12
     div(style='margin-top: 14px')
-      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='showGallery(cstate, ltyp, shonext)')
+      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='showGallery(cstate, shonext)')
         .form-group
           label Show State:
           select.form-control(ng-model='cstate', ng-init='cstate=0')
             option(ng-repeat='i in statenum', value='{{i}}', ng-selected='cstate==(i)') {{i}}
           | &nbsp;&nbsp;
-          label Layout Type:
-          select.form-control(ng-model='ltyp', ng-init='ltyp="both"')
-            each v in ['both','near', 'far']
-              option(value='#{v}', ng-selected='ltyp==#{v}') #{v}
-          | &nbsp;&nbsp;
-          label Show Next State
+          label Show Transition
           input(type='checkbox', ng-model='shonext')
           | &nbsp;&nbsp;
           button.btn.btn-default(type='submit') Go

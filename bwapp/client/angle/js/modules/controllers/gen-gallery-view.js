@@ -702,7 +702,7 @@ angular.module('angle').controller('genGalleryCtrl',
       var eleCanID = 'canvas' + $('canvas').length; // Unique ID
       var eleLabelID = 'h4' + $('h4').length; // Unique ID
       var htmlout = 
-        '<canvas id="'+eleCanID+'" style="width:'+myviewport.width/2+'px;height:'+myviewport.height/2+'px"></canvas>';
+        '<canvas id="'+eleCanID+'" style="width:'+myviewport.width+'px;height:'+myviewport.height+'px"></canvas>';
       if(title) htmlout = '<h4>'+title+'</h4>' + htmlout;
       if(caption) htmlout += '<label id="'+eleLabelID+'" class="mb">'+caption+'</label>';
       console.warn('showImage', caption);
@@ -710,7 +710,7 @@ angular.module('angle').controller('genGalleryCtrl',
       if(attachID) attachTo = '#'+attachID;
       $('<div>').attr({
         id: eleDivID
-      }).addClass('col-sm-3')
+      }).addClass('col-sm-4')
         .html(htmlout).css({}).appendTo(attachTo);
 
       var screendisp = document.getElementById(eleCanID); // Use the created element
@@ -751,32 +751,29 @@ angular.module('angle').controller('genGalleryCtrl',
       }, 200);
     };
 
-    $scope.showGallery = function(cstate, ltype, shonext, itr){
-      console.warn('showGallery', cstate, ltype, shonext, itr);
+    $scope.showGallery = function(cstate, shonext, itr){
+      console.warn('showGallery', cstate, shonext, itr);
       var statel = findBy('stateid', cstate, stateslist);
       if(itr === undefined || itr < 0){
-        if(ltype === 'both') itr = statel.list.length - 1;
-        else itr = statel[ltype].length - 1;
+        itr = statel.list.length - 1;
         $('[id^=div]').remove();
         $('[id^=rowdiv]').remove();
       } //if first run for state n+1
       if(itr > -1){
         $scope.curitr = itr;
-        var sid;
-        if(ltype === 'both') sid = statel.list[itr];
-        else  sid = statel[ltype][itr];
+        var sid = statel.list[itr];
         //we must get the state for this sid
         $scope.$meteorSubscribe("genstates", sid).then(
           function(sub){
             var myframe = GenStates.findOne({_id: sid});
             console.warn('frame', myframe);
-            if(shonext && myframe.next){
-              function itNext(idx, list, cb){
+            if(shonext && myframe.prev){
+              function itPrev(idx, list, cb){
                 if(_.isUndefined(list[idx])) return cb();
                 var nsid = list[idx];
                 $scope.$meteorSubscribe("genstates", nsid).then(
                   function(sub){
-                    var nextframe = GenStates.findOne({_id: nsid});
+                    var prevframe = GenStates.findOne({_id: nsid});
                     var lenID = $('div').length;
                     var eleDivID = 'rowdiv' + lenID; // Unique ID
                     var htmlout =
@@ -788,19 +785,19 @@ angular.module('angle').controller('genGalleryCtrl',
                       id: eleDivID
                     }).addClass('col-sm-12')
                       .html(htmlout).css({"border-bottom": '1px solid #e4eaec'}).appendTo(attachTo);
-                    
-                    showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt + '  Layout:' + myframe.ltype, 'statea'+lenID);
-                    showImage(nextframe.screencap, 'ID: ' + nsid, 'Cubes:' + nextframe.cubecnt + '  Layout:' + nextframe.ltype, 'stateb'+lenID);
-                    itNext(idx+1, list, cb);
+
+                    showImage(prevframe.screencap, 'ID: ' + nsid, 'Cubes:' + prevframe.cubecnt, 'statea'+lenID);
+                    showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt, 'stateb'+lenID);
+                    itPrev(idx+1, list, cb);
                   }
                 )
               }
-              itNext(0, myframe.next, function(){
-                if(itr > 0) $scope.showGallery(cstate, ltype, shonext, itr - 1);
+              itPrev(0, myframe.prev, function(){
+                if(itr > 0) $scope.showGallery(cstate, shonext, itr - 1);
               })
             }
             else{
-              showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt + '  Layout:' + myframe.ltype);
+              showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt);
               //showFrame(myframe.frame);
               /*checkFnSS = setInterval(function(){
                 if(isSteadyState){
@@ -808,12 +805,12 @@ angular.module('angle').controller('genGalleryCtrl',
                   if(itr > 0) $scope.showGallery(cstate, ltype, shonext, itr - 1);
                 }
               }, 200);*/
-              if(itr > 0) $scope.showGallery(cstate, ltype, shonext, itr - 1);
+              if(itr > 0) $scope.showGallery(cstate, shonext, itr - 1);
             }
           }
         )
       }
-      else toaster.pop('info', 'No data available for state:'+cstate+' layout:'+ltype);
+      else toaster.pop('info', 'No data available for state:'+cstate);
     };
 
     $scope.showState = function(sid){
