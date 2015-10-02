@@ -797,7 +797,8 @@ angular.module('angle').controller('genGalleryCtrl',
               })
             }
             else{
-              showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt);
+              if(myframe)
+                showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt);
               //showFrame(myframe.frame);
               /*checkFnSS = setInterval(function(){
                 if(isSteadyState){
