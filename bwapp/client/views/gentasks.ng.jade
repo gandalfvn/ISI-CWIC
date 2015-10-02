@@ -9,7 +9,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, (cstate)?undefined:itr, cstate)')
     .form-group(style='margin-right: 10px')
       label Task Type:
-      select.form-control(ng-model='tasktype')
+      select.form-control(ng-model='tasktype', ng-init='tasktype="action')
         each v in ['state', 'action']
           option(value='#{v}', ng-selected='tasktype==#{v}') #{v}
     .form-group(style='margin-right: 10px')

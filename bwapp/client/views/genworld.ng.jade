@@ -4,9 +4,9 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
-  h3 Generate State
-  .row-fluid.col-sm-3
-    div(style='margin-top: 14px', ng-if='!isgen')
+  .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
+    div.well
+      h4 Generate State
       form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, (cstate)?undefined:itr, cstate)')
         .form-group
           label Create State: 
@@ -15,7 +15,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             option(ng-show='!statenum.length', value='0', ng-selected='cstate==0') 0
             option(ng-show='statenum.length', value='{{statenum[statenum.length-1]+1}}') {{statenum[statenum.length-1]+1}}
         .form-group(ng-show='cstate==0')
-          label Cube Count min: 
+          label Cube min: 
           select.form-control(ng-model='ccnt.min', ng-init='ccnt.min=1')
             option(ng-repeat='i in cubeprops track by $index', value='{{$index+1}}', ng-selected='ccnt.min==($index+1)') {{$index+1}}
           label &nbsp;&nbsp;max:
@@ -23,36 +23,55 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             option(ng-show='($index+1) >= ccnt.min', ng-repeat='i in cubeprops track by $index', value='{{$index+1}}', ng-selected='ccnt.max==($index+1)') {{$index+1}}
           br
         .form-group(ng-show='cstate==0')
-          label Generate Iterations:
+          label Iterations:
           select.form-control(ng-model='itr')
             each v in [1, 2, 10,40,80,160,200,320,500, 640]
               option(value='#{v}', ng-selected='itr==#{v}') #{v}
           br
-        //-.form-group
-          label Layout Type:
-          select.form-control(ng-model='ltyp', ng-init='ltyp="near"')
-            each v in ['near', 'far']
-              option(value='#{v}', ng-selected='ltyp==#{v}') #{v}
         br
         button.btn.btn-default(type='submit') Go
-      hr
+  .row-fluid.col-sm-3(ng-if='!isgen')
+    div.well
+      h4 Import State
+      button.btn.btn-default.btn-sm(ng-show='!enableImpSave', ng-click='showImportDialog()')
+        .glyphicons.file_import Import
+      form.form-inline.ng-pristine.ng-valid(ng-show='enableImpSave', name='saveImpForm', ng-submit='saveImport(impFilename)')
+        .form-group
+          label Name:
+          input(type='text', ng-model='impFilename')
+        button.btn.btn-success.btn-sm(type='submit')
+          .glyphicons.floppy_saved Save
+        | &nbsp;&nbsp;
+        button.btn.btn-warning.btn-sm(ng-click='cancelImport()')
+          .glyphicons.remove_2 Cancel
+  .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
+    div.well
+      h4 State
       form.form-inline.ng-pristine.ng-valid(name='myshowform', ng-submit='showState(sid)')
         .form-group
-          label Show State:
-          input(type='text', ng-model='sid')
+          label Show:
+          input(type='text', ng-model='sid', placeholder='state id')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
       br
       form.form-inline.ng-pristine.ng-valid(name='mytestform', ng-submit='genStateN({sid: tsid})')
         .form-group
-          label Test State Move:
-          input(type='text', ng-model='tsid')
+          label Test Move:
+          input(type='text', ng-model='tsid', placeholder='state id')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
-
+      br
+      form.form-inline.ng-pristine.ng-valid(name='myremform', ng-submit='remState(rsid)')
+        .form-group
+          label Remove:
+          input(type='text', ng-model='rsid', placeholder='state id')
+          input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
+.row-fluid.col-sm-12
   .row-fluid.col-sm-4
     div
       h4(ng-show='curitr') Iteration: {{curitr-1}}
       canvas(id="renderCanvasBab", style='width: 320px; height: 220px;')
       canvas(id="canvas_2D")
+  .row-fluid.col-sm-2
+    div Move camera by clicking and dragging in scene
 .row-fluid.col-sm-12
   hr
   .well.row
@@ -60,31 +79,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     br
     #galleryarea
 
-  //-div(style="position: absolute; z-index: 10;" class="col-sm-12")
-    div(style='margin-top: 14px')
-      button.btn.btn-sm(ng-click='resetWorld();')
-        .fa.fa-refresh(style='color:#fff') 
-          strong Reset
-      button.btn.btn-sm(ng-click='showFrame();')
-        .fa.fa-image(style='color:#fff') 
-          strong Show
-
-//-  canvas(id="screencap", style='width: 640px; height: 440px;')
-//-  canvas(id="screendisp", style='width: 640px; height: 440px;')
-//-form(name='annotform')
-  div(ng-show='myreplay.keyframes.length', ng-repeat = 'kf in myreplay.keyframes')
-    .row-fluid.col-sm-12(style='border-bottom:solid 2px #eee;')
-      h2 Frame {{kf}}
-      .col-sm-7
-        div(ng-repeat='note in annot.notes[kf] track by $index')
-          .col-sm-1
-            button.btn.btn-xs.btn-danger(title='Remove Description')
-              .fa.fa-remove(ng-click='removeNote(kf, $index)')
-          .col-sm-11
-            .form-group.has-feedback(style='display:inline-block; width:100%;margin-bottom:0px')
-              textarea.form-control(type='text', ng-model='annot.notes[kf][$index]', style='padding-left: 26px;', clear-icon)
-        button.btn.btn-xs.btn-primary(ng-click='addAnnot(kf)', style='margin-bottom:6px')
-          .fa.fa-pencil &nbsp;Add Description
-      .col-sm-5(style='overflow:hidden;')
-        span(ng-repeat='r in renderviewdata')
-          canvas(id="{{kf + '_' + r.name}}" style='width: 320px; height: 220px;')
+script#didImportFile(type="text/ng-template")
+  form.form-inline.ng-pristine.ng-valid(role="form",novalidate, name='importfiled', ng-submit='closeThisDialog()')
+    .form-group
+      input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().importFileChanged(event)")
+      button.btn.btn-default(type="submit") Go

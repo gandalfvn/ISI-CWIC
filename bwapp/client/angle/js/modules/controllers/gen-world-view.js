@@ -52,6 +52,7 @@ angular.module('angle').controller('genWorldCtrl',
 
     var cubeslist = [];
     var cubesnamed = {};
+    var cubesdesctocid = {};
     var numcubes = 0;
     var cubecolors = ['red', 'yellow', 'cyan', 'purple', 'green', 'orange'];
     var colorids = {};
@@ -76,7 +77,8 @@ angular.module('angle').controller('genWorldCtrl',
      */
     var createCube = function(data){
       var boxsize = cubesize[data.size];
-      var objname = "cube_"+ boxsize + '_' + data.color + '_' +numcubes;
+      var objdesc = "cube_"+ boxsize + '_' + data.color;
+      var objname = objdesc + '_' +numcubes;
       var boxcolor = colorids[data.color];
       var boxmat = new BABYLON.StandardMaterial(objname, data.scene);
       /*var boxt = new BABYLON.Texture("img/textures/wood.jpg", scene);
@@ -112,6 +114,7 @@ angular.module('angle').controller('genWorldCtrl',
       //box.updatePhysicsBodyPosition();
       //box.refreshBoundingInfo();
       //box.moveWithCollisions(new BABYLON.Vector3(-1, 0, 0));
+      cubesdesctocid[objdesc] = cubeslist.length;
       numcubes++;
       cubeslist.push(box);
       cubesnamed[objname] = box;
@@ -660,7 +663,8 @@ angular.module('angle').controller('genWorldCtrl',
         state.forEach(function(frame){
           var c = cubeslist[frame.cid];
           c.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
-          c.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
+          if(frame.rotquat)
+            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotquat.x, frame.rotquat.y, frame.rotquat.z, frame.rotquat.w);
           c.isVisible = true;
           if(hasPhysics) c.setPhysicsState({
             impostor: BABYLON.PhysicsEngine.BoxImpostor,
@@ -692,7 +696,7 @@ angular.module('angle').controller('genWorldCtrl',
         return c.charCodeAt(0); }));
     };
     
-    var insertGen = function(used, curstate, previd, prevscreen){
+    var insertGen = function(used, curstate, previd, prevscreen, name){
       var str = '';
       used.forEach(function(cid){
         var c = cubeslist[cid];
@@ -734,6 +738,7 @@ angular.module('angle').controller('genWorldCtrl',
           public: true,
           created: (new Date).getTime()
         };
+        if(name) mystate.name = name;
         mystate.next = null;
         if(previd){
           if(!mystate.prev) mystate.prev = [];
@@ -853,7 +858,7 @@ angular.module('angle').controller('genWorldCtrl',
       checkFnSS = setInterval(function(){
         if(isSteadyState){
           clearInterval(checkFnSS);
-          var insRet = insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen);
+          var insRet = insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen, params.name);
           console.warn('insRet', insRet);
           if(insRet){
             if(params.itr > 0) $scope.startGen(params.ccnt, params.itr-1, params.cstate);
@@ -869,7 +874,7 @@ angular.module('angle').controller('genWorldCtrl',
           }
         }
       }, 200);
-    }
+    };
     
     /**
      * start generation of cubes based on number of buces, iterations, and layout type
@@ -928,6 +933,13 @@ angular.module('angle').controller('genWorldCtrl',
       )
     };
 
+    $scope.remState = function(sid){
+      if(sid){
+        genstates.remove(sid);
+        toaster.pop('warning', 'Removed ' + sid);
+      }
+    };
+
     var getStackCubes = function(mycube, used, cid){
       var retStack = [];
       for(var i = 0; i < used.length; i++){
@@ -954,28 +966,61 @@ angular.module('angle').controller('genWorldCtrl',
       })
     };
 
-    $scope.renderviewdata = [
-      {
-        name: 'Front',
-        campos: new BABYLON.Vector3(0, 15, -30),
-        billb: new BABYLON.Vector3(0, 10, 40)
-      }
-      /*,{
-       name: 'Back',
-       campos: new BABYLON.Vector3(25, 15, 25),
-       billb: new BABYLON.Vector3(-20, 10, -20)
-       },
-       {
-       name: 'Left',
-       campos: new BABYLON.Vector3(-35, 15, 0),
-       billb: new BABYLON.Vector3(40, 10, 0)
-       },
-       {
-       name: 'Right',
-       campos: new BABYLON.Vector3(35, 15, 0),
-       billb: new BABYLON.Vector3(-40, 10, 0)
-       }*/
-    ];
+    $scope.enableImpSave = false;
+    var impInfo = {};
+    $scope.showImportDialog = function(){
+      var myfiles;
+      var dialog = ngDialog.open({
+        template: 'didImportFile',
+        controller: ['$scope', function($scope){
+          camera.detachControl(canvas);
+          //allow for change file list to be stored
+          $scope.importFileChanged = function(event){
+            myfiles = event.target.files;
+          }
+        }]
+      });
+      dialog.closePromise.then(function(data){
+        camera.attachControl(canvas, true);
+        console.log('showImportDialog ngDialog closed', data);
+        if(myfiles && myfiles.length){
+          //read file
+          var reader = new FileReader();
+          reader.onload = function(){
+            impInfo.cubesused = new Set();
+            var impdat = JSON.parse(reader.result);
+            impdat.frame.forEach(function(f){
+              var objdesc = f.geotype + "_"+ f.size + '_' + f.color;
+              f.cid = cubesdesctocid[objdesc];
+              impInfo.cubesused.add(f.cid);
+            });
+            impInfo.ccnt = impInfo.cubesused.size;
+            showFrame(impdat.frame, function(){
+              $scope.$apply(function(){
+                $scope.impFilename = myfiles[0].name.toLowerCase().replace(/\.json/g,'');
+                $scope.enableImpSave = true;
+              })
+            });
+          };
+          reader.readAsText(myfiles[0]);
+        }
+      });
+    };
+    
+    $scope.cancelImport = function(){
+      //must use function to apply to scope
+      $scope.impFilename = null;
+      $scope.enableImpSave = false;
+      $scope.resetWorld();
+    };
+
+    $scope.saveImport = function(savename){
+      $scope.impFilename = null;
+      $scope.enableImpSave = false;
+      var params = {ccnt: impInfo.ccnt, itr: 0, cstate: 0, cubesused: impInfo.cubesused, name: savename};
+      setTimeout(function(){waitForSSAndSave(params);}, 400);
+    };
+
     // Now, call the createScene function that you just finished creating
     var scene;
     var grid;
