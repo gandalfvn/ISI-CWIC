@@ -74,17 +74,17 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       ),
       controller: 'genGalleryCtrl'
     })
-    .state('app.gentasks', {
-      url: '/gentasks',
+    .state('app.genjobs', {
+      url: '/genjobs',
       title: 'Generate Tasks View',
-      templateUrl: helper.basepath('gentasks.html'),
+      templateUrl: helper.basepath('genjobs.html'),
       resolve: angular.extend(
         {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
           return !$rootScope.isRole(user, 'agent');});
         }]},  //simple functions appear first so data is loaded
         helper.resolveFor('ngDialog','datatables')
       ),
-      controller: 'genTasksCtrl'
+      controller: 'genJobsCtrl'
     })
     .state('app.worldview', {
         url: '/worldview',

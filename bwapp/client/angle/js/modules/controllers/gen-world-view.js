@@ -336,11 +336,11 @@ angular.module('angle').controller('genWorldCtrl',
       function(sid){dataReady('genstates');},
       function(err){ console.log("error", arguments, err); }
     );
-    var stateslist = $scope.$meteorCollection(StatesList);
+    /*var stateslist = $scope.$meteorCollection(StatesList);
     $scope.$meteorSubscribe("stateslist").then(
       function(sid){dataReady('stateslist');},
       function(err){ console.log("error", arguments, err); }
-    );
+    );*/
     
     $scope.showTime = function(){
       return (new Date).getTime();
@@ -350,11 +350,12 @@ angular.module('angle').controller('genWorldCtrl',
     var dataReady = function(data){
       console.warn('ready ', data, (new Date).getTime());
       readydat.push(data);
-      if(readydat.length > 2){
-        $scope.statenum = [];
-        stateslist.forEach(function(s){
-          $scope.statenum.push(Number(s.stateid));
-        });
+      if(readydat.length > 1){
+        $scope.statenum = _.uniq(GenStates.find({}, {
+          sort: {stateid: 1}, fields: {stateid: true}
+        }).fetch().map(function(x) {
+          return x.stateid;
+        }), true);
         genCubeProps();
         $rootScope.dataloaded = true;
       }
@@ -696,15 +697,16 @@ angular.module('angle').controller('genWorldCtrl',
         return c.charCodeAt(0); }));
     };
     
-    var insertGen = function(used, curstate, previd, prevscreen, name){
-      var str = '';
+    var insertGen = function(used, curstate, previd, prevscreen, creator, name){
+      /*var str = '';
       used.forEach(function(cid){
         var c = cubeslist[cid];
         str += cid + ':' + c.position.x + ':' + c.position.y + ':' + c.position.z+'\n';
       });
       var sig = md5.createHash(str);
       var mygstate = findBy('sig', sig, genstates);
-      if(!mygstate){
+      if(!mygstate){*/
+      if(true){
         var max = appConst.fieldsize/2 + 0.001; //give it a little wiggle room
         var min = -max;
         var frame = [];
@@ -731,7 +733,7 @@ angular.module('angle').controller('genWorldCtrl',
         var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
         var b64encoded = btoa(Uint8ToString(screenRaw));
         var mystate = {
-          sig: sig,
+          stateid: curstate,
           cubecnt: cnt,
           frame: frame,
           screencap: b64encoded,
@@ -739,6 +741,7 @@ angular.module('angle').controller('genWorldCtrl',
           created: (new Date).getTime()
         };
         if(name) mystate.name = name;
+        if(creator) mystate.creator = creator;
         mystate.next = null;
         if(previd){
           if(!mystate.prev) mystate.prev = [];
@@ -756,15 +759,23 @@ angular.module('angle').controller('genWorldCtrl',
                 myframe.next.push($scope.dbid);
                 console.warn('myframe next', myframe._id, JSON.stringify(myframe.next));
                 genstates.save(myframe).then(function(sub){
-                  saveState();
+                  showSaveState();
                 }, function(err){console.error('error:'+err)})
               }
             )
           }
-          else saveState();
+          else showSaveState();
           
+          function showSaveState(){
+            if(previd){
+              showImage(prevscreen, previd, '&nbsp;Before');
+              showImage(b64encoded, $scope.dbid, '&nbspAfer');
+            }
+            else
+              showImage(b64encoded, $scope.dbid);
+          }
           //save to a state
-          function saveState(){
+          /*function saveState(){
             var statelobj = findBy('stateid', curstate, stateslist);
             if(statelobj){
               var listidx = _.indexOf(statelobj.list, $scope.dbid);
@@ -813,7 +824,7 @@ angular.module('angle').controller('genWorldCtrl',
                 toaster.pop('error', 'State list ' + curstate + ' id ' + $scope.dbid, err.reason);
               })
             }
-          }
+          }*/
         }, function(err){
           toaster.pop('error', 'State ' + $scope.dbid, err.reason);
         });
@@ -858,7 +869,7 @@ angular.module('angle').controller('genWorldCtrl',
       checkFnSS = setInterval(function(){
         if(isSteadyState){
           clearInterval(checkFnSS);
-          var insRet = insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen, params.name);
+          var insRet = insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen, params.creator, params.name);
           console.warn('insRet', insRet);
           if(insRet){
             if(params.itr > 0) $scope.startGen(params.ccnt, params.itr-1, params.cstate);
@@ -883,7 +894,8 @@ angular.module('angle').controller('genWorldCtrl',
      * @param itr
      * @param cstate
      */
-    $scope.startGen = function(ccnt, itr, cstate){
+    $scope.startGen = function(ccnt, itr, strstate){
+      var cstate = Number(strstate);
       console.warn('startGen',itr, cstate, ccnt);
       if(cstate == 0){
         if(itr > 0){
@@ -899,7 +911,7 @@ angular.module('angle').controller('genWorldCtrl',
             console.warn('done state!!', cubesused.size, state.length);
           $scope.curitr = itr;
           $scope.showInitFrame(state, function(){
-            var params = {ccnt: ccnt, itr: itr, cstate: cstate, cubesused: cubesused};
+            var params = {ccnt: ccnt, itr: itr, cstate: cstate, cubesused: cubesused, creator: 'system'};
             //we need to set a timeout before checking steading states or we get bad block layouts
             setTimeout(function(){waitForSSAndSave(params);}, 400);
           });
@@ -907,16 +919,20 @@ angular.module('angle').controller('genWorldCtrl',
         if(itr === undefined) toaster.pop('error','Please set Iterations');
       }
       else{
-        var statel = findBy('stateid', cstate - 1, stateslist);
+        var statel = _.uniq(GenStates.find({stateid: cstate-1}, {
+          sort: {"_id": 1}}).fetch().map(function(x) {
+          return x._id;
+        }), true);
+
         if(itr === undefined || itr < 0){
-          itr = statel.list.length - 1; //if first run for state n+1
+          itr = statel.length - 1; //if first run for state n+1
           console.warn('in length', itr);
         }
         $scope.curitr = itr;
         stateNStats.near = 0;
         stateNStats.far = 0;
         stateNStats.stack = 0;
-        var sid = statel.list[itr];
+        var sid = statel[itr];
         var params = {ccnt: ccnt, itr: itr, cstate: cstate, sid: sid};
         $scope.genStateN(params);
       }
@@ -1017,7 +1033,7 @@ angular.module('angle').controller('genWorldCtrl',
     $scope.saveImport = function(savename){
       $scope.impFilename = null;
       $scope.enableImpSave = false;
-      var params = {ccnt: impInfo.ccnt, itr: 0, cstate: 0, cubesused: impInfo.cubesused, name: savename};
+      var params = {ccnt: impInfo.ccnt, itr: 0, cstate: 0, cubesused: impInfo.cubesused, creator: $rootScope.currentUser._id, name: savename};
       setTimeout(function(){waitForSSAndSave(params);}, 400);
     };
 
@@ -1026,4 +1042,5 @@ angular.module('angle').controller('genWorldCtrl',
     var grid;
     createWorld();
     dataReady('world created');
+    console.warn($rootScope.currentUser)
   }]);

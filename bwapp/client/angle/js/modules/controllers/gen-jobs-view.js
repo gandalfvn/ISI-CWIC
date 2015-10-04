@@ -1,8 +1,8 @@
 /**========================================================
- * Module: gen-tasks-view.js
+ * Module: gen-jobs-view.js
  * Created by wjwong on 9/23/15.
  =========================================================*/
-angular.module('angle').controller('genTasksCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster){
+angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster){
   "use strict";
 
   $scope.dtOptions = {
@@ -17,101 +17,52 @@ angular.module('angle').controller('genTasksCtrl', ['$rootScope', '$scope', '$st
     function(sid){dataReady('genstates');},
     function(err){ console.log("error", arguments, err); }
   );
-  $scope.stateslist = $scope.$meteorCollection(StatesList);
-  $scope.$meteorSubscribe("stateslist").then(
-    function(sid){dataReady('stateslist');},
-    function(err){ console.log("error", arguments, err); }
-  );
-  var agents = $scope.$meteorCollection(Meteor.users, false);
-  $scope.$meteorSubscribe("agents").then(
-    function(sid){dataReady('agents');},
-    function(err){ console.log("error", arguments, err); }
-  );
-
-  /*$scope.jobs = $meteorCollection(Jobs).subscribe('jobs');
-  $scope.annotations = $meteorCollection(Annotations).subscribe('annotations');
-  Meteor.subscribe("blockreplays", {
-    onReady: function () {dataReady('blockreplays');},
-    onError: function () { console.log("onError", arguments); }
-  });
-  Meteor.subscribe("jobs", {
-    onReady: function () {dataReady('jobs');},
-    onError: function () { console.log("onError", arguments); }
-  });
-  Meteor.subscribe("annotations", {
-    onReady: function () {dataReady('annotations');},
-    onError: function () { console.log("onError", arguments); }
-  });*/
-
+  
   $scope.dataready = false;
   var readydat = [];
   var dataReady = function(data){
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
-    if(readydat.length > 2){
+    if(readydat.length > 0){
       $rootScope.dataloaded = true;
+      $scope.statenum = _.uniq(GenStates.find({}, {
+        sort: {stateid: 1}, fields: {stateid: true}
+      }).fetch().map(function(x) {
+        return x.stateid;
+      }), true);
+      console.warn($scope.statenum);
     }
-  }
+  };
+  
+  $scope.taskGen = function(tasktype, cstate, bundle, asncnt, antcnt){
+    console.warn(tasktype, cstate, bundle, asncnt, antcnt);
+    var statel = _.uniq(GenStates.find({stateid: cstate}, {
+      sort: {"_id": 1}}).fetch().map(function(x) {
+      return x._id;
+    }), true);
+    console.warn(statel);
+  };
 
 
   $scope.remove = function(id){
     $scope.blockreplays.remove(id);
     toaster.pop('error', 'Game Deleted');
-  }
+  };
 
   $scope.removeJob = function(id){
     $scope.jobs.remove(id);
     toaster.pop('error', 'Job Deleted');
-  }
-
-  $scope.selectAgent = function(uid, type){
-    var repdata = {agents: agents};
-    var dcon = {
-      disableAnimation: true,
-      template: 'didAgents',
-      data: repdata,
-      controller: ['$scope', function($scope){
-        $scope.dtOptions = {
-          "lengthMenu": [[8], [8]],
-          "order": [[ 0, "asc" ]],
-          "language": {"paginate": {"next": '>', "previous": '<'}},
-          "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-        };
-      }],
-      className: 'ngdialog-theme-default width50perc'
-    };
-    var dialog = ngDialog.open(dcon);
-    dialog.closePromise.then(function (data) {
-      if(data && data.value !== '$closeButton'){
-        console.warn('choose', uid, data.value, type);
-        switch(type){
-          case 'job':
-            assignJob(uid, data.value);
-            break;
-          case 'desc':
-          case 'act':
-            assignAnnot(uid, data.value, type);
-            break;
-        }
-      }
-    });
-  }
-
-  $scope.AgentName = function(id){
-    var res = $scope.findById(agents, id);
-    if(res) return res.username;
-    return 'N/A';
-  }
+  };
 
   $scope.TaskName = function(id){
     var res = $scope.findById($scope.blockreplays, id);
     if(res) return res.name;
     return 'N/A';
-  }
+  };
 
   $scope.findById = function(collection, id){
     return _.find(collection, function(a){return id === a._id});
-  }
+  };
 
   var assignJob = function(taskid, agentid){
     var job = {
@@ -129,7 +80,7 @@ angular.module('angle').controller('genTasksCtrl', ['$rootScope', '$scope', '$st
         toaster.pop('error', 'Job Error', err.reason);
       }
     );
-  }
+  };
 
   var assignAnnot = function(jobid, agentid, type){
     var annot = {
@@ -154,6 +105,6 @@ angular.module('angle').controller('genTasksCtrl', ['$rootScope', '$scope', '$st
         toaster.pop('error', 'Annotation Error', err.reason);
       }
     );
-  }
+  };
 
 }]);
