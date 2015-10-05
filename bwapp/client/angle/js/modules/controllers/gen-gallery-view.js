@@ -332,11 +332,6 @@ angular.module('angle').controller('genGalleryCtrl',
       function(sid){dataReady('genstates');},
       function(err){ console.log("error", arguments, err); }
     );
-    var stateslist = $scope.$meteorCollection(StatesList);
-    $scope.$meteorSubscribe("stateslist").then(
-      function(sid){dataReady('stateslist');},
-      function(err){ console.log("error", arguments, err); }
-    );
 
     $scope.showTime = function(){
       return (new Date).getTime();
@@ -346,12 +341,13 @@ angular.module('angle').controller('genGalleryCtrl',
     var dataReady = function(data){
       console.warn('ready ', data, (new Date).getTime());
       readydat.push(data);
-      if(readydat.length > 2){
-        $scope.statenum = [];
-        stateslist.forEach(function(s){
-          $scope.statenum.push(Number(s.stateid));
-        });
+      if(readydat.length > 1){
         $rootScope.dataloaded = true;
+        $scope.statenum = _.uniq(GenStates.find({}, {
+          sort: {stateid: 1}, fields: {stateid: true}
+        }).fetch().map(function(x) {
+          return x.stateid;
+        }), true);
       }
     };
 
@@ -753,15 +749,20 @@ angular.module('angle').controller('genGalleryCtrl',
 
     $scope.showGallery = function(cstate, shonext, itr){
       console.warn('showGallery', cstate, shonext, itr);
-      var statel = findBy('stateid', cstate, stateslist);
+      var statel = _.uniq(GenStates.find({stateid: Number(cstate)}, {
+        sort: {"_id": 1}}).fetch().map(function(x) {
+        return x._id;
+      }), true);
+      
+      console.warn(statel);
       if(itr === undefined || itr < 0){
-        itr = statel.list.length - 1;
+        itr = statel.length - 1;
         $('[id^=div]').remove();
         $('[id^=rowdiv]').remove();
       } //if first run for state n+1
       if(itr > -1){
         $scope.curitr = itr;
-        var sid = statel.list[itr];
+        var sid = statel[itr];
         //we must get the state for this sid
         $scope.$meteorSubscribe("genstates", sid).then(
           function(sub){

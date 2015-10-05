@@ -17,13 +17,23 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     function(sid){dataReady('genstates');},
     function(err){ console.log("error", arguments, err); }
   );
+  var genjobs = $scope.$meteorCollection(GenJobs);
+  $scope.$meteorSubscribe("genjobs").then(
+    function(sid){dataReady('genjobs');},
+    function(err){ console.log("error", arguments, err); }
+  );
+  var genjobsmgr = $scope.$meteorCollection(GenJobsMgr);
+  $scope.$meteorSubscribe("genjobsmgr").then(
+    function(sid){dataReady('genjobsmgr');},
+    function(err){ console.log("error", arguments, err); }
+  );
   
   $scope.dataready = false;
   var readydat = [];
   var dataReady = function(data){
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
-    if(readydat.length > 0){
+    if(readydat.length > 2){
       $rootScope.dataloaded = true;
       $scope.statenum = _.uniq(GenStates.find({}, {
         sort: {stateid: 1}, fields: {stateid: true}
