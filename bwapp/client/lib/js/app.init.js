@@ -93,6 +93,27 @@ angular.module('angle')
         else console.warn(error);
       });
 
+      $rootScope.mdbArray = function(mcol, q, opt, idx){
+        return _.uniq(mcol.find(q, opt).fetch().map(function(x) {
+          return x[idx];
+        }), true);
+      };
+      
+      $rootScope.Uint8ToString = function(u8a){
+        var CHUNK_SZ = 0x8000;
+        var c = [];
+        for (var i=0; i < u8a.length; i+=CHUNK_SZ) {
+          c.push(String.fromCharCode.apply(null, u8a.subarray(i, i+CHUNK_SZ)));
+        }
+        return c.join("");
+      };
+
+      $rootScope.StringToUint8 = function(b64){
+        return new Uint8Array(atob(b64).split("").map(function(c) {
+          return c.charCodeAt(0); }));
+      };
+
+
       //setup account callbacks
       accountsUIBootstrap3.logoutCallback = function(err){
         console.warn('logout');

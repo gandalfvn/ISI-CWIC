@@ -2,12 +2,12 @@
  * Module: gen-jobs-view.js
  * Created by wjwong on 9/23/15.
  =========================================================*/
-angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster){
+angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'md5', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, md5){
   "use strict";
 
   $scope.dtOptions = {
     "lengthMenu": [[10], [10]],
-    "order": [[ 1, "asc" ]],
+    "order": [[ 0, "asc" ]],
     "language": {"paginate": {"next": '>', "previous": '<'}},
     "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
   };
@@ -15,11 +15,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
     function(sid){dataReady('genstates');},
-    function(err){ console.log("error", arguments, err); }
-  );
-  var genjobs = $scope.$meteorCollection(GenJobs);
-  $scope.$meteorSubscribe("genjobs").then(
-    function(sid){dataReady('genjobs');},
     function(err){ console.log("error", arguments, err); }
   );
   var genjobsmgr = $scope.$meteorCollection(GenJobsMgr);
@@ -33,88 +28,102 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   var dataReady = function(data){
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
-    if(readydat.length > 2){
+    if(readydat.length > 1){
       $rootScope.dataloaded = true;
-      $scope.statenum = _.uniq(GenStates.find({}, {
+      $scope.statenum = $rootScope.mdbArray(GenStates, {}, {
         sort: {stateid: 1}, fields: {stateid: true}
-      }).fetch().map(function(x) {
-        return x.stateid;
-      }), true);
+      }, "stateid");
       console.warn($scope.statenum);
+      updateJobMgr();
     }
   };
   
-  $scope.taskGen = function(tasktype, cstate, bundle, asncnt, antcnt){
-    console.warn(tasktype, cstate, bundle, asncnt, antcnt);
-    var statel = _.uniq(GenStates.find({stateid: cstate}, {
-      sort: {"_id": 1}}).fetch().map(function(x) {
-      return x._id;
-    }), true);
-    console.warn(statel);
-  };
+  $scope.taskGen = function(tasktype, stateid, bundle, asncnt, antcnt){
+    console.warn(tasktype, stateid, bundle, asncnt, antcnt);
+    var statelist = $rootScope.mdbArray(GenStates, {stateid: Number(stateid)}, {
+      sort: {"_id": 1}}, "_id");
+    console.warn(statelist);
+    if(statelist.length){
+      var jobdata = {
+        tasktype: tasktype,
+        stateid: stateid,
+        bundle: bundle,
+        asncnt: asncnt,
+        antcnt: antcnt,
+        creator: $rootScope.currentUser._id,
+        created: (new Date).getTime(),
+        public: true,
+        islist: true
+      };
+      
+      var availlist = [];
+      //generate action jobs from states
+      var doneAvailList = _.after(statelist.length, function(){
+        var bundleidlist = [];
+        var bundcnt = Math.ceil(availlist.length/jobdata.bundle);
+        var doneBundles = _.after(bundcnt, function(){
+          jobdata.list = bundleidlist;
+          genjobsmgr.save(jobdata).then(function(val){
+              var jmid = val[0]._id;
+              updateJobMgr();
+              toaster.pop('info', 'Jobs Created', val[0]._id);
+            }
+            , function(err){
+              toaster.pop('error', 'State ' + $scope.dbid, err.reason);
+            })
+        });
 
+        function saveBundle(){
+          var mybundledata = {
+            islist: false,
+            tasktype: jobdata.tasktype,
+            creator: $rootScope.currentUser._id,
+            created: (new Date).getTime(),
+            asncnt: jobdata.asncnt,
+            antcnt: jobdata.antcnt,
+            sidlist: abundle
+          };
+          genjobsmgr.save(mybundledata).then(function(val){
+              bundleidlist.push(val[0]._id);
+              doneBundles();
+              toaster.pop('info', 'Bundle Created', val[0]._id);
+            }
+            , function(err){
+              toaster.pop('error', 'Bundle Data', err.reason);
+            }
+          );
+          abundle = [];
+        }
+        var abundle = [];
+        for(var i = 0; i < availlist.length; i++){
+          if(!(i % jobdata.bundle) && i) saveBundle();
+          abundle.push(availlist[i]);
+        }
+        if(abundle.length) saveBundle(); //save the dangling bundles
+      });
 
-  $scope.remove = function(id){
-    $scope.blockreplays.remove(id);
-    toaster.pop('error', 'Game Deleted');
-  };
-
-  $scope.removeJob = function(id){
-    $scope.jobs.remove(id);
-    toaster.pop('error', 'Job Deleted');
-  };
-
-  $scope.TaskName = function(id){
-    var res = $scope.findById($scope.blockreplays, id);
-    if(res) return res.name;
-    return 'N/A';
-  };
-
-  $scope.findById = function(collection, id){
-    return _.find(collection, function(a){return id === a._id});
-  };
-
-  var assignJob = function(taskid, agentid){
-    var job = {
-      owner: $rootScope.currentUser._id,
-      created: new Date().getTime(),
-      creator: $rootScope.currentUser.username,
-      agent: agentid,
-      assigned: new Date().getTime(),
-      task: taskid
-    };
-    $scope.jobs.save(job).then(
-      function(val){
-        toaster.pop('info', 'Job Created');
-      }, function(err){
-        toaster.pop('error', 'Job Error', err.reason);
+      for(var i = 0; i < statelist.length; i++){
+        var sid = statelist[i];
+        if(tasktype == 'action'){
+          var state = GenStates.findOne({_id: sid});
+          for(var j = 0; j < state.next.length; j++){
+            var tid = state.next[j];
+            availlist.push({src: sid, tgt: tid});
+          }
+        }
+        else availlist.push(sid);
+        doneAvailList();
       }
-    );
+    }
   };
-
-  var assignAnnot = function(jobid, agentid, type){
-    var annot = {
-      owner: $rootScope.currentUser._id,
-      created: new Date().getTime(),
-      creator: $rootScope.currentUser.username,
-      agent: agentid,
-      assigned: new Date().getTime(),
-      job: jobid,
-      type: type
-    };
-    $scope.annotations.save(annot).then(
-      function(val){
-        var myjob = $scope.findById($scope.jobs, jobid);
-        var key = 'kfannot_'+type;
-        if(!myjob[key]) myjob[key] = [];
-        myjob[key].push(val[0]._id);
-        myjob[key] = _.uniq(myjob[key]);
-        console.warn('created', val[0], myjob);
-        toaster.pop('info', 'Annotation type: '+type+' created.');
-      }, function(err){
-        toaster.pop('error', 'Annotation Error', err.reason);
-      }
-    );
+  
+  var updateJobMgr = function(){
+    $scope.jobmgrlist = GenJobsMgr.find({islist: true}, {sort: {"_id": 1}}).fetch();
+    console.warn($scope.jobmgrlist);
   };
-
+  
+  $scope.selectJob = function(jid){
+    $scope.jobinfo = GenJobsMgr.findOne({_id: jid});
+    console.warn($scope.jobinfo);
+  }
 }]);

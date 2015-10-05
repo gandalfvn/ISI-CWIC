@@ -34,34 +34,43 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     button.btn.btn-default(type='submit') Go
   hr
 .row
-  accordion.col-sm-6
+  accordion.col-sm-12
     accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
       accordion-heading
         h4.panel-title
           i.fa.fa-inbox
-          | &nbsp; 1. States to Assign
+          | &nbsp; Job Groups
       table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
         thead
           tr
-            th Annotate
+            th Job Id
+            th Type
             th State
+            th Bundle
+            th # Turks
+            th # Annot
+            th # Tasks
         tbody
-          tr(ng-repeat='state in stateslist', ng-if='state.public')
-            td
-              button.btn.btn-xs.btn-info(title='Remove', ng-click='remove(state._id)')
-                .fa.fa-eye &nbsp; Describe
-              button.btn.btn-xs.btn-info(title='Review Replay', ng-click='$state.go("app.replay", {taskid: state._id})')
-                .fa.fa-eye &nbsp; Action
-            td(title='{{state._id}}', ng-click='selectAgent(state._id, "job")') {{ state.stateid}}
-
-script#didAgents(type="text/ng-template")
-  h3 Choose an Agent
-  div
-    table.row-border.hover(datatable='ng', dt-options='dtOptions')
-      thead
-        tr
-          th Name
-      tbody
-        tr(ng-repeat='agent in ngDialogData.agents', ng-if='agent.profile.roles.indexOf("agent") > -1')
-          td(title='{{agent._id}}', ng-click='closeThisDialog(agent._id)') {{agent.username}}
-
+          tr(ng-repeat='job in jobmgrlist', ng-if='job.public', ng-click='selectJob(job._id)')
+            td(title='{{job._id}}') {{job._id}}
+            td(title='{{job.tasktype}}') {{job.tasktype}}
+            td(title='{{job.stateid}}') {{job.stateid}}
+            td(title='{{job.bundle}}') {{job.bundle}}
+            td(title='{{job.asncnt}}') {{job.asncnt}}
+            td(title='{{job.antcnt}}') {{job.antcnt}}
+            td(title='{{job.list.length}}') {{job.list.length}}
+.row
+  accordion.col-sm-6
+    accordion-group.panel-primary.shadowbox(ng-if='jobinfo', ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-file-text-o
+          | &nbsp; Job {{jobinfo._id}} Information
+      .mb Task Type: {{jobinfo.tasktype | uppercase}}  State: {{jobinfo.stateid}}  Bundle: {{jobinfo.bundle}}
+      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptions")
+        thead
+          tr
+            th Task Id
+        tbody
+          tr(ng-repeat='tid in jobinfo.list', ng-click="$state.go('app.gentask',{taskid: tid})")
+            td {{tid}}

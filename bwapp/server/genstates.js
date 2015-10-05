@@ -48,8 +48,7 @@ Meteor.publish('genstates', function(id){
          ]}*/
       ]
     },
-    {fields: {'_id': 1, 'stateid': 1}}
-    //,{fields: {'_id': 1, 'sig': 1, 'frame': 1, 'prev': 1, 'next': 1, 'cubecnt': 1, 'init': 1, 'screencap': 1, 'ltype': 1, 'created': 1}}
+    {fields: {'_id': 1, 'stateid': 1, 'next': 1}}
   );
 });
 

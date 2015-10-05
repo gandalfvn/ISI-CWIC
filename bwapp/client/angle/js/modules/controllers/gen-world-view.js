@@ -336,11 +336,6 @@ angular.module('angle').controller('genWorldCtrl',
       function(sid){dataReady('genstates');},
       function(err){ console.log("error", arguments, err); }
     );
-    /*var stateslist = $scope.$meteorCollection(StatesList);
-    $scope.$meteorSubscribe("stateslist").then(
-      function(sid){dataReady('stateslist');},
-      function(err){ console.log("error", arguments, err); }
-    );*/
     
     $scope.showTime = function(){
       return (new Date).getTime();
@@ -351,11 +346,9 @@ angular.module('angle').controller('genWorldCtrl',
       console.warn('ready ', data, (new Date).getTime());
       readydat.push(data);
       if(readydat.length > 1){
-        $scope.statenum = _.uniq(GenStates.find({}, {
+        $scope.statenum = $rootScope.mdbArray(GenStates, {}, {
           sort: {stateid: 1}, fields: {stateid: true}
-        }).fetch().map(function(x) {
-          return x.stateid;
-        }), true);
+        }, "stateid");
         genCubeProps();
         $rootScope.dataloaded = true;
       }
@@ -683,20 +676,6 @@ angular.module('angle').controller('genWorldCtrl',
       return _.find(collection, function(a){return key === a[type]});
     };
 
-    var Uint8ToString = function(u8a){
-      var CHUNK_SZ = 0x8000;
-      var c = [];
-      for (var i=0; i < u8a.length; i+=CHUNK_SZ) {
-        c.push(String.fromCharCode.apply(null, u8a.subarray(i, i+CHUNK_SZ)));
-      }
-      return c.join("");
-    };
-    
-    var StringToUint8 = function(b64){
-      return new Uint8Array(atob(b64).split("").map(function(c) {
-        return c.charCodeAt(0); }));
-    };
-    
     var insertGen = function(used, curstate, previd, prevscreen, creator, name){
       /*var str = '';
       used.forEach(function(cid){
@@ -731,7 +710,7 @@ angular.module('angle').controller('genWorldCtrl',
           return false;
         }
         var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
-        var b64encoded = btoa(Uint8ToString(screenRaw));
+        var b64encoded = btoa($rootScope.Uint8ToString(screenRaw));
         var mystate = {
           stateid: curstate,
           cubecnt: cnt,
@@ -837,7 +816,7 @@ angular.module('angle').controller('genWorldCtrl',
     };
     
     var showImage = function(b64, id, text){
-      var u8_2 = StringToUint8(b64);
+      var u8_2 = $rootScope.StringToUint8(b64);
 
       var eleDivID = 'div' + $('div').length; // Unique ID
       var eleCanID = 'canvas' + $('canvas').length; // Unique ID
@@ -876,6 +855,10 @@ angular.module('angle').controller('genWorldCtrl',
             else{
               $scope.dbid = null;
               $scope.curitr = 0;
+              //update states
+              $scope.statenum = $rootScope.mdbArray(GenStates, {}, {
+                sort: {stateid: 1}, fields: {stateid: true}
+              }, "stateid");
             }
           }
           else{

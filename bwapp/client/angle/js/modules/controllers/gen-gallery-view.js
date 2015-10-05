@@ -557,19 +557,6 @@ angular.module('angle').controller('genGalleryCtrl',
       return _.find(collection, function(a){return key === a[type]});
     };
 
-    var Uint8ToString = function(u8a){
-      var CHUNK_SZ = 0x8000;
-      var c = [];
-      for (var i=0; i < u8a.length; i+=CHUNK_SZ) {
-        c.push(String.fromCharCode.apply(null, u8a.subarray(i, i+CHUNK_SZ)));
-      }
-      return c.join("");
-    };
-
-    var StringToUint8 = function(b64){
-      return new Uint8Array(atob(b64).split("").map(function(c) {
-        return c.charCodeAt(0); }));
-    };
 
     var insertGen = function(used, ltype, curstate, previd, prevscreen){
       var str = '';
@@ -691,7 +678,7 @@ angular.module('angle').controller('genGalleryCtrl',
     };
 
     var showImage = function(b64, title, caption, attachID){
-      var u8_2 = StringToUint8(b64);
+      var u8_2 = $rootScope.StringToUint8(b64);
       var myviewport = {width: 320, height: 220};
 
       var eleDivID = 'div' + $('div').length; // Unique ID
@@ -749,10 +736,8 @@ angular.module('angle').controller('genGalleryCtrl',
 
     $scope.showGallery = function(cstate, shonext, itr){
       console.warn('showGallery', cstate, shonext, itr);
-      var statel = _.uniq(GenStates.find({stateid: Number(cstate)}, {
-        sort: {"_id": 1}}).fetch().map(function(x) {
-        return x._id;
-      }), true);
+      var statel = $rootScope.mdbArray(GenStates, {stateid: Number(cstate)}, {
+        sort: {"_id": 1}}, "_id");
       
       console.warn(statel);
       if(itr === undefined || itr < 0){
@@ -768,13 +753,14 @@ angular.module('angle').controller('genGalleryCtrl',
           function(sub){
             var myframe = GenStates.findOne({_id: sid});
             console.warn('frame', myframe);
-            if(shonext && myframe.prev){
-              function itPrev(idx, list, cb){
+            if(shonext && myframe.next){
+              function itNext(idx, list, cb){
                 if(_.isUndefined(list[idx])) return cb();
                 var nsid = list[idx];
+                console.warn('nsid', nsid);
                 $scope.$meteorSubscribe("genstates", nsid).then(
                   function(sub){
-                    var prevframe = GenStates.findOne({_id: nsid});
+                    var nextframe = GenStates.findOne({_id: nsid});
                     var lenID = $('div').length;
                     var eleDivID = 'rowdiv' + lenID; // Unique ID
                     var htmlout =
@@ -787,26 +773,19 @@ angular.module('angle').controller('genGalleryCtrl',
                     }).addClass('col-sm-12')
                       .html(htmlout).css({"border-bottom": '1px solid #e4eaec'}).appendTo(attachTo);
 
-                    showImage(prevframe.screencap, 'ID: ' + nsid, 'Cubes:' + prevframe.cubecnt, 'statea'+lenID);
-                    showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt, 'stateb'+lenID);
-                    itPrev(idx+1, list, cb);
+                    showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt, 'statea'+lenID);
+                    showImage(nextframe.screencap, 'ID: ' + nsid, 'Cubes:' + nextframe.cubecnt, 'stateb'+lenID);
+                    itNext(idx+1, list, cb);
                   }
                 )
               }
-              itPrev(0, myframe.prev, function(){
+              itNext(0, myframe.next, function(){
                 if(itr > 0) $scope.showGallery(cstate, shonext, itr - 1);
               })
             }
             else{
               if(myframe)
                 showImage(myframe.screencap, 'ID: ' + sid, 'Cubes:' + myframe.cubecnt);
-              //showFrame(myframe.frame);
-              /*checkFnSS = setInterval(function(){
-                if(isSteadyState){
-                  clearInterval(checkFnSS);
-                  if(itr > 0) $scope.showGallery(cstate, ltype, shonext, itr - 1);
-                }
-              }, 200);*/
               if(itr > 0) $scope.showGallery(cstate, shonext, itr - 1);
             }
           }

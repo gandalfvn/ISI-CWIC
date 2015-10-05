@@ -82,9 +82,21 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
           return !$rootScope.isRole(user, 'agent');});
         }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('ngDialog','datatables')
+        helper.resolveFor('ngDialog','datatables', 'ngMd5')
       ),
       controller: 'genJobsCtrl'
+    })
+    .state('app.gentask', {
+      url: '/annotate?taskid&assignmentId&hitId&turkSubmitTo&workerId',
+      title: 'Annotation Task',
+      templateUrl: helper.basepath('gentask.html'),
+      resolve: angular.extend(
+        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
+          return !$rootScope.isRole(user, 'agent');});
+        }]},  //simple functions appear first so data is loaded
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables')
+      ),
+      controller: 'genTaskCtrl'
     })
     .state('app.worldview', {
         url: '/worldview',
