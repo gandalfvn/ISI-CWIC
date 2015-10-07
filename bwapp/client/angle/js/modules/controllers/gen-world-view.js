@@ -3,7 +3,7 @@
  * Created by wjwong on 9/9/15.
  =========================================================*/
 angular.module('angle').controller('genWorldCtrl',
-  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'md5', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, appConst, md5){
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'md5', 'Utils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, appConst, md5, utils){
     "use strict";
 
     var hasPhysics = true;
@@ -54,9 +54,12 @@ angular.module('angle').controller('genWorldCtrl',
     var cubesnamed = {};
     var cubesdesctocid = {};
     var numcubes = 0;
-    var cubecolors = ['red', 'yellow', 'cyan', 'purple', 'green', 'orange'];
+    var cubecolors = ['red', 'blue', 'green', 'cyan', 'magenta', 'yellow'];
+    var cubenames = ['adidas', 'bmw', 'burger king', 'coca cola', 'esso', 'heineken', 'hp', 'mcdonalds', 'mercedes benz', 'nvidia', 'pepsi', 'shell', 'sri', 'starbucks', 'stella artois', 'target', 'texaco', 'toyota', 'twitter', 'ups'];
     var colorids = {};
     colorids['red'] = (new BABYLON.Color3.FromInts(210,49,93));
+    colorids['blue'] = (new BABYLON.Color3.FromInts(0,0,200));
+    colorids['magenta'] = (new BABYLON.Color3.FromInts(200,0,200));
     colorids['yellow'] = (new BABYLON.Color3.FromInts(247,200,8));
     colorids['cyan'] = (new BABYLON.Color3.FromInts(34,181,191));
     colorids['purple'] = (new BABYLON.Color3.FromInts(135,103,166));
@@ -346,7 +349,7 @@ angular.module('angle').controller('genWorldCtrl',
       console.warn('ready ', data, (new Date).getTime());
       readydat.push(data);
       if(readydat.length > 1){
-        $scope.statenum = $rootScope.mdbArray(GenStates, {}, {
+        $scope.statenum = utils.mdbArray(GenStates, {}, {
           sort: {stateid: 1}, fields: {stateid: true}
         }, "stateid");
         genCubeProps();
@@ -710,7 +713,7 @@ angular.module('angle').controller('genWorldCtrl',
           return false;
         }
         var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
-        var b64encoded = btoa($rootScope.Uint8ToString(screenRaw));
+        var b64encoded = btoa(utils.Uint8ToString(screenRaw));
         var mystate = {
           stateid: curstate,
           cubecnt: cnt,
@@ -816,7 +819,7 @@ angular.module('angle').controller('genWorldCtrl',
     };
     
     var showImage = function(b64, id, text){
-      var u8_2 = $rootScope.StringToUint8(b64);
+      var u8_2 = utils.StringToUint8(b64);
 
       var eleDivID = 'div' + $('div').length; // Unique ID
       var eleCanID = 'canvas' + $('canvas').length; // Unique ID
@@ -856,7 +859,7 @@ angular.module('angle').controller('genWorldCtrl',
               $scope.dbid = null;
               $scope.curitr = 0;
               //update states
-              $scope.statenum = $rootScope.mdbArray(GenStates, {}, {
+              $scope.statenum = utils.mdbArray(GenStates, {}, {
                 sort: {stateid: 1}, fields: {stateid: true}
               }, "stateid");
             }
@@ -1020,6 +1023,23 @@ angular.module('angle').controller('genWorldCtrl',
       setTimeout(function(){waitForSSAndSave(params);}, 400);
     };
 
+    $scope.blockmeta = null;
+    $scope.loadMeta = function(){
+      if($scope.metafilename && $scope.metafilename.length){
+        //read file
+        var reader = new FileReader();
+        reader.onload = function(){
+          $scope.blockmeta = JSON.parse(reader.result);
+        };
+        reader.readAsText($scope.metafilename[0]);
+      }
+    };
+    
+    $scope.metaFileChanged = function(event){
+      $scope.$apply(function(){$scope.metafilename = event.target.files;});
+      console.warn($scope.metafilename);
+    };
+    
     // Now, call the createScene function that you just finished creating
     var scene;
     var grid;

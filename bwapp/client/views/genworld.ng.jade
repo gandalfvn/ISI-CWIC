@@ -4,6 +4,13 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
+  h3 1. Load Block Meta Data
+  form.form-inline.ng-pristine.ng-valid(role="form",novalidate, name='importmetaform', ng-submit='loadMeta()')
+    .form-group
+      input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().metaFileChanged(event)")
+      button.btn.btn-default(type="submit", ng-show='metafilename') Go
+  hr
+.row-fluid.col-sm-12(ng-show='hasBlockMeta')
   .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
     div.well
       h4 Generate State
@@ -65,6 +72,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           input(type='text', ng-model='rsid', placeholder='state id')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
 .row-fluid.col-sm-12
+  h3 Scene
   .row-fluid.col-sm-4
     div
       h4(ng-show='curitr') Iteration: {{curitr-1}}
