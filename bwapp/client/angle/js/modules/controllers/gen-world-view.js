@@ -10,7 +10,7 @@ angular.module('angle').controller('genWorldCtrl',
     var fric = 0.1;
     var rest = 0.2;
     var showGrid = true;
-    var useLogos = true;
+    $scope.showLogos = false;
 
     var screenshotCanvas = document.getElementById('screencap');
     var screenRaw;
@@ -104,7 +104,7 @@ angular.module('angle').controller('genWorldCtrl',
       boxmat.alpha = 1.0;
       //boxmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 1.0);
       var boxt;
-      if(useLogos)
+      if($scope.showLogos)
         boxt = new BABYLON.Texture("img/textures/logos/" + block.name.replace(/ /g, '') + '.png', scene);
       else
         boxt = numTextures[block.id-1];

@@ -2,41 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/adidas.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/bmw.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/burgerking.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/cocacola.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/esso.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/heineken.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/hp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/mcdonalds.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/mercedes.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/nvidia.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/pepsi.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/shell.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/sri.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/starbucks.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/stella.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/target.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/texaco.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/toyota.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/twitter.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/objects/ups.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/babylon.2.1.d.ts" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/babylon.2.1.debug.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/babylon.2.1.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/babylon.2.1.noworker.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/preview release - alpha/babylon.2.2.d.ts" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/preview release - alpha/babylon.2.2.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/preview release - alpha/babylon.2.2.max.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/preview release - alpha/babylon.2.2.noworker.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/vendor/babylonjs/preview release - alpha/what's new.md" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/constants.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/genstates.js" afterPath="$PROJECT_DIR$/server/genstates.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genworld.ng.jade" afterPath="$PROJECT_DIR$/client/views/genworld.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/services/utils.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/services/utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -57,21 +24,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="false">
+      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="86" column="44" selection-start-line="86" selection-start-column="44" selection-end-line="86" selection-end-column="44" />
+            <state vertical-scroll-proportion="0.31779662">
+              <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-world-view.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gen-world-view.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.26530612">
-              <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="106" column="0" selection-start-line="106" selection-start-column="0" selection-end-line="106" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -187,8 +154,8 @@
         <option value="$PROJECT_DIR$/client/angle/js/modules/services/utils.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
         <option value="$PROJECT_DIR$/server/genstates.js" />
-        <option value="$PROJECT_DIR$/client/views/genworld.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" />
+        <option value="$PROJECT_DIR$/client/views/genworld.ng.jade" />
       </list>
     </option>
   </component>
@@ -833,7 +800,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="23" width="1536" height="1280" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3277311" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -841,7 +808,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22046204" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39962998" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.35882354" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.35882354" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32857144" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1234,18 +1201,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="86" column="44" selection-start-line="86" selection-start-column="44" selection-end-line="86" selection-end-column="44" />
+          <caret line="106" column="0" selection-start-line="106" selection-start-column="0" selection-end-line="106" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js">
+    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.26530612">
-          <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+        <state vertical-scroll-proportion="0.31779662">
+          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
           <folding />
         </state>
       </provider>
