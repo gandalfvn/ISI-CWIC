@@ -141,6 +141,16 @@ angular.module('angle').service('Utils', ["$window", "APP_MEDIAQUERY", function(
         return new Uint8Array(atob(b64).split("").map(function(c){
           return c.charCodeAt(0);
         }));
+      },
+      /**
+       * Returns a random integer between min (inclusive) and max (inclusive)
+       * Using Math.round() will give you a non-uniform distribution!
+       * @param min
+       * @param max
+       * @returns {*}
+       */
+      rndInt: function(min, max){
+        return Math.floor(Math.random() * (max - min + 1)) + min;
       }
     };
 }]);

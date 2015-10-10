@@ -39,8 +39,7 @@ angular.module('angle')
         'vendor/glyphicons-pro/glyphicons_social/web/html_css/css/social.css',
         'vendor/glyphicons-pro/glyphicons_filetypes/web/html_css/css/filetypes.css'
       ],
-      'babylonjs':          [ //'vendor/babylonjs/babylon.2.1.debug.js',
-                              'vendor/babylonjs/preview release - alpha/babylon.2.2.js',
+      'babylonjs':          [ 'vendor/babylonjs/babylon.2.2.js',
                               'vendor/babylonjs/Oimo.js',
                               'vendor/handjs/hand.js'],
       'circular-json':      ['vendor/circular-json/build/circular-json.js'],
@@ -73,6 +72,6 @@ angular.module('angle')
     ]
   })
   .constant('APP_CONST', {
-    'fieldsize': 18
+    'fieldsize': 6
   })
 ;

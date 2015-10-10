@@ -5,12 +5,12 @@
 
 GenStates.allow({
   insert: function(userId, data){
-    var fcheck = _.without(_.keys(data), '_id','sig', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init', 'screencap', 'ltype', 'created', 'name', 'creator', 'stateid');
+    var fcheck = _.without(_.keys(data), '_id', 'public', 'block_meta', 'block_state', 'prev', 'next', 'cubecnt', 'init', 'screencap', 'created', 'name', 'creator', 'stateitr');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },
   update: function(userId, data, fields, modifier){
-    var fcheck = _.without(_.keys(data), '_id', 'sig', 'public', 'frame', 'prev', 'next', 'cubecnt', 'init', 'screencap', 'ltype', 'created', 'name', 'creator', 'stateid');
+    var fcheck = _.without(_.keys(data), '_id', 'public', 'block_meta', 'block_state', 'prev', 'next', 'cubecnt', 'init', 'screencap', 'created', 'name', 'creator', 'stateitr');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },
@@ -48,7 +48,7 @@ Meteor.publish('genstates', function(id){
          ]}*/
       ]
     },
-    {fields: {'_id': 1, 'stateid': 1, 'next': 1}}
+    {fields: {'_id': 1, 'stateitr': 1, 'next': 1}}
   );
 });
 
@@ -67,5 +67,5 @@ Meteor.publish('genstatesGallery', function(){
        {owner: {$exists: true}}
        ]}*/
     ]
-  },{fields: {'_id': 1, 'cubecnt': 1, 'screencap': 1, 'ltype': 1}});
+  },{fields: {'_id': 1, 'cubecnt': 1, 'screencap': 1}});
 });

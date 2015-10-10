@@ -4,14 +4,36 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
-  h3 1. Load Block Meta Data
-  form.form-inline.ng-pristine.ng-valid(role="form",novalidate, name='importmetaform', ng-submit='loadMeta()')
-    .form-group
-      input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().metaFileChanged(event)")
-      button.btn.btn-default(type="submit", ng-show='metafilename') Go
+  h3 Block Meta Data
+  .content.col-sm-4(ng-show='!blockmeta')
+    form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstateform', ng-submit='loadState()')
+      b Import State
+      .form-group
+        input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().stateFileChanged(event)")
+        button.btn.btn-default(type="submit", ng-show='statefilename') Go
+  .content.col-sm-4(ng-show='!blockmeta')
+    form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importmetaform', ng-submit='loadMeta()')
+      b Import Meta
+      .form-group
+        input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().metaFileChanged(event)")
+        button.btn.btn-default(type="submit", ng-show='metafilename') Go
+  .content.col-sm-3(ng-show='!blockmeta')
+    form.form-inline.ng-pristine.ng-valid.well(name='usemetastateform', ng-submit='showState(msid)')
+      .form-group
+        label Use State:
+        input(type='text', ng-model='msid', placeholder='state id')
+        input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
+  div(ng-show='blockmeta')
+    h4 # Blocks: {{blockmeta.blocks.length}}
+    span(ng-repeat='block in blockmeta.blocks')
+      | &nbsp;&nbsp;
+      button.btn.btn-xs.btn-default {{block.id}} &nbsp; {{block.name | uppercase}}
+    div
+      button.btn.btn-primary(ng-click='clearMeta()') Reset
+.row-fluid.col-sm-12
   hr
-.row-fluid.col-sm-12(ng-show='hasBlockMeta')
-  .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
+.row-fluid.col-sm-12(ng-show='blockmeta')
+  //-.row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
     div.well
       h4 Generate State
       form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, (cstate)?undefined:itr, cstate)')
@@ -23,11 +45,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             option(ng-show='statenum.length', value='{{statenum[statenum.length-1]+1}}') {{statenum[statenum.length-1]+1}}
         .form-group(ng-show='cstate==0')
           label Cube min: 
-          select.form-control(ng-model='ccnt.min', ng-init='ccnt.min=1')
-            option(ng-repeat='i in cubeprops track by $index', value='{{$index+1}}', ng-selected='ccnt.min==($index+1)') {{$index+1}}
+          select.form-control(ng-model='ccnt.min', ng-init='ccnt.min=2')
+            option(ng-repeat='i in blockmeta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.min==($index+1)') {{$index+1}}
           label &nbsp;&nbsp;max:
-          select.form-control(ng-model='ccnt.max', ng-init='ccnt.max=1')
-            option(ng-show='($index+1) >= ccnt.min', ng-repeat='i in cubeprops track by $index', value='{{$index+1}}', ng-selected='ccnt.max==($index+1)') {{$index+1}}
+          select.form-control(ng-model='ccnt.max', ng-init='ccnt.max=2')
+            option(ng-show='($index+1) >= ccnt.min', ng-repeat='i in blockmeta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.max==($index+1)') {{$index+1}}
           br
         .form-group(ng-show='cstate==0')
           label Iterations:
@@ -37,29 +59,27 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           br
         br
         button.btn.btn-default(type='submit') Go
-  .row-fluid.col-sm-3(ng-if='!isgen')
+  .row-fluid.col-sm-3(ng-if='!isgen && enableImpSave')
     div.well
-      h4 Import State
-      button.btn.btn-default.btn-sm(ng-show='!enableImpSave', ng-click='showImportDialog()')
-        .glyphicons.file_import Import
       form.form-inline.ng-pristine.ng-valid(ng-show='enableImpSave', name='saveImpForm', ng-submit='saveImport(impFilename)')
         .form-group
           label Name:
           input(type='text', ng-model='impFilename')
-        button.btn.btn-success.btn-sm(type='submit')
-          .glyphicons.floppy_saved Save
-        | &nbsp;&nbsp;
-        button.btn.btn-warning.btn-sm(ng-click='cancelImport()')
-          .glyphicons.remove_2 Cancel
+        .form-group
+          button.btn.btn-success.btn-sm(type='submit')
+            .glyphicons.floppy_saved Save
+          | &nbsp;&nbsp;
+          button.btn.btn-warning.btn-sm(ng-click='cancelImport()')
+            .glyphicons.remove_2 Cancel
   .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
     div.well
       h4 State
-      form.form-inline.ng-pristine.ng-valid(name='myshowform', ng-submit='showState(sid)')
+      //-form.form-inline.ng-pristine.ng-valid(name='myshowform', ng-submit='showState(sid)')
         .form-group
           label Show:
-          input(type='text', ng-model='sid', placeholder='state id')
+          input(type='text', ng-model='sid', placeholder='state iteration')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
-      br
+        br
       form.form-inline.ng-pristine.ng-valid(name='mytestform', ng-submit='genStateN({sid: tsid})')
         .form-group
           label Test Move:
@@ -73,10 +93,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
 .row-fluid.col-sm-12
   h3 Scene
-  .row-fluid.col-sm-4
+  .row-fluid.col-sm-5
     div
       h4(ng-show='curitr') Iteration: {{curitr-1}}
-      canvas(id="renderCanvasBab", style='width: 320px; height: 220px;')
+      canvas(id="renderCanvasBab", style='width: 384px; height: 264px;')
       canvas(id="canvas_2D")
   .row-fluid.col-sm-2
     div Move camera by clicking and dragging in scene
