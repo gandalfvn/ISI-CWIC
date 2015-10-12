@@ -676,7 +676,7 @@ angular.module('angle').controller('genWorldCtrl',
             params.cubesused = cubesused;
             params.prev = params.sid;
             params.prevscreen = myframe.screencap;
-            setTimeout(function(){waitForSSAndSave(params);}, 400);
+            setTimeout(function(){waitForSSAndSave(params, nextItr(params));}, 400);
           });
         }
       )
@@ -912,37 +912,14 @@ angular.module('angle').controller('genWorldCtrl',
     var checkFnSS; //store steady state check
     /**
      * check for a scene steady state before saving data.
+     * providing a cb will short circuit checks for startgen or startmove functions
      * @param params
      */
-    var waitForSSAndSave = function(params){
+    var waitForSSAndSave = function(params, cb){
       checkFnSS = setInterval(function(){
         if(isSteadyState){
           clearInterval(checkFnSS);
-          insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen, params.creator, params.name,
-          function(err, savedsid){
-            if(err) toaster.pop('warn', err);
-            if(savedsid){
-              if(params.itr > 1){
-                if(params.startGen) params.startGen(params.ccnt, params.itr - 1, params.cstate);
-                if(params.startMove) params.startMove(params.itr-1, params.cstate+1, savedsid);
-              }
-              else{
-                $scope.dbid = null;
-                $scope.curitr = 0;
-                $scope.curcnt = 0;
-                //update states
-                $scope.statenum = utils.mdbArray(GenStates, {}, {
-                  sort: {stateitr: 1}, fields: {stateitr: true}
-                }, "stateitr");
-              }
-            }
-            else{
-              //don't iterate since we had error with previous insert
-              //which means we need to make a new init state
-              if(params.startGen) params.startGen(params.ccnt, params.itr, params.cstate);
-              if(params.startMove) params.startMove(params.itr, params.cstate, params.sid);
-            }
-          });
+          insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen, params.creator, params.name, cb);
         }
       }, 200);
     };
@@ -974,7 +951,7 @@ angular.module('angle').controller('genWorldCtrl',
           $scope.showInitFrame(state, function(){
             var params = {ccnt: ccnt, itr: itr, cstate: cstate, cubesused: cubesused, creator: 'system', startGen: $scope.startGen};
             //we need to set a timeout before checking steading states or we get bad block layouts
-            setTimeout(function(){waitForSSAndSave(params);}, 400);
+            setTimeout(function(){waitForSSAndSave(params, nextItr(params));}, 400);
           });
         }
         if(itr === undefined) toaster.pop('error','Please set Iterations');
@@ -1126,7 +1103,16 @@ angular.module('angle').controller('genWorldCtrl',
         cubesused.add(b.id);
       })
       var params = {ccnt: $scope.curState.blockmeta.blocks.length, itr: 0, cstate: $scope.curState.stateitr, cubesused: cubesused, creator: $rootScope.currentUser._id, name: savename};
-      setTimeout(function(){waitForSSAndSave(params);}, 400);
+      setTimeout(function(){waitForSSAndSave(params, 
+        function(err, savedsid){
+          if(err) toaster.pop('warn', err);
+          if(savedsid){
+            $scope.curitr = $scope.curState.stateitr;
+            $scope.curcnt = 0;
+            $scope.curState.stateid = savedsid;
+          }
+        });
+      }, 400);
     };
 
     $scope.clearMeta = function(){
@@ -1219,6 +1205,32 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.genStateN(params);
     };
 
+    var nextItr = function(params){
+      return function(err, savedsid){
+        if(err) toaster.pop('warn', err);
+        if(savedsid){
+          if(params.itr > 1){
+            if(params.startGen) params.startGen(params.ccnt, params.itr - 1, params.cstate);
+            if(params.startMove) params.startMove(params.itr - 1, params.cstate + 1, savedsid);
+          }
+          else{
+            $scope.dbid = null;
+            $scope.curitr = 0;
+            $scope.curcnt = 0;
+            //update states
+            $scope.statenum = utils.mdbArray(GenStates, {}, {
+              sort: {stateitr: 1}, fields: {stateitr: true}
+            }, "stateitr");
+          }
+        }
+        else{
+          //don't iterate since we had error with previous insert
+          //which means we need to make a new init state
+          if(params.startGen) params.startGen(params.ccnt, params.itr, params.cstate);
+          if(params.startMove) params.startMove(params.itr, params.cstate, params.sid);
+        }
+      };
+    }
     // Start by calling the createScene function that you just finished creating
     var scene;
     var grid;
