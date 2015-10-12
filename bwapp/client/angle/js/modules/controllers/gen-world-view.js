@@ -10,8 +10,7 @@ angular.module('angle').controller('genWorldCtrl',
     var fric = 0.1;
     var rest = 0.2;
     var showGrid = true;
-    $scope.showLogos = false;
-
+    
     var screenshotCanvas = document.getElementById('screencap');
     var screenRaw;
     BABYLON.Tools.DumpFramebuffer = function(width, height, engine){
@@ -327,31 +326,6 @@ angular.module('angle').controller('genWorldCtrl',
       return scene;
     };  // End of createScene function
 
-    var createObjects = function(blocks){
-      if(cubeslist.length) cubeslist.forEach(function(c){
-        if(hasPhysics) oimo.unregisterMesh(c); //stop physics
-        c.dispose();
-      });
-      cubeslist.length = 0;
-      cubesdata = {};
-      numcubes = 0;
-      var p = -2;
-      var i = 0;
-      var z = 0;
-      var zpos = [0,1,2];
-      for(var j = 0; j < blocks.length; j++){
-        createCube({pos: new BABYLON.Vector3((p+i),blocks[j].shape.size, zpos[z]), scene: scene, block: blocks[j], isVisible: true});
-        if(i > 3){i = 0; z++;}
-        else i++;
-      }
-      cubesid = Object.keys(cubesdata);
-      console.warn('cubesid', cubesid);
-    };
-
-    var get3DCubeById = function(cid){
-      return cubeslist[cubesdata[cid].objidx];
-    }
-
     var updateRender = function (scene) {
       return function(){
         scene.render();
@@ -374,7 +348,44 @@ angular.module('angle').controller('genWorldCtrl',
       engine.resize();
     });
 
-    //**start app================================
+    //**start app================================================================
+    //**3D helpers
+    var createObjects = function(blocks){
+      if(cubeslist.length) cubeslist.forEach(function(c){
+        if(hasPhysics) oimo.unregisterMesh(c); //stop physics
+        c.dispose();
+      });
+      cubeslist.length = 0;
+      cubesdata = {};
+      numcubes = 0;
+      var p = -2;
+      var i = 0;
+      var z = 0;
+      var zpos = [0,1,2];
+      for(var j = 0; j < blocks.length; j++){
+        createCube({pos: new BABYLON.Vector3((p+i),blocks[j].shape.size, zpos[z]), scene: scene, block: blocks[j], isVisible: true});
+        if(i > 3){i = 0; z++;}
+        else i++;
+      }
+      cubesid = Object.keys(cubesdata);
+    };
+
+    var get3DCubeById = function(cid){
+      return cubeslist[cubesdata[cid].objidx];
+    };
+
+    //**start app logic============================================================
+    $scope.showLogos = false;
+
+    function CurrentState(){
+      this.clear =  function(){
+        this.blockmeta = {}; 
+        this.stateitr = -1; this.stateid = null;
+      };
+      this.clear();
+    }
+    $scope.curState = new CurrentState();
+
     var genstates = $scope.$meteorCollection(GenStates);
     $scope.$meteorSubscribe("genstates").then(
       function(sid){dataReady('genstates');},
@@ -455,7 +466,7 @@ angular.module('angle').controller('genWorldCtrl',
           //half of the size of the cube is from base cube other half from current cube
           mycube.position.y = c.position.y + c.prop.size/2 + mycube.prop.size/2; 
         }
-      };
+      }
     };
 
     /**
@@ -591,20 +602,26 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.$meteorSubscribe("genstates", params.sid).then(
         function(sub){
           var myframe = GenStates.findOne({_id: params.sid});
-          if(!params.cstate) //show when we use 'show state' input
-            showImage(myframe.screencap, params.sid, '&nbsp;Show');
+          //if(!params.cstate) //show when we use 'show state' input
+            //showImage(myframe.screencap, params.sid, '&nbsp;Show');
           //showFrame(myframe);
           //create a munge of cube position rotate and props
           var used = [];
           var cidlist = [];
           var cubeInWorld = {};
           var cubesused = new Set();
-          _.forEach(myframe.frame, function(p,i){
-            var val = {prop: $scope.cubeprops[p.cid], position: p.position, rotation: p.rotation};
+          //create updated blockmeta
+          var cubemeta = {};
+          var maxsize = 0;
+          _.each(myframe.block_meta.blocks, function(m){cubemeta[m.id] = m;});
+          _.each(myframe.block_state, function(p,i){
+            var size = cubemeta[p.id].shape.size;
+            if(maxsize < size) maxsize = size;
+            var val = {prop: {cid: p.id, size: size}, position: p.position, rotation: p.rotation};
             used.push(val);
-            cubeInWorld[p.cid] = val;
-            cidlist.push(p.cid);
-            cubesused.add(p.cid);
+            cubeInWorld[p.id] = val;
+            cidlist.push(p.id);
+            cubesused.add(p.id);
           });
           var cubeDat;
           //let gencube choose a cube and create a position based on it
@@ -614,22 +631,22 @@ angular.module('angle').controller('genWorldCtrl',
           }
           if(ltype < 10){
             if(ltype < 5){
-              cubeDat = genCubeNear(0, cidlist, cubeInWorld);
+              cubeDat = genCubeNear(maxsize, cidlist, cubeInWorld);
               stateNStats.near++;
             }
             else{
-              cubeDat = genCubeFar(0, cidlist, cubeInWorld);
+              cubeDat = genCubeFar(maxsize, cidlist, cubeInWorld);
               stateNStats.far++
             }
           }
           else{
-            cubeDat = genCubeStack(0, cidlist, cubeInWorld);
+            cubeDat = genCubeStack(maxsize, cidlist, cubeInWorld);
             stateNStats.stack++;
           }
           //now we randomly choose a cube outside of the anchor cube id to move to the new position
           var mycid = cubeDat.anchorCid;
-          while(mycid == cubeDat.anchorCid && myframe.frame.length>1){//choose a cube not the anchor cube
-            mycid = myframe.frame[utils.rndInt(0, myframe.frame.length-1)].cid;
+          while(mycid == cubeDat.anchorCid && myframe.block_state.length>1){//choose a cube not the anchor cube
+            mycid = myframe.block_state[utils.rndInt(0, myframe.block_state.length-1)].id;
           }
           var acube = cubeInWorld[mycid];
           var cubeStack = getStackCubes(acube, used, mycid);
@@ -650,16 +667,16 @@ angular.module('angle').controller('genWorldCtrl',
           });
           //rebuild frame and show
           for(var i = 0; i < myframe.block_state.length; i++){
-            myframe.block_state[i].position = cubeInWorld[p.cid].position;
-          };
+            myframe.block_state[i].position = cubeInWorld[myframe.block_state[i].id].position;
+          }
           showFrame(myframe, function(){
             //this is a iterate state generation so lets save the info
-            if(params.cstate){
-              params.cubesused = cubesused;
-              params.prev = params.sid;
-              params.prevscreen = myframe.screencap;
-              setTimeout(function(){waitForSSAndSave(params);}, 400);
-            }
+            $scope.curcnt = params.itr+1;
+            $scope.curitr = params.cstate+1;
+            params.cubesused = cubesused;
+            params.prev = params.sid;
+            params.prevscreen = myframe.screencap;
+            setTimeout(function(){waitForSSAndSave(params);}, 400);
           });
         }
       )
@@ -710,7 +727,7 @@ angular.module('angle').controller('genWorldCtrl',
       return _.find(collection, function(a){return key === a[type]});
     };
 
-    var insertGen = function(used, curstate, previd, prevscreen, creator, name){
+    var insertGen = function(used, stateitr, previd, prevscreen, creator, name, cb){
       /*var str = '';
       used.forEach(function(cid){
         var c = get3DCubeById(cid);
@@ -748,7 +765,7 @@ angular.module('angle').controller('genWorldCtrl',
         var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
         var b64encoded = btoa(utils.Uint8ToString(screenRaw));
         var mystate = {
-          stateitr: curstate,
+          stateitr: stateitr,
           cubecnt: cnt,
           block_state: frame,
           block_meta: meta,
@@ -784,11 +801,24 @@ angular.module('angle').controller('genWorldCtrl',
           
           function showSaveState(){
             if(previd){
-              showImage(prevscreen, previd, '&nbsp;Before');
-              showImage(b64encoded, $scope.dbid, '&nbspAfer');
+              var lenID = $('div').length;
+              var eleDivID = 'rowdiv' + lenID; // Unique ID
+              var htmlout =
+                '<div id="statea'+lenID+'"></div>' +
+                '<div class="fa fa-chevron-right col-sm-1" style="margin-top: 1em; font-size: 60px;"></div>' +
+                '<div id="stateb'+lenID+'"></div>';
+              var attachTo = '#galleryarea';
+              $('<div>').attr({
+                id: eleDivID
+              }).addClass('col-sm-12')
+                .html(htmlout).css({"border-bottom": '1px solid #e4eaec'}).appendTo(attachTo);
+
+              showImage(prevscreen, previd, '&nbsp;Before', 'statea'+lenID);
+              showImage(b64encoded, $scope.dbid, '&nbspAfter', 'stateb'+lenID);
             }
             else
               showImage(b64encoded, $scope.dbid);
+            cb(null, $scope.dbid);
           }
           //save to a state
           /*function saveState(){
@@ -842,30 +872,29 @@ angular.module('angle').controller('genWorldCtrl',
             }
           }*/
         }, function(err){
-          toaster.pop('error', 'State ' + $scope.dbid, err.reason);
+          cb('State ' + $scope.dbi + ' ' + err.reason);
         });
-        return true;
       }
       else{
-        toaster.pop('warning', 'State already exists!');
-        return false;
+        cb('State already exists!');
       }
     };
     
-    var showImage = function(b64, id, text){
+    var showImage = function(b64, id, text, attachID){
       var u8_2 = utils.StringToUint8(b64);
 
       var eleDivID = 'div' + $('div').length; // Unique ID
       var eleCanID = 'canvas' + $('canvas').length; // Unique ID
       var eleLabelID = 'h4' + $('h4').length; // Unique ID
-      var htmlout = '<canvas id="'+eleCanID+'" style="width:'+canvas.width+'px;height:'+canvas.height+'px"></canvas>' +
+      var htmlout = '<canvas id="'+eleCanID+'" style="width:'+canvas.width*2/3+'px;height:'+canvas.height*2/3+'px"></canvas>' +
         '<label id="'+eleLabelID+'" class="mb"> ID: '+id+'</label>';
-      if(text)
-        htmlout += '<b>'+text+'</b>';
+      if(text) htmlout += '<b>'+text+'</b>';
+      var attachTo = '#galleryarea';
+      if(attachID) attachTo = '#'+attachID;
       $('<div>').attr({
         id: eleDivID
       }).addClass('col-sm-4')
-      .html(htmlout).css({}).appendTo('#galleryarea');
+      .html(htmlout).css({}).appendTo(attachTo);
       
       var screendisp = document.getElementById(eleCanID); // Use the created element
       screendisp.width = canvas.width;
@@ -889,27 +918,31 @@ angular.module('angle').controller('genWorldCtrl',
       checkFnSS = setInterval(function(){
         if(isSteadyState){
           clearInterval(checkFnSS);
-          var insRet = insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen, params.creator, params.name);
-          console.warn('insRet', insRet);
-          if(insRet){
-            if(params.itr > 0){
-              if(params.startGen) params.startGen(params.ccnt, params.itr - 1, params.cstate);
-              else console.warn('ERROR missing startGen in WaitforSSAndSave');
+          insertGen(params.cubesused, params.cstate, params.prev, params.prevscreen, params.creator, params.name,
+          function(err, savedsid){
+            if(err) toaster.pop('warn', err);
+            if(savedsid){
+              if(params.itr > 1){
+                if(params.startGen) params.startGen(params.ccnt, params.itr - 1, params.cstate);
+                if(params.startMove) params.startMove(params.itr-1, params.cstate+1, savedsid);
+              }
+              else{
+                $scope.dbid = null;
+                $scope.curitr = 0;
+                $scope.curcnt = 0;
+                //update states
+                $scope.statenum = utils.mdbArray(GenStates, {}, {
+                  sort: {stateitr: 1}, fields: {stateitr: true}
+                }, "stateitr");
+              }
             }
             else{
-              $scope.dbid = null;
-              $scope.curitr = 0;
-              //update states
-              $scope.statenum = utils.mdbArray(GenStates, {}, {
-                sort: {stateitr: 1}, fields: {stateitr: true}
-              }, "stateitr");
+              //don't iterate since we had error with previous insert
+              //which means we need to make a new init state
+              if(params.startGen) params.startGen(params.ccnt, params.itr, params.cstate);
+              if(params.startMove) params.startMove(params.itr, params.cstate, params.sid);
             }
-          }
-          else{
-            //don't iterate since we had error with previous insert
-            //which means we need to make a new init state
-            if(params.startGen) params.startGen(params.ccnt, params.itr, params.cstate);
-          }
+          });
         }
       }, 200);
     };
@@ -936,7 +969,8 @@ angular.module('angle').controller('genWorldCtrl',
           }
           if(cubesused.size != state.length)
             console.warn('done state!!', cubesused.size, state.length);
-          $scope.curitr = itr;
+          $scope.curitr = cstate;
+          $scope.curcnt = itr;
           $scope.showInitFrame(state, function(){
             var params = {ccnt: ccnt, itr: itr, cstate: cstate, cubesused: cubesused, creator: 'system', startGen: $scope.startGen};
             //we need to set a timeout before checking steading states or we get bad block layouts
@@ -955,7 +989,8 @@ angular.module('angle').controller('genWorldCtrl',
           itr = statel.length - 1; //if first run for state n+1
           console.warn('in length', itr);
         }
-        $scope.curitr = itr;
+        $scope.curitr = cstate;
+        $scope.curcnt = itr;
         stateNStats.near = 0;
         stateNStats.far = 0;
         stateNStats.stack = 0;
@@ -975,10 +1010,15 @@ angular.module('angle').controller('genWorldCtrl',
         function(sub){
           var myframe = GenStates.findOne({_id: sid});
           //update the meta
-          $scope.blockmeta = myframe.block_meta;
-          createObjects($scope.blockmeta.blocks);
+          $scope.curitr = myframe.stateitr;
+          $scope.curcnt = 0;
+          $scope.curState.stateid = myframe._id;
+          $scope.curState.stateitr = myframe.stateitr;
+          $scope.curState.blockmeta = myframe.block_meta;
+          createObjects($scope.curState.blockmeta.blocks);
           showImage(myframe.screencap, sid);
           showFrame(myframe);
+          /*
           var tempframe = {block_meta: myframe.block_meta, block_state: []};
           for(var i = 0; i < myframe.block_state.length; i++){
             var s = myframe.block_state[i];
@@ -993,7 +1033,7 @@ angular.module('angle').controller('genWorldCtrl',
             });
             tempframe.block_state.push({id: s.id, position: pos, rotation: rot})
           }
-          console.warn(JSON.stringify(tempframe, null, 2));
+          console.warn(JSON.stringify(tempframe, null, 2));*/
         }
       )
     };
@@ -1074,7 +1114,7 @@ angular.module('angle').controller('genWorldCtrl',
       //must use function to apply to scope
       $scope.impFilename = null;
       $scope.enableImpSave = false;
-      $scope.blockmeta = null;
+      $scope.curState.clear();
       $scope.resetWorld();
     };
 
@@ -1082,16 +1122,16 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.impFilename = null;
       $scope.enableImpSave = false;
       var cubesused = new Set();
-      $scope.blockmeta.blocks.forEach(function(b){
+      $scope.curState.blockmeta.blocks.forEach(function(b){
         cubesused.add(b.id);
       })
-      var params = {ccnt: $scope.blockmeta.blocks.length, itr: 0, cstate: 0, cubesused: cubesused, creator: $rootScope.currentUser._id, name: savename};
+      var params = {ccnt: $scope.curState.blockmeta.blocks.length, itr: 0, cstate: $scope.curState.stateitr, cubesused: cubesused, creator: $rootScope.currentUser._id, name: savename};
       setTimeout(function(){waitForSSAndSave(params);}, 400);
     };
 
-    $scope.blockmeta = null;
     $scope.clearMeta = function(){
-      $scope.blockmeta = null;
+      $('#galleryarea').empty();
+      $scope.curState.clear();
     };
 
     $scope.loadMeta = function(){
@@ -1100,8 +1140,9 @@ angular.module('angle').controller('genWorldCtrl',
         var reader = new FileReader();
         reader.onload = function(){
           $scope.$apply(function(){
-            $scope.blockmeta = JSON.parse(reader.result);
-            createObjects($scope.blockmeta.blocks);
+            $scope.curState.stateitr = 0;
+            $scope.curState.blockmeta = JSON.parse(reader.result);
+            createObjects($scope.curState.blockmeta.blocks);
           })
         };
         reader.readAsText($scope.metafilename[0]);
@@ -1113,15 +1154,19 @@ angular.module('angle').controller('genWorldCtrl',
       console.warn($scope.metafilename);
     };
 
+    /**
+     * loads a json state file with the CURRENT state iteration set to 0
+     */
     $scope.loadState = function(){
       if($scope.statefilename && $scope.statefilename.length){
         //read file
         var reader = new FileReader();
         reader.onload = function(){
           var filedata = JSON.parse(reader.result);
-          $scope.blockmeta = filedata.block_meta;
-          console.warn($scope.blockmeta);
-          createObjects($scope.blockmeta.blocks);
+          $scope.curState.stateitr = 0;
+          $scope.curState.blockmeta = filedata.block_meta;
+          console.warn($scope.curState.blockmeta);
+          createObjects($scope.curState.blockmeta.blocks);
           //mung block_state
           filedata.block_state = mungeBlockState(filedata.block_state);
           showFrame(filedata, function(){
@@ -1141,6 +1186,11 @@ angular.module('angle').controller('genWorldCtrl',
       console.warn($scope.statefilename);
     };
 
+    /**
+     * Transform text block states from cwic to internal block states
+     * @param bs
+     * @returns {Array}
+     */
     var mungeBlockState = function(bs){
       var newBS = [];
       bs.forEach(function(b){
@@ -1157,7 +1207,19 @@ angular.module('angle').controller('genWorldCtrl',
       return newBS;
     };
 
-    // Now, call the createScene function that you just finished creating
+    $scope.startMove = function(itr, cstate, sid){
+      console.warn(itr);
+
+      stateNStats.near = 0;
+      stateNStats.far = 0;
+      stateNStats.stack = 0;
+      if(!cstate) cstate = $scope.curState.stateitr;
+      if(!sid) sid = $scope.curState.stateid;
+      var params = {itr: itr, cstate: cstate, sid: sid, startMove: $scope.startMove};
+      $scope.genStateN(params);
+    };
+
+    // Start by calling the createScene function that you just finished creating
     var scene;
     var grid;
     createWorld();
