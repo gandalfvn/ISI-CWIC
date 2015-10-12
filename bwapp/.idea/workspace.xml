@@ -47,7 +47,7 @@
         <entry file="file://$PROJECT_DIR$/kill.sh">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.020408163">
-              <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
+              <caret line="1" column="6" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -1240,7 +1240,7 @@
     <entry file="file://$PROJECT_DIR$/kill.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.020408163">
-          <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
+          <caret line="1" column="6" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
           <folding />
         </state>
       </provider>
