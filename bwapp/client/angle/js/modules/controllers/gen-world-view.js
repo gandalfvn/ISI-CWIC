@@ -438,12 +438,12 @@ angular.module('angle').controller('genWorldCtrl',
      * @returns {boolean}
      */
     var intersectsMeshXYZ = function(src, tgt){
-      var s = (src.prop.size/2)-0.1; //slightly small
+      var s = (src.prop.size/2)-0.01; //slightly small
       var a = {
         max: {x: src.position.x+s, y: src.position.y+s, z: src.position.z+s},
         min: {x: src.position.x-s, y: src.position.y-s, z: src.position.z-s}
       };
-      s = (tgt.prop.size/2)-0.1;
+      s = (tgt.prop.size/2)-0.01;
       var b = {
         max: {x: tgt.position.x+s, y: tgt.position.y+s, z: tgt.position.z+s},
         min: {x: tgt.position.x-s, y: tgt.position.y-s, z: tgt.position.z-s}
@@ -632,7 +632,7 @@ angular.module('angle').controller('genWorldCtrl',
           });
           var cubeDat;
           //let gencube choose a cube and create a position based on it
-          var ltype = utils.rndInt(0,19);
+          var ltype = 15;// utils.rndInt(0,19);
           if(cidlist.length < 2){//only 1 cube so no stacks
             ltype = utils.rndInt(0, 9);
           }
@@ -657,9 +657,10 @@ angular.module('angle').controller('genWorldCtrl',
           }
           var acube = cubeInWorld[mycid];
           var cubeStack = getStackCubes(acube, used, mycid);
-          //get the cubes left in the world
+          //remove cubes used from the world and leave world cubes in cidlist
           cidlist.splice(_.indexOf(cidlist, acube.prop.cid), 1);
           cubeStack.forEach(function(c){cidlist.splice(_.indexOf(cidlist, c.prop.cid), 1)});
+          
           var basePos = {x: acube.position.x, y: acube.position.y, z: acube.position.z}; //store base Y
           acube.position = cubeDat.position;
           acube.position.y = acube.prop.size/2; //translate it down to the ground
@@ -677,13 +678,18 @@ angular.module('angle').controller('genWorldCtrl',
             myframe.block_state[i].position = cubeInWorld[myframe.block_state[i].id].position;
           }
           showFrame(myframe, function(){
-            //this is a iterate state generation so lets save the info
-            $scope.curcnt = params.itr+1;
-            $scope.curitr = params.cstate+1;
-            params.cubesused = cubesused;
-            params.prev = params.sid;
-            params.prevscreen = myframe.screencap;
-            setTimeout(function(){waitForSSAndSave(params, nextItr(params));}, 400);
+            if(params.itr){
+              //this is a iterate state generation so lets save the info
+              $scope.curcnt = params.itr + 1;
+              $scope.curitr = params.cstate + 1;
+              params.cubesused = cubesused;
+              params.prev = params.sid;
+              params.prevscreen = myframe.screencap;
+              setTimeout(function(){
+                waitForSSAndSave(params, nextItr(params));
+              }, 400);
+            }
+            else $scope.$apply(function(){toaster.pop('info','Generated Test Move')});
           });
         }
       )
@@ -753,20 +759,21 @@ angular.module('angle').controller('genWorldCtrl',
         used.forEach(function(cid){
           cnt++;
           var c = get3DCubeById(cid);
-          if((c.position.x-c.boxsize/2) >= min && (c.position.x+c.boxsize/2) <= max &&
-            (c.position.z-c.boxsize/2) >= min && (c.position.z+c.boxsize/2) <= max)
-          {
-            var dat = {id: cid, position: c.position.clone(), rotation: c.rotationQuaternion.clone()};
-            frame.push(dat);
-            meta.blocks.push(cubesdata[cid].meta);
-          }
-          else{
-            isValid = false;
-            //console.warn('Out',c.position.x- c.boxsize/2, c.position.x+ c.boxsize/2,c.position.z- c.boxsize/2, c.position.z+ c.boxsize/2);
+          if(c){
+            if((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
+              (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max){
+              var dat = {id: cid, position: c.position.clone(), rotation: c.rotationQuaternion.clone()};
+              frame.push(dat);
+              meta.blocks.push(cubesdata[cid].meta);
+            }
+            else{
+              isValid = false;
+              //console.warn('Out',c.position.x- c.boxsize/2, c.position.x+ c.boxsize/2,c.position.z- c.boxsize/2, c.position.z+ c.boxsize/2);
+            }
           }
         });
         if(!isValid){
-          toaster.pop('error', 'Cube(s) Out of Bounds!');
+          $scope.$apply(function(){toaster.pop('error', 'Cube(s) Out of Bounds!');});
           return false;
         }
         var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
@@ -1059,7 +1066,7 @@ angular.module('angle').controller('genWorldCtrl',
             retStack.push(c);
           }
         }
-        else console.warn('skipped', cid)
+        //else console.warn('skipped', cid)
       }
       return retStack;
     };
@@ -1129,10 +1136,12 @@ angular.module('angle').controller('genWorldCtrl',
       var cubesused = new Set();
       $scope.curState.block_meta.blocks.forEach(function(b){
         cubesused.add(b.id);
-      })
+      });
+      console.warn('saveImport');
       var params = {ccnt: $scope.curState.block_meta.blocks.length, itr: 0, cstate: $scope.curState.stateitr, cubesused: cubesused, creator: $rootScope.currentUser._id, name: savename};
       setTimeout(function(){waitForSSAndSave(params, 
         function(err, savedsid){
+          console.warn('saveimpor wait for');
           if(err) toaster.pop('warn', err);
           if(savedsid){
             $scope.curitr = $scope.curState.stateitr;
@@ -1184,6 +1193,9 @@ angular.module('angle').controller('genWorldCtrl',
           var filedata = JSON.parse(reader.result);
           if(filedata.block_state && filedata.block_state.length
             && filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length){
+            if(filedata.block_meta.blocks.length != filedata.block_state.length) return $scope.$apply(function(){
+              toaster.pop('error', 'Block META and STATE mismatch!');
+            });
             $scope.curState.clear();
             $scope.curState.stateitr = 0;
             $scope.curState.block_meta = filedata.block_meta;
