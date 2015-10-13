@@ -40,7 +40,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         button.btn.btn-primary(ng-click='clearMeta()') Reset
 .row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
   hr
-.row-fluid.col-sm-12
+.row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
   .row-fluid.col-sm-5
     h3 Scene
     div.col-sm-7
