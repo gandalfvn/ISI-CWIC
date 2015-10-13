@@ -632,7 +632,7 @@ angular.module('angle').controller('genWorldCtrl',
           });
           var cubeDat;
           //let gencube choose a cube and create a position based on it
-          var ltype = 15;// utils.rndInt(0,19);
+          var ltype = utils.rndInt(0,19);
           if(cidlist.length < 2){//only 1 cube so no stacks
             ltype = utils.rndInt(0, 9);
           }
