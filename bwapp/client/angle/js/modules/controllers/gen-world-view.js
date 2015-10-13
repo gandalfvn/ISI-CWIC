@@ -1220,13 +1220,22 @@ angular.module('angle').controller('genWorldCtrl',
       bs.forEach(function(b){
         var l = b.position.split(',');
         l.forEach(function(v,i){l[i]=Number(v)});
-        var r = b.rotation.split(',');
-        r.forEach(function(v,i){r[i]=Number(v)});
-        newBS.push({id: b.id, position: {
-          x: l[0], y: l[1], z: l[2]
-        }, rotation: {
-          x: r[0], y: r[1], z: r[2], w: r[3]
-        }})
+        if(b.rotation){
+          var r = b.rotation.split(',');
+          r.forEach(function(v, i){
+            r[i] = Number(v)
+          });
+          newBS.push({id: b.id, position: {
+            x: l[0], y: l[1], z: l[2]
+          }, rotation: {
+            x: r[0], y: r[1], z: r[2], w: r[3]
+          }})
+        }
+        else
+          newBS.push({id: b.id, position: {
+            x: l[0], y: l[1], z: l[2]
+          }})
+
       });
       return newBS;
     };
