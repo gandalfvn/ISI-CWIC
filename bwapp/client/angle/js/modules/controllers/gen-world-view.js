@@ -74,14 +74,14 @@ angular.module('angle').controller('genWorldCtrl',
     };
     var camera;
 
-    var numTextures = new Array(20);
+    var numTextures = new Array(21);
     /**
      * Create Dynamic number textures for use in cubes
      */
     var createNumTexture = function(scene){
       for(var i = 0; i < numTextures.length; i++){
         numTextures[i] = new BABYLON.DynamicTexture("dynamic texture", 256, scene, true);
-        numTextures[i].drawText(i+1, 32, 128, "bold 140px verdana", "black", "#aaaaaa");
+        numTextures[i].drawText(i, 32, 128, "bold 140px verdana", "black", "#aaaaaa");
       }
     };
     
@@ -105,7 +105,7 @@ angular.module('angle').controller('genWorldCtrl',
       if($scope.showLogos)
         boxt = new BABYLON.Texture("img/textures/logos/" + block.name.replace(/ /g, '') + '.png', scene);
       else
-        boxt = numTextures[block.id-1];
+        boxt = numTextures[block.id];
       boxt.uScale = boxt.vScale = 1;
       boxmat.diffuseTexture = boxt;
       //boxmat.diffuseColor = boxcolor;
