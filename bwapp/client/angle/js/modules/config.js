@@ -58,7 +58,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
           return !$rootScope.isRole(user, 'agent');});
         }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'ngMd5')
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'ngMd5', 'ngTable')
       ),
       controller: 'genWorldCtrl'
     })

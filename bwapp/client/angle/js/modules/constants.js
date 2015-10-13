@@ -53,25 +53,29 @@ angular.module('angle')
     },
     // Angular based script (use the right module name)
     modules: [
-      {name: 'toaster',                   files: [
+      {name: 'toaster',                 files: [
         'vendor/angularjs-toaster/toaster.js',
         'vendor/angularjs-toaster/toaster.css'
       ]},
       {name: 'ngMd5',                   files: [
         'vendor/angular-md5/angular-md5.min.js'
       ]},
-      {name: 'ngDialog', files: [
+      {name: 'ngDialog',                files: [
         'vendor/ngDialog/css/ngDialog.min.css',
         'vendor/ngDialog/css/ngDialog-theme-default.min.css',
         'vendor/ngDialog/js/ngDialog.min.js'
       ]},
-      {name: 'datatables', files: [
+      {name: 'ngTable',                 files: [
+        'vendor/ng-table/dist/ng-table.css',
+        'vendor/ng-table/dist/ng-table.js'
+      ]},
+      {name: 'datatables',              files: [
         'vendor/datatables/media/css/jquery.dataTables.css',
         'vendor/datatables/media/js/jquery.dataTables.js',
         'vendor/angular-datatables/dist/angular-datatables.min.js'], serie: true},
     ]
   })
   .constant('APP_CONST', {
-    'fieldsize': 6
+    'fieldsize': 2
   })
 ;

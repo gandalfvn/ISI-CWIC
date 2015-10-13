@@ -5,42 +5,52 @@
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
   h3 Block Meta Data
-  .row.mb-sm(ng-show='!curState.blockmeta.blocks')
+  .row.mb-sm(ng-show='!curState.block_meta.blocks')
     .content.col-sm-3
       button.btn.btn-default(ng-show='showLogos', ng-click='showLogos=false')
         .fa.fa-toggle-on &nbsp;Hide Logos
       button.btn.btn-default(ng-show='!showLogos', ng-click='showLogos=true')
         .fa.fa-toggle-off &nbsp;Show Logos
   .row
-    .content.col-sm-4(ng-show='!curState.blockmeta.blocks')
+    .content.col-sm-4(ng-show='!curState.block_meta.blocks')
       form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstateform', ng-submit='loadState()')
         b Import State
         .form-group
           input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().stateFileChanged(event)")
           button.btn.btn-default(type="submit", ng-show='statefilename') Go
-    .content.col-sm-4(ng-show='!curState.blockmeta.blocks')
+    .content.col-sm-4(ng-show='!curState.block_meta.blocks')
       form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importmetaform', ng-submit='loadMeta()')
         b Import Meta
         .form-group
           input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().metaFileChanged(event)")
           button.btn.btn-default(type="submit", ng-show='metafilename') Go
-    .content.col-sm-3(ng-show='!curState.blockmeta.blocks')
+    .content.col-sm-3(ng-show='!curState.block_meta.blocks')
       form.form-inline.ng-pristine.ng-valid.well(name='usemetastateform', ng-submit='showState(msid)')
         .form-group
           label Use State:
           input(type='text', ng-model='msid', placeholder='state id')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
-    div(ng-show='curState.blockmeta.blocks')
+    div(ng-show='curState.block_meta.blocks')
       h4 Active State: {{curState.stateid}}
-      h4 Move Iteration: {{curState.stateitr}} &nbsp; # Blocks: {{curState.blockmeta.blocks.length}}
-      span(ng-repeat='block in curState.blockmeta.blocks')
+      h4 Move Iteration: {{curState.stateitr}} &nbsp; # Blocks: {{curState.block_meta.blocks.length}}
+      span(ng-repeat='block in curState.block_meta.blocks')
         | &nbsp;&nbsp;
         button.btn.btn-xs.btn-default {{block.id}} &nbsp; {{block.name | uppercase}}
       div
         button.btn.btn-primary(ng-click='clearMeta()') Reset
-.row-fluid.col-sm-12
+.row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
   hr
-.row-fluid.col-sm-12(ng-show='curState.blockmeta.blocks')
+.row-fluid.col-sm-12
+  .row-fluid.col-sm-5
+    h3 Scene
+    div.col-sm-7
+      b(ng-show='curcnt > -1', style='font-size:1.25em') Create Count: {{curcnt}}
+      b(ng-show='curitr > -1', style='font-size:1.25em') Current State: {{curitr}}
+    div.col-sm-5
+      | Move camera by clicking and dragging in scene
+    div.col-sm-12
+      canvas(id="renderCanvasBab", style='width: 384px; height: 264px;')
+      canvas(id="canvas_2D")
   //-.row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
     div.well
       h4 Generate State
@@ -54,10 +64,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         .form-group(ng-show='cstate==0')
           label Cube min: 
           select.form-control(ng-model='ccnt.min', ng-init='ccnt.min=2')
-            option(ng-repeat='i in curState.blockmeta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.min==($index+1)') {{$index+1}}
+            option(ng-repeat='i in curState.block_meta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.min==($index+1)') {{$index+1}}
           label &nbsp;&nbsp;max:
           select.form-control(ng-model='ccnt.max', ng-init='ccnt.max=2')
-            option(ng-show='($index+1) >= ccnt.min', ng-repeat='i in curState.blockmeta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.max==($index+1)') {{$index+1}}
+            option(ng-show='($index+1) >= ccnt.min', ng-repeat='i in curState.block_meta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.max==($index+1)') {{$index+1}}
           br
         .form-group(ng-show='cstate==0')
           label Iterations:
@@ -111,17 +121,15 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           label Remove:
           input(type='text', ng-model='rsid', placeholder='state id')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
-  .row-fluid.col-sm-1
-.row-fluid.col-sm-12
-  h3 Scene
-  .row-fluid.col-sm-5
-    div
-      h4(ng-show='curcnt > -1') Create Count: {{curcnt}}
-      h4(ng-show='curitr > -1') Current State: {{curitr}}
-      canvas(id="renderCanvasBab", style='width: 384px; height: 264px;')
-      canvas(id="canvas_2D")
-  .row-fluid.col-sm-2
-    div Move camera by clicking and dragging in scene
+  //-.row-fluid.col-sm-6(ng-if='!isgen && !enableImpSave && (curState.next || curState.prev)')
+    div.well
+      h4 Navigate
+      pre {{tableParams}}
+      table.table(ng-table='tableParams', show-filter='false')
+        tr(ng-repeat='id in $data')
+          td(title="'ID'")
+            | {{id}}
+
 .row-fluid.col-sm-12
   hr
   .well.row

@@ -3,7 +3,7 @@
  * Created by wjwong on 9/9/15.
  =========================================================*/
 angular.module('angle').controller('genWorldCtrl',
-  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'md5', 'Utils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, md5, utils){
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'md5', 'Utils', 'ngTableParams', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, md5, utils, ngTableParams){
     "use strict";
 
     var hasPhysics = true;
@@ -92,8 +92,7 @@ angular.module('angle').controller('genWorldCtrl',
      */
     var createCube = function(data){
       var block = data.block;
-      console.warn('createCube',data, block);
-      var boxsize = block.shape.size;
+      var boxsize = block.shape.shape_params.side_length;
       var objdesc = block.name + '_' + block.shape.type + '_' + boxsize;
       var objname = objdesc + '_' + block.id;
       var boxcolor = colorids['orange'];
@@ -186,9 +185,9 @@ angular.module('angle').controller('genWorldCtrl',
       scene.workerCollisions = true;
 
       //  Create an ArcRotateCamera aimed at 0,0,0, with no alpha, beta or radius, so be careful.  It will look broken.
-      camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 0, 6, new BABYLON.Vector3(0, 0, 0), scene);
+      camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 0, APP_CONST.fieldsize, new BABYLON.Vector3(0, 0, 0), scene);
       // Quick, let's use the setPosition() method... with a common Vector3 position, to make our camera better aimed.
-      camera.setPosition(new BABYLON.Vector3(0, 5, -5.75));
+      camera.setPosition(new BABYLON.Vector3(0, APP_CONST.fieldsize*0.95, -(APP_CONST.fieldsize*0.8)));
       // This creates and positions a free camera
       //camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 15, -46), scene);
       // This targets the camera to scene origin
@@ -250,9 +249,9 @@ angular.module('angle').controller('genWorldCtrl',
       //var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {}); //shader grid
 
       // Object
-      var ground = BABYLON.Mesh.CreateBox("ground", 600, scene);
+      var ground = BABYLON.Mesh.CreateBox("ground", 200, scene);
       ground.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-      ground.position.y = -0.5;
+      ground.position.y = -0.1;
       ground.scaling.y = 0.001;
       ground.onCollide = function(a,b){
         console.warn('oncollide ground', a, b)
@@ -290,7 +289,7 @@ angular.module('angle').controller('genWorldCtrl',
       gridmat.wireframe = true; //create wireframe
       gridmat.diffuseColor = BABYLON.Color3.Gray();
       grid = BABYLON.Mesh.CreateGround("grid", APP_CONST.fieldsize, APP_CONST.fieldsize, 6, scene, false); //used to show grid
-      grid.position.y = 0.02;
+      grid.position.y = 0.01;
       grid.scaling.y = 0.001;
       grid.material = gridmat;
 
@@ -363,7 +362,7 @@ angular.module('angle').controller('genWorldCtrl',
       var z = 0;
       var zpos = [0,1,2];
       for(var j = 0; j < blocks.length; j++){
-        createCube({pos: new BABYLON.Vector3((p+i),blocks[j].shape.size, zpos[z]), scene: scene, block: blocks[j], isVisible: true});
+        createCube({pos: new BABYLON.Vector3((p+i),blocks[j].shape.shape_params.side_length, zpos[z]), scene: scene, block: blocks[j], isVisible: true});
         if(i > 3){i = 0; z++;}
         else i++;
       }
@@ -379,8 +378,16 @@ angular.module('angle').controller('genWorldCtrl',
 
     function CurrentState(){
       this.clear =  function(){
-        this.blockmeta = {}; 
+        this.block_meta = null; this.block_state = null;
         this.stateitr = -1; this.stateid = null;
+        this.next = null; this.prev = null;
+      };
+      this.copy = function(s){
+        var l = ['block_meta', 'block_state', 'stateitr', 'next', 'prev'];
+        for(var i = 0; i < l.length; i++){
+          this[l[i]] = s[l[i]];
+        }
+        this.stateid = s._id;
       };
       this.clear();
     }
@@ -421,7 +428,7 @@ angular.module('angle').controller('genWorldCtrl',
         if(i > 3){i = 0; z++;}
         else i++;
       }
-      camera.setPosition(new BABYLON.Vector3(0, 5, -5.75));
+      camera.setPosition(new BABYLON.Vector3(0, APP_CONST.fieldsize*0.95, -(APP_CONST.fieldsize*0.8)));
     };
 
     /**
@@ -568,7 +575,7 @@ angular.module('angle').controller('genWorldCtrl',
       while(cid === null || used.has(cid)){
         cid = cubesid[utils.rndInt(0,cubesid.length-1)];
       }
-      var data = {prop: {size: cubesdata[cid].meta.shape.size, cid: cid}};
+      var data = {prop: {size: cubesdata[cid].meta.shape.shape_params.side_length, cid: cid}};
       if(used.size){
         var ltype = utils.rndInt(0, 9);
         if(ltype < 5){
@@ -615,7 +622,7 @@ angular.module('angle').controller('genWorldCtrl',
           var maxsize = 0;
           _.each(myframe.block_meta.blocks, function(m){cubemeta[m.id] = m;});
           _.each(myframe.block_state, function(p,i){
-            var size = cubemeta[p.id].shape.size;
+            var size = cubemeta[p.id].shape.shape_params.side_length;
             if(maxsize < size) maxsize = size;
             var val = {prop: {cid: p.id, size: size}, position: p.position, rotation: p.rotation};
             used.push(val);
@@ -986,15 +993,36 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.$meteorSubscribe("genstates", sid).then(
         function(sub){
           var myframe = GenStates.findOne({_id: sid});
+          if(!myframe) return toaster.pop('warn', 'Invalid State ID');
           //update the meta
           $scope.curitr = myframe.stateitr;
           $scope.curcnt = 0;
-          $scope.curState.stateid = myframe._id;
-          $scope.curState.stateitr = myframe.stateitr;
-          $scope.curState.blockmeta = myframe.block_meta;
-          createObjects($scope.curState.blockmeta.blocks);
-          showImage(myframe.screencap, sid);
+          $scope.curState.copy(myframe);
+          createObjects($scope.curState.block_meta.blocks);
+          //showImage(myframe.screencap, sid);
           showFrame(myframe);
+          var data =  $scope.curState.prev;
+          /*$scope.tableParams = new ngTableParams({
+            page: 1,            // show first page
+            count: 10          // count per page
+          }, {
+            total: data.length, // length of data
+            getData: function ($defer, params) {
+              console.warn('in getData');
+              // use build-in angular filter
+              var filteredData = params.filter() ?
+                $filter('filter')(data, params.filter()) :
+                data;
+              var orderedData = params.sorting() ?
+                $filter('orderBy')(filteredData, params.orderBy()) :
+                data;
+
+              params.total(orderedData.length); // set total for recalc pagination
+              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+          });
+          $scope.tableParams.data = data;*/
+
           /*
           var tempframe = {block_meta: myframe.block_meta, block_state: []};
           for(var i = 0; i < myframe.block_state.length; i++){
@@ -1099,10 +1127,10 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.impFilename = null;
       $scope.enableImpSave = false;
       var cubesused = new Set();
-      $scope.curState.blockmeta.blocks.forEach(function(b){
+      $scope.curState.block_meta.blocks.forEach(function(b){
         cubesused.add(b.id);
       })
-      var params = {ccnt: $scope.curState.blockmeta.blocks.length, itr: 0, cstate: $scope.curState.stateitr, cubesused: cubesused, creator: $rootScope.currentUser._id, name: savename};
+      var params = {ccnt: $scope.curState.block_meta.blocks.length, itr: 0, cstate: $scope.curState.stateitr, cubesused: cubesused, creator: $rootScope.currentUser._id, name: savename};
       setTimeout(function(){waitForSSAndSave(params, 
         function(err, savedsid){
           if(err) toaster.pop('warn', err);
@@ -1125,11 +1153,16 @@ angular.module('angle').controller('genWorldCtrl',
         //read file
         var reader = new FileReader();
         reader.onload = function(){
-          $scope.$apply(function(){
-            $scope.curState.stateitr = 0;
-            $scope.curState.blockmeta = JSON.parse(reader.result);
-            createObjects($scope.curState.blockmeta.blocks);
-          })
+          var filedata = JSON.parse(reader.result);
+          if(filedata.blocks && filedata.blocks.length){
+            $scope.$apply(function(){
+              $scope.curState.clear();
+              $scope.curState.stateitr = 0;
+              $scope.curState.block_meta = filedata;
+              createObjects($scope.curState.block_meta.blocks);
+            })
+          }
+          else $scope.$apply(function(){toaster.pop('warn', 'Invalid JSON META file')});
         };
         reader.readAsText($scope.metafilename[0]);
       }
@@ -1149,19 +1182,24 @@ angular.module('angle').controller('genWorldCtrl',
         var reader = new FileReader();
         reader.onload = function(){
           var filedata = JSON.parse(reader.result);
-          $scope.curState.stateitr = 0;
-          $scope.curState.blockmeta = filedata.block_meta;
-          console.warn($scope.curState.blockmeta);
-          createObjects($scope.curState.blockmeta.blocks);
-          //mung block_state
-          filedata.block_state = mungeBlockState(filedata.block_state);
-          showFrame(filedata, function(){
-            $scope.$apply(function(){
-              if(filedata.name) $scope.impFilename = filedata.name;
-              else $scope.impFilename = $scope.statefilename[0].name.toLowerCase().replace(/\.json/g,'');
-              $scope.enableImpSave = true;
-            });
-          })
+          if(filedata.block_state && filedata.block_state.length
+            && filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length){
+            $scope.curState.clear();
+            $scope.curState.stateitr = 0;
+            $scope.curState.block_meta = filedata.block_meta;
+            console.warn($scope.curState.block_meta);
+            createObjects($scope.curState.block_meta.blocks);
+            //mung block_state
+            filedata.block_state = mungeBlockState(filedata.block_state);
+            showFrame(filedata, function(){
+              $scope.$apply(function(){
+                if(filedata.name) $scope.impFilename = filedata.name;
+                else $scope.impFilename = $scope.statefilename[0].name.toLowerCase().replace(/\.json/g, '');
+                $scope.enableImpSave = true;
+              });
+            })
+          }
+          else $scope.$apply(function(){toaster.pop('warn', 'Invalid JSON STATE file')});
         };
         reader.readAsText($scope.statefilename[0]);
       }
