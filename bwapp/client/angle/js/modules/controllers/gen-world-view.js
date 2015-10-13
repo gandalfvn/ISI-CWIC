@@ -483,7 +483,7 @@ angular.module('angle').controller('genWorldCtrl',
         if(used.size) used.forEach(function(c){myArr.push(c);});
         else myArr = used; //its an array
         var halfsize = size/2;
-        var halfrad = 6/2; //near radius
+        var halfrad = APP_CONST.fieldsize/4; //near radius
         var anchorIdx = myArr[utils.rndInt(0, myArr.length-1)];
         var aPos = idxdata[anchorIdx].position;
         var fieldmin = -(APP_CONST.fieldsize/2) + (size/2);
@@ -516,7 +516,7 @@ angular.module('angle').controller('genWorldCtrl',
         if(used.size) used.forEach(function(c){myArr.push(c);});
         else myArr = used; //its an array
         var halfsize = size/2;
-        var halfrad = 6/2; //avoid radius
+        var halfrad = APP_CONST.fieldsize/4; //avoid radius
         var anchorIdx = myArr[utils.rndInt(0, myArr.length-1)];
         var aPos = idxdata[anchorIdx].position;
         var fieldmin = -(APP_CONST.fieldsize/2) + (size/2);
