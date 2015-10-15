@@ -33,6 +33,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             .form-group
               input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().metaFileChanged(event)")
               button.btn.btn-default(type="submit", ng-show='metafilename') Go
+        .content.col-sm-4
+          form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstatesform', ng-submit='loadStates()')
+            b Import STATES
+            .form-group
+              input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().statesFileChanged(event)")
+              button.btn.btn-default(type="submit", ng-show='statesfilename') Go
         //-.content.col-sm-3(ng-show='!curState.block_meta.blocks')
           form.form-inline.ng-pristine.ng-valid.well(name='usemetastateform', ng-submit='showState(msid)')
             .form-group
@@ -43,16 +49,17 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       .row
         .content.col-sm-8
           table.table(ng-table='tableStateParams', show-filter='true')
-            tr(ng-repeat='s in $data', ng-click='showState(s._id)')
-              td(title="'ID'", filter="{ _id: 'text'}", sortable="'_id'")
+            tr(ng-repeat='s in $data')
+              td(title="''")
+                button.btn.btn-xs.btn-danger(ng-click='remState(s._id)')
+                  .fa.fa-remove
+              td(title="'ID'", filter="{ _id: 'text'}", sortable="'_id'", ng-click='showState(s._id)')
                 | {{s._id}}
-              td(title="'Name'", filter="{ name: 'text'}", sortable="'name'")
+              td(title="'Name'", filter="{ name: 'text'}", sortable="'name'", ng-click='showState(s._id)')
                 | {{s.name}}
-              td(title="'Created'", sortable="'created'")
+              td(title="'Created'", sortable="'created'", ng-click='showState(s._id)')
                 | {{s.created | date:"MM/dd/yyyy"}}
-
-
-.row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
+//-.row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
   hr
 .row-fluid.col-sm-12
   .row-fluid.col-sm-5
@@ -66,32 +73,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     div.col-sm-12
       canvas(id="renderCanvasBab", style='width: 384px; height: 264px;')
       canvas(id="canvas_2D")
-  //-.row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
-    div.well
-      h4 Generate State
-      form.form-inline.ng-pristine.ng-valid(name='myform', ng-submit='startGen(ccnt, (cstate)?undefined:itr, cstate)')
-        .form-group
-          label Create State: 
-          select.form-control(ng-model='cstate', ng-init='cstate=0')
-            option(ng-repeat='i in statenum', value='{{i}}', ng-selected='cstate==(i)') {{i}}
-            option(ng-show='!statenum.length', value='0', ng-selected='cstate==0') 0
-            option(ng-show='statenum.length', value='{{statenum[statenum.length-1]+1}}') {{statenum[statenum.length-1]+1}}
-        .form-group(ng-show='cstate==0')
-          label Cube min: 
-          select.form-control(ng-model='ccnt.min', ng-init='ccnt.min=2')
-            option(ng-repeat='i in curState.block_meta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.min==($index+1)') {{$index+1}}
-          label &nbsp;&nbsp;max:
-          select.form-control(ng-model='ccnt.max', ng-init='ccnt.max=2')
-            option(ng-show='($index+1) >= ccnt.min', ng-repeat='i in curState.block_meta.blocks track by $index', value='{{$index+1}}', ng-selected='ccnt.max==($index+1)') {{$index+1}}
-          br
-        .form-group(ng-show='cstate==0')
-          label Iterations:
-          select.form-control(ng-model='itr')
-            each v in [1, 2, 10,40,80,160,200,320,500, 640]
-              option(value='#{v}', ng-selected='itr==#{v}') #{v}
-          br
-        br
-        button.btn.btn-default(type='submit') Go
   .row-fluid.col-sm-3(ng-if='!isgen && enableImpSave && curState.block_meta.blocks')
     div.well
       form.form-inline.ng-pristine.ng-valid(ng-show='enableImpSave', name='saveImpForm', ng-submit='saveImport(impFilename)')
@@ -104,30 +85,31 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           | &nbsp;&nbsp;
           button.btn.btn-warning.btn-sm(ng-click='cancelImport()')
             .glyphicons.remove_2 Cancel
-  .row-fluid.col-sm-2(ng-if='!isgen && !enableImpSave && curState._id && curState.block_meta.blocks')
+  .row-fluid.col-sm-2(ng-if='!isgen && !enableImpSave && curState._id && curState.block_meta.blocks && curState.block_states.length < 20')
     div.well
       h4 Create Block Moves
       small(style='color: red') *Appends to moves
       form.form-inline.ng-pristine.ng-valid(name='moveform', ng-submit='startMove(mvcnt)')
         .form-group
           label Iterations:
-          select.form-control(ng-model='mvcnt')
-            each v in [1, 2, 5, 10,19]
-              option(value='#{v}', ng-selected='mvcnt==#{v}') #{v}
+          select.form-control(ng-model='mvcnt', ng-init='selmov=[1, 2, 5, 10,19]')
+            option(ng-show='20-curState.block_states.length-v > -1', ng-repeat='v in selmov', value='{{v}}', ng-selected='mvcnt==v') {{v}}
           br
         br
         button.btn.btn-default(ng-show='mvcnt', type='submit') Go
   .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave && curState.block_meta.blocks')
     div.well
       h4 State
-      button.btn.btn-sm.btn-info(ng-click='dlScene()') Get JSON
+      button.btn.btn-sm.btn-info.mb-sm(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks', ng-click='startGen()') Create Layout
+      br(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks')
+      button.btn.btn-sm.btn-info.mb-sm(ng-click='dlScene()') Get JSON
       //-form.form-inline.ng-pristine.ng-valid(name='myshowform', ng-submit='showState(sid)')
         .form-group
           label Show:
           input(type='text', ng-model='sid', placeholder='state iteration')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
         br
-      form.form-inline.ng-pristine.ng-valid(name='mytestform', ng-submit='genStateN({sid: tsid})')
+      //-form.form-inline.ng-pristine.ng-valid(name='mytestform', ng-submit='genStateN({sid: tsid})')
         .form-group
           label Test Move:
           input(type='text', ng-model='tsid', placeholder='state id')

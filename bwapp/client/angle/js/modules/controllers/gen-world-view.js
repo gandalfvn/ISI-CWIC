@@ -10,6 +10,7 @@ angular.module('angle').controller('genWorldCtrl',
     var fric = 0.1;
     var rest = 0.2;
     var showGrid = true;
+    var mult = 100; //position multiplier for int random
     
     var screenshotCanvas = document.getElementById('screencap');
     var screenRaw;
@@ -302,7 +303,7 @@ angular.module('angle').controller('genWorldCtrl',
             if(isZeroVec(delta)){
               if(!c.zeromoveTicks) c.zeromoveTicks = 0;
               c.zeromoveTicks++;
-              if(c.isMoving && c.zeromoveTicks > 20){//only reset color if it was moving
+              if(c.isMoving && c.zeromoveTicks > 25){//only reset color if it was moving
                 c.material.emissiveColor = new BABYLON.Color3.Black();
                 c.isMoving = false;
                 c.zeromoveTicks = 0;
@@ -445,7 +446,7 @@ angular.module('angle').controller('genWorldCtrl',
      * @param tgt
      * @returns {boolean}
      */
-    var intersectsMeshXYZ = function(src, tgt){
+    var intersectsMeshXYZ = function(src, tgt, checkY){
       var s = (src.prop.size/2)-0.01; //slightly small
       var a = {
         max: {x: src.position.x+s, y: src.position.y+s, z: src.position.z+s},
@@ -461,7 +462,7 @@ angular.module('angle').controller('genWorldCtrl',
       if (a.min.x > b.max.x) return false; // a is right of b
       if (a.max.z < b.min.z) return false; // a is front b
       if (a.min.z > b.max.z) return false; // a is back b
-      if (a.min.y > b.max.y) return false; // a is top b
+      if(checkY) if (a.min.y > b.max.y) return false; // a is top b
       return true; // boxes overlap
     };
 
@@ -476,7 +477,7 @@ angular.module('angle').controller('genWorldCtrl',
       used.forEach(function(c){myArr.push(c);});
       for(var i = 0; i < myArr.length; i++){
         var c = idxdata[myArr[i]];
-        if(intersectsMeshXYZ(mycube, c)){
+        if(intersectsMeshXYZ(mycube, c, true)){
           //console.warn('intersect', mycube.prop.cid, mycube.position, c.prop.cid, c.position);
           //half of the size of the cube is from base cube other half from current cube
           mycube.position.y = c.position.y + c.prop.size/2 + mycube.prop.size/2; 
@@ -508,14 +509,14 @@ angular.module('angle').controller('genWorldCtrl',
         var val = APP_CONST.fieldsize;
         var it = 0;
         while(val > fieldmax || val < fieldmin){
-          val = utils.rndInt(min, max) + aPos.x;
+          val = utils.rndInt(min*mult, max*mult)/mult + aPos.x;
           if(it > 50){console.warn('it > 50 posx:', val);};
         }
         var xval = val;
         val = APP_CONST.fieldsize;
         it = 0;
         while(val > fieldmax || val < fieldmin){
-          val = utils.rndInt(min, max) + aPos.z;
+          val = utils.rndInt(min*mult, max*mult)/mult + aPos.z;
           if(it > 50){console.warn('it > 50 posz:', val);};
         }
         var zval = val;
@@ -544,8 +545,8 @@ angular.module('angle').controller('genWorldCtrl',
           val.z > fieldmax || val.z < fieldmin ||
           (val.x > aPos.x+min && val.x < aPos.x+max 
           && val.z > aPos.z+min && val.z < aPos.z+max)){
-          val.x = utils.rndInt(fieldmin, fieldmax);
-          val.z = utils.rndInt(fieldmin, fieldmax);
+          val.x = utils.rndInt(fieldmin*mult, fieldmax*mult)/mult;
+          val.z = utils.rndInt(fieldmin*mult, fieldmax*mult)/mult;
           it++;
           if(it > 50) console.warn('it > 50 pos:', val);
         }
@@ -583,25 +584,43 @@ angular.module('angle').controller('genWorldCtrl',
       while(cid === null || used.has(cid)){
         cid = cubesid[utils.rndInt(0,cubesid.length-1)];
       }
+      var max = APP_CONST.fieldsize/2 + 0.001; //give it a little wiggle room
+      var min = -max;
       var data = {prop: {size: cubesdata[cid].meta.shape.shape_params.side_length, cid: cid}};
-      if(used.size){
-        var ltype = utils.rndInt(0, 9);
-        if(ltype < 5){
-          //console.warn('state0 near');
-          var cubeDat = genCubeNear(data.prop.size, used, idxdata);
-          if(cubeDat) data.position = cubeDat.position;
+      var isRegen = true;
+      while(isRegen){
+        if(used.size){
+          var ltype = utils.rndInt(0, 9);
+          if(ltype < 5){
+            //console.warn('state0 near');
+            var cubeDat = genCubeNear(data.prop.size, used, idxdata);
+            if(cubeDat) data.position = cubeDat.position;
+          }
+          else{
+            //console.warn('state0 far');
+            var cubeDat = genCubeFar(data.prop.size, used, idxdata);
+            if(cubeDat) data.position = cubeDat.position;
+          }
+          if(cubeDat && cubeDat.position) data.position = cubeDat.position
+          else $scope.$apply(function(){
+            toaster.pop('error', 'missing position')
+          })
         }
         else{
-          //console.warn('state0 far');
-          var cubeDat = genCubeFar(data.prop.size, used, idxdata);
-          if(cubeDat) data.position = cubeDat.position;
+          var minloc = (-(APP_CONST.fieldsize / 2) + (data.prop.size / 2))*mult;
+          var maxloc = ((APP_CONST.fieldsize / 2) - (data.prop.size / 2))*mult;
+          data.position = new BABYLON.Vector3(utils.rndInt(minloc, maxloc)/mult, (data.prop.size / 2), utils.rndInt(minloc, maxloc)/mult);
         }
-      }
-      else{
-        var min = -(APP_CONST.fieldsize/2) + (data.prop.size/2);
-        var max = (APP_CONST.fieldsize/2) - (data.prop.size/2);
-        //min = max = 0;
-        data.position = new BABYLON.Vector3(utils.rndInt(min, max), (data.prop.size/2), utils.rndInt(min, max));
+        if((data.position.x - data.prop.size / 2) >= min && (data.position.x + data.prop.size / 2) <= max &&
+          (data.position.z - data.prop.size / 2) >= min && (data.position.z + data.prop.size / 2) <= max){
+          var cubespos = [];
+          _.each(idxdata, function(i){
+            cubespos.push(i);
+          })
+          var anchorStack = getStackCubes(data, cubespos, null, false);
+          console.warn('output', cid, anchorStack.length);
+          if(anchorStack.length < 2) isRegen = false;
+        }
       }
       updateYCube(data, used, idxdata);
       used.add(cid);
@@ -651,33 +670,49 @@ angular.module('angle').controller('genWorldCtrl',
           cidlist.push(p.id);
           cubesused.add(p.id);
         });
-        var cubeDat;
-        //let gencube choose a cube and create a position based on it
-        var ltype = utils.rndInt(0, 19);
-        if(cidlist.length < 2){//only 1 cube so no stacks
-          ltype = utils.rndInt(0, 9);
-        }
-        if(ltype < 10){
-          if(ltype < 5){
-            cubeDat = genCubeNear(maxsize, cidlist, cubeInWorld);
-            stateNStats.near++;
+        var isRegen = true;
+        var cubeDat, acube, cubeStack;
+        while(isRegen){
+          //let gencube choose a cube and create a position based on it
+          var ltype = utils.rndInt(0, 19);
+          if(cidlist.length < 2){//only 1 cube so no stacks
+            ltype = utils.rndInt(0, 9);
+          }
+          if(ltype < 10){
+            if(ltype < 5){
+              cubeDat = genCubeNear(maxsize, cidlist, cubeInWorld);
+              console.warn('near');
+              stateNStats.near++;
+            }
+            else{
+              cubeDat = genCubeFar(maxsize, cidlist, cubeInWorld);
+              console.warn('far');
+              stateNStats.far++
+            }
           }
           else{
-            cubeDat = genCubeFar(maxsize, cidlist, cubeInWorld);
-            stateNStats.far++
+            cubeDat = genCubeStack(maxsize, cidlist, cubeInWorld);
+            stateNStats.stack++;
+            console.warn('stack');
+          }
+          //now we randomly choose a cube outside of the anchor cube id to move to the new position
+          var mycid = cubeDat.anchorCid;
+          while(mycid == cubeDat.anchorCid && block_state.length > 1){//choose a cube not the anchor cube
+            mycid = block_state[utils.rndInt(0, block_state.length - 1)].id;
+          }
+          acube = cubeInWorld[mycid];
+          //check Y because we will move this stack
+          cubeStack = getStackCubes(acube, used, mycid, true);
+          //check stack for more than stack of 2 - meaning no stacking on top of stacks or move stacks on another
+          var anchorStack;
+          if(!cubeStack.length){
+            //don't check Y because this is the base stack where things will move to
+            //we also don't need to reference cube but by position
+            anchorStack = getStackCubes({position: cubeDat.position, prop: {size: maxsize}}, used, null, false);
+            if(anchorStack.length < 2) isRegen = false;
+            console.warn('gen itr', $scope.curState.block_states.length, mycid, cubeStack.length, cubeDat.anchorCid, anchorStack.length);
           }
         }
-        else{
-          cubeDat = genCubeStack(maxsize, cidlist, cubeInWorld);
-          stateNStats.stack++;
-        }
-        //now we randomly choose a cube outside of the anchor cube id to move to the new position
-        var mycid = cubeDat.anchorCid;
-        while(mycid == cubeDat.anchorCid && block_state.length > 1){//choose a cube not the anchor cube
-          mycid = block_state[utils.rndInt(0, block_state.length - 1)].id;
-        }
-        var acube = cubeInWorld[mycid];
-        var cubeStack = getStackCubes(acube, used, mycid);
         //remove cubes used from the world and leave world cubes in cidlist
         cidlist.splice(_.indexOf(cidlist, acube.prop.cid), 1);
         cubeStack.forEach(function(c){
@@ -729,7 +764,7 @@ angular.module('angle').controller('genWorldCtrl',
           if(hasPhysics) c.setPhysicsState({
             impostor: BABYLON.PhysicsEngine.BoxImpostor,
             move: true,
-            mass: c.boxsize,
+            mass: 5, //c.boxsize,
             friction: fric,
             restitution: rest
           });
@@ -751,7 +786,7 @@ angular.module('angle').controller('genWorldCtrl',
             if(hasPhysics) c.setPhysicsState({
               impostor: BABYLON.PhysicsEngine.BoxImpostor,
               move: true,
-              mass: c.boxsize,
+              mass: 5, //c.boxsize,
               friction: fric,
               restitution: rest
             });
@@ -813,7 +848,8 @@ angular.module('angle').controller('genWorldCtrl',
         genstates.save($scope.curState).then(function(val){
           console.warn(val[0]);
           $scope.curState._id = val[0]._id;
-          showImage(b64encoded, 'Move #: ' + ($scope.curState.block_states.length-1));
+          var attachid = createButtons('stateimg', $scope.curState.block_states.length-1);
+          showImage(b64encoded, 'Move #: ' + ($scope.curState.block_states.length-1), attachid);
           cb(null, $scope.curState._id);
         }, function(err){
           cb(err.reason);
@@ -876,50 +912,60 @@ angular.module('angle').controller('genWorldCtrl',
      * @param itr
      * @param cstate
      */
-    $scope.startGen = function(ccnt, itr, strstate){
-      var cstate = Number(strstate);
-      console.warn('startGen',itr, cstate, ccnt);
-      if(cstate == 0){
-        if(itr > 0){
-          var state = [];
-          var cubeidxdata = {};
-          var cubesused = new Set();
-          var myccnt = utils.rndInt(Number(ccnt.min), Number(ccnt.max));
-          for(var i = 0; i < myccnt; i++){
-            var dat = genCubeState0(cubesused, cubeidxdata); //save used list
-            state.push(dat);
-          }
-          if(cubesused.size != state.length)
-            console.warn('done state!!', cubesused.size, state.length);
-          $scope.curitr = cstate;
-          $scope.curcnt = itr;
-          $scope.showInitFrame(state, function(){
-            var params = {ccnt: ccnt, itr: itr, cstate: cstate, cubesused: cubesused, creator: 'system', startGen: $scope.startGen};
-            //we need to set a timeout before checking steading states or we get bad block layouts
-            setTimeout(function(){waitForSSAndSave(params, nextItr(params));}, 400);
-          });
-        }
-        if(itr === undefined) toaster.pop('error','Please set Iterations');
+    $scope.startGen = function(){
+      var state = [];
+      var cubeidxdata = {};
+      var cubesused = new Set();
+      var myccnt = $scope.curState.block_meta.blocks.length;
+      for(var i = 0; i < myccnt; i++){
+        var dat = genCubeState0(cubesused, cubeidxdata); //save used list
+        state.push({id: dat.prop.cid, position: dat.position});
       }
-      else{
-        var statel = _.uniq(GenStates.find({stateitr: cstate-1}, {
-          sort: {"_id": 1}}).fetch().map(function(x) {
-          return x._id;
-        }), true);
+      if(cubesused.size != state.length)
+        console.warn('done state!!', cubesused.size, state.length);
 
-        if(itr === undefined || itr < 0){
-          itr = statel.length - 1; //if first run for state n+1
-          console.warn('in length', itr);
-        }
-        $scope.curitr = cstate;
-        $scope.curcnt = itr;
-        stateNStats.near = 0;
-        stateNStats.far = 0;
-        stateNStats.stack = 0;
-        var sid = statel[itr];
-        var params = {ccnt: ccnt, itr: itr, cstate: cstate, sid: sid, startGen: $scope.startGen};
-        $scope.genStateN(params);
-      }
+      $('#galleryarea').empty();
+      createObjects($scope.curState.block_meta.blocks);
+      $scope.curState.public = true;
+      $scope.curState.created = (new Date).getTime();
+      $scope.curState.creator = $rootScope.currentUser._id;
+      showFrame({block_state: state}, function(){
+        checkFnSS = setInterval(function(){
+          if(isSteadyState){
+            clearInterval(checkFnSS);
+            //check if all cubes are inside the bounds of the table
+            var max = APP_CONST.fieldsize/2 + 0.001; //give it a little wiggle room
+            var min = -max;
+            var isValid = true;
+            var len = $scope.curState.block_meta.blocks.length;
+            for(var i = 0; i < len; i++){
+              var cid = $scope.curState.block_meta.blocks[i].id;
+              var c = get3DCubeById(cid);
+              if(c){
+                if(!((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
+                  (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max)){
+                  isValid = false; //fail time to restart the generation
+                  i = len;
+                }
+              }
+            }
+            if(!isValid) $scope.startGen();
+            else $scope.$apply(function(){
+              $scope.impFilename = 'system';
+              $scope.enableImpSave = true;
+            });
+          }
+        }, 100);
+      });
+
+/*
+      $scope.showInitFrame(state, function(){
+        var params = {cubesused: cubesused, creator: 'system'};
+        //we need to set a timeout before checking steading states or we get bad block layouts
+        setTimeout(function(){waitForSSAndSave(params, function(err, sid){
+          console.warn()
+        });}, 400);
+      });*/
     };
 
     /**
@@ -941,24 +987,9 @@ angular.module('angle').controller('genWorldCtrl',
           createObjects($scope.curState.block_meta.blocks);
           showFrame(myframe.block_states[$scope.curitr]);
           for(var i = 0; i < myframe.block_states.length; i++){
-            var lenID = $('div').length;
-            var eleDivID = 'rowdiv' + lenID; // Unique ID
-            var msg = 'Clone Move '+ i;
-            if(!i) msg = 'Clone Root';
-            var htmlout =
-              '<button onclick="angular.element(this).scope().cloneMove('+i+')" class="btn btn-xs btn-info">'+msg+'</button>'+
-              '    '+
-              '<button onclick="angular.element(this).scope().dlMove('+i+')" class="btn btn-xs btn-info"> Get JSON </button>'+
-              '<div id="stateimg'+lenID+'"></div>';
-            var attachTo = '#galleryarea';
-            $('<div>').attr({
-              id: eleDivID
-            }).addClass('col-sm-4')
-              .html(htmlout).css({"border-bottom": '1px solid #e4eaec'}).appendTo(attachTo);
-            
-            showImage(myframe.block_states[i].screencap, 'Move #:' + i, 'stateimg'+lenID);
+            var attachid = createButtons('stateimg', i);
+            showImage(myframe.block_states[i].screencap, 'Move #:' + i, attachid);
           }
-          //showImage(myframe.screencap, sid);
           /*
           var tempframe = {block_meta: myframe.block_meta, block_state: []};
           for(var i = 0; i < myframe.block_state.length; i++){
@@ -978,20 +1009,40 @@ angular.module('angle').controller('genWorldCtrl',
         }
       )
     };
+    
+    var createButtons = function(id, i){
+      var lenID = $('div').length;
+      var eleDivID = 'rowdiv' + lenID; // Unique ID
+      var retId = id+lenID;
+      var htmlout =
+        '<button onclick="angular.element(this).scope().cloneMove('+i+')" class="btn btn-xs btn-info"> Clone Move </button>'+
+        '    '+
+        '<button onclick="angular.element(this).scope().getMove('+i+')" class="btn btn-xs btn-info"> Get JSON </button>'+
+        '    '+
+        '<button onclick="angular.element(this).scope().delMove('+i+')" class="btn btn-xs btn-info"> Delete Move(s) </button>'+
+        '<div id="'+retId+'"></div>';
+      var attachTo = '#galleryarea';
+      $('<div>').attr({
+        id: eleDivID
+      }).addClass('col-sm-4')
+        .html(htmlout).css({"border-bottom": '1px solid #e4eaec'}).appendTo(attachTo);
+      return retId;
+    };
 
     $scope.remState = function(sid){
       if(sid){
         genstates.remove(sid);
+        updateTableStateParams();
         toaster.pop('warning', 'Removed ' + sid);
       }
     };
 
-    var getStackCubes = function(mycube, used, cid){
+    var getStackCubes = function(mycube, used, cid, checkY){
       var retStack = [];
       for(var i = 0; i < used.length; i++){
-        if(cid != used[i].prop.cid){
+        if(!cid || cid != used[i].prop.cid){
           var c = used[i];
-          if(intersectsMeshXYZ(mycube, c)){
+          if(intersectsMeshXYZ(mycube, c, checkY)){
             retStack.push(c);
           }
         }
@@ -1038,6 +1089,7 @@ angular.module('angle').controller('genWorldCtrl',
           if(savedsid){
             $scope.curitr = $scope.curState.stateitr;
             $scope.curcnt = 0;
+            updateTableStateParams();
           }
         });
       }, 400);
@@ -1115,8 +1167,82 @@ angular.module('angle').controller('genWorldCtrl',
       console.warn($scope.statefilename);
     };
 
+    $scope.loadStates = function(){
+      if($scope.statesfilename && $scope.statesfilename.length){
+        //read file
+        var reader = new FileReader();
+        reader.onload = function(){
+          var filedata = JSON.parse(reader.result);
+          if(filedata.block_states && filedata.block_states.length
+            && filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length){
+            if(filedata.block_meta.blocks.length != filedata.block_states[0].block_state.length) return $scope.$apply(function(){
+              toaster.pop('error', 'Block META and STATE mismatch!');
+            });
+            $scope.curState.clear();
+            $scope.curState.block_meta = filedata.block_meta;
+            $scope.curState.public = true;
+            $scope.curState.created = (new Date).getTime();
+            $scope.curState.creator = $rootScope.currentUser._id;
+
+            console.warn($scope.curState.block_meta);
+            createObjects($scope.curState.block_meta.blocks);
+            //mung block_states
+            $scope.curState.block_states = mungeBlockStates(filedata.block_states);
+            
+            function itrFrame(idx, block_states, cb){
+              if(_.isUndefined(block_states[idx])){
+                $scope.$apply(function(){
+                  if(filedata.name) $scope.impFilename = filedata.name;
+                  else $scope.impFilename = $scope.statesfilename[0].name.toLowerCase().replace(/\.json/g, '');
+                  $scope.enableImpSave = true;
+                });
+                return cb();
+              }
+              showFrame(block_states[idx], function(){
+                //wait for steady state
+                checkFnSS = setInterval(function(){
+                  if(isSteadyState){
+                    clearInterval(checkFnSS);
+                    var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {
+                      width: canvas.width,
+                      height: canvas.height
+                    });
+                    var b64encoded = btoa(utils.Uint8ToString(screenRaw));
+                    block_states[idx].screencap = b64encoded;
+                    block_states[idx].created = (new Date).getTime();
+                    var attachid = createButtons('stateimg', idx);
+                    showImage(b64encoded, 'Move #: ' + idx, attachid);
+                    itrFrame(idx + 1, block_states, cb);
+                  }
+                }, 100);
+              });
+            }
+            
+            itrFrame(0, $scope.curState.block_states, function(){
+              console.warn($scope.curState.block_states);
+            });
+          }
+          else $scope.$apply(function(){toaster.pop('warn', 'Invalid JSON STATE file')});
+        };
+        reader.readAsText($scope.statesfilename[0]);
+      }
+    };
+
+    $scope.statesFileChanged = function(event){
+      $scope.$apply(function(){$scope.statesfilename = event.target.files;});
+      console.warn($scope.statesfilename);
+    };
+
+    var mungeBlockStates = function(bss){
+      var newbss = [];
+      for(var i = 0; i < bss.length; i++){
+        newbss.push({block_state: mungeBlockState(bss[i].block_state)});
+      }
+      return newbss;
+    };
+    
     /**
-     * Transform text block states from cwic to internal block states
+     * Transform text block state from cwic to internal block states
      * @param bs
      * @returns {Array}
      */
@@ -1147,6 +1273,8 @@ angular.module('angle').controller('genWorldCtrl',
 
     $scope.startMove = function(itr){
       console.warn(itr);
+      itr = Number(itr);
+      $scope.isgen = true;
 
       stateNStats.near = 0;
       stateNStats.far = 0;
@@ -1166,6 +1294,7 @@ angular.module('angle').controller('genWorldCtrl',
           else{
             $scope.curitr = 0;
             $scope.curcnt = 0;
+            $scope.isgen = false;
           }
         }
         else{
@@ -1216,14 +1345,14 @@ angular.module('angle').controller('genWorldCtrl',
           });
           newblock_state.push({id: s.id, position: pos, rotation: rot})
         }
-        tempframe.block_states.push(newblock_state);
+        tempframe.block_states.push({block_state: newblock_state});
       }
       var content = JSON.stringify(tempframe, null, 2);
       var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
       saveAs(uriContent, 'bw_'+$scope.curState._id+'.json');
     };
 
-    $scope.dlMove = function(idx){
+    $scope.getMove = function(idx){
       var tempframe = {block_meta: $scope.curState.block_meta, block_state: []};
       var block_state = $scope.curState.block_states[idx].block_state;
       for(var i = 0; i < block_state.length; i++){
@@ -1242,6 +1371,17 @@ angular.module('angle').controller('genWorldCtrl',
       var content = JSON.stringify(tempframe, null, 2);
       var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
       saveAs(uriContent, 'bw_'+$scope.curState._id+'_'+idx+'.json');
+    };
+
+    $scope.delMove = function(idx){
+      var count = $scope.curState.block_states.length-idx;
+      $scope.curState.block_states.splice(idx, count);
+      genstates.save($scope.curState).then(function(val){
+        $scope.clearMeta();
+        $scope.showState(val[0]._id);
+      }, function(err){
+        console.warn(err.reason);
+      });
     };
 
     function saveAs(uri, filename) {
