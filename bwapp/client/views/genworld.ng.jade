@@ -4,47 +4,62 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
-  h3 Block Meta Data
   .row.mb-sm(ng-show='!curState.block_meta.blocks')
     .content.col-sm-3
       button.btn.btn-default(ng-show='showLogos', ng-click='showLogos=false')
         .fa.fa-toggle-on &nbsp;Hide Logos
       button.btn.btn-default(ng-show='!showLogos', ng-click='showLogos=true')
         .fa.fa-toggle-off &nbsp;Show Logos
-  .row
-    .content.col-sm-4(ng-show='!curState.block_meta.blocks')
-      form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstateform', ng-submit='loadState()')
-        b Import State
-        .form-group
-          input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().stateFileChanged(event)")
-          button.btn.btn-default(type="submit", ng-show='statefilename') Go
-    .content.col-sm-4(ng-show='!curState.block_meta.blocks')
-      form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importmetaform', ng-submit='loadMeta()')
-        b Import Meta
-        .form-group
-          input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().metaFileChanged(event)")
-          button.btn.btn-default(type="submit", ng-show='metafilename') Go
-    .content.col-sm-3(ng-show='!curState.block_meta.blocks')
-      form.form-inline.ng-pristine.ng-valid.well(name='usemetastateform', ng-submit='showState(msid)')
-        .form-group
-          label Use State:
-          input(type='text', ng-model='msid', placeholder='state id')
-          input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
-    div(ng-show='curState.block_meta.blocks')
-      h4 Active State: {{curState.stateid}}
-      h4 Move Iteration: {{curState.stateitr}} &nbsp; # Blocks: {{curState.block_meta.blocks.length}}
-      span(ng-repeat='block in curState.block_meta.blocks')
-        | &nbsp;&nbsp;
-        button.btn.btn-xs.btn-default {{block.id}} &nbsp; {{block.name | uppercase}}
-      div
-        button.btn.btn-primary(ng-click='clearMeta()') Reset
+  div(ng-show='curState.block_meta.blocks')
+    h4 Active State: {{curState._id}}
+    h4 # Moves: {{curState.block_states.length}} &nbsp; # Blocks: {{curState.block_meta.blocks.length}}
+    span(ng-repeat='block in curState.block_meta.blocks')
+      | &nbsp;&nbsp;
+      button.btn.btn-xs.btn-default {{block.id}} &nbsp; {{block.name | uppercase}}
+    div
+      button.btn.btn-primary(ng-click='clearMeta()') Reset
+  tabset(ng-show='!curState.block_meta.blocks')
+    tab(heading='Create Block Actions', active=true) 
+      .row
+        .content.col-sm-4
+          form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstateform', ng-submit='loadState()')
+            b Import State
+            .form-group
+              input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().stateFileChanged(event)")
+              button.btn.btn-default(type="submit", ng-show='statefilename') Go
+        .content.col-sm-4(ng-show='!curState.block_meta.blocks')
+          form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importmetaform', ng-submit='loadMeta()')
+            b Import Meta
+            .form-group
+              input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().metaFileChanged(event)")
+              button.btn.btn-default(type="submit", ng-show='metafilename') Go
+        //-.content.col-sm-3(ng-show='!curState.block_meta.blocks')
+          form.form-inline.ng-pristine.ng-valid.well(name='usemetastateform', ng-submit='showState(msid)')
+            .form-group
+              label Use State:
+              input(type='text', ng-model='msid', placeholder='state id')
+              input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
+    tab(heading='Review Block Actions')
+      .row
+        .content.col-sm-8
+          table.table(ng-table='tableStateParams', show-filter='true')
+            tr(ng-repeat='s in $data', ng-click='showState(s._id)')
+              td(title="'ID'", filter="{ _id: 'text'}", sortable="'_id'")
+                | {{s._id}}
+              td(title="'Name'", filter="{ name: 'text'}", sortable="'name'")
+                | {{s.name}}
+              td(title="'Created'", sortable="'created'")
+                | {{s.created | date:"MM/dd/yyyy"}}
+
+
 .row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
   hr
-.row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
+.row-fluid.col-sm-12
   .row-fluid.col-sm-5
     h3 Scene
     div.col-sm-7
       b(ng-show='curcnt > -1', style='font-size:1.25em') Create Count: {{curcnt}}
+      br
       b(ng-show='curitr > -1', style='font-size:1.25em') Current State: {{curitr}}
     div.col-sm-5
       | Move camera by clicking and dragging in scene
@@ -77,7 +92,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           br
         br
         button.btn.btn-default(type='submit') Go
-  .row-fluid.col-sm-3(ng-if='!isgen && enableImpSave')
+  .row-fluid.col-sm-3(ng-if='!isgen && enableImpSave && curState.block_meta.blocks')
     div.well
       form.form-inline.ng-pristine.ng-valid(ng-show='enableImpSave', name='saveImpForm', ng-submit='saveImport(impFilename)')
         .form-group
@@ -89,21 +104,23 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           | &nbsp;&nbsp;
           button.btn.btn-warning.btn-sm(ng-click='cancelImport()')
             .glyphicons.remove_2 Cancel
-  .row-fluid.col-sm-2(ng-if='!isgen && !enableImpSave && curState.stateid')
+  .row-fluid.col-sm-2(ng-if='!isgen && !enableImpSave && curState._id && curState.block_meta.blocks')
     div.well
       h4 Create Block Moves
+      small(style='color: red') *Appends to moves
       form.form-inline.ng-pristine.ng-valid(name='moveform', ng-submit='startMove(mvcnt)')
         .form-group
           label Iterations:
           select.form-control(ng-model='mvcnt')
-            each v in [1, 2, 5, 10,40,80,160,200,320,500,640]
+            each v in [1, 2, 5, 10,19]
               option(value='#{v}', ng-selected='mvcnt==#{v}') #{v}
           br
         br
         button.btn.btn-default(ng-show='mvcnt', type='submit') Go
-  .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave')
+  .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave && curState.block_meta.blocks')
     div.well
       h4 State
+      button.btn.btn-sm.btn-info(ng-click='dlScene()') Get JSON
       //-form.form-inline.ng-pristine.ng-valid(name='myshowform', ng-submit='showState(sid)')
         .form-group
           label Show:
