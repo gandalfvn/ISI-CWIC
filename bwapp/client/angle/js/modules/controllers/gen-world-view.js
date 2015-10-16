@@ -376,7 +376,10 @@ angular.module('angle').controller('genWorldCtrl',
 
     //**start app logic============================================================
     $scope.showLogos = false;
-    
+    $scope.limStack = true;
+    $scope.limStackToggle = function(){
+      $scope.limStack = !$scope.limStack;
+    }
     function CurrentState(){
       var l = ['block_meta', 'block_states', '_id','public','created','creator','name'];
       this.clear =  function(){
@@ -705,13 +708,17 @@ angular.module('angle').controller('genWorldCtrl',
           cubeStack = getStackCubes(acube, used, mycid, true);
           //check stack for more than stack of 2 - meaning no stacking on top of stacks or move stacks on another
           var anchorStack;
-          if(!cubeStack.length){
-            //don't check Y because this is the base stack where things will move to
-            //we also don't need to reference cube but by position
-            anchorStack = getStackCubes({position: cubeDat.position, prop: {size: maxsize}}, used, null, false);
-            if(anchorStack.length < 2) isRegen = false;
-            console.warn('gen itr', $scope.curState.block_states.length, mycid, cubeStack.length, cubeDat.anchorCid, anchorStack.length);
+          console.warn('$scope.limStack', $scope.limStack);
+          if($scope.limStack){ //check for stacking above two
+            if(!cubeStack.length){
+              //don't check Y because this is the base stack where things will move to
+              //we also don't need to reference cube but by position
+              anchorStack = getStackCubes({position: cubeDat.position, prop: {size: maxsize}}, used, null, false);
+              if(anchorStack.length < 2) isRegen = false;
+              console.warn('gen itr', $scope.curState.block_states.length, mycid, cubeStack.length, cubeDat.anchorCid, anchorStack.length);
+            }
           }
+          else isRegen = false;
         }
         //remove cubes used from the world and leave world cubes in cidlist
         cidlist.splice(_.indexOf(cidlist, acube.prop.cid), 1);
