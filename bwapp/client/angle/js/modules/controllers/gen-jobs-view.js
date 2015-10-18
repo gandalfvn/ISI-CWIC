@@ -2,15 +2,10 @@
  * Module: gen-jobs-view.js
  * Created by wjwong on 9/23/15.
  =========================================================*/
-angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'md5', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, md5){
+angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', 'ngTableParams', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils, ngTableParams){
   "use strict";
 
-  $scope.dtOptions = {
-    "lengthMenu": [[10], [10]],
-    "order": [[ 0, "asc" ]],
-    "language": {"paginate": {"next": '>', "previous": '<'}},
-    "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-  };
+  var canvas = {width: 384, height: 264};
 
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
@@ -30,14 +25,118 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     readydat.push(data);
     if(readydat.length > 1){
       $rootScope.dataloaded = true;
-      $scope.statenum = $rootScope.mdbArray(GenStates, {}, {
-        sort: {stateid: 1}, fields: {stateid: true}
-      }, "stateid");
-      console.warn($scope.statenum);
+      updateTableStateParams();
       updateJobMgr();
     }
   };
-  
+
+  var updateTableStateParams = function(){
+    var data = GenStates.find({}, {sort: {"_id": 1}}).fetch();
+    $scope.tableStateParams = new ngTableParams({
+      count: 5
+    }, {counts: [5,10,20],
+      paginationMaxBlocks: 8,
+      paginationMinBlcoks: 2,
+      data: data});
+  };
+
+  function CurrentState(c){
+    var l = ['block_meta', 'block_states', '_id','public','created','creator','name'];
+    this.clear =  function(){
+      for(var i = 0; i < l.length; i++){
+        this[l[i]] = null;
+      }
+      if(!_.isUndefined(this._id)) delete this._id;
+    };
+    this.copy = function(s){
+      for(var i = 0; i < l.length; i++){
+        this[l[i]] = s[l[i]];
+      }
+    };
+    this.clear();
+    if(c) this.copy(c);
+  }
+  $scope.curState = new CurrentState();
+
+  $scope.remState = function(sid){
+    if(sid){
+      genstates.remove(sid);
+      updateTableStateParams();
+      toaster.pop('warning', 'Removed ' + sid);
+    }
+  };
+
+  $scope.chooseState = function(sid){
+    $scope.enableImpSave = false;
+    //we must get the state for this sid
+    $scope.$meteorSubscribe("genstates", sid).then(
+      function(sub){
+        var myframe = GenStates.findOne({_id: sid});
+        if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
+        $scope.curState.clear();
+        $scope.curState.copy(myframe);
+        $scope.showMove(0);
+      }
+    )
+  };
+
+  $scope.showMove = function(i){
+    $('#imgpreview').empty();
+    var retid = navImgButtons('imgpreview', i);
+    showImage($scope.curState.block_states[i].screencap, 'Move #: '+i, retid);
+  };
+
+  var navImgButtons = function(id, i){
+    var lenID = $('div').length;
+    var eleDivID = 'rowdiv' + lenID; // Unique ID
+    var retId = id+lenID;
+    var htmlout = '';
+    if(i < $scope.curState.block_states.length-1)
+      htmlout += '<button onclick="angular.element(this).scope().showMove('+(i+1)+')" class="btn btn-xs btn-info pull-right" style="margin-left: 6px"> &gt; </button>';
+    if(i > 0)
+      htmlout += '<button onclick="angular.element(this).scope().showMove('+(i-1)+')" class="btn btn-xs btn-info pull-right"> &lt; </button>';
+    htmlout += '<div id="'+retId+'"></div>';
+    var attachTo = '#'+id;
+    $('<div>').attr({
+      id: eleDivID
+    }).addClass('col-sm-12')
+      .html(htmlout).css({"border-bottom": '1px solid #e4eaec'}).appendTo(attachTo);
+    return retId;
+  };
+
+  var showImage = function(b64, text, attachID){
+    if(!attachID){
+      console.warn('showImage missing attachID');
+      return;
+    }
+    var u8_2 = utils.StringToUint8(b64);
+
+    var eleDivID = 'div' + $('div').length; // Unique ID
+    var eleCanID = 'canvas' + $('canvas').length; // Unique ID
+    var eleLabelID = 'h4' + $('h4').length; // Unique ID
+    var htmlout = '';
+    if(text) htmlout += '<b>'+text+'</b><br>';
+    htmlout += '<canvas id="'+eleCanID+'" style="width:'+canvas.width*5/6+'px;height:'+canvas.height*5/6+'px"></canvas>';
+    // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
+    $('<div>').attr({
+      id: eleDivID
+    }).addClass('col-sm-4')
+      .html(htmlout).css({}).appendTo('#'+attachID);
+
+    var screendisp = document.getElementById(eleCanID); // Use the created element
+    console.warn(screendisp);
+    screendisp.width = canvas.width;
+    screendisp.height = canvas.height;
+    var context = screendisp.getContext('2d');
+    // Copy the pixels to a 2D canvas
+    var imageData = context.createImageData(canvas.width, canvas.height);
+    var data = imageData.data;
+    for (var i = 0, len = u8_2.length; i < len; i++) {
+      data[i] = u8_2[i];
+    }
+    context.putImageData(imageData, 0, 0);
+  };
+
   $scope.taskGen = function(tasktype, stateid, bundle, asncnt, antcnt){
     console.warn(tasktype, stateid, bundle, asncnt, antcnt);
     var statelist = $rootScope.mdbArray(GenStates, {stateid: Number(stateid)}, {

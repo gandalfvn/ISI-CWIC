@@ -39,16 +39,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             .form-group
               input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().statesFileChanged(event)")
               button.btn.btn-default(type="submit", ng-show='statesfilename') Go
-        //-.content.col-sm-3(ng-show='!curState.block_meta.blocks')
-          form.form-inline.ng-pristine.ng-valid.well(name='usemetastateform', ng-submit='showState(msid)')
-            .form-group
-              label Use State:
-              input(type='text', ng-model='msid', placeholder='state id')
-              input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
     tab(heading='Review Block Actions')
       .row
-        .content.col-sm-8
-          table.table(ng-table='tableStateParams', show-filter='true')
+        .content.col-sm-8(style='background-color: white')
+          table.table.table-condensed.table-striped(ng-table='tableStateParams', show-filter='true')
             tr(ng-repeat='s in $data')
               td(title="''")
                 button.btn.btn-xs.btn-danger(ng-click='remState(s._id)')
@@ -59,8 +53,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 | {{s.name}}
               td(title="'Created'", sortable="'created'", ng-click='showState(s._id)')
                 | {{s.created | date:"MM/dd/yyyy"}}
-//-.row-fluid.col-sm-12(ng-show='curState.block_meta.blocks')
-  hr
 .row-fluid.col-sm-12
   .row-fluid.col-sm-5
     h3 Scene

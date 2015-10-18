@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/config.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genjobs.ng.jade" afterPath="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genworld.ng.jade" afterPath="$PROJECT_DIR$/client/views/genworld.ng.jade" />
     </list>
     <ignored path="bwapp.iws" />
@@ -24,11 +27,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="true">
+      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.9491526">
-              <caret line="92" column="81" selection-start-line="92" selection-start-column="81" selection-end-line="92" selection-end-column="81" />
+            <state vertical-scroll-proportion="-9.481482">
+              <caret line="65" column="52" selection-start-line="65" selection-start-column="49" selection-end-line="65" selection-end-column="52" />
               <folding />
             </state>
           </provider>
@@ -38,7 +41,7 @@
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="372" column="28" selection-start-line="372" selection-start-column="28" selection-end-line="372" selection-end-column="28" />
+              <caret line="1038" column="0" selection-start-line="1020" selection-start-column="0" selection-end-line="1038" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -48,17 +51,27 @@
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="72" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+              <caret line="89" column="0" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="genjobs.ng.jade" pinned="false" current-in-tab="false">
+      <file leaf-file-name="genjobs.ng.jade" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="74" column="94" selection-start-line="74" selection-start-column="94" selection-end-line="74" selection-end-column="94" />
+            <state vertical-scroll-proportion="0.61440676">
+              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gameview.ng.jade" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/views/gameview.ng.jade">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-23.88889">
+              <caret line="65" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -118,8 +131,6 @@
         <option value="$PROJECT_DIR$/server/genjobsmgr.js" />
         <option value="$PROJECT_DIR$/client/views/gentask.ng.jade.js" />
         <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
-        <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js" />
         <option value="$PROJECT_DIR$/client/lib/js/app.init.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/services/utils.js" />
@@ -128,10 +139,12 @@
         <option value="$PROJECT_DIR$/client/angle/js/modules/constants.js" />
         <option value="$PROJECT_DIR$/public/bower.json" />
         <option value="$PROJECT_DIR$/server/genstates.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/config.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/package.json" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/config.js" />
         <option value="$PROJECT_DIR$/client/views/genworld.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
+        <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
       </list>
     </option>
   </component>
@@ -436,36 +449,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="angle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="modules" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="directives" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -910,13 +893,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/describe-view.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.47389558">
-          <caret line="278" column="39" selection-start-line="278" selection-start-column="39" selection-end-line="278" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/.bowerrc">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -954,14 +930,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.48751837">
           <caret line="300" column="9" selection-start-line="300" selection-start-column="9" selection-end-line="300" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/gengallery.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33898306">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1018,14 +986,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.66101694">
-          <caret line="270" column="0" selection-start-line="270" selection-start-column="0" selection-end-line="270" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-gallery-view.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.81632656">
@@ -1052,17 +1012,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/services/utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.42585033">
-          <caret line="115" column="47" selection-start-line="115" selection-start-column="22" selection-end-line="115" selection-end-column="47" />
-          <folding>
-            <element signature="e#521#1134#0" expanded="false" />
-            <element signature="e#1169#1768#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/constants.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.8367347">
@@ -1079,10 +1028,69 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/services/utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42585033">
+          <caret line="115" column="47" selection-start-line="115" selection-start-column="22" selection-end-line="115" selection-end-column="47" />
+          <folding>
+            <element signature="e#521#1134#0" expanded="false" />
+            <element signature="e#1169#1768#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/describe-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.8979592">
+          <caret line="278" column="39" selection-start-line="278" selection-start-column="39" selection-end-line="278" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/describe.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/gengallery.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33898306">
+          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.46938777">
+          <caret line="60" column="83" selection-start-line="60" selection-start-column="83" selection-end-line="60" selection-end-column="83" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/gameview.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-23.88889">
+          <caret line="65" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.481482">
+          <caret line="65" column="52" selection-start-line="65" selection-start-column="49" selection-end-line="65" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="372" column="28" selection-start-line="372" selection-start-column="28" selection-end-line="372" selection-end-column="28" />
+          <caret line="1038" column="0" selection-start-line="1020" selection-start-column="0" selection-end-line="1038" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1090,23 +1098,15 @@
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="72" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+          <caret line="89" column="0" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="74" column="94" selection-start-line="74" selection-start-column="94" selection-end-line="74" selection-end-column="94" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.9491526">
-          <caret line="92" column="81" selection-start-line="92" selection-start-column="81" selection-end-line="92" selection-end-column="81" />
+        <state vertical-scroll-proportion="0.61440676">
+          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
           <folding />
         </state>
       </provider>

@@ -3,7 +3,7 @@
  * Created by wjwong on 9/9/15.
  =========================================================*/
 angular.module('angle').controller('genWorldCtrl',
-  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'md5', 'Utils', 'ngTableParams', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, md5, utils, ngTableParams){
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'Utils', 'ngTableParams', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, utils, ngTableParams){
     "use strict";
 
     var hasPhysics = true;
@@ -379,8 +379,8 @@ angular.module('angle').controller('genWorldCtrl',
     $scope.limStack = true;
     $scope.limStackToggle = function(){
       $scope.limStack = !$scope.limStack;
-    }
-    function CurrentState(){
+    };
+    function CurrentState(c){
       var l = ['block_meta', 'block_states', '_id','public','created','creator','name'];
       this.clear =  function(){
         for(var i = 0; i < l.length; i++){
@@ -394,6 +394,7 @@ angular.module('angle').controller('genWorldCtrl',
         }
       };
       this.clear();
+      if(c) this.copy(c);
     }
     $scope.curState = new CurrentState();
 
