@@ -49,10 +49,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   };
   
   var showTask = function(sid){
-    console.warn('showTask', sid);
     $scope.$meteorSubscribe("genstates", sid).then(
       function(val){
-        console.warn('subscribe', val);
         $scope.curState = GenStates.findOne(sid);
         console.warn('curState',$scope.curState);
         $scope.taskidx = 0;
@@ -76,7 +74,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
       $('#statea').empty();
       $('#stateb').empty();
-      console.warn('renderTask', $scope.curState.block_states[aidx].screencap);
       showImage($scope.curState.block_states[aidx].screencap, 'Before', null, 'statea');
       showImage($scope.curState.block_states[bidx].screencap, 'After', null, 'stateb');
     }
