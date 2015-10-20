@@ -2,10 +2,30 @@
  * Module: gen-jobs-view.js
  * Created by wjwong on 9/23/15.
  =========================================================*/
-angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', 'ngTableParams', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils, ngTableParams){
+angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
   "use strict";
 
   var canvas = {width: 384, height: 264};
+  $scope.dtOptionsAvail = {
+    "lengthMenu": [[5], [5]],
+    "order": [[1, "asc"]],
+    "language": {"paginate": {"next": '>', "previous": '<'}},
+    "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
+  };
+
+  $scope.dtOptionsGrp = {
+    "lengthMenu": [[10], [10]],
+    "order": [[1, "asc"]],
+    "language": {"paginate": {"next": '>', "previous": '<'}},
+    "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
+  };
+
+  $scope.dtOptionsTask = {
+    "lengthMenu": [[10], [10]],
+    "order": [[0, "asc"]],
+    "language": {"paginate": {"next": '>', "previous": '<'}},
+    "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
+  };
 
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
@@ -31,13 +51,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   };
 
   var updateTableStateParams = function(){
-    var data = GenStates.find({}, {sort: {"_id": 1}}).fetch();
-    $scope.tableStateParams = new ngTableParams({
-      count: 5
-    }, {counts: [5,10,20],
-      paginationMaxBlocks: 8,
-      paginationMinBlcoks: 2,
-      data: data});
+    $scope.stateslist = GenStates.find({}, {sort: {"_id": 1}}).fetch();
   };
 
   function CurrentState(c){
@@ -137,15 +151,16 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     context.putImageData(imageData, 0, 0);
   };
 
-  $scope.taskGen = function(tasktype, stateid, bundle, asncnt, antcnt){
-    console.warn(tasktype, stateid, bundle, asncnt, antcnt);
-    var statelist = $rootScope.mdbArray(GenStates, {stateid: Number(stateid)}, {
+  $scope.taskGen = function(tasktype, movedir, bundle, asncnt, antcnt){
+    console.warn(tasktype, movedir, bundle, asncnt, antcnt);
+    var statelist = utils.mdbArray(GenStates, {}, {
       sort: {"_id": 1}}, "_id");
     console.warn(statelist);
     if(statelist.length){
       var jobdata = {
+        stateid: $scope.curState._id,
         tasktype: tasktype,
-        stateid: stateid,
+        movedir: movedir,
         bundle: bundle,
         asncnt: asncnt,
         antcnt: antcnt,
@@ -156,8 +171,9 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       };
       
       var availlist = [];
+      var statelen = $scope.curState.block_states.length;
       //generate action jobs from states
-      var doneAvailList = _.after(statelist.length, function(){
+      var doneAvailList = _.after(statelen, function(){
         var bundleidlist = [];
         var bundcnt = Math.ceil(availlist.length/jobdata.bundle);
         var doneBundles = _.after(bundcnt, function(){
@@ -174,13 +190,15 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
 
         function saveBundle(){
           var mybundledata = {
+            stateid: $scope.curState._id,
             islist: false,
             tasktype: jobdata.tasktype,
+            movedir: jobdata.movedir,
             creator: $rootScope.currentUser._id,
             created: (new Date).getTime(),
             asncnt: jobdata.asncnt,
             antcnt: jobdata.antcnt,
-            sidlist: abundle
+            idxlist: abundle
           };
           genjobsmgr.save(mybundledata).then(function(val){
               bundleidlist.push(val[0]._id);
@@ -201,28 +219,43 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         if(abundle.length) saveBundle(); //save the dangling bundles
       });
 
-      for(var i = 0; i < statelist.length; i++){
-        var sid = statelist[i];
-        if(tasktype == 'action'){
-          var state = GenStates.findOne({_id: sid});
-          for(var j = 0; j < state.next.length; j++){
-            var tid = state.next[j];
-            availlist.push({src: sid, tgt: tid});
-          }
+      //decide on normal or reverse action
+      if(tasktype == 'action' && movedir == 'reverse'){
+        for(var i = statelen-1; i > -1; i--){
+          if(i > 0) availlist.push(i); //because we use i & i+1 states in actions
+          doneAvailList();
         }
-        else availlist.push(sid);
-        doneAvailList();
+      }
+      else{
+        for(var i = 0; i < statelen; i++){
+          if(tasktype == 'action'){
+            if(i < statelen-1) availlist.push(i); //because we use i & i+1 states in actions
+          }
+          else availlist.push(i);
+          doneAvailList();
+        }
       }
     }
   };
   
   var updateJobMgr = function(){
     $scope.jobmgrlist = GenJobsMgr.find({islist: true}, {sort: {"_id": 1}}).fetch();
-    console.warn($scope.jobmgrlist);
   };
   
   $scope.selectJob = function(jid){
     $scope.jobinfo = GenJobsMgr.findOne({_id: jid});
     console.warn($scope.jobinfo);
-  }
+  };
+  
+  $scope.remJob = function(jid){
+    console.warn('remJob', jid);
+    $scope.jobinfo = null; //null out job in case its the one deleted
+    var deljob = GenJobsMgr.findOne({_id: jid});
+    deljob.list.forEach(function(j){
+      GenJobsMgr.remove(j);
+    })
+    GenJobsMgr.remove(jid);
+    updateJobMgr();
+  };
+  
 }]);

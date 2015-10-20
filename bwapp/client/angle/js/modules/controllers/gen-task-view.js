@@ -5,7 +5,7 @@
 
 //?taskid=2kw6CqcqjRzsHBWD2&assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&hitId=123RVWYBAZW00EXAMPLE&turkSubmitTo=https://www.mturk.com/&workerId=AZ3456EXAMPLE
 
-angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster){
+angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
   "use strict";
   
   var genstates = $scope.$meteorCollection(GenStates);
@@ -19,67 +19,102 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     function(err){ console.log("error", arguments, err); }
   );
 
-  var taskdata;
-  var taskidx = 0;
-  $scope.dataready = false;
+  $scope.taskdata;
+  $scope.taskidx = 0;
+  $scope.notes = null;
   var readydat = [];
   var dataReady = function(data){
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
     if(readydat.length > 1){
       $rootScope.dataloaded = true;
-      $scope.statenum = $rootScope.mdbArray(GenStates, {}, {
-        sort: {stateid: 1}, fields: {stateid: true}
-      }, "stateid");
-      console.warn($scope.statenum);
       console.warn($stateParams);
-      taskdata = GenJobsMgr.findOne($stateParams.taskid);
-      showTask(taskdata.sidlist[taskidx]);
+      if($stateParams.taskId){
+        $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
+        if($stateParams.workerId){
+          $scope.workerId = $stateParams.workerId;
+          var isValid = true;
+          if($scope.taskdata.worked)
+            if(_.indexOf($scope.taskdata.worked, $scope.workerId) > -1){
+              $scope.workerId = null;
+              isValid = false;
+            }
+          if(isValid) showTask($scope.taskdata.stateid);
+        }
+      }
     }
   };
   
-  var showTask = function(tid){
-    $scope.$meteorSubscribe("genstates", tid).then(
+  var showTask = function(sid){
+    $scope.$meteorSubscribe("genstates", sid).then(
       function(val){
-        $scope.curtask = GenStates.findOne(tid);
-        console.warn($scope.curtask);
+        $scope.curState = GenStates.findOne(sid);
+        console.warn($scope.curState);
+        $scope.taskidx = 0;
+        renderTask($scope.taskidx);
       },
       function(err){
-        toaster.pop('error', tid+' Not Found', err.reason);
+        toaster.pop('error', sid+' Not Found', err.reason);
       }
     );
   };
 
+  var renderTask = function(idx){
+    //create the annotations
+    if(!$scope.taskdata.notes) $scope.taskdata.notes = {};
+    if(!$scope.taskdata.notes[$scope.workerId]) $scope.taskdata.notes[$scope.workerId] = {};
+    if(!$scope.taskdata.notes[$scope.workerId][idx]) $scope.taskdata.notes[$scope.workerId][idx] = ['','',''];
+    $scope.notes = $scope.taskdata.notes[$scope.workerId][idx];
+    if($scope.taskdata.tasktype == 'action'){
+      var aidx = $scope.taskdata.idxlist[idx];
+      var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
+      $('#statea').empty();
+      $('#stateb').empty();
+      showImage($scope.curState.block_states[aidx].screencap, 'Before', null, 'statea');
+      showImage($scope.curState.block_states[bidx].screencap, 'After', null, 'stateb');
+    }
+  };
+  
   var showImage = function(b64, title, caption, attachID){
-    var u8_2 = $rootScope.StringToUint8(b64);
-    var myviewport = {width: 320, height: 220};
+    if(!attachID) return console.warn('Missing dom attach id');
+    var u8_2 = utils.StringToUint8(b64);
+    var canvas = {width: 384, height: 264};
 
     var eleDivID = 'div' + $('div').length; // Unique ID
     var eleCanID = 'canvas' + $('canvas').length; // Unique ID
     var eleLabelID = 'h4' + $('h4').length; // Unique ID
     var htmlout =
-      '<canvas id="'+eleCanID+'" style="width:'+myviewport.width+'px;height:'+myviewport.height+'px"></canvas>';
+      '<canvas id="'+eleCanID+'" style="width:'+canvas.width+'px;height:'+canvas.height+'px"></canvas>';
     if(title) htmlout = '<h4>'+title+'</h4>' + htmlout;
     if(caption) htmlout += '<label id="'+eleLabelID+'" class="mb">'+caption+'</label>';
     console.warn('showImage', caption);
-    var attachTo = '#galleryarea';
-    if(attachID) attachTo = '#'+attachID;
     $('<div>').attr({
       id: eleDivID
     }).addClass('col-sm-4')
-      .html(htmlout).css({}).appendTo(attachTo);
+      .html(htmlout).css({}).appendTo('#'+attachID);
 
     var screendisp = document.getElementById(eleCanID); // Use the created element
-    screendisp.width = myviewport.width;
-    screendisp.height = myviewport.height;
+    screendisp.width = canvas.width;
+    screendisp.height = canvas.height;
     var context = screendisp.getContext('2d');
     // Copy the pixels to a 2D canvas
-    var imageData = context.createImageData(myviewport.width, myviewport.height);
+    var imageData = context.createImageData(canvas.width, canvas.height);
     var data = imageData.data;
     for (var i = 0, len = u8_2.length; i < len; i++) {
       data[i] = u8_2[i];
     }
     context.putImageData(imageData, 0, 0);
+  };
+  
+  $scope.nextAnnot = function(notes){
+    console.warn($scope.taskdata.notes[$scope.workerId][$scope.taskidx]);
+    genjobsmgr.save($scope.taskdata).then(function(val){
+        console.warn(val);
+        $scope.taskidx++;
+        renderTask($scope.taskidx);
+      }, function(err){
+        toaster.pop('error', err.reason);
+      });
   };
   
 }]);
