@@ -34,7 +34,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         if($stateParams.workerId){
           $scope.workerId = $stateParams.workerId;
           var isValid = true;
-          if($scope.taskdata.submitted){
+          if(!$scope.workerId) isValid = false; //no workid no view
+          if($scope.taskdata.submitted && isValid){
             if(!_.isUndefined($scope.taskdata.submitted[$scope.workerId])){
               //worker already submitted
               $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
@@ -88,7 +89,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       '<canvas id="'+eleCanID+'" style="width:'+canvas.width+'px;height:'+canvas.height+'px"></canvas>';
     if(title) htmlout = '<h4>'+title+'</h4>' + htmlout;
     if(caption) htmlout += '<label id="'+eleLabelID+'" class="mb">'+caption+'</label>';
-    console.warn('showImage', caption);
     $('<div>').attr({
       id: eleDivID
     }).addClass('col-sm-4')
@@ -115,19 +115,26 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       renderTask($scope.taskidx);
     }
     else{//new entry save as we go
-      if($scope.taskidx >= $scope.taskdata.idxlist.length){
+      var isValid = true;
+      if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE'){
+        $scope.taskidx = $scope.taskdata.idxlist.length - 1;
+        isValid = false; //prevent final submission until accepted
+        toaster.pop('info', 'Please ACCEPT assignment before submitting.');
+      }
+      if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
         if(!$scope.taskdata.submitted) $scope.taskdata.submitted = {};
         if(!$scope.taskdata.submitted[$scope.workerId]){
           $scope.taskdata.submitted[$scope.workerId] = {
-            time: (new Date()).getTime()
+            time: (new Date()).getTime(),
+            aid: $stateParams.assignmentId,
+            hid: $stateParams.hitId
           };
           $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
           $scope.taskidx = 0;
           toaster.pop('info', 'Task Submitted');
         }
       }
-      genjobsmgr.save($scope.taskdata).then(function(val){
-        console.warn(val);
+      if(isValid) genjobsmgr.save($scope.taskdata).then(function(val){
         renderTask($scope.taskidx);
       }, function(err){
         toaster.pop('error', err.reason);
