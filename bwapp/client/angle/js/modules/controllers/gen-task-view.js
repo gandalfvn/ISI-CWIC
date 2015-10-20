@@ -31,6 +31,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       console.warn($stateParams);
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
+        console.warn('taskdata', $scope.taskdata);
         if($stateParams.workerId){
           $scope.workerId = $stateParams.workerId;
           var isValid = true;
@@ -72,6 +73,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
       $('#statea').empty();
       $('#stateb').empty();
+      console.warn('renderTask', $scope.curState.block_states[aidx].screencap);
       showImage($scope.curState.block_states[aidx].screencap, 'Before', null, 'statea');
       showImage($scope.curState.block_states[bidx].screencap, 'After', null, 'stateb');
     }
