@@ -49,15 +49,18 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   };
   
   var showTask = function(sid){
+    console.warn('showTask', sid);
     $scope.$meteorSubscribe("genstates", sid).then(
       function(val){
+        console.warn('subscribe', val);
         $scope.curState = GenStates.findOne(sid);
-        console.warn($scope.curState);
+        console.warn('curState',$scope.curState);
         $scope.taskidx = 0;
         renderTask($scope.taskidx);
       },
       function(err){
-        toaster.pop('error', sid+' Not Found', err.reason);
+        console.warn('err', err);
+        $scope.$apply(function(){toaster.pop('error', sid+' Not Found', err.reason)});
       }
     );
   };
