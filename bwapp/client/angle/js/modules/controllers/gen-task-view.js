@@ -34,11 +34,12 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         if($stateParams.workerId){
           $scope.workerId = $stateParams.workerId;
           var isValid = true;
-          if($scope.taskdata.worked)
-            if(_.indexOf($scope.taskdata.worked, $scope.workerId) > -1){
-              $scope.workerId = null;
-              isValid = false;
+          if($scope.taskdata.submitted){
+            if(!_.isUndefined($scope.taskdata.submitted[$scope.workerId])){
+              //worker already submitted
+              $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
             }
+          }
           if(isValid) showTask($scope.taskdata.stateid);
         }
       }
@@ -106,15 +107,32 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     context.putImageData(imageData, 0, 0);
   };
   
-  $scope.nextAnnot = function(notes){
-    console.warn($scope.taskdata.notes[$scope.workerId][$scope.taskidx]);
-    genjobsmgr.save($scope.taskdata).then(function(val){
+  $scope.itrAnnot = function(notes, vdir){
+    $scope.taskidx+=vdir;
+    if($scope.submitter){
+      //read only submisson already done
+      if($scope.taskidx >= $scope.taskdata.idxlist.length) $scope.taskidx = 0;
+      renderTask($scope.taskidx);
+    }
+    else{//new entry save as we go
+      if($scope.taskidx >= $scope.taskdata.idxlist.length){
+        if(!$scope.taskdata.submitted) $scope.taskdata.submitted = {};
+        if(!$scope.taskdata.submitted[$scope.workerId]){
+          $scope.taskdata.submitted[$scope.workerId] = {
+            time: (new Date()).getTime()
+          };
+          $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
+          $scope.taskidx = 0;
+          toaster.pop('info', 'Task Submitted');
+        }
+      }
+      genjobsmgr.save($scope.taskdata).then(function(val){
         console.warn(val);
-        $scope.taskidx++;
         renderTask($scope.taskidx);
       }, function(err){
         toaster.pop('error', err.reason);
       });
+    }
   };
-  
+
 }]);

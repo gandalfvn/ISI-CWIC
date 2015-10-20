@@ -9,6 +9,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   //-.row-fluid.well
     h3 Example
   .row-fluid.well.col-sm-12(ng-if='workerId && taskdata.tasktype == "action"')
+    .col-sm-12(ng-if='submitter')
+      .label.label-warning Read Only
+      i(style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
     .col-sm-12
       .col-sm-1
         h3 {{taskidx+1}}/{{taskdata.idxlist.length}}
@@ -22,7 +25,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       h4 What would you tell a friend of yours to do in a world that has the objects in the first image in order to obtain the configuration in the second image?  Use each text box to write at least three distinct alternatives.
       hr
     .col-sm-12
-      form.ng-pristine.ng-valid(name='annotForm', ng-submit='nextAnnot(notes)')
+      form.ng-pristine.ng-valid(name='annotForm')
         div(ng-repeat='note in notes track by $index')
           //-.col-sm-1
             //-button.btn.btn-xs.btn-danger(title='Remove Description')
@@ -32,8 +35,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               .fa.fa-asterisk
             b.pull-left(ng-show='note.length > 9', style='font-size: 16px; color: green; width:2%;').fa.fa-check
             .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-              textarea.form-control(type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
-        button.btn.btn-primary(ng-show='notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9') Next
+              textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
+              textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
+        button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
+        button.btn.btn-primary(ng-if='notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 == taskdata.idxlist.length', ng-click='itrAnnot(notes, 1)') Submit
+        button.btn.btn-primary(ng-if='notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length', ng-click='itrAnnot(notes, 1)') Next
+
   .row-fluid.well.col-sm-12(ng-if='!workerId')
     .col-sm-12
       h3(style='color: red') This Job is unavailable.
