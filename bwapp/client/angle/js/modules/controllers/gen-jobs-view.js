@@ -32,6 +32,13 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     function(sid){dataReady('genstates');},
     function(err){ console.log("error", arguments, err); }
   );
+
+  var screencaps = $scope.$meteorCollection(ScreenCaps);
+  $scope.$meteorSubscribe("screencaps").then(
+    function(sid){dataReady('screencaps');},
+    function(err){ console.log("error", arguments, err); }
+  );
+
   var genjobsmgr = $scope.$meteorCollection(GenJobsMgr);
   $scope.$meteorSubscribe("genjobsmgr").then(
     function(sid){dataReady('genjobsmgr');},
@@ -43,7 +50,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   var dataReady = function(data){
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
-    if(readydat.length > 1){
+    if(readydat.length > 2){
       $rootScope.dataloaded = true;
       updateTableStateParams();
       updateJobMgr();
@@ -96,8 +103,14 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
 
   $scope.showMove = function(i){
     $('#imgpreview').empty();
-    var retid = navImgButtons('imgpreview', i);
-    showImage($scope.curState.block_states[i].screencap, 'Move #: '+i, retid);
+    var scid = $scope.curState.block_states[i].screencapid;
+    $scope.$meteorSubscribe('screencaps', scid).then(
+      function(sub){
+        var retid = navImgButtons('imgpreview', i);
+        var screen = ScreenCaps.findOne({_id: scid});
+        showImage(screen.data, 'Move #: '+i, retid);
+      }
+    );
   };
 
   var navImgButtons = function(id, i){

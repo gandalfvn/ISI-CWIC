@@ -130,5 +130,5 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr
             th Task Id
         tbody
-          tr(ng-repeat='tid in jobinfo.list', ng-click="$state.go('app.gentask',{taskId: tid})")
+          tr(ng-repeat='tid in jobinfo.list', ng-click="$state.go('app.gentask',{taskId: tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})")
             td {{tid}}

@@ -60,6 +60,11 @@ angular.module('angle')
       {name: 'ngMd5',                   files: [
         'vendor/angular-md5/angular-md5.min.js'
       ]},
+      {name: 'lzString',                   files: [
+        'vendor/lz-string/libs/base64-string.js',
+        //'vendor/lz-string/libs/lz-string.js'
+        'vendor/lz-string/libs/lz-string.min.js'
+      ]},
       {name: 'ngDialog',                files: [
         'vendor/ngDialog/css/ngDialog.min.css',
         'vendor/ngDialog/css/ngDialog-theme-default.min.css',

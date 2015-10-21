@@ -13,6 +13,13 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     function(sid){dataReady('genstates');},
     function(err){ console.log("error", arguments, err); }
   );
+
+  var screencaps = $scope.$meteorCollection(ScreenCaps);
+  $scope.$meteorSubscribe("screencaps").then(
+    function(sid){dataReady('screencaps');},
+    function(err){ console.log("error", arguments, err); }
+  );
+
   var genjobsmgr = $scope.$meteorCollection(GenJobsMgr);
   $scope.$meteorSubscribe("genjobsmgr").then(
     function(sid){dataReady('genjobsmgr');},
@@ -26,14 +33,14 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   var dataReady = function(data){
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
-    if(readydat.length > 1){
-      $rootScope.dataloaded = true;
+    if(readydat.length > 2){
       console.warn($stateParams);
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
         console.warn('taskdata', $scope.taskdata);
         if($stateParams.workerId){
           $scope.workerId = $stateParams.workerId;
+          if($scope.workerId === 'EXAMPLE') $scope.submitter = true;
           var isValid = true;
           if(!$scope.workerId) isValid = false; //no workid no view
           if($scope.taskdata.submitted && isValid){
@@ -50,7 +57,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   
   var showTask = function(sid){
     $scope.$meteorSubscribe("genstates", sid).then(
-      function(val){
+      function(sub){
         $scope.curState = GenStates.findOne(sid);
         console.warn('curState',$scope.curState);
         $scope.taskidx = 0;
@@ -74,8 +81,16 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
       $('#statea').empty();
       $('#stateb').empty();
-      showImage($scope.curState.block_states[aidx].screencap, 'Before', null, 'statea');
-      showImage($scope.curState.block_states[bidx].screencap, 'After', null, 'stateb');
+      var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
+      $scope.$meteorSubscribe('screencaps', scids).then(
+        function(sub){
+          var screena = ScreenCaps.findOne(scids[0]);
+          var screenb = ScreenCaps.findOne(scids[1]);
+          showImage(screena.data, 'Before', null, 'statea');
+          showImage(screenb.data, 'After', null, 'stateb');
+          $rootScope.dataloaded = true;
+        }
+      );
     }
   };
   
@@ -111,6 +126,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   
   $scope.itrAnnot = function(notes, vdir){
     $scope.taskidx+=vdir;
+    $rootScope.dataloaded = false;
     if($scope.submitter){
       //read only submisson already done
       if($scope.taskidx >= $scope.taskdata.idxlist.length) $scope.taskidx = 0;
@@ -119,6 +135,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     else{//new entry save as we go
       var isValid = true;
       if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE'){
+        $rootScope.dataloaded = true;
         $scope.taskidx = $scope.taskdata.idxlist.length - 1;
         isValid = false; //prevent final submission until accepted
         toaster.pop('info', 'Please ACCEPT assignment before submitting.');

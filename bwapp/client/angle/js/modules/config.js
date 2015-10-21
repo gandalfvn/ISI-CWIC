@@ -58,7 +58,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
           return !$rootScope.isRole(user, 'agent');});
         }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog', 'ngTable')
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog', 'ngTable', 'lzString')
       ),
       controller: 'genWorldCtrl'
     })
@@ -82,7 +82,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
           return !$rootScope.isRole(user, 'agent');});
         }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('ngDialog', 'datatables')
+        helper.resolveFor('ngDialog', 'datatables', 'lzString')
       ),
       controller: 'genJobsCtrl'
     })
@@ -90,7 +90,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId',
       title: 'Annotation Task',
       templateUrl: helper.basepath('gentask.html'),
-      resolve: helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables'),
+      resolve: helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'lzString'),
       controller: 'genTaskCtrl'
     })
     .state('app.worldview', {

@@ -403,16 +403,18 @@ angular.module('angle').controller('genWorldCtrl',
       function(sid){dataReady('genstates');},
       function(err){ console.log("error", arguments, err); }
     );
-    
-    $scope.showTime = function(){
-      return (new Date).getTime();
-    };
 
+    var screencaps = $scope.$meteorCollection(ScreenCaps);
+    $scope.$meteorSubscribe("screencaps").then(
+      function(sid){dataReady('screencaps');},
+      function(err){ console.log("error", arguments, err); }
+    );
+    
     var readydat = [];
     var dataReady = function(data){
       console.warn('ready ', data, (new Date).getTime());
       readydat.push(data);
-      if(readydat.length > 1){
+      if(readydat.length > 2){
         updateTableStateParams();
         $rootScope.dataloaded = true;
       }
@@ -819,49 +821,93 @@ angular.module('angle').controller('genWorldCtrl',
       var mygstate = findBy('sig', sig, genstates);
       if(!mygstate){*/
       if(true){
-        var max = APP_CONST.fieldsize/2 + 0.001; //give it a little wiggle room
-        var min = -max;
-        var frame = [];
-        var meta = {blocks: []};
-        var isValid = true;
-        var cnt = 0;
-        used.forEach(function(cid){
-          cnt++;
-          var c = get3DCubeById(cid);
-          if(c){
-            if((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
-              (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max){
-              var dat = {id: cid, position: c.position.clone(), rotation: c.rotationQuaternion.clone()};
-              frame.push(dat);
-              meta.blocks.push(cubesdata[cid].meta);
-            }
-            else{
-              isValid = false;
-              //console.warn('Out',c.position.x- c.boxsize/2, c.position.x+ c.boxsize/2,c.position.z- c.boxsize/2, c.position.z+ c.boxsize/2);
-            }
+        //check if we loaded states or just a frame save for an existing system
+        if(!$scope.curState._id && $scope.curState.block_states && $scope.curState.block_states.length
+          && $scope.curState.block_states[0].screencap){
+          //if there is no id for current state, there are states in it and screencap then it must be a loadstates object
+          //we have to save everything in this state and save the screen caps in another value.
+          for(var i = 0; i < $scope.curState.block_states.length; i++);
+          
+          function saveScreen(idx, list, cb){
+            if(_.isUndefined(list[idx])) return cb();
+            screencaps.save({
+              data: list[idx].screencap,
+              created: (new Date).getTime(),
+              public: true
+            }).then(function(val){
+                delete list[idx].screencap;
+                list[idx].screencapid = val[0]._id;
+                saveScreen(idx+1, list, cb);
+              }, function(err){
+                console.warn('saveScreen', err.reason);
+                cb(err);
+              }
+            );
           }
-        });
-        if(!isValid){
-          cb('Cube(s) Out of Bounds!');
-          return false;
+          
+          saveScreen(0, $scope.curState.block_states, function(err){
+            if(err) return $scope.$apply(function(){toaster.pop('error', err.reason)});
+            genstates.save($scope.curState).then(function(val){
+              $scope.curState._id = val[0]._id;
+              cb(null, $scope.curState._id);
+            }, function(err){
+              cb(err.reason);
+            });
+          })
         }
-        var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
-        var b64encoded = btoa(utils.Uint8ToString(screenRaw));
-        if(!$scope.curState.block_states) $scope.curState.block_states = [];
-        $scope.curState.block_states.push({
-          block_state: frame,
-          screencap: b64encoded,
-          created: (new Date).getTime()
-        });
-        genstates.save($scope.curState).then(function(val){
-          console.warn(val[0]);
-          $scope.curState._id = val[0]._id;
-          var attachid = createButtons('stateimg', $scope.curState.block_states.length-1);
-          showImage(b64encoded, 'Move #: ' + ($scope.curState.block_states.length-1), attachid);
-          cb(null, $scope.curState._id);
-        }, function(err){
-          cb(err.reason);
-        });
+        else{
+          var max = APP_CONST.fieldsize / 2 + 0.001; //give it a little wiggle room
+          var min = -max;
+          var frame = [];
+          var meta = {blocks: []};
+          var isValid = true;
+          used.forEach(function(cid){
+            var c = get3DCubeById(cid);
+            if(c){
+              if((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
+                (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max){
+                var dat = {id: cid, position: c.position.clone(), rotation: c.rotationQuaternion.clone()};
+                frame.push(dat);
+                meta.blocks.push(cubesdata[cid].meta);
+              }
+              else{
+                isValid = false;
+                //console.warn('Out',c.position.x- c.boxsize/2, c.position.x+ c.boxsize/2,c.position.z- c.boxsize/2, c.position.z+ c.boxsize/2);
+              }
+            }
+          });
+          if(!isValid){
+            cb('Cube(s) Out of Bounds!');
+            return false;
+          }
+          var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
+          var b64encoded = utils.Uint8ToString(screenRaw); //btoa(utils.Uint8ToString(screenRaw));
+          console.warn('b64encoded > ', b64encoded.length);
+          screencaps.save({
+            data: b64encoded,
+            created: (new Date).getTime(),
+            public: true
+          }).then(function(val){
+              if(!$scope.curState.block_states) $scope.curState.block_states = [];
+              $scope.curState.block_states.push({
+                block_state: frame,
+                screencapid: val[0]._id,
+                created: (new Date).getTime()
+              });
+              genstates.save($scope.curState).then(function(val){
+                console.warn(val[0]);
+                $scope.curState._id = val[0]._id;
+                var attachid = createButtons('stateimg', $scope.curState.block_states.length - 1);
+                showImage(b64encoded, 'Move #: ' + ($scope.curState.block_states.length - 1), attachid);
+                cb(null, $scope.curState._id);
+              }, function(err){
+                cb(err.reason);
+              });
+            }, function(err){
+              cb(err.reason);
+            }
+          );
+        }
       }
       else{
         cb('State already exists!');
@@ -869,7 +915,7 @@ angular.module('angle').controller('genWorldCtrl',
     };
     
     var showImage = function(b64, text, attachID){
-      var u8_2 = utils.StringToUint8(b64);
+      var u8_2 = utils.StringToUint8(b64);//utils.StringToUint8(b64);
 
       var eleDivID = 'div' + $('div').length; // Unique ID
       var eleCanID = 'canvas' + $('canvas').length; // Unique ID
@@ -994,26 +1040,17 @@ angular.module('angle').controller('genWorldCtrl',
           $scope.curState.copy(myframe);
           createObjects($scope.curState.block_meta.blocks);
           showFrame(myframe.block_states[$scope.curitr]);
-          for(var i = 0; i < myframe.block_states.length; i++){
-            var attachid = createButtons('stateimg', i);
-            showImage(myframe.block_states[i].screencap, 'Move #:' + i, attachid);
-          }
-          /*
-          var tempframe = {block_meta: myframe.block_meta, block_state: []};
-          for(var i = 0; i < myframe.block_state.length; i++){
-            var s = myframe.block_state[i];
-            var pos = '', rot = '';
-            _.each(s.position, function(v){
-              if(pos.length) pos += ',';
-              pos += v;
+          function itrScreencap(idx, list, cb){
+            if(_.isUndefined(list[idx])) return cb();
+            var scid = list[idx].screencapid;
+            $scope.$meteorSubscribe("screencaps", scid).then(function(sub){
+              var screen = ScreenCaps.findOne({_id: scid});
+              var attachid = createButtons('stateimg', idx);
+              showImage(screen.data, 'Move #:' + idx, attachid);
+              itrScreencap(idx+1, list, cb);
             });
-            _.each(s.rotation, function(v){
-              if(rot.length) rot += ',';
-              rot += v;
-            });
-            tempframe.block_state.push({id: s.id, position: pos, rotation: rot})
           }
-          console.warn(JSON.stringify(tempframe, null, 2));*/
+          itrScreencap(0, myframe.block_states, function(){});
         }
       )
     };
@@ -1039,9 +1076,17 @@ angular.module('angle').controller('genWorldCtrl',
 
     $scope.remState = function(sid){
       if(sid){
-        genstates.remove(sid);
-        updateTableStateParams();
-        toaster.pop('warning', 'Removed ' + sid);
+        $scope.$meteorSubscribe("genstates", sid).then(
+          function(sub){
+            var myframe = GenStates.findOne({_id: sid});
+            myframe.block_states.forEach(function(s){
+              screencaps.remove(s.screencapid);
+            })
+            genstates.remove(sid);
+            updateTableStateParams();
+            toaster.pop('warning', 'Removed ' + sid);
+          }
+        );
       }
     };
 
@@ -1215,7 +1260,7 @@ angular.module('angle').controller('genWorldCtrl',
                       width: canvas.width,
                       height: canvas.height
                     });
-                    var b64encoded = btoa(utils.Uint8ToString(screenRaw));
+                    var b64encoded = utils.Uint8ToString(screenRaw); //btoa(utils.Uint8ToString(screenRaw));
                     block_states[idx].screencap = b64encoded;
                     block_states[idx].created = (new Date).getTime();
                     var attachid = createButtons('stateimg', idx);

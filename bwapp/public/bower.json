@@ -35,7 +35,8 @@
     "angular-sanitize": "1.4.3",
     "angular-loading-bar": "0.8.0",
     "angular-md5": "0.1.8",
-    "ng-table": "*"
+    "ng-table": "*",
+    "lz-string": "*"
   },
   "resolutions": {
     "angular": ">=1.3.0"

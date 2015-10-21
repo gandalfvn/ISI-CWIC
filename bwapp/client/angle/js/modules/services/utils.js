@@ -129,7 +129,7 @@ angular.module('angle').service('Utils', ["$window", "APP_MEDIAQUERY", function(
         for(var i = 0; i < u8a.length; i += CHUNK_SZ){
           c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SZ)));
         }
-        return c.join("");
+        return Base64String.compressToUTF16(btoa(c.join("")));
       },
       /**
        * string to binary
@@ -138,7 +138,7 @@ angular.module('angle').service('Utils', ["$window", "APP_MEDIAQUERY", function(
        * @constructor
        */
       StringToUint8: function(b64){
-        return new Uint8Array(atob(b64).split("").map(function(c){
+        return new Uint8Array(atob(Base64String.decompressFromUTF16(b64)).split("").map(function(c){
           return c.charCodeAt(0);
         }));
       },

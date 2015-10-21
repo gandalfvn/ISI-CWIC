@@ -11,7 +11,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   .row-fluid.well.col-sm-12(ng-if='workerId && taskdata.tasktype == "action"')
     .col-sm-12(ng-if='submitter')
       .label.label-warning Read Only
-      i(style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
+      i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
     .col-sm-12
       .col-sm-1
         h3 {{taskidx+1}}/{{taskdata.idxlist.length}}
@@ -39,7 +39,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
         button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
         button.btn.btn-primary(ng-if='notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-        button.btn.btn-primary(ng-if='notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length', ng-click='itrAnnot(notes, 1)') Next
+        button.btn.btn-primary(ng-if='(notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length)', ng-click='itrAnnot(notes, 1)') Next
 
   .row-fluid.well.col-sm-12(ng-if='!workerId')
     .col-sm-12
