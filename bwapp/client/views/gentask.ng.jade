@@ -3,7 +3,7 @@
   * Created by wjwong on 10/5/15.
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
-.container-fluid
+.container-fluid(ng-if='!report')
   .row-fluid
     h2 Task
   //-.row-fluid.well
@@ -44,3 +44,22 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   .row-fluid.well.col-sm-12(ng-if='!workerId')
     .col-sm-12
       h3(style='color: red') This Job is unavailable.
+//-report view
+.container-fluid(ng-if='report')
+  .row-fluid
+    h3 Report for Submitter {{workerId}}
+  .col-sm-12(ng-repeat='notes in taskdata.notes[workerId] track by $index')
+    .col-sm-12
+      .col-sm-1
+        h3 {{$index+1}}
+      .col-sm-5
+        div(id='statea{{$index}}')
+      .col-sm-1(style="margin-top: 1em; font-size: 60px;")
+        .fa.fa-chevron-right
+      .col-sm-5
+        div(id='stateb{{$index}}')
+    .col-sm-12
+      div.mb-sm(ng-repeat='note in notes track by $index')
+        label.form-control {{notes[$index]}}
+    .col-sm-12
+      hr

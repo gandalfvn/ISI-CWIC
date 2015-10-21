@@ -256,7 +256,12 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   };
   
   $scope.selectJob = function(jid){
-    $scope.jobinfo = GenJobsMgr.findOne({_id: jid});
+    var job = GenJobsMgr.findOne({_id: jid});
+    $scope.jobinfo = [];
+    job.list.forEach(function(tid){
+      var task = GenJobsMgr.findOne({_id: tid});
+      $scope.jobinfo.push(task);
+    });
     console.warn($scope.jobinfo);
   };
   

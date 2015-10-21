@@ -49,27 +49,50 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
               $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
             }
           }
-          if(isValid) showTask($scope.taskdata.stateid);
+          var sid = $scope.taskdata.stateid;
+          $scope.$meteorSubscribe("genstates", sid).then(
+            function(sub){
+              $scope.curState = GenStates.findOne(sid);
+              console.warn('curState',$scope.curState);
+              $scope.taskidx = 0;
+              if($stateParams.report){ //report view
+                $scope.report = $stateParams.report;
+                $timeout(function(){renderReport(0)});
+              }
+              else if(isValid) renderTask($scope.taskidx); //single item view
+            },
+            function(err){
+              console.warn('err', err);
+              $scope.$apply(function(){toaster.pop('error', sid+' Not Found', err.reason)});
+            }
+          );
         }
       }
     }
   };
-  
-  var showTask = function(sid){
-    $scope.$meteorSubscribe("genstates", sid).then(
-      function(sub){
-        $scope.curState = GenStates.findOne(sid);
-        console.warn('curState',$scope.curState);
-        $scope.taskidx = 0;
-        renderTask($scope.taskidx);
-      },
-      function(err){
-        console.warn('err', err);
-        $scope.$apply(function(){toaster.pop('error', sid+' Not Found', err.reason)});
-      }
-    );
-  };
 
+  var renderReport = function(idx){
+    if(_.isUndefined($scope.taskdata.idxlist[idx])) return;
+    if($scope.taskdata.tasktype == 'action'){
+      var aidx = $scope.taskdata.idxlist[idx];
+      var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
+      console.warn($('#statea'+idx));
+      $('#statea'+idx).empty();
+      $('#stateb'+idx).empty();
+      var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
+      $scope.$meteorSubscribe('screencaps', scids).then(
+        function(sub){
+          var screena = ScreenCaps.findOne(scids[0]);
+          var screenb = ScreenCaps.findOne(scids[1]);
+          showImage(screena.data, 'Before', null, 'statea'+idx);
+          showImage(screenb.data, 'After', null, 'stateb'+idx);
+          $rootScope.dataloaded = true;
+          renderReport(idx+1);
+        }
+      );
+    }
+  };
+  
   var renderTask = function(idx){
     //create the annotations
     if(!$scope.taskdata.notes) $scope.taskdata.notes = {};

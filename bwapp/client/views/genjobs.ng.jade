@@ -129,6 +129,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         thead
           tr
             th Task Id
+            th Submitters
         tbody
-          tr(ng-repeat='tid in jobinfo.list', ng-click="$state.go('app.gentask',{taskId: tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})")
-            td {{tid}}
+          tr(ng-repeat='task in jobinfo')
+            td(ng-click="$state.go('app.gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})") {{task._id}}
+            td
+              div(ng-repeat='(k,v) in task.submitted', ng-click="$state.go('app.gentask',{taskId: task._id, workerId: k, report: 1})") {{k}} {{v.time | date:"MM/dd/yyyy H:m"}}

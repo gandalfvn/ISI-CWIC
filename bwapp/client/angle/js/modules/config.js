@@ -87,7 +87,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       controller: 'genJobsCtrl'
     })
     .state('app.gentask', {
-      url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId',
+      url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
       title: 'Annotation Task',
       templateUrl: helper.basepath('gentask.html'),
       resolve: helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'lzString'),
