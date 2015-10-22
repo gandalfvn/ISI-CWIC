@@ -6,8 +6,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .container-fluid(ng-if='!report')
   .row-fluid
     h2 Task
-  //-.row-fluid.well
-    h3 Example
+  accordion(ng-if='workerId && taskdata.tasktype == "action"')
+    accordion-group.panel-primary(is-open="isOpenDir")
+      accordion-heading
+        h4.panel-title Directions
+      h4 What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Here is an example:
+      h1 PLACEHOLDER IMAGE
   .row-fluid.well.col-sm-12(ng-if='workerId && taskdata.tasktype == "action"')
     .col-sm-12(ng-if='submitter')
       .label.label-warning Read Only
@@ -22,7 +26,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       .col-sm-5
         #stateb
     .col-sm-12
-      h4 What would you tell a friend of yours to do in a world that has the objects in the first image in order to obtain the configuration in the second image?  Use each text box to write at least three distinct alternatives.
       hr
     .col-sm-12
       form.ng-pristine.ng-valid(name='annotForm')

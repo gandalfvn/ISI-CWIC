@@ -27,6 +27,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     function(err){ console.log("error", arguments, err); }
   );
 
+  $scope.isOpenDir = true;
   $scope.taskdata;
   $scope.taskidx = 0;
   $scope.notes = null;
@@ -155,6 +156,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   
   $scope.itrAnnot = function(notes, vdir){
     $scope.taskidx+=vdir;
+    if($scope.taskidx != 0) $scope.isOpenDir = false;
+    else $scope.isOpenDir = true;
     $rootScope.dataloaded = false;
     if($scope.submitter){
       //read only submisson already done
