@@ -1440,7 +1440,6 @@ angular.module('angle').controller('genWorldCtrl',
     function saveAs(uri, filename) {
       var link = document.createElement('a');
       if (typeof link.download === 'string') {
-        console.warn('here');
         link.href = uri;
         link.download = filename;
         //Firefox requires the link to be in the body

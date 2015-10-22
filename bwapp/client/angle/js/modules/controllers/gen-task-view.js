@@ -35,7 +35,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
     if(readydat.length > 2){
-      console.warn($stateParams);
       var isAdminUser = ($rootScope.currentUser)? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
       if($stateParams.report && !isAdminUser){
         $rootScope.dataloaded = true;
@@ -84,7 +83,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     if($scope.taskdata.tasktype == 'action'){
       var aidx = $scope.taskdata.idxlist[idx];
       var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
-      console.warn($('#statea'+idx));
       $('#statea'+idx).empty();
       $('#stateb'+idx).empty();
       var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
@@ -229,7 +227,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   function saveAs(uri, filename) {
     var link = document.createElement('a');
     if (typeof link.download === 'string') {
-      console.warn('here');
       link.href = uri;
       link.download = filename;
       //Firefox requires the link to be in the body
