@@ -7,7 +7,8 @@
 
 angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
   "use strict";
-  
+
+  console.warn($rootScope.currentUser);
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
     function(sid){dataReady('genstates');},
@@ -35,6 +36,11 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     readydat.push(data);
     if(readydat.length > 2){
       console.warn($stateParams);
+      var isAdminUser = ($rootScope.currentUser)? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
+      if($stateParams.report && !isAdminUser){
+        $rootScope.dataloaded = true;
+        return;
+      }
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
         console.warn('taskdata', $scope.taskdata);
@@ -57,7 +63,9 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
               $scope.taskidx = 0;
               if($stateParams.report){ //report view
                 $scope.report = $stateParams.report;
-                $timeout(function(){renderReport(0)});
+                $timeout(function(){
+                  renderReport(0)
+                });
               }
               else if(isValid) renderTask($scope.taskidx); //single item view
             },
@@ -183,5 +191,54 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       });
     }
   };
+
+  $scope.dlScene = function(){
+    var tempframe = {_id: $scope.curState._id,
+      public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
+      creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: []};
+
+    for(var idx = 0; idx < $scope.curState.block_states.length; idx++){
+      var block_state = $scope.curState.block_states[idx].block_state;
+      var newblock_state = [];
+      for(var i = 0; i < block_state.length; i++){
+        var s = block_state[i];
+        var pos = '', rot = '';
+        _.each(s.position, function(v){
+          if(pos.length) pos += ',';
+          pos += v;
+        });
+        _.each(s.rotation, function(v){
+          if(rot.length) rot += ',';
+          rot += v;
+        });
+        newblock_state.push({id: s.id, position: pos, rotation: rot})
+      }
+      tempframe.block_states.push({block_state: newblock_state});
+    }
+    var content = JSON.stringify(tempframe, null, 2);
+    var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
+    saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
+  };
+
+  $scope.dlNotes = function(){
+    var content = JSON.stringify($scope.taskdata, null, 2);
+    var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
+    saveAs(uriContent, 'bw_notes_'+$scope.taskdata._id+'_'+$scope.workerId+'.json');
+  };
+
+  function saveAs(uri, filename) {
+    var link = document.createElement('a');
+    if (typeof link.download === 'string') {
+      console.warn('here');
+      link.href = uri;
+      link.download = filename;
+      //Firefox requires the link to be in the body
+      document.body.appendChild(link);
+      //simulate click
+      link.click();
+      //remove the link when done
+      document.body.removeChild(link);
+    } else window.open(uri);
+  }
 
 }]);

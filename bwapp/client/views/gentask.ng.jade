@@ -45,9 +45,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     .col-sm-12
       h3(style='color: red') This Job is unavailable.
 //-report view
-.container-fluid(ng-if='report')
+.container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
   .row-fluid
     h3 Report for Submitter {{workerId}}
+    button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
+    | &nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
   .col-sm-12(ng-repeat='notes in taskdata.notes[workerId] track by $index')
     .col-sm-12
       .col-sm-1

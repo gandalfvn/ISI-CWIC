@@ -1402,7 +1402,7 @@ angular.module('angle').controller('genWorldCtrl',
       }
       var content = JSON.stringify(tempframe, null, 2);
       var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
-      saveAs(uriContent, 'bw_'+$scope.curState._id+'.json');
+      saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
     };
 
     $scope.getMove = function(idx){
@@ -1423,7 +1423,7 @@ angular.module('angle').controller('genWorldCtrl',
       }
       var content = JSON.stringify(tempframe, null, 2);
       var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
-      saveAs(uriContent, 'bw_'+$scope.curState._id+'_'+idx+'.json');
+      saveAs(uriContent, 'bw_state_'+$scope.curState._id+'_'+idx+'.json');
     };
 
     $scope.delMove = function(idx){
