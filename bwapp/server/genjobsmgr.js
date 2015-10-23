@@ -5,7 +5,6 @@
 
 GenJobsMgr.allow({
   insert: function(userId, job){
-    console.warn('insert', userId, job);
     return userId; // && job.owner === userId;
   },
   update: function(userId, job, fields, modifier){
@@ -19,7 +18,6 @@ GenJobsMgr.allow({
     }
   },
   remove: function(userId, job){
-    console.warn('remove', userId, job);
     return userId; // && job.owner === userId;
   }
   //,fetch: ['owner']

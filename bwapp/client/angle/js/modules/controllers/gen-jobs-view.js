@@ -131,37 +131,24 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     return retId;
   };
 
-  var showImage = function(b64, text, attachID){
-    if(!attachID){
-      console.warn('showImage missing attachID');
-      return;
-    }
-    var u8_2 = utils.StringToUint8(b64);
+  var showImage = function(b64i, text, attachID){
+    if(!attachID) return console.warn('showImage missing attachID');
+    var b64img = LZString.decompressFromUTF16(b64i);
 
     var eleDivID = 'div' + $('div').length; // Unique ID
-    var eleCanID = 'canvas' + $('canvas').length; // Unique ID
+    var eleImgID = 'img' + $('img').length; // Unique ID
     var eleLabelID = 'h4' + $('h4').length; // Unique ID
     var htmlout = '';
     if(text) htmlout += '<b>'+text+'</b><br>';
-    htmlout += '<canvas id="'+eleCanID+'" style="width:'+canvas.width*5/6+'px;height:'+canvas.height*5/6+'px"></canvas>';
+    htmlout += '<img id="'+eleImgID+'" style="width:'+canvas.width*2/3+'px;height:'+canvas.height*2/3+'px"></img>';
     // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
     $('<div>').attr({
       id: eleDivID
     }).addClass('col-sm-4')
       .html(htmlout).css({}).appendTo('#'+attachID);
 
-    var screendisp = document.getElementById(eleCanID); // Use the created element
-    console.warn(screendisp);
-    screendisp.width = canvas.width;
-    screendisp.height = canvas.height;
-    var context = screendisp.getContext('2d');
-    // Copy the pixels to a 2D canvas
-    var imageData = context.createImageData(canvas.width, canvas.height);
-    var data = imageData.data;
-    for (var i = 0, len = u8_2.length; i < len; i++) {
-      data[i] = u8_2[i];
-    }
-    context.putImageData(imageData, 0, 0);
+    var img = document.getElementById(eleImgID); // Use the created element
+    img.src = b64img;
   };
 
   $scope.taskGen = function(tasktype, movedir, bundle, asncnt, antcnt){

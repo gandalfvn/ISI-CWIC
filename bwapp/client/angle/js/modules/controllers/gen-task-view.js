@@ -80,7 +80,10 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   };
 
   var renderReport = function(idx){
-    if(_.isUndefined($scope.taskdata.idxlist[idx])) return;
+    if(_.isUndefined($scope.taskdata.idxlist[idx])){
+      $rootScope.dataloaded = true;
+      return;
+    }
     if($scope.taskdata.tasktype == 'action'){
       var aidx = $scope.taskdata.idxlist[idx];
       var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
@@ -93,7 +96,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
           var screenb = ScreenCaps.findOne(scids[1]);
           showImage(screena.data, 'Before', null, 'statea'+idx);
           showImage(screenb.data, 'After', null, 'stateb'+idx);
-          $rootScope.dataloaded = true;
           renderReport(idx+1);
         }
       );
@@ -124,16 +126,15 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     }
   };
   
-  var showImage = function(b64, title, caption, attachID){
+  var showImage = function(b64i, title, caption, attachID){
     if(!attachID) return console.warn('Missing dom attach id');
-    var u8_2 = utils.StringToUint8(b64);
     var canvas = {width: 384, height: 264};
+    var b64img = LZString.decompressFromUTF16(b64i);
 
     var eleDivID = 'div' + $('div').length; // Unique ID
-    var eleCanID = 'canvas' + $('canvas').length; // Unique ID
+    var eleImgID = 'img' + $('img').length; // Unique ID
     var eleLabelID = 'h4' + $('h4').length; // Unique ID
-    var htmlout =
-      '<canvas id="'+eleCanID+'" style="width:'+canvas.width+'px;height:'+canvas.height+'px"></canvas>';
+    var htmlout = '<img id="'+eleImgID+'" style="width:'+canvas.width+'px;height:'+canvas.height+'px"></img>';
     if(title) htmlout = '<h4>'+title+'</h4>' + htmlout;
     if(caption) htmlout += '<label id="'+eleLabelID+'" class="mb">'+caption+'</label>';
     $('<div>').attr({
@@ -141,17 +142,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     }).addClass('col-sm-4')
       .html(htmlout).css({}).appendTo('#'+attachID);
 
-    var screendisp = document.getElementById(eleCanID); // Use the created element
-    screendisp.width = canvas.width;
-    screendisp.height = canvas.height;
-    var context = screendisp.getContext('2d');
-    // Copy the pixels to a 2D canvas
-    var imageData = context.createImageData(canvas.width, canvas.height);
-    var data = imageData.data;
-    for (var i = 0, len = u8_2.length; i < len; i++) {
-      data[i] = u8_2[i];
-    }
-    context.putImageData(imageData, 0, 0);
+    var img = document.getElementById(eleImgID); // Use the created element
+    img.src = b64img;
   };
   
   $scope.itrAnnot = function(notes, vdir){

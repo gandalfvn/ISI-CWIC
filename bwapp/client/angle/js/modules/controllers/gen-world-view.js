@@ -11,41 +11,6 @@ angular.module('angle').controller('genWorldCtrl',
     var rest = 0.2;
     var showGrid = true;
     var mult = 100; //position multiplier for int random
-    
-    var screenshotCanvas = document.getElementById('screencap');
-    var screenRaw;
-    BABYLON.Tools.DumpFramebuffer = function(width, height, engine){
-      console.log("MY version of DumpFramebuffer - Activated!", screenshotCanvas);
-      // Read the contents of the framebuffer
-      var numberOfChannelsByLine = width * 4;
-      var halfHeight = height / 2;
-      //Reading datas from WebGL
-      screenRaw = engine.readPixels(0, 0, width, height);
-      for (var i = 0; i < halfHeight; i++) {
-        for (var j = 0; j < numberOfChannelsByLine; j++) {
-          var currentCell = j + i * numberOfChannelsByLine;
-          var targetLine = height - i - 1;
-          var targetCell = j + targetLine * numberOfChannelsByLine;
-          var temp = screenRaw[currentCell];
-          screenRaw[currentCell] = screenRaw[targetCell];
-          screenRaw[targetCell] = temp;
-        }
-      }
-      // Create a 2D canvas to store the result
-      if (!screenshotCanvas) {
-        screenshotCanvas = document.createElement('canvas');
-      }
-      screenshotCanvas.width = width;
-      screenshotCanvas.height = height;
-      var context = screenshotCanvas.getContext('2d');
-      // Copy the pixels to a 2D canvas
-      var imageData = context.createImageData(width, height);
-      //cast is due to ts error in lib.d.ts, see here - https://github.com/Microsoft/TypeScript/issues/949
-      var castData = imageData.data;
-      castData.set(screenRaw);
-      context.putImageData(imageData, 0, 0);
-      return imageData.data;
-    };
 
     // Get the canvas element from our HTML above
     var canvas = document.getElementById("renderCanvasBab");
@@ -646,8 +611,6 @@ angular.module('angle').controller('genWorldCtrl',
       if($scope.curState._id){
         var myframe = $scope.curState;
         //if(!params.cstate) //show when we use 'show state' input
-        //showImage(myframe.screencap, params.sid, '&nbsp;Show');
-        //showFrame(myframe);
         //create a munge of cube position rotate and props
         var used = [];
         var cidlist = [];
@@ -880,33 +843,33 @@ angular.module('angle').controller('genWorldCtrl',
             cb('Cube(s) Out of Bounds!');
             return false;
           }
-          var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height});
-          var b64encoded = utils.Uint8ToString(screenRaw); //btoa(utils.Uint8ToString(screenRaw));
-          console.warn('b64encoded > ', b64encoded.length);
-          screencaps.save({
-            data: b64encoded,
-            created: (new Date).getTime(),
-            public: true
-          }).then(function(val){
-              if(!$scope.curState.block_states) $scope.curState.block_states = [];
-              $scope.curState.block_states.push({
-                block_state: frame,
-                screencapid: val[0]._id,
-                created: (new Date).getTime()
-              });
-              genstates.save($scope.curState).then(function(val){
-                console.warn(val[0]);
-                $scope.curState._id = val[0]._id;
-                var attachid = createButtons('stateimg', $scope.curState.block_states.length - 1);
-                showImage(b64encoded, 'Move #: ' + ($scope.curState.block_states.length - 1), attachid);
-                cb(null, $scope.curState._id);
+          BABYLON.Tools.CreateScreenshot(engine, camera, {width: canvas.width, height: canvas.height}, function(b64i){
+            var b64img = LZString.compressToUTF16(b64i);
+            screencaps.save({
+              data: b64img,
+              created: (new Date).getTime(),
+              public: true
+            }).then(function(val){
+                if(!$scope.curState.block_states) $scope.curState.block_states = [];
+                $scope.curState.block_states.push({
+                  block_state: frame,
+                  screencapid: val[0]._id,
+                  created: (new Date).getTime()
+                });
+                genstates.save($scope.curState).then(function(val){
+                  console.warn(val[0]);
+                  $scope.curState._id = val[0]._id;
+                  var attachid = createButtons('stateimg', $scope.curState.block_states.length - 1);
+                  showImage(b64img, 'Move #: ' + ($scope.curState.block_states.length - 1), attachid);
+                  cb(null, $scope.curState._id);
+                }, function(err){
+                  cb(err.reason);
+                });
               }, function(err){
                 cb(err.reason);
-              });
-            }, function(err){
-              cb(err.reason);
-            }
-          );
+              }
+            );
+          });
         }
       }
       else{
@@ -914,15 +877,15 @@ angular.module('angle').controller('genWorldCtrl',
       }
     };
     
-    var showImage = function(b64, text, attachID){
-      var u8_2 = utils.StringToUint8(b64);//utils.StringToUint8(b64);
+    var showImage = function(b64i, text, attachID){
+      var b64img = LZString.decompressFromUTF16(b64i);
 
       var eleDivID = 'div' + $('div').length; // Unique ID
-      var eleCanID = 'canvas' + $('canvas').length; // Unique ID
+      var eleImgID = 'img' + $('img').length; // Unique ID
       var eleLabelID = 'h4' + $('h4').length; // Unique ID
       var htmlout = '';
       if(text) htmlout += '<b>'+text+'</b><br>';
-      htmlout += '<canvas id="'+eleCanID+'" style="width:'+canvas.width*2/3+'px;height:'+canvas.height*2/3+'px"></canvas>';
+      htmlout += '<img id="'+eleImgID+'" style="width:'+canvas.width*2/3+'px;height:'+canvas.height*2/3+'px"></img>';
       // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
       var attachTo = '#galleryarea';
       if(attachID) attachTo = '#'+attachID;
@@ -930,18 +893,9 @@ angular.module('angle').controller('genWorldCtrl',
         id: eleDivID
       }).addClass('col-sm-4')
       .html(htmlout).css({}).appendTo(attachTo);
-      
-      var screendisp = document.getElementById(eleCanID); // Use the created element
-      screendisp.width = canvas.width;
-      screendisp.height = canvas.height;
-      var context = screendisp.getContext('2d');
-      // Copy the pixels to a 2D canvas
-      var imageData = context.createImageData(canvas.width, canvas.height);
-      var data = imageData.data;
-      for (var i = 0, len = u8_2.length; i < len; i++) {
-        data[i] = u8_2[i];
-      }
-      context.putImageData(imageData, 0, 0);
+
+      var img = document.getElementById(eleImgID); // Use the created element
+      img.src = b64img;
     };
 
     var checkFnSS; //store steady state check
@@ -1257,15 +1211,18 @@ angular.module('angle').controller('genWorldCtrl',
                   if(isSteadyState){
                     clearInterval(checkFnSS);
                     var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {
-                      width: canvas.width,
-                      height: canvas.height
+                      width: canvas.width, height: canvas.height
+                    }, function(b64i){
+                      var b64img = LZString.compressToUTF16(b64i);
+                      /*console.warn('len', b64i.length, b64img.length);
+                      console.warn('b64i', b64i);
+                      console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
+                      block_states[idx].screencap = b64img;
+                      block_states[idx].created = (new Date).getTime();
+                      var attachid = createButtons('stateimg', idx);
+                      showImage(b64img, 'Move #: ' + idx, attachid);
+                      itrFrame(idx + 1, block_states, cb);
                     });
-                    var b64encoded = utils.Uint8ToString(screenRaw); //btoa(utils.Uint8ToString(screenRaw));
-                    block_states[idx].screencap = b64encoded;
-                    block_states[idx].created = (new Date).getTime();
-                    var attachid = createButtons('stateimg', idx);
-                    showImage(b64encoded, 'Move #: ' + idx, attachid);
-                    itrFrame(idx + 1, block_states, cb);
                   }
                 }, 100);
               });
