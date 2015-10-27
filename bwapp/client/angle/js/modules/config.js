@@ -58,21 +58,9 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
           return !$rootScope.isRole(user, 'agent');});
         }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'ngMd5', 'ngTable')
+        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog', 'ngTable', 'lzString')
       ),
       controller: 'genWorldCtrl'
-    })
-    .state('app.gengallery', {
-      url: '/gengallery',
-      title: 'Generate State Gallery',
-      templateUrl: helper.basepath('gengallery.html'),
-      resolve: angular.extend(
-        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
-          return !$rootScope.isRole(user, 'agent');});
-        }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'ngMd5')
-      ),
-      controller: 'genGalleryCtrl'
     })
     .state('app.genjobs', {
       url: '/genjobs',
@@ -82,20 +70,15 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
           return !$rootScope.isRole(user, 'agent');});
         }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('ngDialog','datatables', 'ngMd5')
+        helper.resolveFor('ngDialog', 'datatables', 'lzString')
       ),
       controller: 'genJobsCtrl'
     })
     .state('app.gentask', {
-      url: '/annotate?taskid&assignmentId&hitId&turkSubmitTo&workerId',
+      url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
       title: 'Annotation Task',
       templateUrl: helper.basepath('gentask.html'),
-      resolve: angular.extend(
-        {"currentUser": ["$meteor", '$rootScope', function($meteor, $rootScope){return $meteor.requireValidUser(function(user){
-          return !$rootScope.isRole(user, 'agent');});
-        }]},  //simple functions appear first so data is loaded
-        helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables')
-      ),
+      resolve: helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'lzString'),
       controller: 'genTaskCtrl'
     })
     .state('app.worldview', {

@@ -8,7 +8,14 @@ GenJobsMgr.allow({
     return userId; // && job.owner === userId;
   },
   update: function(userId, job, fields, modifier){
-    return userId; // && (job.owner === userId);
+    if(userId) return userId;
+    else{
+      //only allow pass through of updates to notes and submitted
+      var keys = Object.keys(modifier['$set']);
+      keys = _.difference(keys, ['notes', 'submitted']); //only allow notes and submitted when not logged in
+      for(var i = 0; i < keys.length; i++) delete modifier['$set'][keys[i]];
+      return true;
+    }
   },
   remove: function(userId, job){
     return userId; // && job.owner === userId;

@@ -1,7 +1,6 @@
 /**========================================================
- * Module: genjobsdb.js
- * Created by wjwong on 10/3/15.
+ * Module: screencapdb.js
+ * Created by wjwong on 10/21/15.
  =========================================================*/
 
-GenJobs = new Mongo.Collection('genjobs');
-
+ScreenCaps = new Mongo.Collection('screencaps');
