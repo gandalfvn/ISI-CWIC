@@ -41,6 +41,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         $rootScope.dataloaded = true;
         return;
       }
+      console.warn($stateParams);
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
         console.warn('taskdata', $scope.taskdata);

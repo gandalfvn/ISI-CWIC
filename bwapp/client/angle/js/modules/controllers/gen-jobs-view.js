@@ -263,4 +263,8 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     updateJobMgr();
   };
   
+  $scope.createHIT = function(jid){
+    Meteor.call('mturkCreateHIT', {jid: jid});
+  };
+  
 }]);
