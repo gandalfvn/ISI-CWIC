@@ -45,37 +45,36 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
         console.warn('taskdata', $scope.taskdata);
-        if($stateParams.workerId){
-          $scope.workerId = $stateParams.workerId;
-          if($scope.workerId === 'EXAMPLE') $scope.submitter = true;
-          var isValid = true;
-          if(!$scope.workerId) isValid = false; //no workid no view
-          if($scope.taskdata.submitted && isValid){
-            if(!_.isUndefined($scope.taskdata.submitted[$scope.workerId])){
-              //worker already submitted
-              $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
-            }
+        if($stateParams.workerId) $scope.workerId = $stateParams.workerId;
+        if($stateParams.assignmentId) $scope.assignmentId = $stateParams.assignmentId;
+        if($scope.workerId === 'EXAMPLE') $scope.submitter = true;
+        var isValid = true;
+        //if(!$scope.workerId) isValid = false; //no workid no view
+        if($scope.taskdata.submitted && isValid){
+          if(!_.isUndefined($scope.taskdata.submitted[$scope.workerId])){
+            //worker already submitted
+            $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
           }
-          var sid = $scope.taskdata.stateid;
-          $scope.$meteorSubscribe("genstates", sid).then(
-            function(sub){
-              $scope.curState = GenStates.findOne(sid);
-              console.warn('curState',$scope.curState);
-              $scope.taskidx = 0;
-              if($stateParams.report){ //report view
-                $scope.report = $stateParams.report;
-                $timeout(function(){
-                  renderReport(0)
-                });
-              }
-              else if(isValid) renderTask($scope.taskidx); //single item view
-            },
-            function(err){
-              console.warn('err', err);
-              $scope.$apply(function(){toaster.pop('error', sid+' Not Found', err.reason)});
-            }
-          );
         }
+        var sid = $scope.taskdata.stateid;
+        $scope.$meteorSubscribe("genstates", sid).then(
+          function(sub){
+            $scope.curState = GenStates.findOne(sid);
+            console.warn('curState',$scope.curState);
+            $scope.taskidx = 0;
+            if($stateParams.report){ //report view
+              $scope.report = $stateParams.report;
+              $timeout(function(){
+                renderReport(0)
+              });
+            }
+            else if(isValid) renderTask($scope.taskidx); //single item view
+          },
+          function(err){
+            console.warn('err', err);
+            $scope.$apply(function(){toaster.pop('error', sid+' Not Found', err.reason)});
+          }
+        );
       }
     }
   };

@@ -6,7 +6,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .container-fluid(ng-if='!report')
   .row-fluid
     h2 Task
-  accordion(ng-if='workerId && taskdata.tasktype == "action"')
+  accordion(ng-if='taskdata.tasktype == "action"')
     accordion-group.panel-primary(is-open="isOpenDir")
       accordion-heading
         h4.panel-title Directions
@@ -18,7 +18,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
 
-  .row-fluid.well.col-sm-12(ng-if='workerId && taskdata.tasktype == "action"')
+  .row-fluid.well.col-sm-12(ng-if='taskdata.tasktype == "action"')
     .col-sm-12(ng-if='submitter')
       .label.label-warning Read Only
       i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
@@ -50,7 +50,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         button.btn.btn-primary(ng-if='notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
         button.btn.btn-primary(ng-if='(notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length)', ng-click='itrAnnot(notes, 1)') Next
 
-  .row-fluid.well.col-sm-12(ng-if='!workerId')
+  .row-fluid.well.col-sm-12(ng-if='!assignmentId')
     .col-sm-12
       h3(style='color: red') This Job is unavailable.
 //-report view
