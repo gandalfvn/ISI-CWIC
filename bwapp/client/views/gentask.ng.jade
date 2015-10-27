@@ -4,15 +4,13 @@
   =========================================================*/
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .container-fluid(ng-if='!report')
-  .row-fluid
-    h2 Task
   accordion(ng-if='taskdata.tasktype == "action"')
     accordion-group.panel-primary(is-open="isOpenDir")
       accordion-heading
         h4.panel-title Directions
-      h4 What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.
+      h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.
       .well.col-sm-8.col-sm-offset-2
-        h3 Example:
+        h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
         img.center-block(src='img/example.png')
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take block 14 and place it next to block 17. The down right corner of block 14 should touch the upper left corner of block 17.
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
@@ -23,8 +21,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       .label.label-warning Read Only
       i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
     .col-sm-12
-      .col-sm-1
-        h3 {{taskidx+1}}/{{taskdata.idxlist.length}}
       .col-sm-5
         #statea
       .col-sm-1(style="margin-top: 1em; font-size: 60px;")
@@ -33,7 +29,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         #stateb
     .col-sm-12
       hr
-    .col-sm-12
+    .col-sm-1
+      h3 {{taskidx+1}}/{{taskdata.idxlist.length}}
+    .col-sm-11
       form.ng-pristine.ng-valid(name='annotForm')
         div(ng-repeat='note in notes track by $index')
           //-.col-sm-1
@@ -47,8 +45,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
               textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
         button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
-        button.btn.btn-primary(ng-if='notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-        button.btn.btn-primary(ng-if='(notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length)', ng-click='itrAnnot(notes, 1)') Next
+        button.btn.btn-primary(ng-if='workerId && notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
+        button.btn.btn-primary(ng-if='workerId && ((notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
 
   .row-fluid.well.col-sm-12(ng-if='!assignmentId')
     .col-sm-12

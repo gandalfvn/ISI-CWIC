@@ -26,7 +26,7 @@ Meteor.methods({
 
         /*        api.req('CreateHIT', {Title: 'Assignment ' + p.jid, Description: 'Job ' + p.jid, Question: {ExternalQuestion: {ExternalURL: 'https://45.55.184.244/annotate?taskId=Twc6bmr3ufmY3Y2vL', FrameHeight: 400}}, Reward: {Amount: 5, CurrencyCode: 'USD'}, AssignmentDurationInSeconds: 15*60, LifetimeInSeconds: 24*60*60, Keywords: 'identification, tagging, image', MaxAssignments: 3})
          */
-        api.req('CreateHIT', {Title: 'Assignment ' + p.jid, Description: 'Job ' + p.jid, Question: quest, Reward: {Amount: 5, CurrencyCode: 'USD'}, AssignmentDurationInSeconds: 15*60, LifetimeInSeconds: 24*60*60, Keywords: 'identification, tagging, image', MaxAssignments: 3})
+        api.req('CreateHIT', {Title: 'Assignment ' + p.jid, Description: 'Job ' + p.jid, Question: quest, Reward: {Amount: 15*0.1, CurrencyCode: 'USD'}, AssignmentDurationInSeconds: 20*60, LifetimeInSeconds: 24*60*60, Keywords: 'image, identification, recognition, tagging, description', MaxAssignments: 3})
           .then(function(response){
           //Do something 
           console.warn('CreateHITS', response);

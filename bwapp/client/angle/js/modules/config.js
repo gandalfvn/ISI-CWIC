@@ -39,16 +39,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
             $state.go('main');
         });
       }]
-      /*resolve: {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
-      controller: ["$rootScope",'$state', function($rootScope, $state){
-        if($rootScope.currentUser){
-          //check for agent role
-          if($rootScope.isRole($rootScope.currentUser, 'agent'))
-            $state.go('app.games');
-          else $state.go('app.worldview');
-        }
-        else $state.go('main');
-      }]*/
     })
     .state('app.genworld', {
       url: '/genworld',
@@ -74,11 +64,11 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       ),
       controller: 'genJobsCtrl'
     })
-    .state('app.gentask', {
+    .state('gentask', {
       url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
       title: 'Annotation Task',
       templateUrl: helper.basepath('gentask.html'),
-      resolve: helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'lzString'),
+      resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'glyphiconspro', 'ngDialog', 'datatables', 'lzString'),
       controller: 'genTaskCtrl'
     })
     .state('app.worldview', {
