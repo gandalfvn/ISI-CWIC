@@ -184,7 +184,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
               toaster.pop('info', 'Jobs Created', val[0]._id);
             }
             , function(err){
-              toaster.pop('error', 'State ' + $scope.dbid, err.reason);
+              toaster.pop('error', 'Job Create Error', err.reason);
             })
         });
 
@@ -263,8 +263,25 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     updateJobMgr();
   };
   
-  $scope.createHIT = function(jid){
-    Meteor.call('mturkCreateHIT', {jid: jid});
+  $scope.createHIT = function(tid){
+    Meteor.call('mturkCreateHIT', {tid: tid}, function(err, ret){
+      console.warn(err, ret);
+      if(err) return $scope.$apply(function(){toaster.pop('error', err)});
+      if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
+      //create the HITId system
+      var res = ret.result[0];
+      var hitdata = {
+        '_id': 'H_'+res.HITId,
+        HITId: res.HITId,
+        HITTypeId: res.HITTypeId,
+        tid: tid
+      };
+      //cannot use save with custom _id
+      GenJobsMgr.insert(hitdata, function(err, hid){
+        if(err) return $scope.$apply(function(){toaster.pop('error', err)});
+        GenJobsMgr.update({_id: tid}, {$addToSet: {hitlist: hid}});
+      });
+    });
   };
   
 }]);

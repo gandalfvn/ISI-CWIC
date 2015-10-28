@@ -16,32 +16,32 @@ Meteor.methods({
     
     var turk = Async.runSync(function(done){
       mturk.connect(mturkconf).then(function(api){
-        //Example operation, no params 
+        
+        var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://45.55.184.244/annotate?taskId=Twc6bmr3ufmY3Y2vL</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
+
+        api.req('CreateHIT', {Title: 'Assignment ' + p.tid, Description: 'Job ' + p.tid, Question: quest, Reward: {Amount: 15*0.1, CurrencyCode: 'USD'}, AssignmentDurationInSeconds: 20*60, LifetimeInSeconds: 24*60*60, Keywords: 'image, identification, recognition, tagging, description', MaxAssignments: 3})
+          .then(function(response){
+            console.warn('CreateHITS', response.HIT);
+            done(null, response.HIT);
+          }, function(err){
+            console.warn('CREATEHITS', err);
+            done(err);
+          });
+        /*//Example operation, no params 
         api.req('GetAccountBalance').then(function(response){
           //Do something 
           console.warn('gab', response.GetAccountBalanceResult);
         });
-        
-        var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://45.55.184.244/annotate?taskId=Twc6bmr3ufmY3Y2vL</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
-
-        api.req('CreateHIT', {Title: 'Assignment ' + p.jid, Description: 'Job ' + p.jid, Question: quest, Reward: {Amount: 15*0.1, CurrencyCode: 'USD'}, AssignmentDurationInSeconds: 20*60, LifetimeInSeconds: 24*60*60, Keywords: 'image, identification, recognition, tagging, description', MaxAssignments: 3})
-          .then(function(response){
-          //Do something 
-          console.warn('CreateHITS', response);
-        }, function(err){console.warn('CREATEHITS', err)});
-
         //Example operation, with params 
         api.req('SearchHITs', { PageSize: 100 }).then(function(response){
           //Do something 
           console.warn('SearchHITS', response.SearchHITsResult.HIT);
-        });
+        });*/
         
-        done(null, 'good');
-
       }).catch(console.error);
     });
 
-    console.warn(turk.result);
-    return turk.result;
+    console.warn('return', turk);
+    return turk;
   }
 });

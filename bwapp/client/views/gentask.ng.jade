@@ -43,8 +43,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
               textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
         button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
-        button.btn.btn-primary(ng-if='workerId && notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-        button.btn.btn-primary(ng-if='workerId && ((notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
+        button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
+        button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 9 && notes[1].length > 9 && notes[2].length > 9 && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
 
   .row-fluid.well.col-sm-12(ng-if='!assignmentId')
     .col-sm-12
@@ -56,7 +56,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
     | &nbsp;&nbsp;
     button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
-  .col-sm-12(ng-repeat='notes in taskdata.notes[workerId] track by $index')
+  .col-sm-12(ng-repeat='notes in hitdata.notes[workerId] track by $index')
     .col-sm-12
       h3.pull-left {{$index+1}}
       .col-sm-5
