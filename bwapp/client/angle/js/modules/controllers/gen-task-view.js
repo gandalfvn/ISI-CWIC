@@ -147,6 +147,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   };
   
   $scope.itrAnnot = function(notes, vdir){
+    var previdx = $scope.taskidx;
     $scope.taskidx+=vdir;
     if($scope.taskidx != 0) $scope.isOpenDir = false;
     else $scope.isOpenDir = true;
@@ -157,13 +158,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       renderTask($scope.taskidx);
     }
     else{//new entry save as we go
-      var isValid = true;
-      if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE'){
-        $rootScope.dataloaded = true;
-        $scope.taskidx = $scope.taskdata.idxlist.length - 1;
-        isValid = false; //prevent final submission until accepted
-        toaster.pop('info', 'Please ACCEPT assignment before submitting.');
-      }
       if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
         if(!$scope.taskdata.submitted) $scope.taskdata.submitted = {};
         if(!$scope.taskdata.submitted[$scope.workerId]){
@@ -177,7 +171,10 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
           toaster.pop('info', 'Task Submitted');
         }
       }
-      if(isValid) genjobsmgr.save($scope.taskdata).then(function(val){
+      if(!$scope.taskdata.timed) $scope.taskdata.timed = {};
+      if(!$scope.taskdata.timed[$scope.workerId]) $scope.taskdata.timed[$scope.workerId] = {};
+      if(!$scope.taskdata.timed[$scope.workerId][previdx]) $scope.taskdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
+      genjobsmgr.save($scope.taskdata).then(function(val){
         renderTask($scope.taskidx);
       }, function(err){
         toaster.pop('error', err.reason);
