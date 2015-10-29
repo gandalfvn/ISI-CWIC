@@ -72,14 +72,14 @@ Meteor.methods({
     var needle = Meteor.npmRequire('needle');
 
     var postret= Async.runSync(function(done){
-      var postdat = {
+      /*var postdat = {
         assignmentId: p.aid,
         notes: p.notes,
         timed: p.timed
-      };
+      };*/
       
       console.warn(postdat);
-      needle.post(p.submitto, postdat, {follow_max: 0}, function(err, resp, body){
+      needle.post(p.submitto, 'assignmentId='+ p.aid, {follow_max: 0}, function(err, resp, body){
         console.warn('here',err, body, resp.statusCode);
         done(err, body);
       });
