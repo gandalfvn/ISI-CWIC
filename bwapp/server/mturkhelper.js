@@ -76,9 +76,8 @@ Meteor.methods({
         assignmentId: p.aid,
         notes: p.notes,
         timed: p.timed
-      };*/
-      
-      console.warn(postdat);
+      };
+      console.warn(postdat);*/
       needle.post(p.submitto, 'assignmentId='+ p.aid+'&foo=bar', {follow_max: 0}, function(err, resp, body){
         console.warn('here',err, body, resp.statusCode);
         done(err, body);
