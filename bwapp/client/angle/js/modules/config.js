@@ -253,6 +253,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
   $sceDelegateProvider.resourceUrlWhitelist([
     // Allow same origin resource loads.
     'self',
+    'https://45.55.184.244',
+    'http://45.55.184.244',
     // Allow loading from our assets domain.  Notice the difference between * and **.
     'https://*.mturk.com/**'
   ]);
