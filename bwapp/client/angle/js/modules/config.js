@@ -249,5 +249,17 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     cfpLoadingBarProvider.parentSelector = '.wrapper > section';
 }]).config(['$tooltipProvider', function ($tooltipProvider) {
     $tooltipProvider.options({appendToBody: true});
-}])
+}]).config(function($sceDelegateProvider) {
+  $sceDelegateProvider.resourceUrlWhitelist([
+    // Allow same origin resource loads.
+    'self',
+    // Allow loading from our assets domain.  Notice the difference between * and **.
+    'https://*.mturk.com/**'
+  ]);
+
+  // The blacklist overrides the whitelist so the open redirect here is blocked.
+  /*$sceDelegateProvider.resourceUrlBlacklist([
+    'http://myapp.example.com/clickThru**'
+  ]);*/
+})
 ;
