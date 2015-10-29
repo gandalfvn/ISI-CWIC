@@ -66,28 +66,6 @@ Meteor.methods({
 
     return turk;
   },
-
-  mturkSubmit: function(p){
-    console.warn(p);
-    var needle = Meteor.npmRequire('needle');
-
-    var postret= Async.runSync(function(done){
-      /*var postdat = {
-        assignmentId: p.aid,
-        notes: p.notes,
-        timed: p.timed
-      };
-      console.warn(postdat);*/
-      needle.post(p.submitto, 'assignmentId='+ p.aid+'&foo=bar', {follow_max: 0}, function(err, resp, body){
-        console.warn('here',err, body, resp.statusCode);
-        done(err, body);
-      });
-      //done(null, 'good');
-    });
-
-    console.warn(postret);
-    return postret;
-  },
   
   mturkReviewableHITs: function(p){
     var mturk = Meteor.npmRequire('mturk-api');

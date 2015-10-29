@@ -192,16 +192,15 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             };
             $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
             $scope.taskidx = 0;
-            Meteor.call('mturkSubmit', {submitto: $scope.turkSubmitTo, aid: $scope.assignmentId, notes: $scope.hitdata.notes, timed: $scope.hitdata.timed}, function(err, resp){
-              if(err) return toaster.pop('error', err);
-              console.warn(err, resp);
+            $.post($scope.turkSubmitTo, {assignmentId: $scope.assignmentId, time: (new Date()).getTime()}, function(resp){
+              console.warn(resp);
               GenJobsMgr.update({_id: $scope.hitdata._id}, {
-                  $set: {
-                    notes: $scope.hitdata.notes,
-                    timed: $scope.hitdata.timed,
-                    submitted: $scope.hitdata.submitted
-                  }
-                }, function(err, ret){
+                $set: {
+                  notes: $scope.hitdata.notes,
+                  timed: $scope.hitdata.timed,
+                  submitted: $scope.hitdata.submitted
+                }
+              }, function(err, ret){
                 console.warn('hit', err, ret);
                 toaster.pop('info', 'HIT Task Submitted');
               })
