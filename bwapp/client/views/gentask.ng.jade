@@ -30,7 +30,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       hr
     h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
     .col-sm-11
-      form.ng-pristine.ng-valid(name='annotForm')
+      form.ng-pristine.ng-valid(name='annotForm', action='{{turkSubmitTo}}', method='post')
+        input(type="hidden" name="assignmentId" value="{{assignmentId}}")
         div(ng-repeat='note in notes track by $index')
           //-.col-sm-1
             //-button.btn.btn-xs.btn-danger(title='Remove Description')
@@ -43,7 +44,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
               textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
         button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
-        button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 9 && (notes[1] == undefined || notes[1].length > 9) && (notes[2] == undefined || notes[2].length > 9) && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
+        button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 9 && (notes[1] == undefined || notes[1].length > 9) && (notes[2] == undefined || notes[2].length > 9) && taskidx+1 == taskdata.idxlist.length && !submitter', type='submit') Submit
         button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 9 && (notes[1] == undefined || notes[1].length > 9) && (notes[2] == undefined || notes[2].length > 9) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
 
   .row-fluid.well.col-sm-12(ng-if='!assignmentId')
