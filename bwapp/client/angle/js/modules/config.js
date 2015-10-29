@@ -249,12 +249,10 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper, $sceDel
     cfpLoadingBarProvider.parentSelector = '.wrapper > section';
 }]).config(['$tooltipProvider', function ($tooltipProvider) {
     $tooltipProvider.options({appendToBody: true});
-}]).config(function($sceDelegateProvider) {
+}]).config(['$sceDelegateProvider', function($sceDelegateProvider) {
   $sceDelegateProvider.resourceUrlWhitelist([
     // Allow same origin resource loads.
     'self',
-    'https://45.55.184.244',
-    'http://45.55.184.244',
     // Allow loading from our assets domain.  Notice the difference between * and **.
     'https://*.mturk.com/**'
   ]);
@@ -263,5 +261,5 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper, $sceDel
   /*$sceDelegateProvider.resourceUrlBlacklist([
     'http://myapp.example.com/clickThru**'
   ]);*/
-})
+}])
 ;
