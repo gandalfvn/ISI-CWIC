@@ -15,33 +15,98 @@ Meteor.methods({
     var mturk = Meteor.npmRequire('mturk-api');
     
     var turk = Async.runSync(function(done){
+      var taskdata = GenJobsMgr.findOne({_id: p.tid});
+      var len = taskdata.idxlist.length;
+      
+      console.warn(taskdata);
       mturk.connect(mturkconf).then(function(api){
-        
-        var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://45.55.184.244/annotate?taskId=Twc6bmr3ufmY3Y2vL</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
+        var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://45.55.184.244/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
 
-        api.req('CreateHIT', {Title: 'Assignment ' + p.tid, Description: 'Job ' + p.tid, Question: quest, Reward: {Amount: 15*0.1, CurrencyCode: 'USD'}, AssignmentDurationInSeconds: 20*60, LifetimeInSeconds: 24*60*60, Keywords: 'image, identification, recognition, tagging, description', MaxAssignments: 3})
-          .then(function(response){
-            console.warn('CreateHITS', response.HIT);
-            done(null, response.HIT);
+        var hitcontent = {
+          Title: 'Describe this Image ' + p.tid,
+          Description: 'Tagging image with a description.',
+          Question: quest,
+          Reward: {
+            Amount: len * 2 * 0.1, 
+            CurrencyCode: 'USD'
+          },
+          AssignmentDurationInSeconds: len * 3 * 60,
+          LifetimeInSeconds: 24 * 60 * 60,
+          Keywords: 'image, identification, recognition, tagging, description',
+          MaxAssignments: 3
+        };
+        if(taskdata.tasktype === 'action'){
+          hitcontent.Title = 'Describe this Image Sequence ' + p.tid;
+          hitcontent.Description = 'Tagging image transitions witn a description.';
+          hitcontent.Reward.Amount = len * 1.5 * 0.1;
+          hitcontent.AssignmentDurationInSeconds = len * 2 * 60;
+        }
+        
+        api.req('CreateHIT', hitcontent)
+          .then(function(resp){
+            console.warn('CreateHITS', resp.HIT);
+            done(null, resp.HIT);
           }, function(err){
             console.warn('CREATEHITS', err);
             done(err);
           });
         /*//Example operation, no params 
-        api.req('GetAccountBalance').then(function(response){
+        api.req('GetAccountBalance').then(function(resp){
           //Do something 
-          console.warn('gab', response.GetAccountBalanceResult);
+          console.warn('gab', resp.GetAccountBalanceResult);
         });
         //Example operation, with params 
-        api.req('SearchHITs', { PageSize: 100 }).then(function(response){
+        api.req('SearchHITs', { PageSize: 100 }).then(function(resp){
           //Do something 
-          console.warn('SearchHITS', response.SearchHITsResult.HIT);
+          console.warn('SearchHITS', resp.SearchHITsResult.HIT);
         });*/
         
       }).catch(console.error);
     });
 
-    console.warn('return', turk);
     return turk;
-  }
+  },
+
+  mturkSubmit: function(p){
+    console.warn(p);
+    var needle = Meteor.npmRequire('needle');
+
+    var postret= Async.runSync(function(done){
+      var postdat = {
+        assignmentId: p.aid,
+        notes: p.notes,
+        timed: p.timed
+      };
+      
+      console.warn(postdat);
+      needle.post(p.submitto, postdat, {follow_max: 5}, function(err, resp, body){
+        console.warn('here',err, body, resp.statusCode);
+        done(err, body);
+      });
+      //done(null, 'good');
+    });
+
+    console.warn(postret);
+    return postret;
+  },
+  
+  mturkReviewableHITs: function(p){
+    var mturk = Meteor.npmRequire('mturk-api');
+
+    var turk = Async.runSync(function(done){
+      mturk.connect(mturkconf).then(function(api){
+        api.req('GetAssignmentsForHIT', {HITId: '3MG8450X2OWLIIVVG81B7FV4GTQUPN'})
+          .then(function(resp){
+            console.warn('GetReviewableHITs', resp);
+            done(null, resp);
+          }, function(err){
+            console.warn('GetReviewableHITs', err);
+            done(err);
+          });
+      })
+    });
+
+    return turk;
+  },
+  
 });

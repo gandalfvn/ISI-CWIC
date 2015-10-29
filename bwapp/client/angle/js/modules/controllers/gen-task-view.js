@@ -53,7 +53,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         if($scope.hitId){
           //load hit
           $scope.hitdata = GenJobsMgr.findOne('H_'+$scope.hitId);
-          if($scope.hitdata.submitted && isValid && $scope.workerId && $scope.workerId !== 'EXAMPLE'){
+          if($scope.hitdata && $scope.hitdata.submitted && isValid && $scope.workerId && $scope.workerId !== 'EXAMPLE'){
             if(!_.isUndefined($scope.hitdata.submitted[$scope.workerId])){
               //worker already submitted
               $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
@@ -73,6 +73,9 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
               });
             }
             else if(isValid) renderTask($scope.taskidx); //single item view
+            Meteor.call('mturkReviewableHITs', function(err, resp){
+              console.warn(err,resp);
+            })
           },
           function(err){
             console.warn('err', err);
@@ -112,11 +115,17 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     if($scope.hitdata){
       if(!$scope.hitdata.notes) $scope.hitdata.notes = {};
       if(!$scope.hitdata.notes[$scope.workerId]) $scope.hitdata.notes[$scope.workerId] = {};
-      if(!$scope.hitdata.notes[$scope.workerId][idx]) $scope.hitdata.notes[$scope.workerId][idx] = ['', '', ''];
+      if(!$scope.hitdata.notes[$scope.workerId][idx]){
+        $scope.hitdata.notes[$scope.workerId][idx] = [];
+        for(var i =0; i < $scope.taskdata.antcnt; i++)
+          $scope.hitdata.notes[$scope.workerId][idx].push('');
+      }
       $scope.notes = $scope.hitdata.notes[$scope.workerId][idx];
     }
     else{//only an example no HIT id
-      $scope.notes = ['','',''];
+      $scope.notes = [];
+      for(var i =0; i < $scope.taskdata.antcnt; i++)
+        $scope.notes.push('');
     }
     if($scope.taskdata.tasktype == 'action'){
       var aidx = $scope.taskdata.idxlist[idx];
@@ -169,29 +178,48 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     }
     else{//new entry save as we go
       if($scope.hitId){
-        if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
+        if(!$scope.hitdata.timed) $scope.hitdata.timed = {};
+        if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
+        if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
+        if($scope.taskidx >= $scope.taskdata.idxlist.length && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
           //submission assignment as done
           if(!$scope.hitdata.submitted) $scope.hitdata.submitted = {};
           if(!$scope.hitdata.submitted[$scope.workerId]){
             $scope.hitdata.submitted[$scope.workerId] = {
               time: (new Date()).getTime(),
-              aid: $stateParams.assignmentId,
+              aid: $scope.assignmentId,
+              submitto: $scope.turkSubmitTo
             };
             $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
             $scope.taskidx = 0;
-            GenJobsMgr.update({_id: $scope.hitdata._id}, {$set: {submitted: $scope.hitdata.submitted}}, function(err, ret){
-              toaster.pop('info', 'HIT Task Submitted');
-            })
+            Meteor.call('mturkSubmit', {submitto: $scope.turkSubmitTo, aid: $scope.assignmentId, notes: $scope.hitdata.notes, timed: $scope.hitdata.timed}, function(err, resp){
+              if(err) return toaster.pop('error', err);
+              console.warn(err, resp);
+              GenJobsMgr.update({_id: $scope.hitdata._id}, {
+                  $set: {
+                    notes: $scope.hitdata.notes,
+                    timed: $scope.hitdata.timed,
+                    submitted: $scope.hitdata.submitted
+                  }
+                }, function(err, ret){
+                console.warn('hit', err, ret);
+                toaster.pop('info', 'HIT Task Submitted');
+              })
+            });
           }
         }
-        if(!$scope.hitdata.timed) $scope.hitdata.timed = {};
-        if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
-        if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
-        //must use update instead of save because _id is custom generated
-        GenJobsMgr.update({_id: $scope.hitdata._id}, {$set: {notes: $scope.hitdata.notes, timed: $scope.hitdata.timed}}, function(err, ret){
-          if(err) return toaster.pop('error', err.reason);
-          renderTask($scope.taskidx);
-        });
+        else{
+          //must use update instead of save because _id is custom generated
+          GenJobsMgr.update({_id: $scope.hitdata._id}, {
+            $set: {
+              notes: $scope.hitdata.notes,
+              timed: $scope.hitdata.timed
+            }
+          }, function(err, ret){
+            if(err) return toaster.pop('error', err.reason);
+            renderTask($scope.taskidx);
+          });
+        }
       }
       else toaster.pop('error', 'Missing HIT Id');
     }

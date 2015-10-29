@@ -265,7 +265,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   
   $scope.createHIT = function(tid){
     Meteor.call('mturkCreateHIT', {tid: tid}, function(err, ret){
-      console.warn(err, ret);
       if(err) return $scope.$apply(function(){toaster.pop('error', err)});
       if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
       //create the HITId system
@@ -274,7 +273,8 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         '_id': 'H_'+res.HITId,
         HITId: res.HITId,
         HITTypeId: res.HITTypeId,
-        tid: tid
+        tid: tid,
+        created: (new Date()).getTime()
       };
       //cannot use save with custom _id
       GenJobsMgr.insert(hitdata, function(err, hid){

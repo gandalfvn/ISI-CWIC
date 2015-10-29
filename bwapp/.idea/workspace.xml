@@ -4,9 +4,9 @@
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/genjobsmgr.js" afterPath="$PROJECT_DIR$/server/genjobsmgr.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/gentask.ng.jade" afterPath="$PROJECT_DIR$/client/views/gentask.ng.jade" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js" afterPath="$PROJECT_DIR$/server/mturkhelper.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages.json" afterPath="$PROJECT_DIR$/packages.json" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,8 +41,11 @@
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="277" column="8" selection-start-line="277" selection-start-column="8" selection-end-line="277" selection-end-column="8" />
-              <folding />
+              <caret line="276" column="39" selection-start-line="276" selection-start-column="39" selection-end-line="276" selection-end-column="39" />
+              <folding>
+                <marker date="1446133545000" expanded="true" signature="9053:9458" placeholder="{...}" />
+                <marker date="1446133545000" expanded="true" signature="9300:9450" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -60,7 +63,7 @@
       <file leaf-file-name="genjobs.ng.jade" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-23.518518">
+            <state vertical-scroll-proportion="-56.11111">
               <caret line="140" column="0" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
               <folding />
             </state>
@@ -71,27 +74,27 @@
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="96" column="56" selection-start-line="96" selection-start-column="56" selection-end-line="96" selection-end-column="56" />
+              <caret line="76" column="21" selection-start-line="76" selection-start-column="21" selection-end-line="76" selection-end-column="21" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5762712">
-              <caret line="58" column="40" selection-start-line="58" selection-start-column="40" selection-end-line="58" selection-end-column="40" />
+            <state vertical-scroll-proportion="-6.7777777">
+              <caret line="49" column="14" selection-start-line="49" selection-start-column="14" selection-end-line="49" selection-end-column="14" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mturkhelper.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="mturkhelper.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/mturkhelper.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="21" column="87" selection-start-line="21" selection-start-column="87" selection-end-line="21" selection-end-column="87" />
+            <state vertical-scroll-proportion="0.59183675">
+              <caret line="97" column="79" selection-start-line="97" selection-start-column="79" selection-end-line="97" selection-end-column="79" />
               <folding>
                 <element signature="e#0#180#0" expanded="false" />
               </folding>
@@ -130,7 +133,6 @@
         <option value="$PROJECT_DIR$/server/stateslist.js" />
         <option value="$PROJECT_DIR$/model/stateannotationsdb.js" />
         <option value="$PROJECT_DIR$/server/stateannotations.js" />
-        <option value="$PROJECT_DIR$/packages.json" />
         <option value="$PROJECT_DIR$/util/mturktest.js" />
         <option value="$PROJECT_DIR$/client/views/gengallery.ng.jade" />
         <option value="$PROJECT_DIR$/server/loadUsers.js" />
@@ -162,11 +164,12 @@
         <option value="$PROJECT_DIR$/howtorun.txt" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/config.js" />
         <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
-        <option value="$PROJECT_DIR$/server/mturkhelper.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
         <option value="$PROJECT_DIR$/server/genjobsmgr.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
         <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
+        <option value="$PROJECT_DIR$/packages.json" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js" />
+        <option value="$PROJECT_DIR$/server/mturkhelper.js" />
       </list>
     </option>
   </component>
@@ -998,6 +1001,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.8718331">
           <caret line="39" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1179,6 +1183,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.30837005">
           <caret line="23" column="45" selection-start-line="23" selection-start-column="45" selection-end-line="23" selection-end-column="45" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1186,13 +1193,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.1632653">
           <caret line="8" column="12" selection-start-line="8" selection-start-column="12" selection-end-line="8" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/packages.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.042194095">
-          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1219,28 +1220,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="276" column="39" selection-start-line="276" selection-start-column="39" selection-end-line="276" selection-end-column="39" />
+          <folding>
+            <marker date="1446133545000" expanded="true" signature="9053:9458" placeholder="{...}" />
+            <marker date="1446133545000" expanded="true" signature="9300:9450" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-23.518518">
+        <state vertical-scroll-proportion="-56.11111">
           <caret line="140" column="0" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/mturkhelper.js">
+    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="87" selection-start-line="21" selection-start-column="87" selection-end-line="21" selection-end-column="87" />
-          <folding>
-            <element signature="e#0#180#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="277" column="8" selection-start-line="277" selection-start-column="8" selection-end-line="277" selection-end-column="8" />
+        <state vertical-scroll-proportion="-6.7777777">
+          <caret line="49" column="14" selection-start-line="49" selection-start-column="14" selection-end-line="49" selection-end-column="14" />
           <folding />
         </state>
       </provider>
@@ -1253,19 +1255,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js">
+    <entry file="file://$PROJECT_DIR$/packages.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="96" column="56" selection-start-line="96" selection-start-column="56" selection-end-line="96" selection-end-column="56" />
+        <state vertical-scroll-proportion="0.06329114">
+          <caret line="3" column="1" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5762712">
-          <caret line="58" column="40" selection-start-line="58" selection-start-column="40" selection-end-line="58" selection-end-column="40" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="76" column="21" selection-start-line="76" selection-start-column="21" selection-end-line="76" selection-end-column="21" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/mturkhelper.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.59183675">
+          <caret line="97" column="79" selection-start-line="97" selection-start-column="79" selection-end-line="97" selection-end-column="79" />
+          <folding>
+            <element signature="e#0#180#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
