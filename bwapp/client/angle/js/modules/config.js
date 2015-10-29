@@ -3,8 +3,8 @@
  * App routes and resources configuration
  =========================================================*/
 
-angular.module('angle').config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider',
-function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
+angular.module('angle').config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider', '$sceDelegateProvider',
+function ($stateProvider, $locationProvider, $urlRouterProvider, helper, $sceDelegateProvider) {
   'use strict';
 
   // Set the following to true to enable the HTML5 Mode
