@@ -79,7 +79,7 @@ Meteor.methods({
       };
       
       console.warn(postdat);
-      needle.post(p.submitto, postdat, {follow_max: 5}, function(err, resp, body){
+      needle.post(p.submitto, postdat, {follow_max: 0}, function(err, resp, body){
         console.warn('here',err, body, resp.statusCode);
         done(err, body);
       });
@@ -95,7 +95,7 @@ Meteor.methods({
 
     var turk = Async.runSync(function(done){
       mturk.connect(mturkconf).then(function(api){
-        api.req('GetAssignmentsForHIT', {HITId: '3MG8450X2OWLIIVVG81B7FV4GTQUPN'})
+        api.req('GetAssignmentsForHIT', {HITId: p.hid})
           .then(function(resp){
             console.warn('GetReviewableHITs', resp);
             done(null, resp);
