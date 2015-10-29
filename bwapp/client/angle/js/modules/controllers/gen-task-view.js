@@ -192,7 +192,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             };
             $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
             $scope.taskidx = 0;
-            $.post($scope.turkSubmitTo, {assignmentId: $scope.assignmentId, time: (new Date()).getTime()}, function(resp){
+            //$.post($scope.turkSubmitTo, {assignmentId: $scope.assignmentId, time: (new Date()).getTime()}, function(resp){
               console.warn(resp);
               GenJobsMgr.update({_id: $scope.hitdata._id}, {
                 $set: {
@@ -204,7 +204,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
                 console.warn('hit', err, ret);
                 toaster.pop('info', 'HIT Task Submitted');
               })
-            });
+            //});
           }
         }
         else{

@@ -30,6 +30,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       hr
     h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
     .col-sm-11
+      pre {{turkSubmitTo}}
       form.ng-pristine.ng-valid(name='annotForm', action='{{turkSubmitTo}}', method='post')
         input(type="hidden" name="assignmentId" value="{{assignmentId}}")
         div(ng-repeat='note in notes track by $index')
