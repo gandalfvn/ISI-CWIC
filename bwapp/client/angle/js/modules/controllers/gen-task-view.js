@@ -34,7 +34,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   $scope.notes = null;
   var readydat = [];
   var dataReady = function(data){
-    console.warn('data ready ', data, (new Date).getTime());
+    //console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
     if(readydat.length > 2){
       var isAdminUser = ($rootScope.currentUser)? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
@@ -42,10 +42,10 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         $rootScope.dataloaded = true;
         return;
       }
-      console.warn($stateParams);
+      //console.warn($stateParams);
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
-        console.warn('taskdata', $scope.taskdata);
+        //console.warn('taskdata', $scope.taskdata);
         $scope = _.extend($scope, $stateParams);
         if($scope.turkSubmitTo) $scope.submitTo = $scope.turkSubmitTo+'/mturk/externalSubmit';
         //if($stateParams.workerId) $scope.workerId = $stateParams.workerId;
@@ -66,7 +66,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         $scope.$meteorSubscribe("genstates", sid).then(
           function(sub){
             $scope.curState = GenStates.findOne(sid);
-            console.warn('curState',$scope.curState);
+            //console.warn('curState',$scope.curState);
             $scope.taskidx = 0;
             if($stateParams.report){ //report view
               $scope.report = $stateParams.report;
@@ -112,7 +112,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   };
   
   var renderTask = function(idx){
-    console.warn('renderTask', idx);
     //create the annotations
     if($scope.hitdata){
       if(!$scope.hitdata.notes) $scope.hitdata.notes = {};
