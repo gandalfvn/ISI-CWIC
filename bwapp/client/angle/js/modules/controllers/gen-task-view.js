@@ -7,8 +7,9 @@
 
 angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
   "use strict";
+  
+  $scope.date = (new Date()).getTime();
 
-  console.warn($rootScope.currentUser);
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
     function(sid){dataReady('genstates');},
@@ -41,40 +42,52 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         $rootScope.dataloaded = true;
         return;
       }
+      //console.warn($stateParams);
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
-        console.warn('taskdata', $scope.taskdata);
-        if($stateParams.workerId){
-          $scope.workerId = $stateParams.workerId;
-          if($scope.workerId === 'EXAMPLE') $scope.submitter = true;
-          var isValid = true;
-          if(!$scope.workerId) isValid = false; //no workid no view
-          if($scope.taskdata.submitted && isValid){
-            if(!_.isUndefined($scope.taskdata.submitted[$scope.workerId])){
+        if(!$scope.taskdata){
+          $rootScope.dataloaded = true;
+          $scope.assignmentId = null;
+          return;
+        }
+        $scope = _.extend($scope, $stateParams);
+        if($scope.turkSubmitTo) $scope.submitTo = $scope.turkSubmitTo+'/mturk/externalSubmit';
+        //if($stateParams.workerId) $scope.workerId = $stateParams.workerId;
+        //if($stateParams.assignmentId) $scope.assignmentId = $stateParams.assignmentId;
+        if($scope.workerId === 'EXAMPLE') $scope.submitter = true;
+        var isValid = true;
+        if($scope.hitId){
+          //load hit
+          $scope.hitdata = GenJobsMgr.findOne('H_'+$scope.hitId);
+          if($scope.hitdata && $scope.hitdata.submitted && isValid && $scope.workerId && $scope.workerId !== 'EXAMPLE'){
+            if(!_.isUndefined($scope.hitdata.submitted[$scope.workerId])){
               //worker already submitted
-              $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
+              $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
             }
           }
-          var sid = $scope.taskdata.stateid;
-          $scope.$meteorSubscribe("genstates", sid).then(
-            function(sub){
-              $scope.curState = GenStates.findOne(sid);
-              console.warn('curState',$scope.curState);
-              $scope.taskidx = 0;
-              if($stateParams.report){ //report view
-                $scope.report = $stateParams.report;
-                $timeout(function(){
-                  renderReport(0)
-                });
-              }
-              else if(isValid) renderTask($scope.taskidx); //single item view
-            },
-            function(err){
-              console.warn('err', err);
-              $scope.$apply(function(){toaster.pop('error', sid+' Not Found', err.reason)});
-            }
-          );
         }
+        var sid = $scope.taskdata.stateid;
+        $scope.$meteorSubscribe("genstates", sid).then(
+          function(sub){
+            $scope.curState = GenStates.findOne(sid);
+            //console.warn('curState',$scope.curState);
+            $scope.taskidx = 0;
+            if($stateParams.report){ //report view
+              $scope.report = $stateParams.report;
+              $timeout(function(){
+                renderReport(0)
+              });
+            }
+            else if(isValid) renderTask($scope.taskidx); //single item view
+            Meteor.call('mturkReviewableHITs', {hid: $scope.hitId},  function(err, resp){
+              console.warn(err,resp);
+            })
+          },
+          function(err){
+            console.warn('err', err);
+            $scope.$apply(function(){toaster.pop('error', sid+' Not Found', err.reason)});
+          }
+        );
       }
     }
   };
@@ -85,8 +98,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       return;
     }
     if($scope.taskdata.tasktype == 'action'){
-      var aidx = $scope.taskdata.idxlist[idx];
-      var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
+      var aidx = $scope.taskdata.idxlist[idx][0];
+      var bidx = $scope.taskdata.idxlist[idx][1];
       $('#statea'+idx).empty();
       $('#stateb'+idx).empty();
       var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
@@ -104,13 +117,24 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   
   var renderTask = function(idx){
     //create the annotations
-    if(!$scope.taskdata.notes) $scope.taskdata.notes = {};
-    if(!$scope.taskdata.notes[$scope.workerId]) $scope.taskdata.notes[$scope.workerId] = {};
-    if(!$scope.taskdata.notes[$scope.workerId][idx]) $scope.taskdata.notes[$scope.workerId][idx] = ['','',''];
-    $scope.notes = $scope.taskdata.notes[$scope.workerId][idx];
+    if($scope.hitdata){
+      if(!$scope.hitdata.notes) $scope.hitdata.notes = {};
+      if(!$scope.hitdata.notes[$scope.workerId]) $scope.hitdata.notes[$scope.workerId] = {};
+      if(!$scope.hitdata.notes[$scope.workerId][idx]){
+        $scope.hitdata.notes[$scope.workerId][idx] = [];
+        for(var i =0; i < $scope.taskdata.antcnt; i++)
+          $scope.hitdata.notes[$scope.workerId][idx].push('');
+      }
+      $scope.notes = $scope.hitdata.notes[$scope.workerId][idx];
+    }
+    else{//only an example no HIT id
+      $scope.notes = [];
+      for(var i =0; i < $scope.taskdata.antcnt; i++)
+        $scope.notes.push('');
+    }
     if($scope.taskdata.tasktype == 'action'){
-      var aidx = $scope.taskdata.idxlist[idx];
-      var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
+      var aidx = $scope.taskdata.idxlist[idx][0];
+      var bidx = $scope.taskdata.idxlist[idx][1];
       $('#statea').empty();
       $('#stateb').empty();
       var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
@@ -147,41 +171,60 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   };
   
   $scope.itrAnnot = function(notes, vdir){
+    var previdx = $scope.taskidx;
     $scope.taskidx+=vdir;
     if($scope.taskidx != 0) $scope.isOpenDir = false;
     else $scope.isOpenDir = true;
     $rootScope.dataloaded = false;
     if($scope.submitter){
-      //read only submisson already done
+      //read only submission already done
       if($scope.taskidx >= $scope.taskdata.idxlist.length) $scope.taskidx = 0;
       renderTask($scope.taskidx);
     }
     else{//new entry save as we go
-      var isValid = true;
-      if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE'){
-        $rootScope.dataloaded = true;
-        $scope.taskidx = $scope.taskdata.idxlist.length - 1;
-        isValid = false; //prevent final submission until accepted
-        toaster.pop('info', 'Please ACCEPT assignment before submitting.');
-      }
-      if($scope.taskidx >= $scope.taskdata.idxlist.length && $stateParams.assignmentId && $stateParams.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
-        if(!$scope.taskdata.submitted) $scope.taskdata.submitted = {};
-        if(!$scope.taskdata.submitted[$scope.workerId]){
-          $scope.taskdata.submitted[$scope.workerId] = {
-            time: (new Date()).getTime(),
-            aid: $stateParams.assignmentId,
-            hid: $stateParams.hitId
-          };
-          $scope.submitter = $scope.taskdata.submitted[$scope.workerId];
-          $scope.taskidx = 0;
-          toaster.pop('info', 'Task Submitted');
+      if($scope.hitId){
+        if(!$scope.hitdata.timed) $scope.hitdata.timed = {};
+        if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
+        if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
+        if($scope.taskidx >= $scope.taskdata.idxlist.length && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
+          //submission assignment as done
+          if(!$scope.hitdata.submitted) $scope.hitdata.submitted = {};
+          if(!$scope.hitdata.submitted[$scope.workerId]){
+            $scope.hitdata.submitted[$scope.workerId] = {
+              time: (new Date()).getTime(),
+              aid: $scope.assignmentId,
+              submitto: $scope.turkSubmitTo
+            };
+            $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
+            $scope.taskidx = 0;
+            GenJobsMgr.update({_id: $scope.hitdata._id}, {
+              $set: {
+                notes: $scope.hitdata.notes,
+                timed: $scope.hitdata.timed,
+                submitted: $scope.hitdata.submitted
+              }
+            }, function(err, ret){
+              console.warn('hit', err, ret);
+              if(err) return toaster.pop('error', err);
+              toaster.pop('info', 'HIT Task Submitted');
+              $('form[name="submitForm"]').submit(); //submit to turk
+            });
+          }
+        }
+        else{
+          //must use update instead of save because _id is custom generated
+          GenJobsMgr.update({_id: $scope.hitdata._id}, {
+            $set: {
+              notes: $scope.hitdata.notes,
+              timed: $scope.hitdata.timed
+            }
+          }, function(err, ret){
+            if(err) return toaster.pop('error', err.reason);
+            renderTask($scope.taskidx);
+          });
         }
       }
-      if(isValid) genjobsmgr.save($scope.taskdata).then(function(val){
-        renderTask($scope.taskidx);
-      }, function(err){
-        toaster.pop('error', err.reason);
-      });
+      else toaster.pop('error', 'Missing HIT Id');
     }
   };
 
@@ -232,5 +275,4 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       document.body.removeChild(link);
     } else window.open(uri);
   }
-
 }]);

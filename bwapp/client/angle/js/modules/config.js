@@ -3,8 +3,8 @@
  * App routes and resources configuration
  =========================================================*/
 
-angular.module('angle').config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider',
-function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
+angular.module('angle').config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider', '$sceDelegateProvider',
+function ($stateProvider, $locationProvider, $urlRouterProvider, helper, $sceDelegateProvider) {
   'use strict';
 
   // Set the following to true to enable the HTML5 Mode
@@ -39,16 +39,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
             $state.go('main');
         });
       }]
-      /*resolve: {"currentUser": ["$meteor", function($meteor){return $meteor.requireUser();}]},
-      controller: ["$rootScope",'$state', function($rootScope, $state){
-        if($rootScope.currentUser){
-          //check for agent role
-          if($rootScope.isRole($rootScope.currentUser, 'agent'))
-            $state.go('app.games');
-          else $state.go('app.worldview');
-        }
-        else $state.go('main');
-      }]*/
     })
     .state('app.genworld', {
       url: '/genworld',
@@ -74,11 +64,11 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       ),
       controller: 'genJobsCtrl'
     })
-    .state('app.gentask', {
+    .state('gentask', {
       url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
       title: 'Annotation Task',
       templateUrl: helper.basepath('gentask.html'),
-      resolve: helper.resolveFor('babylonjs', 'glyphiconspro','circular-json','ngDialog','datatables', 'lzString'),
+      resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'glyphiconspro', 'ngDialog', 'datatables', 'lzString'),
       controller: 'genTaskCtrl'
     })
     .state('app.worldview', {
@@ -259,5 +249,17 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
     cfpLoadingBarProvider.parentSelector = '.wrapper > section';
 }]).config(['$tooltipProvider', function ($tooltipProvider) {
     $tooltipProvider.options({appendToBody: true});
+}]).config(['$sceDelegateProvider', function($sceDelegateProvider) {
+  $sceDelegateProvider.resourceUrlWhitelist([
+    // Allow same origin resource loads.
+    'self',
+    // Allow loading from our assets domain.  Notice the difference between * and **.
+    'https://*.mturk.com/**'
+  ]);
+
+  // The blacklist overrides the whitelist so the open redirect here is blocked.
+  /*$sceDelegateProvider.resourceUrlBlacklist([
+    'http://myapp.example.com/clickThru**'
+  ]);*/
 }])
 ;

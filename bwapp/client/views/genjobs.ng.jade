@@ -112,7 +112,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td(title='{{job.antcnt}}') {{job.antcnt}}
             td(title='{{job.list.length}}') {{job.list.length}}
 .row
-  accordion.col-sm-6
+  accordion.col-sm-12
     accordion-group.panel-primary.shadowbox(ng-if='jobinfo', ng-init="isOpen = true", is-open="isOpen")
       accordion-heading
         h4.panel-title
@@ -128,10 +128,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
+            th
             th Task Id
-            th Submitters
+            th HITs
         tbody
           tr(ng-repeat='task in jobinfo')
-            td(ng-click="$state.go('app.gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})") {{task._id}}
             td
-              div(ng-repeat='(k,v) in task.submitted', ng-click="$state.go('app.gentask',{taskId: task._id, workerId: k, report: 1})") {{k}} {{v.time | date:"MM/dd/yyyy H:m"}}
+              button.btn.btn-xs(ng-click='createHIT(task._id)') Create HIT
+            td(ng-click="$state.go('gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})") {{task._id}}
+            td
+              span(ng-repeat='hit in task.hitlist') {{hit}} &nbsp;
+              //-div(ng-repeat='(k,v) in task.submitted', ng-click="$state.go('gentask',{taskId: task._id, workerId: k, report: 1})") {{k}} {{v.time | date:"MM/dd/yyyy H:m"}}

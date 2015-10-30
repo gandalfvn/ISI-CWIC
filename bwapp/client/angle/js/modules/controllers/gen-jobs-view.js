@@ -160,7 +160,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       var jobdata = {
         stateid: $scope.curState._id,
         tasktype: tasktype,
-        movedir: movedir,
         bundle: bundle,
         asncnt: asncnt,
         antcnt: antcnt,
@@ -184,7 +183,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
               toaster.pop('info', 'Jobs Created', val[0]._id);
             }
             , function(err){
-              toaster.pop('error', 'State ' + $scope.dbid, err.reason);
+              toaster.pop('error', 'Job Create Error', err.reason);
             })
         });
 
@@ -193,7 +192,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
             stateid: $scope.curState._id,
             islist: false,
             tasktype: jobdata.tasktype,
-            movedir: jobdata.movedir,
             creator: $rootScope.currentUser._id,
             created: (new Date).getTime(),
             asncnt: jobdata.asncnt,
@@ -222,14 +220,14 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       //decide on normal or reverse action
       if(tasktype == 'action' && movedir == 'reverse'){
         for(var i = statelen-1; i > -1; i--){
-          if(i > 0) availlist.push(i); //because we use i & i+1 states in actions
+          if(i > 0) availlist.push([i, i-1]); //because we use i & i+1 states in actions
           doneAvailList();
         }
       }
       else{
         for(var i = 0; i < statelen; i++){
           if(tasktype == 'action'){
-            if(i < statelen-1) availlist.push(i); //because we use i & i+1 states in actions
+            if(i < statelen-1) availlist.push([i, i+1]); //because we use i & i+1 states in actions
           }
           else availlist.push(i);
           doneAvailList();
@@ -244,6 +242,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   
   $scope.selectJob = function(jid){
     var job = GenJobsMgr.findOne({_id: jid});
+    $scope.jobid = jid;
     $scope.jobinfo = [];
     job.list.forEach(function(tid){
       var task = GenJobsMgr.findOne({_id: tid});
@@ -254,13 +253,45 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   
   $scope.remJob = function(jid){
     console.warn('remJob', jid);
+    $scope.jobid = null;
     $scope.jobinfo = null; //null out job in case its the one deleted
     var deljob = GenJobsMgr.findOne({_id: jid});
     deljob.list.forEach(function(j){
+      var deltask = GenJobsMgr.findOne({_id: j});
+      if(deltask && deltask.hitlist)
+        deltask.hitlist.forEach(function(h){
+          console.warn('remove h ', h);
+          GenJobsMgr.remove(h);
+        });
+      console.warn('remove j ', j);
       GenJobsMgr.remove(j);
-    })
+    });
+    console.warn('remove jid ', jid);
     GenJobsMgr.remove(jid);
     updateJobMgr();
+  };
+  
+  $scope.createHIT = function(tid){
+    Meteor.call('mturkCreateHIT', {tid: tid}, function(err, ret){
+      if(err) return $scope.$apply(function(){toaster.pop('error', err)});
+      if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
+      //create the HITId system
+      var res = ret.result[0];
+      var hitdata = {
+        '_id': 'H_'+res.HITId,
+        HITId: res.HITId,
+        HITTypeId: res.HITTypeId,
+        tid: tid,
+        created: (new Date()).getTime()
+      };
+      $scope.$apply(function(){toaster.pop('info', 'HIT created: '+ hitdata._id)});
+      //cannot use save with custom _id
+      GenJobsMgr.insert(hitdata, function(err, hid){
+        if(err) return $scope.$apply(function(){toaster.pop('error', err)});
+        GenJobsMgr.update({_id: tid}, {$addToSet: {hitlist: hid}});
+        $scope.selectJob($scope.jobid);
+      });
+    });
   };
   
 }]);
