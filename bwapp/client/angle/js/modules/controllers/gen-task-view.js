@@ -46,6 +46,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
         console.warn('taskdata', $scope.taskdata);
         $scope = _.extend($scope, $stateParams);
+        if($scope.turkSubmitTo) $scope.submitTo = $scope.turkSubmitTo+'/mturk/externalSubmit';
         //if($stateParams.workerId) $scope.workerId = $stateParams.workerId;
         //if($stateParams.assignmentId) $scope.assignmentId = $stateParams.assignmentId;
         if($scope.workerId === 'EXAMPLE') $scope.submitter = true;
