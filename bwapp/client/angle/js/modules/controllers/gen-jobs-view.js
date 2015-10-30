@@ -242,6 +242,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   
   $scope.selectJob = function(jid){
     var job = GenJobsMgr.findOne({_id: jid});
+    $scope.jobid = jid;
     $scope.jobinfo = [];
     job.list.forEach(function(tid){
       var task = GenJobsMgr.findOne({_id: tid});
@@ -252,11 +253,20 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   
   $scope.remJob = function(jid){
     console.warn('remJob', jid);
+    $scope.jobid = null;
     $scope.jobinfo = null; //null out job in case its the one deleted
     var deljob = GenJobsMgr.findOne({_id: jid});
     deljob.list.forEach(function(j){
+      var deltask = GenJobsMgr.findOne({_id: j});
+      if(deltask && deltask.hitlist)
+        deltask.hitlist.forEach(function(h){
+          console.warn('remove h ', h);
+          GenJobsMgr.remove(h);
+        });
+      console.warn('remove j ', j);
       GenJobsMgr.remove(j);
-    })
+    });
+    console.warn('remove jid ', jid);
     GenJobsMgr.remove(jid);
     updateJobMgr();
   };
@@ -274,10 +284,12 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         tid: tid,
         created: (new Date()).getTime()
       };
+      $scope.$apply(function(){toaster.pop('info', 'HIT created: '+ hitdata._id)});
       //cannot use save with custom _id
       GenJobsMgr.insert(hitdata, function(err, hid){
         if(err) return $scope.$apply(function(){toaster.pop('error', err)});
         GenJobsMgr.update({_id: tid}, {$addToSet: {hitlist: hid}});
+        $scope.selectJob($scope.jobid);
       });
     });
   };
