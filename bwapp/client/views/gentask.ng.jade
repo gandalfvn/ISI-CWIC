@@ -30,14 +30,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       hr
     h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
     .col-sm-11
-      pre {{turkSubmitTo}}
-      form(name='annotForm', action='{{submitTo}}', method='post')
+      form(name='submitForm', action='{{submitTo}}', method='post')
         input(type="hidden", name="assignmentId", value="{{assignmentId}}")
-        button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
+        input(type="hidden", name="created", value="{{date}}")
+        //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
 
-      //-form.ng-pristine.ng-valid(name='annotForm', action='{{turkSubmitTo}}', method='post')
-        input(type="hidden", name="assignmentId", value="{{assignmentId}}")
-        input(type="hidden", name="foo", value="bar")
+      form.ng-pristine.ng-valid(name='annotForm')
         div(ng-repeat='note in notes track by $index')
           //-.col-sm-1
             //-button.btn.btn-xs.btn-danger(title='Remove Description')

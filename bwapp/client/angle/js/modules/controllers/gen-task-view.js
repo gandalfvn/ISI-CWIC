@@ -7,8 +7,9 @@
 
 angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
   "use strict";
+  
+  $scope.date = (new Date()).getTime();
 
-  console.warn($rootScope.currentUser);
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
     function(sid){dataReady('genstates');},
@@ -193,19 +194,18 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             };
             $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
             $scope.taskidx = 0;
-            //$.post($scope.turkSubmitTo, {assignmentId: $scope.assignmentId, time: (new Date()).getTime()}, function(resp){
-              console.warn(resp);
-              GenJobsMgr.update({_id: $scope.hitdata._id}, {
-                $set: {
-                  notes: $scope.hitdata.notes,
-                  timed: $scope.hitdata.timed,
-                  submitted: $scope.hitdata.submitted
-                }
-              }, function(err, ret){
-                console.warn('hit', err, ret);
-                toaster.pop('info', 'HIT Task Submitted');
-              })
-            //});
+            GenJobsMgr.update({_id: $scope.hitdata._id}, {
+              $set: {
+                notes: $scope.hitdata.notes,
+                timed: $scope.hitdata.timed,
+                submitted: $scope.hitdata.submitted
+              }
+            }, function(err, ret){
+              console.warn('hit', err, ret);
+              if(err) return toaster.pop('error', err);
+              toaster.pop('info', 'HIT Task Submitted');
+              $('form[name="submitForm"]').submit(); //submit to turk
+            });
           }
         }
         else{
@@ -272,5 +272,4 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       document.body.removeChild(link);
     } else window.open(uri);
   }
-
 }]);
