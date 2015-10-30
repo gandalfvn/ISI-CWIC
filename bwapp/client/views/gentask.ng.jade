@@ -33,7 +33,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       pre {{turkSubmitTo}}
       form(name='annotForm', action='{{submitTo}}', method='post')
         input(type="hidden", name="assignmentId", value="{{assignmentId}}")
-        input(type="hidden", name="foo", value="bar")
         button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
 
       //-form.ng-pristine.ng-valid(name='annotForm', action='{{turkSubmitTo}}', method='post')

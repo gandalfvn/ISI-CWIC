@@ -6,6 +6,8 @@ tail -f nohup.out
 
 
 ====nginx ssl====
+https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04
+
     server {
       listen       443 ssl;
       server_name 45.55.184.244;
