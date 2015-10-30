@@ -34,7 +34,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   $scope.notes = null;
   var readydat = [];
   var dataReady = function(data){
-    //console.warn('data ready ', data, (new Date).getTime());
+    console.warn('data ready ', data, (new Date).getTime());
     readydat.push(data);
     if(readydat.length > 2){
       var isAdminUser = ($rootScope.currentUser)? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
@@ -45,7 +45,11 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       //console.warn($stateParams);
       if($stateParams.taskId){
         $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
-        //console.warn('taskdata', $scope.taskdata);
+        if(!$scope.taskdata){
+          $rootScope.dataloaded = true;
+          $scope.assignmentId = null;
+          return;
+        }
         $scope = _.extend($scope, $stateParams);
         if($scope.turkSubmitTo) $scope.submitTo = $scope.turkSubmitTo+'/mturk/externalSubmit';
         //if($stateParams.workerId) $scope.workerId = $stateParams.workerId;
@@ -94,8 +98,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       return;
     }
     if($scope.taskdata.tasktype == 'action'){
-      var aidx = $scope.taskdata.idxlist[idx];
-      var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
+      var aidx = $scope.taskdata.idxlist[idx][0];
+      var bidx = $scope.taskdata.idxlist[idx][1];
       $('#statea'+idx).empty();
       $('#stateb'+idx).empty();
       var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
@@ -129,8 +133,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         $scope.notes.push('');
     }
     if($scope.taskdata.tasktype == 'action'){
-      var aidx = $scope.taskdata.idxlist[idx];
-      var bidx = ($scope.taskdata.movedir == 'reverse')? aidx-1 : aidx+1;
+      var aidx = $scope.taskdata.idxlist[idx][0];
+      var bidx = $scope.taskdata.idxlist[idx][1];
       $('#statea').empty();
       $('#stateb').empty();
       var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];

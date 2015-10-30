@@ -160,7 +160,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       var jobdata = {
         stateid: $scope.curState._id,
         tasktype: tasktype,
-        movedir: movedir,
         bundle: bundle,
         asncnt: asncnt,
         antcnt: antcnt,
@@ -193,7 +192,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
             stateid: $scope.curState._id,
             islist: false,
             tasktype: jobdata.tasktype,
-            movedir: jobdata.movedir,
             creator: $rootScope.currentUser._id,
             created: (new Date).getTime(),
             asncnt: jobdata.asncnt,
@@ -222,14 +220,14 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       //decide on normal or reverse action
       if(tasktype == 'action' && movedir == 'reverse'){
         for(var i = statelen-1; i > -1; i--){
-          if(i > 0) availlist.push(i); //because we use i & i+1 states in actions
+          if(i > 0) availlist.push([i, i-1]); //because we use i & i+1 states in actions
           doneAvailList();
         }
       }
       else{
         for(var i = 0; i < statelen; i++){
           if(tasktype == 'action'){
-            if(i < statelen-1) availlist.push(i); //because we use i & i+1 states in actions
+            if(i < statelen-1) availlist.push([i, i+1]); //because we use i & i+1 states in actions
           }
           else availlist.push(i);
           doneAvailList();
