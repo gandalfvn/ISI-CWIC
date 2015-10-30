@@ -34,6 +34,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       form.ng-pristine.ng-valid(name='annotForm', action='{{turkSubmitTo}}', method='post')
         input(type="hidden", name="assignmentId", value="{{assignmentId}}")
         input(type="hidden", name="foo", value="bar")
+        button.btn.btn-primary(type='submit') Submit
+
+      //-form.ng-pristine.ng-valid(name='annotForm', action='{{turkSubmitTo}}', method='post')
+        input(type="hidden", name="assignmentId", value="{{assignmentId}}")
+        input(type="hidden", name="foo", value="bar")
         div(ng-repeat='note in notes track by $index')
           //-.col-sm-1
             //-button.btn.btn-xs.btn-danger(title='Remove Description')
