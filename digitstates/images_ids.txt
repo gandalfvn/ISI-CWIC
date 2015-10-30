@@ -98,4 +98,3 @@
 93.png
 96.png
 97.png
-sequence_four.png
