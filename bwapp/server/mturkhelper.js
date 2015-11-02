@@ -23,7 +23,7 @@ Meteor.methods({
         var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://45.55.184.244/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
 
         var hitcontent = {
-          Title: 'Describe this Image ' + p.tid,
+          Title: 'Describe this Image ', // + p.tid,
           Description: 'Tagging image with a description.',
           Question: quest,
           Reward: {
@@ -36,8 +36,8 @@ Meteor.methods({
           MaxAssignments: 3
         };
         if(taskdata.tasktype === 'action'){
-          hitcontent.Title = 'Describe this Image Sequence ' + p.tid;
-          hitcontent.Description = 'Tagging image transitions witn a description.';
+          hitcontent.Title = 'Describe this Image Sequence'; // + p.tid;
+          hitcontent.Description = 'Tagging image transitions with a description.';
           hitcontent.Reward.Amount = len * antpriceact[taskdata.antcnt-1] * 0.1; //price based on more for 1st answer
           hitcontent.AssignmentDurationInSeconds = len * 2 * 60;
         }

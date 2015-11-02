@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genjobs.ng.jade" afterPath="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/gentask.ng.jade" afterPath="$PROJECT_DIR$/client/views/gentask.ng.jade" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js" afterPath="$PROJECT_DIR$/server/mturkhelper.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -66,21 +63,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6558074">
+            <state vertical-scroll-proportion="-17.148148">
               <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mturkhelper.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="mturkhelper.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/mturkhelper.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="190" selection-start-line="22" selection-start-column="190" selection-end-line="22" selection-end-column="190" />
+            <state vertical-scroll-proportion="0.675307">
+              <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
               <folding>
                 <element signature="e#0#180#0" expanded="false" />
               </folding>
@@ -154,8 +151,8 @@
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
         <option value="$PROJECT_DIR$/server/genjobsmgr.js" />
         <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
-        <option value="$PROJECT_DIR$/server/mturkhelper.js" />
         <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
+        <option value="$PROJECT_DIR$/server/mturkhelper.js" />
       </list>
     </option>
   </component>
@@ -1200,21 +1197,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/mturkhelper.js">
+    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="190" selection-start-line="22" selection-start-column="190" selection-end-line="22" selection-end-column="190" />
-          <folding>
-            <element signature="e#0#180#0" expanded="false" />
-          </folding>
+        <state vertical-scroll-proportion="-17.148148">
+          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
+    <entry file="file://$PROJECT_DIR$/server/mturkhelper.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6558074">
-          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-          <folding />
+        <state vertical-scroll-proportion="0.675307">
+          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#180#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
