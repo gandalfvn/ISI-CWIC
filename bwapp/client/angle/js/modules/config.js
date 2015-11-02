@@ -191,11 +191,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper, $sceDel
         })
       }]
     })
-    .state('ssltxt', {
-      url: '/0114899C4F3DFFFEF7F301C0CBC06E6B.txt',
-      title: "Block World",
-      templateUrl: helper.basepath('ssltxt.html')
-    })
     //
     // CUSTOM RESOLVES
     //   Add your own resolves properties
