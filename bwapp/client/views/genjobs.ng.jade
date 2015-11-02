@@ -135,7 +135,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr(ng-repeat='task in jobinfo')
             td
               button.btn.btn-xs(ng-click='createHIT(task._id)') Create HIT
-            td(ng-click="$state.go('gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})") {{task._id}}
+            td(ng-click="$state.go('gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})")
+              i.fa.fa-eye
+              | &nbsp;{{task._id}}
             td
               span(ng-repeat='hit in task.hitlist') {{hit}} &nbsp;
               //-div(ng-repeat='(k,v) in task.submitted', ng-click="$state.go('gentask',{taskId: task._id, workerId: k, report: 1})") {{k}} {{v.time | date:"MM/dd/yyyy H:m"}}

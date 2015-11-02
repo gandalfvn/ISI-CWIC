@@ -5,7 +5,7 @@
 
 GenJobsMgr.allow({
   insert: function(userId, job){
-    console.warn('insert');
+    //console.warn('insert');
     return userId; // && job.owner === userId;
   },
   update: function(userId, job, fields, modifier){
