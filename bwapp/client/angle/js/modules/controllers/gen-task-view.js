@@ -259,10 +259,16 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
   };
 
-  $scope.dlNotes = function(){
+  $scope.dlStates = function(){
     var content = JSON.stringify($scope.taskdata, null, 2);
     var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
-    saveAs(uriContent, 'bw_notes_'+$scope.taskdata._id+'_'+$scope.workerId+'.json');
+    saveAs(uriContent, 'bw_states_'+$scope.taskdata._id+'.json');
+  };
+
+  $scope.dlNotes = function(){
+    var content = JSON.stringify($scope.hitdata, null, 2);
+    var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
+    saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
   };
 
   function saveAs(uri, filename) {

@@ -67,6 +67,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     h3 Report for Submitter {{workerId}}
     button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
     | &nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlStates()') Get States JSON
+    | &nbsp;&nbsp;
     button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
   .col-sm-12(ng-repeat='notes in hitdata.notes[workerId] track by $index')
     .col-sm-12
