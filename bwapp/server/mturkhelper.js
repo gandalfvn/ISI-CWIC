@@ -3,11 +3,7 @@
  * Created by wjwong on 10/27/15.
  =========================================================*/
 
-var mturkconf = {
-  access: 'AKIAIU67PYL5OCMK627A',
-  secret: '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',
-  sandbox: true
-}
+console.warn(serverconfig);
 
 Meteor.methods({
   mturkCreateHIT: function(p){
@@ -19,7 +15,7 @@ Meteor.methods({
       var taskdata = GenJobsMgr.findOne({_id: p.tid});
       var len = taskdata.idxlist.length;
       
-      mturk.connect(mturkconf).then(function(api){
+      mturk.connect(serverconfig.mturk).then(function(api){
         var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://45.55.184.244/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
 
         var hitcontent = {
@@ -71,7 +67,7 @@ Meteor.methods({
     var mturk = Meteor.npmRequire('mturk-api');
 
     var turk = Async.runSync(function(done){
-      mturk.connect(mturkconf).then(function(api){
+      mturk.connect(serverconfig.mturk).then(function(api){
         api.req('GetAssignmentsForHIT', {HITId: p.hid})
           .then(function(resp){
             console.warn('GetReviewableHITs', resp);
