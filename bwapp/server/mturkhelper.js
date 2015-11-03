@@ -3,8 +3,6 @@
  * Created by wjwong on 10/27/15.
  =========================================================*/
 
-console.warn(serverconfig);
-
 Meteor.methods({
   mturkCreateHIT: function(p){
     console.warn(p);
