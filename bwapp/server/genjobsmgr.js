@@ -28,8 +28,22 @@ GenJobsMgr.allow({
   //,fetch: ['owner']
 });
 
-Meteor.publish('genjobsmgr', function(){
-  return GenJobsMgr.find({
+Meteor.publish('genjobsmgr', function(param){
+  if(param){
+    switch(param.type){
+      case 'submitted':
+        return GenJobsMgr.find({
+            /*$and: [
+             {owner: this.userId},
+             {owner: {$exists: true}}
+             ]*/
+          }
+          //, {fields: {'_id': 1, 'islist': 1}}
+        );
+        break;
+    }
+  }
+  else return GenJobsMgr.find({
       /*$and: [
        {owner: this.userId},
        {owner: {$exists: true}}

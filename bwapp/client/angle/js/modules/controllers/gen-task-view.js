@@ -60,9 +60,10 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
           //load hit
           $scope.hitdata = GenJobsMgr.findOne('H_'+$scope.hitId);
           if($scope.hitdata && $scope.hitdata.submitted && isValid && $scope.workerId && $scope.workerId !== 'EXAMPLE'){
-            if(!_.isUndefined($scope.hitdata.submitted[$scope.workerId])){
+            var subfound = _.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
+            if(!_.isUndefined(subfound)){
               //worker already submitted
-              $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
+              $scope.submitter = subfound;
             }
           }
         }
@@ -188,14 +189,16 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
         if($scope.taskidx >= $scope.taskdata.idxlist.length && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
           //submission assignment as done
-          if(!$scope.hitdata.submitted) $scope.hitdata.submitted = {};
-          if(!$scope.hitdata.submitted[$scope.workerId]){
-            $scope.hitdata.submitted[$scope.workerId] = {
+          if(!$scope.hitdata.submitted) $scope.hitdata.submitted = [];
+          var subfound = _.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
+          if(_.isUndefined(subfound)){
+            $scope.hitdata.submitted.push({
+              name: $scope.workerId,
               time: (new Date()).getTime(),
               aid: $scope.assignmentId,
               submitto: $scope.turkSubmitTo
-            };
-            $scope.submitter = $scope.hitdata.submitted[$scope.workerId];
+            });
+            $scope.submitter = $scope.hitdata.submitted[$scope.hitdata.submitted.length-1];
             $scope.taskidx = 0;
             GenJobsMgr.update({_id: $scope.hitdata._id}, {
               $set: {
