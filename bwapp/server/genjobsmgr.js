@@ -32,13 +32,10 @@ Meteor.publish('genjobsmgr', function(param){
   if(param){
     switch(param.type){
       case 'submitted':
-        return GenJobsMgr.find({
-            /*$and: [
-             {owner: this.userId},
-             {owner: {$exists: true}}
-             ]*/
-          }
-          //, {fields: {'_id': 1, 'islist': 1}}
+        return GenJobsMgr.find(
+          {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
+          , {fields: {tid: 1, submitted: 1}}
+          , {sort: {'submitted.time': -1}}
         );
         break;
     }

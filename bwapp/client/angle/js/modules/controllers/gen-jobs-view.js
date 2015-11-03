@@ -52,11 +52,27 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     readydat.push(data);
     if(readydat.length > 2){
       $rootScope.dataloaded = true;
+      $scope.doneHITs = getDoneHITs();
       updateTableStateParams();
       updateJobMgr();
     }
   };
 
+  var getDoneHITs= function(){
+    var donejobs = GenJobsMgr.find(
+      {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
+      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1}}
+      , {sort: {'submitted.time': -1}}
+    ).fetch();
+    var sorteddone = [];
+    _.each(donejobs, function(j){
+      j.submitted.forEach(function(h){
+        sorteddone.push({time: h.time, name: h.name, tid: j.tid, hid: j._id.split('_')[1]})
+      })
+    });
+    return sorteddone.sort(function(a,b){a.time > b.time});
+  };
+  
   var updateTableStateParams = function(){
     $scope.stateslist = GenStates.find({}, {sort: {"_id": 1}}).fetch();
   };
