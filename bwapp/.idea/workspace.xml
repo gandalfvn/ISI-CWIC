@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/views/ssltxt.ng.jade" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/config.js" />
-    </list>
+    <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="" />
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -79,8 +76,8 @@
       <file leaf-file-name="config.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/config.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.63165075">
-              <caret line="194" column="22" selection-start-line="194" selection-start-column="22" selection-end-line="194" selection-end-column="22" />
+            <state vertical-scroll-proportion="0.5293315">
+              <caret line="189" column="31" selection-start-line="189" selection-start-column="31" selection-end-line="189" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -1238,8 +1235,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/config.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.63165075">
-          <caret line="194" column="22" selection-start-line="194" selection-start-column="22" selection-end-line="194" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.5293315">
+          <caret line="189" column="31" selection-start-line="189" selection-start-column="31" selection-end-line="189" selection-end-column="31" />
           <folding />
         </state>
       </provider>
