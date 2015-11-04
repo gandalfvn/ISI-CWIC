@@ -93,6 +93,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr
             th 
             th Job Id
+            th Created
             th Type
             th State
             th Bundle
@@ -105,6 +106,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               button.btn.btn-xs.btn-danger(ng-click='remJob(job._id)')
                 .fa.fa-remove
             td(title='{{job._id}}', ng-click='selectJob(job._id)') {{job._id}}
+            td {{job.created | date:"MM/dd/yyyy H:mm" }}
             td(title='{{job.tasktype}}') {{job.tasktype}}
             td(title='{{job.stateid}}', ng-click='chooseState(job.stateid)') {{job.stateid}}
             td(title='{{job.bundle}}') {{job.bundle}}
@@ -123,6 +125,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr
             th
             th Task Id
+            th # Entries
             th HITs
         tbody
           tr(ng-repeat='task in jobinfo')
@@ -131,6 +134,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td(ng-click="$state.go('gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})")
               i.fa.fa-eye
               | &nbsp;{{task._id}}
+            td {{task.idxlist.length}}
             td
               span(ng-repeat='hit in task.hitlist') {{hit}} &nbsp;
 .row

@@ -8,6 +8,7 @@ Meteor.methods({
     console.warn(p);
     var mturk = Meteor.npmRequire('mturk-api');
     var antpriceact = [0.6, 1.1, 1.5];
+    var anttimeact = [0.8, 1.2, 1.6];
     
     var turk = Async.runSync(function(done){
       var taskdata = GenJobsMgr.findOne({_id: p.tid});
@@ -33,7 +34,7 @@ Meteor.methods({
           hitcontent.Title = 'Describe this Image Sequence'; // + p.tid;
           hitcontent.Description = 'Tagging image transitions with a description.';
           hitcontent.Reward.Amount = len * antpriceact[taskdata.antcnt-1] * 0.1; //price based on more for 1st answer
-          hitcontent.AssignmentDurationInSeconds = len * 2 * 60;
+          hitcontent.AssignmentDurationInSeconds = len * anttimeact[taskdata.antcnt-1] * 60;
         }
         
         api.req('CreateHIT', hitcontent)
