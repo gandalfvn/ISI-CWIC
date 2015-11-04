@@ -52,13 +52,17 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     readydat.push(data);
     if(readydat.length > 2){
       $rootScope.dataloaded = true;
-      $scope.doneHITs = getDoneHITs();
-      $scope.activeHITs = getActiveHITs();
       updateTableStateParams();
       updateJobMgr();
+      updateHITs();
     }
   };
 
+  var updateHITs = function(){
+    $scope.doneHITs = getDoneHITs();
+    $scope.activeHITs = getActiveHITs();
+  };
+  
   var getDoneHITs= function(){
     var jobs = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
@@ -308,6 +312,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     });
     GenJobsMgr.remove(jid);
     updateJobMgr();
+    updateHITs();
   };
   
   $scope.createHIT = function(tid){
