@@ -30,6 +30,7 @@ GenJobsMgr.allow({
 
 Meteor.publish('genjobsmgr', function(param){
   if(param){
+    //todo: not used so far
     switch(param.type){
       case 'submitted':
         return GenJobsMgr.find(
