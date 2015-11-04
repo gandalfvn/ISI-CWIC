@@ -84,18 +84,16 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     ).fetch();
     var sortedjobs = [];
     _.each(jobs, function(j){
-      if(j.hitcontent){
-        var asnleft = (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments;
-        if(asnleft){
-          var names = null;
-          if(j.submitted){
-            names = [];
-            j.submitted.forEach(function(h){
-              names.push(h.name);
-            })
-          }
-          sortedjobs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft});
+      var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
+      if(asnleft){
+        var names = null;
+        if(j.submitted){
+          names = [];
+          j.submitted.forEach(function(h){
+            names.push(h.name);
+          })
         }
+        sortedjobs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft});
       }
     });
     if(sortedjobs.length)
