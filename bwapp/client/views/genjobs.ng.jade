@@ -161,8 +161,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr(ng-repeat='task in activeHITs')
             td {{task.time | date:"MM/dd/yyyy H:mm"}}
             td {{task.hid}}  
-              span(ng-show='task.islive') Live
-              span(ng-show='!task.islive') Sandbox
+              span(ng-show='task.islive', style='color:green') Live
+              span(ng-show='!task.islive', style='color:grey') Sandbox
             td {{task.asnleft}}
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
@@ -189,8 +189,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr(ng-repeat='task in doneHITs')
             td {{task.time | date:"MM/dd/yyyy H:mm"}}
             td {{task.hid}}  
-              span(ng-show='task.islive') Live
-              span(ng-show='!task.islive') Sandbox
+              span(ng-show='task.islive', style='color:green') Live
+              span(ng-show='!task.islive', style='color:grey') Sandbox
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
