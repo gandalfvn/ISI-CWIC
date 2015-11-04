@@ -53,26 +53,55 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     if(readydat.length > 2){
       $rootScope.dataloaded = true;
       $scope.doneHITs = getDoneHITs();
+      $scope.activeHITs = getActiveHITs();
       updateTableStateParams();
       updateJobMgr();
     }
   };
 
   var getDoneHITs= function(){
-    var donejobs = GenJobsMgr.find(
+    var jobs = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
       , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1}}
       , {sort: {'submitted.time': -1}}
     ).fetch();
-    var sorteddone = [];
-    _.each(donejobs, function(j){
+    var sortedjobs = [];
+    _.each(jobs, function(j){
       j.submitted.forEach(function(h){
-        sorteddone.push({time: h.time, name: h.name, tid: j.tid, hid: j._id.split('_')[1]})
+        sortedjobs.push({time: h.time, name: h.name, tid: j.tid, hid: j._id.split('_')[1]})
       })
     });
-    return sorteddone.sort(function(a,b){a.time > b.time});
+    if(sortedjobs.length)
+      return sortedjobs.sort(function(a,b){a.time > b.time});
+    return null;
   };
-  
+
+  var getActiveHITs= function(){
+    var jobs = GenJobsMgr.find(
+      {HITId: {$exists: true}}
+      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'created': 1, 'islive': 1}}
+      , {sort: {'created': -1}}
+    ).fetch();
+    var sortedjobs = [];
+    _.each(jobs, function(j){
+      console.warn(j);
+      var asnleft = (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments;
+      if(asnleft){
+        var names = null;
+        if(j.submitted){
+          names = [];
+          j.submitted.forEach(function(h){
+            names.push(h.name);
+          })
+        }
+        sortedjobs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft});
+      }
+    });
+    if(sortedjobs.length)
+      return sortedjobs.sort(function(a,b){a.time > b.time});
+    return null;
+  };
+
   var updateTableStateParams = function(){
     $scope.stateslist = GenStates.find({}, {sort: {"_id": 1}}).fetch();
   };
@@ -208,10 +237,10 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
             stateid: $scope.curState._id,
             islist: false,
             tasktype: jobdata.tasktype,
-            creator: $rootScope.currentUser._id,
-            created: (new Date).getTime(),
             asncnt: jobdata.asncnt,
             antcnt: jobdata.antcnt,
+            creator: $rootScope.currentUser._id,
+            created: (new Date).getTime(),
             idxlist: abundle
           };
           genjobsmgr.save(mybundledata).then(function(val){
@@ -264,11 +293,9 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       var task = GenJobsMgr.findOne({_id: tid});
       $scope.jobinfo.push(task);
     });
-    console.warn($scope.jobinfo);
   };
   
   $scope.remJob = function(jid){
-    console.warn('remJob', jid);
     $scope.jobid = null;
     $scope.jobinfo = null; //null out job in case its the one deleted
     var deljob = GenJobsMgr.findOne({_id: jid});
@@ -276,28 +303,27 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       var deltask = GenJobsMgr.findOne({_id: j});
       if(deltask && deltask.hitlist)
         deltask.hitlist.forEach(function(h){
-          console.warn('remove h ', h);
           GenJobsMgr.remove(h);
         });
-      console.warn('remove j ', j);
       GenJobsMgr.remove(j);
     });
-    console.warn('remove jid ', jid);
     GenJobsMgr.remove(jid);
     updateJobMgr();
   };
   
   $scope.createHIT = function(tid){
-    Meteor.call('mturkCreateHIT', {tid: tid}, function(err, ret){
+    Meteor.call('mturkCreateHIT', {tid: tid, islive: $scope.options.isLive}, function(err, ret){
       if(err) return $scope.$apply(function(){toaster.pop('error', err)});
       if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
       //create the HITId system
-      var res = ret.result[0];
+      var res = ret.result;
       var hitdata = {
-        '_id': 'H_'+res.HITId,
-        HITId: res.HITId,
-        HITTypeId: res.HITTypeId,
+        '_id': 'H_'+res.hit[0].HITId,
+        HITId: res.hit[0].HITId,
+        HITTypeId: res.hit[0].HITTypeId,
+        hitcontent: res.hitcontent,
         tid: tid,
+        islive: $scope.options.isLive,
         created: (new Date()).getTime()
       };
       $scope.$apply(function(){toaster.pop('info', 'HIT created: '+ hitdata._id)});
@@ -309,5 +335,9 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
       });
     });
   };
-  
+
+  $scope.stateGo = utils.stateGo($state);
+
+  $scope.options = {}; //angular has issues with updating primitives
+  $scope.options.isLive = false;
 }]);

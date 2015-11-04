@@ -118,6 +118,21 @@ angular.module('angle').service('Utils', ["$window", "APP_MEDIAQUERY", function(
         }), true);
       },
       /**
+       * Transition from current view
+       * @param state - to go to
+       * @param param - parameters for the state
+       * @param newtab - new tab or in the current browser window
+       */
+      stateGo: function(state){
+        return function(dest, param, newtab){
+          if(newtab){
+            var url = state.href(dest, param);
+            window.open(url, '_blank');
+          }
+          else state.go(dest, param);
+        }
+      },
+      /**
        * Convert unsigned int data into text for transport to mongo
        * @param u8a
        * @returns {string}

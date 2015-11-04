@@ -123,4 +123,5 @@ angular.module('angle').controller('AppController',
       $event.stopPropagation();
     };
 
+    
 }]);

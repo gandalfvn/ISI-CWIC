@@ -120,6 +120,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-file-text-o
           | &nbsp; Job Information
+      button.btn.btn-default(type='button', ng-model='options.isLive', btn-checkbox)
+        .fa.fa-toggle-off(ng-show='!options.isLive')
+          | &nbsp;Sandbox
+        .fa.fa-toggle-on(ng-show='options.isLive')
+          | &nbsp;Production
       table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
@@ -131,12 +136,41 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr(ng-repeat='task in jobinfo')
             td
               button.btn.btn-xs(ng-click='createHIT(task._id)') Create HIT
-            td(ng-click="$state.go('gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})", target="_blank")
+            td(ng-click="stateGo('gentask', {taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task._id}}
             td Ent: {{task.idxlist.length}} &nbsp;&nbsp; Ant: {{task.antcnt}} &nbsp;&nbsp; Asn: {{task.asncnt}}
             td
               span(ng-repeat='hit in task.hitlist') {{hit}} &nbsp;
+.row
+  accordion.col-sm-12
+    accordion-group.panel-primary.shadowbox(ng-if='activeHITs', ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-flag-checkered
+          | &nbsp; Active HITs
+      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+        thead
+          tr
+            th Time
+            th HIT Id
+            th #Assign
+            th Task Id
+            th Turker
+        tbody
+          tr(ng-repeat='task in activeHITs')
+            td {{task.time | date:"MM/dd/yyyy H:mm"}}
+            td {{task.hid}}  
+              span(ng-show='task.islive') Live
+              span(ng-show='!task.islive') Sandbox
+            td {{task.asnleft}}
+            td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
+              i.fa.fa-eye
+              | &nbsp;{{task.tid}}
+            td
+              span(ng-repeat='n in task.names', ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
+                i.fa.fa-eye
+                | &nbsp;{{n}}
 .row
   accordion.col-sm-12
     accordion-group.panel-primary.shadowbox(ng-if='doneHITs', ng-init="isOpen = true", is-open="isOpen")
@@ -154,11 +188,13 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         tbody
           tr(ng-repeat='task in doneHITs')
             td {{task.time | date:"MM/dd/yyyy H:mm"}}
-            td {{task.hid}}
-            td(ng-click="$state.go('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})", target="_blank")
+            td {{task.hid}}  
+              span(ng-show='task.islive') Live
+              span(ng-show='!task.islive') Sandbox
+            td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
-            td(ng-click="$state.go('gentask',{taskId: task.tid, workerId: task.name, hitId: task.hid, report: 1})", target="_blank")
+            td(ng-click="stateGo('gentask',{taskId: task.tid, workerId: task.name, hitId: task.hid, report: 1}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.name}} 
    

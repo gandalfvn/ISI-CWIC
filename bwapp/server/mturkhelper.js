@@ -13,8 +13,10 @@ Meteor.methods({
     var turk = Async.runSync(function(done){
       var taskdata = GenJobsMgr.findOne({_id: p.tid});
       var len = taskdata.idxlist.length;
-      
-      mturk.connect(serverconfig.mturk).then(function(api){
+
+      var mturkconf = _.extend({}, serverconfig.mturk);
+      mturkconf.sandbox = !p.islive;
+      mturk.connect(mturkconf).then(function(api){
         var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
 
         var hitcontent = {
@@ -28,7 +30,7 @@ Meteor.methods({
           AssignmentDurationInSeconds: len * 3 * 60,
           LifetimeInSeconds: 4 * 24 * 60 * 60,
           Keywords: 'image, identification, recognition, tagging, description',
-          MaxAssignments: 3
+          MaxAssignments: taskdata.asncnt
         };
         if(taskdata.tasktype === 'action'){
           hitcontent.Title = 'Describe this Image Sequence'; // + p.tid;
@@ -39,8 +41,7 @@ Meteor.methods({
         
         api.req('CreateHIT', hitcontent)
           .then(function(resp){
-            //console.warn('CreateHITS', resp.HIT);
-            done(null, resp.HIT);
+            done(null, {hit: resp.HIT, hitcontent: hitcontent});
           }, function(err){
             //console.warn('CREATEHITS', err);
             done(err);
