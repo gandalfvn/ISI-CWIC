@@ -80,9 +80,9 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
               });
             }
             else if(isValid) renderTask($scope.taskidx); //single item view
-            Meteor.call('mturkReviewableHITs', {hid: $scope.hitId},  function(err, resp){
+            /*Meteor.call('mturkReviewableHITs', {hid: $scope.hitId},  function(err, resp){
               console.warn(err,resp);
-            })
+            })*/
           },
           function(err){
             console.warn('err', err);
