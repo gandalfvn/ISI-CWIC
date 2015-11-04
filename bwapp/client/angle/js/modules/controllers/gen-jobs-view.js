@@ -315,8 +315,8 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     updateHITs();
   };
   
-  $scope.createHIT = function(tid){
-    Meteor.call('mturkCreateHIT', {tid: tid, islive: $scope.options.isLive}, function(err, ret){
+  $scope.createHIT = function(jid, tid){
+    Meteor.call('mturkCreateHIT', {jid: jid, tid: tid, islive: $scope.options.isLive}, function(err, ret){
       if(err) return $scope.$apply(function(){toaster.pop('error', err)});
       if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
       //create the HITId system
@@ -327,6 +327,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         HITTypeId: res.hit[0].HITTypeId,
         hitcontent: res.hitcontent,
         tid: tid,
+        jid: jid,
         islive: $scope.options.isLive,
         created: (new Date()).getTime()
       };
@@ -336,6 +337,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         if(err) return $scope.$apply(function(){toaster.pop('error', err)});
         GenJobsMgr.update({_id: tid}, {$addToSet: {hitlist: hid}});
         $scope.selectJob($scope.jobid);
+        updateHITs();
       });
     });
   };

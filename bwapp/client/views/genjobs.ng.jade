@@ -119,7 +119,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       accordion-heading
         h4.panel-title
           i.fa.fa-file-text-o
-          | &nbsp; Job Information
+          | &nbsp; Job {{jobid}} Information
       button.btn.btn-default(type='button', ng-model='options.isLive', btn-checkbox)
         .fa.fa-toggle-off(ng-show='!options.isLive')
           | &nbsp;Sandbox
@@ -135,7 +135,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         tbody
           tr(ng-repeat='task in jobinfo')
             td
-              button.btn.btn-xs(ng-click='createHIT(task._id)') Create HIT
+              button.btn.btn-xs(ng-click='createHIT(jobid, task._id)') Create HIT
             td(ng-click="stateGo('gentask', {taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task._id}}
