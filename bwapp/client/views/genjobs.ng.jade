@@ -125,16 +125,16 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr
             th
             th Task Id
-            th # Entries
+            th Info
             th HITs
         tbody
           tr(ng-repeat='task in jobinfo')
             td
               button.btn.btn-xs(ng-click='createHIT(task._id)') Create HIT
-            td(ng-click="$state.go('gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})")
+            td(ng-click="$state.go('gentask',{taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})", target="_blank")
               i.fa.fa-eye
               | &nbsp;{{task._id}}
-            td {{task.idxlist.length}}
+            td Ent: {{task.idxlist.length}} &nbsp;&nbsp; Ant: {{task.antcnt}} &nbsp;&nbsp; Asn: {{task.asncnt}}
             td
               span(ng-repeat='hit in task.hitlist') {{hit}} &nbsp;
 .row
@@ -155,10 +155,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr(ng-repeat='task in doneHITs')
             td {{task.time | date:"MM/dd/yyyy H:mm"}}
             td {{task.hid}}
-            td(ng-click="$state.go('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})")
+            td(ng-click="$state.go('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'})", target="_blank")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
-            td(ng-click="$state.go('gentask',{taskId: task.tid, workerId: task.name, hitId: task.hid, report: 1})")
+            td(ng-click="$state.go('gentask',{taskId: task.tid, workerId: task.name, hitId: task.hid, report: 1})", target="_blank")
               i.fa.fa-eye
               | &nbsp;{{task.name}} 
    

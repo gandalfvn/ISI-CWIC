@@ -26,7 +26,7 @@ Meteor.methods({
             CurrencyCode: 'USD'
           },
           AssignmentDurationInSeconds: len * 3 * 60,
-          LifetimeInSeconds: 120 * 60 * 60,
+          LifetimeInSeconds: 4 * 24 * 60 * 60,
           Keywords: 'image, identification, recognition, tagging, description',
           MaxAssignments: 3
         };

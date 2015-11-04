@@ -15,7 +15,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
 
   $scope.dtOptionsGrp = {
     "lengthMenu": [[10], [10]],
-    "order": [[1, "asc"]],
+    "order": [[2, "desc"]],
     "language": {"paginate": {"next": '>', "previous": '<'}},
     "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
   };
