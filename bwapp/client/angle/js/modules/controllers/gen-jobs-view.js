@@ -66,13 +66,13 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   var getDoneHITs= function(){
     var jobs = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
-      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1}}
+      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1}}
       , {sort: {'submitted.time': -1}}
     ).fetch();
     var sortedjobs = [];
     _.each(jobs, function(j){
       j.submitted.forEach(function(h){
-        sortedjobs.push({time: h.time, name: h.name, tid: j.tid, hid: j._id.split('_')[1]})
+        sortedjobs.push({time: h.time, name: h.name, tid: j.tid, hid: j._id.split('_')[1], islive: j.islive})
       })
     });
     if(sortedjobs.length)
