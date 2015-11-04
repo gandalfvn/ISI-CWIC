@@ -75,9 +75,15 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             $scope.taskidx = 0;
             if($stateParams.report){ //report view
               $scope.report = $stateParams.report;
-              $timeout(function(){
-                renderReport(0)
-              });
+              if($scope.hitdata.notes[$scope.workerId]){
+                $timeout(function(){
+                  renderReport(0)
+                });
+              }
+              else{
+                $rootScope.dataloaded = true;
+                toaster.pop('error', 'Missing annotations');
+              }
             }
             else if(isValid) renderTask($scope.taskidx); //single item view
             /*Meteor.call('mturkReviewableHITs', {hid: $scope.hitId},  function(err, resp){
@@ -187,45 +193,42 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         if(!$scope.hitdata.timed) $scope.hitdata.timed = {};
         if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
         if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
-        if($scope.taskidx >= $scope.taskdata.idxlist.length && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
-          //submission assignment as done
-          if(!$scope.hitdata.submitted) $scope.hitdata.submitted = [];
-          var subfound = _.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
-          if(_.isUndefined(subfound)){
-            $scope.hitdata.submitted.push({
-              name: $scope.workerId,
-              time: (new Date()).getTime(),
-              aid: $scope.assignmentId,
-              submitto: $scope.turkSubmitTo
-            });
-            $scope.submitter = $scope.hitdata.submitted[$scope.hitdata.submitted.length-1];
-            $scope.taskidx = 0;
-            GenJobsMgr.update({_id: $scope.hitdata._id}, {
-              $set: {
-                notes: $scope.hitdata.notes,
-                timed: $scope.hitdata.timed,
-                submitted: $scope.hitdata.submitted
-              }
-            }, function(err, ret){
-              console.warn('hit', err, ret);
-              if(err) return toaster.pop('error', err);
-              toaster.pop('info', 'HIT Task Submitted');
-              $('form[name="submitForm"]').submit(); //submit to turk
-            });
-          }
-        }
-        else{
-          //must use update instead of save because _id is custom generated
-          GenJobsMgr.update({_id: $scope.hitdata._id}, {
-            $set: {
-              notes: $scope.hitdata.notes,
-              timed: $scope.hitdata.timed
+
+        //must use update instead of save because _id is custom generated
+        var setdata = {};
+        setdata['notes.'+$scope.workerId] = $scope.hitdata.notes[$scope.workerId];
+        setdata['timed.'+$scope.workerId] = $scope.hitdata.timed[$scope.workerId];
+        GenJobsMgr.update({_id: $scope.hitdata._id}, {
+          $set: setdata
+        }, function(err, ret){
+          if(err) return toaster.pop('error', err.reason);
+          if($scope.taskidx >= $scope.taskdata.idxlist.length && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
+            //submission assignment as done
+            if(!$scope.hitdata.submitted) $scope.hitdata.submitted = [];
+            var subfound = _.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
+            if(_.isUndefined(subfound)){
+              $scope.hitdata.submitted.push({
+                name: $scope.workerId,
+                time: (new Date()).getTime(),
+                aid: $scope.assignmentId,
+                submitto: $scope.turkSubmitTo
+              });
+              $scope.submitter = $scope.hitdata.submitted[$scope.hitdata.submitted.length-1];
+              $scope.taskidx = 0;
+              GenJobsMgr.update({_id: $scope.hitdata._id}, {
+                $addToSet: {
+                  submitted: $scope.submitter
+                }
+              }, function(err, ret){
+                console.warn('hit', err, ret);
+                if(err) return toaster.pop('error', err);
+                toaster.pop('info', 'HIT Task Submitted');
+                $('form[name="submitForm"]').submit(); //submit to turk
+              });
             }
-          }, function(err, ret){
-            if(err) return toaster.pop('error', err.reason);
-            renderTask($scope.taskidx);
-          });
-        }
+          }
+          else renderTask($scope.taskidx);
+        });
       }
       else toaster.pop('error', 'Missing HIT Id');
     }
@@ -270,7 +273,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
     saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
   };
-
+  
   function saveAs(uri, filename) {
     var link = document.createElement('a');
     if (typeof link.download === 'string') {
