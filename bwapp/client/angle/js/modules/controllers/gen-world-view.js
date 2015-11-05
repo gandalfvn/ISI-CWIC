@@ -539,7 +539,13 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
             }
             var max = APP_CONST.fieldsize / 2 + 0.001; //give it a little wiggle room
             var min = -max;
-            var data = { prop: { size: cubesdata[cid].meta.shape.shape_params.side_length, cid: cid }, position: null };
+            var data = {
+                prop: {
+                    size: cubesdata[cid].meta.shape.shape_params.side_length,
+                    cid: cid
+                },
+                position: null
+            };
             var isRegen = true;
             while (isRegen) {
                 if (used.size) {
@@ -1172,7 +1178,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                         createObjects($scope.curState.block_meta.blocks);
                         //mung block_states
                         $scope.curState.block_states = mungeBlockStates(filedata.block_states);
-                        function itrFrame(idx, block_states, cb) {
+                        var itrFrame = function (idx, block_states, cb) {
                             if (_.isUndefined(block_states[idx])) {
                                 $scope.$apply(function () {
                                     if (filedata.name)
@@ -1204,7 +1210,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                                     }
                                 }, 100);
                             });
-                        }
+                        };
                         itrFrame(0, $scope.curState.block_states, function () {
                             console.warn($scope.curState.block_states);
                         });
