@@ -1,5 +1,5 @@
 /**========================================================
- * Module: gen-task-view.js
+ * Module: gen-task-view.ts
  * Created by wjwong on 10/5/15.
  =========================================================*/
 /// <reference path="../../../../../model/genjobsmgrdb.ts" />

@@ -1,5 +1,5 @@
 /**========================================================
- * Module: gen-jobs-view.js
+ * Module: gen-jobs-view.ts
  * Created by wjwong on 9/23/15.
  =========================================================*/
 /// <reference path="../../../../../model/genjobsmgrdb.ts" />
@@ -11,6 +11,7 @@
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../shared/dataready.ts" />
+/// <reference path="../shared/currentstate.ts" />
 /*
 *
    class cDataReady {
@@ -101,29 +102,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         var updateTableStateParams = function () {
             $scope.stateslist = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
         };
-        var CurrentState = (function () {
-            function CurrentState(c) {
-                if (c)
-                    this.copy(c);
-            }
-            CurrentState.prototype.clear = function () {
-                for (var i = 0; i < CurrentState.l.length; i++) {
-                    this[CurrentState.l[i]] = null;
-                }
-                if (!_.isUndefined(this._id))
-                    delete this['_id'];
-            };
-            ;
-            CurrentState.prototype.copy = function (s) {
-                for (var i = 0; i < CurrentState.l.length; i++) {
-                    this[CurrentState.l[i]] = s[CurrentState.l[i]];
-                }
-            };
-            ;
-            CurrentState.l = ['block_meta', 'block_states', '_id', 'public', 'created', 'creator', 'name'];
-            return CurrentState;
-        })();
-        $scope.curState = new CurrentState();
+        $scope.curState = new cCurrentState();
         $scope.remState = function (sid) {
             if (sid) {
                 genstates.remove(sid);

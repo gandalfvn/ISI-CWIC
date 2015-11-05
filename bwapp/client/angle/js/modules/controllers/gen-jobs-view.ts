@@ -1,5 +1,5 @@
 /**========================================================
- * Module: gen-jobs-view.js
+ * Module: gen-jobs-view.ts
  * Created by wjwong on 9/23/15.
  =========================================================*/
 /// <reference path="../../../../../model/genjobsmgrdb.ts" />
@@ -11,6 +11,7 @@
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../shared/dataready.ts" />
+/// <reference path="../shared/currentstate.ts" />
 
 /*
 *  
@@ -143,25 +144,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     $scope.stateslist = GenStates.find({}, {sort: {"_id": 1}}).fetch();
   };
 
-  class CurrentState{
-    _id: string;
-    static l:string[] = ['block_meta', 'block_states', '_id', 'public', 'created', 'creator', 'name'];
-    constructor(c?: CurrentState){
-      if(c) this.copy(c);
-    }
-    clear(){
-      for(var i:number = 0; i < CurrentState.l.length; i++){
-        this[CurrentState.l[i]] = null;
-      }
-      if(!_.isUndefined(this._id)) delete this['_id'];
-    };
-    copy(s:CurrentState){
-      for(var i:number = 0; i < CurrentState.l.length; i++){
-        this[CurrentState.l[i]] = s[CurrentState.l[i]];
-      }
-    };
-  }
-  $scope.curState = new CurrentState();
+  $scope.curState = new cCurrentState();
 
   $scope.remState = function(sid:string){
     if(sid){
@@ -176,7 +159,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     //we must get the state for this sid
     $scope.$meteorSubscribe("genstates", sid).then(
       function(sub){
-        var myframe:CurrentState = GenStates.findOne({_id: sid});
+        var myframe:iCurrentSate = GenStates.findOne({_id: sid});
         if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
         $scope.curState.clear();
         $scope.curState.copy(myframe);
