@@ -10,6 +10,25 @@
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
+/// <reference path="../shared/dataready.ts" />
+/*
+*
+   class cDataReady {
+ private ready:string[];
+ private readylim:number;
+ private cb: () => void;
+ constructor(readylim:number, cb:()=>void){
+ this.readylim = readylim;
+ this.cb = cb;
+ this.ready = [];
+ }
+ update(data:string) {
+ console.warn('data ready ', data, (new Date).getTime());
+ this.ready.push(data);
+ if (this.ready.length > this.readylim) return this.cb();
+ };
+ }
+ */
 angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function ($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils) {
         "use strict";
         var canvas = { width: 384, height: 264 };
@@ -32,23 +51,17 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
             "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
         };
         var genstates = $scope.$meteorCollection(GenStates);
-        $scope.$meteorSubscribe("genstates").then(function (sid) { dataReady('genstates'); }, function (err) { console.log("error", arguments, err); });
+        $scope.$meteorSubscribe("genstates").then(function (sid) { dataReady.update('genstates'); }, function (err) { console.log("error", arguments, err); });
         var screencaps = $scope.$meteorCollection(ScreenCaps);
-        $scope.$meteorSubscribe("screencaps").then(function (sid) { dataReady('screencaps'); }, function (err) { console.log("error", arguments, err); });
+        $scope.$meteorSubscribe("screencaps").then(function (sid) { dataReady.update('screencaps'); }, function (err) { console.log("error", arguments, err); });
         var genjobsmgr = $scope.$meteorCollection(GenJobsMgr);
-        $scope.$meteorSubscribe("genjobsmgr").then(function (sid) { dataReady('genjobsmgr'); }, function (err) { console.log("error", arguments, err); });
-        $scope.dataready = false;
-        var readydat = [];
-        var dataReady = function (data) {
-            console.warn('data ready ', data, (new Date).getTime());
-            readydat.push(data);
-            if (readydat.length > 2) {
-                $rootScope.dataloaded = true;
-                updateTableStateParams();
-                updateJobMgr();
-                updateHITs();
-            }
-        };
+        $scope.$meteorSubscribe("genjobsmgr").then(function (sid) { dataReady.update('genjobsmgr'); }, function (err) { console.log("error", arguments, err); });
+        var dataReady = new cDataReady(2, function () {
+            $rootScope.dataloaded = true;
+            updateTableStateParams();
+            updateJobMgr();
+            updateHITs();
+        });
         var updateHITs = function () {
             $scope.doneHITs = getDoneHITs();
             $scope.activeHITs = getActiveHITs();
@@ -162,7 +175,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
             var b64img = LZString.decompressFromUTF16(b64i);
             var eleDivID = 'div' + $('div').length; // Unique ID
             var eleImgID = 'img' + $('img').length; // Unique ID
-            var eleLabelID = 'h4' + $('h4').length; // Unique ID
+            //var eleLabelID:string = 'h4' + $('h4').length; // Unique ID
             var htmlout = '';
             if (text)
                 htmlout += '<b>' + text + '</b><br>';
@@ -201,7 +214,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
                     var doneBundles = _.after(bundcnt, function () {
                         jobdata.list = bundleidlist;
                         genjobsmgr.save(jobdata).then(function (val) {
-                            var jmid = val[0]._id;
                             updateJobMgr();
                             toaster.pop('info', 'Jobs Created', val[0]._id);
                         }, function (err) {
