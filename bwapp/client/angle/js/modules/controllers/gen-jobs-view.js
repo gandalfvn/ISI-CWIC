@@ -88,24 +88,28 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         var updateTableStateParams = function () {
             $scope.stateslist = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
         };
-        function CurrentState(c) {
-            var l = ['block_meta', 'block_states', '_id', 'public', 'created', 'creator', 'name'];
-            this.clear = function () {
-                for (var i = 0; i < l.length; i++) {
-                    this[l[i]] = null;
+        var CurrentState = (function () {
+            function CurrentState(c) {
+                if (c)
+                    this.copy(c);
+            }
+            CurrentState.prototype.clear = function () {
+                for (var i = 0; i < CurrentState.l.length; i++) {
+                    this[CurrentState.l[i]] = null;
                 }
                 if (!_.isUndefined(this._id))
-                    delete this._id;
+                    delete this['_id'];
             };
-            this.copy = function (s) {
-                for (var i = 0; i < l.length; i++) {
-                    this[l[i]] = s[l[i]];
+            ;
+            CurrentState.prototype.copy = function (s) {
+                for (var i = 0; i < CurrentState.l.length; i++) {
+                    this[CurrentState.l[i]] = s[CurrentState.l[i]];
                 }
             };
-            this.clear();
-            if (c)
-                this.copy(c);
-        }
+            ;
+            CurrentState.l = ['block_meta', 'block_states', '_id', 'public', 'created', 'creator', 'name'];
+            return CurrentState;
+        })();
         $scope.curState = new CurrentState();
         $scope.remState = function (sid) {
             if (sid) {
@@ -172,7 +176,6 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
             img.src = b64img;
         };
         $scope.taskGen = function (tasktype, movedir, bundle, asncnt, antcnt) {
-            console.warn(tasktype, movedir, bundle, asncnt, antcnt);
             var statelist = utils.mdbArray(GenStates, {}, {
                 sort: { "_id": 1 } }, "_id");
             console.warn(statelist);
@@ -249,7 +252,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
                                 availlist.push([i, i + 1]); //because we use i & i+1 states in actions
                         }
                         else
-                            availlist.push(i);
+                            availlist.push([i]);
                         doneAvailList();
                     }
                 }

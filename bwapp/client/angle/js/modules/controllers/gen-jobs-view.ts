@@ -130,25 +130,27 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     $scope.stateslist = GenStates.find({}, {sort: {"_id": 1}}).fetch();
   };
 
-  function CurrentState(c?:any){
-    var l = ['block_meta', 'block_states', '_id','public','created','creator','name'];
-    this.clear =  function(){
-      for(var i = 0; i < l.length; i++){
-        this[l[i]] = null;
+  class CurrentState{
+    _id: string;
+    static l:string[] = ['block_meta', 'block_states', '_id', 'public', 'created', 'creator', 'name'];
+    constructor(c?: CurrentState){
+      if(c) this.copy(c);
+    }
+    clear(){
+      for(var i:number = 0; i < CurrentState.l.length; i++){
+        this[CurrentState.l[i]] = null;
       }
-      if(!_.isUndefined(this._id)) delete this._id;
+      if(!_.isUndefined(this._id)) delete this['_id'];
     };
-    this.copy = function(s){
-      for(var i = 0; i < l.length; i++){
-        this[l[i]] = s[l[i]];
+    copy(s:CurrentState){
+      for(var i:number = 0; i < CurrentState.l.length; i++){
+        this[CurrentState.l[i]] = s[CurrentState.l[i]];
       }
     };
-    this.clear();
-    if(c) this.copy(c);
   }
   $scope.curState = new CurrentState();
 
-  $scope.remState = function(sid){
+  $scope.remState = function(sid:string){
     if(sid){
       genstates.remove(sid);
       updateTableStateParams();
@@ -156,12 +158,12 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     }
   };
 
-  $scope.chooseState = function(sid){
+  $scope.chooseState = function(sid:string){
     $scope.enableImpSave = false;
     //we must get the state for this sid
     $scope.$meteorSubscribe("genstates", sid).then(
       function(sub){
-        var myframe = GenStates.findOne({_id: sid});
+        var myframe:CurrentState = GenStates.findOne({_id: sid});
         if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
         $scope.curState.clear();
         $scope.curState.copy(myframe);
@@ -170,22 +172,22 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     )
   };
 
-  $scope.showMove = function(i){
+  $scope.showMove = function(i:number){
     $('#imgpreview').empty();
-    var scid = $scope.curState.block_states[i].screencapid;
+    var scid:string = $scope.curState.block_states[i].screencapid;
     $scope.$meteorSubscribe('screencaps', scid).then(
       function(sub){
-        var retid = navImgButtons('imgpreview', i);
+        var retid:string = navImgButtons('imgpreview', i);
         var screen = ScreenCaps.findOne({_id: scid});
         showImage(screen.data, 'Move #: '+i, retid);
       }
     );
   };
 
-  var navImgButtons = function(id, i){
-    var lenID = $('div').length;
-    var eleDivID = 'rowdiv' + lenID; // Unique ID
-    var retId = id+lenID;
+  var navImgButtons = function(id:string, i:number):string{
+    var lenID:number = $('div').length;
+    var eleDivID:string = 'rowdiv' + lenID; // Unique ID
+    var retId:string = id+lenID;
     var htmlout = '';
     if(i < $scope.curState.block_states.length-1)
       htmlout += '<button onclick="angular.element(this).scope().showMove('+(i+1)+')" class="btn btn-xs btn-info pull-right" style="margin-left: 6px"> &gt; </button>';
@@ -200,14 +202,14 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     return retId;
   };
 
-  var showImage = function(b64i, text, attachID){
+  var showImage = function(b64i:string, text:string, attachID:string){
     if(!attachID) return console.warn('showImage missing attachID');
     var b64img = LZString.decompressFromUTF16(b64i);
 
-    var eleDivID = 'div' + $('div').length; // Unique ID
-    var eleImgID = 'img' + $('img').length; // Unique ID
-    var eleLabelID = 'h4' + $('h4').length; // Unique ID
-    var htmlout = '';
+    var eleDivID:string = 'div' + $('div').length; // Unique ID
+    var eleImgID:string = 'img' + $('img').length; // Unique ID
+    var eleLabelID:string = 'h4' + $('h4').length; // Unique ID
+    var htmlout:string = '';
     if(text) htmlout += '<b>'+text+'</b><br>';
     htmlout += '<img id="'+eleImgID+'" style="width:'+canvas.width*2/3+'px;height:'+canvas.height*2/3+'px"></img>';
     // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
@@ -216,13 +218,12 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     }).addClass('col-sm-4')
       .html(htmlout).css({}).appendTo('#'+attachID);
 
-    var img = <HTMLImageElement>document.getElementById(eleImgID); // Use the created element
+    var img:HTMLImageElement = <HTMLImageElement>document.getElementById(eleImgID); // Use the created element
     img.src = b64img;
   };
 
-  $scope.taskGen = function(tasktype, movedir, bundle, asncnt, antcnt){
-    console.warn(tasktype, movedir, bundle, asncnt, antcnt);
-    var statelist = utils.mdbArray(GenStates, {}, {
+  $scope.taskGen = function(tasktype:string, movedir:string, bundle:number, asncnt:number, antcnt:number){
+    var statelist:string[] = utils.mdbArray(GenStates, {}, {
       sort: {"_id": 1}}, "_id");
     console.warn(statelist);
     if(statelist.length){
@@ -239,16 +240,16 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         list: null
       };
       
-      var availlist = [];
-      var statelen = $scope.curState.block_states.length;
+      var availlist:number[][] = [];
+      var statelen:number = $scope.curState.block_states.length;
       //generate action jobs from states
       var doneAvailList = _.after(statelen, function(){
-        var bundleidlist = [];
-        var bundcnt = Math.ceil(availlist.length/jobdata.bundle);
+        var bundleidlist:string[] = [];
+        var bundcnt:number = Math.ceil(availlist.length/jobdata.bundle);
         var doneBundles = _.after(bundcnt, function(){
           jobdata.list = bundleidlist;
           genjobsmgr.save(jobdata).then(function(val){
-              var jmid = val[0]._id;
+              var jmid:string = val[0]._id;
               updateJobMgr();
               toaster.pop('info', 'Jobs Created', val[0]._id);
             }
@@ -279,8 +280,8 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
           );
           abundle = [];
         }
-        var abundle = [];
-        for(var i = 0; i < availlist.length; i++){
+        var abundle:number[][] = [];
+        for(var i:number = 0; i < availlist.length; i++){
           if(!(i % jobdata.bundle) && i) saveBundle();
           abundle.push(availlist[i]);
         }
@@ -289,17 +290,17 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
 
       //decide on normal or reverse action
       if(tasktype == 'action' && movedir == 'reverse'){
-        for(var i = statelen-1; i > -1; i--){
+        for(var i:number = statelen-1; i > -1; i--){
           if(i > 0) availlist.push([i, i-1]); //because we use i & i+1 states in actions
           doneAvailList();
         }
       }
       else{
-        for(var i = 0; i < statelen; i++){
+        for(var i:number = 0; i < statelen; i++){
           if(tasktype == 'action'){
             if(i < statelen-1) availlist.push([i, i+1]); //because we use i & i+1 states in actions
           }
-          else availlist.push(i);
+          else availlist.push([i]);
           doneAvailList();
         }
       }
@@ -310,7 +311,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     $scope.jobmgrlist = GenJobsMgr.find({islist: true}, {sort: {"_id": 1}}).fetch();
   };
   
-  $scope.selectJob = function(jid){
+  $scope.selectJob = function(jid:string){
     var job = GenJobsMgr.findOne({_id: jid});
     $scope.jobid = jid;
     $scope.jobinfo = [];
@@ -320,7 +321,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     });
   };
   
-  $scope.remJob = function(jid){
+  $scope.remJob = function(jid:string){
     $scope.jobid = null;
     $scope.jobinfo = null; //null out job in case its the one deleted
     var deljob = GenJobsMgr.findOne({_id: jid});
@@ -337,7 +338,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     updateHITs();
   };
   
-  $scope.createHIT = function(jid, tid){
+  $scope.createHIT = function(jid:string, tid:string){
     Meteor.call('mturkCreateHIT', {jid: jid, tid: tid, islive: $scope.options.isLive}, function(err, ret){
       if(err) return $scope.$apply(function(){toaster.pop('error', err)});
       if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
