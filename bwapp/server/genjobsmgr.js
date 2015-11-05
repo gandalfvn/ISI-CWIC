@@ -2,6 +2,9 @@
  * Module: genjobsmgr.js
  * Created by wjwong on 10/3/15.
  =========================================================*/
+/// <reference path="../model/genjobsmgrdb.ts" />
+/// <reference path="./typings/meteor/meteor.d.ts" />
+/// <reference path="./typings/underscore/underscore.d.ts" />
 GenJobsMgr.allow({
     insert: function (userId, job) {
         //console.warn('insert');
@@ -11,14 +14,34 @@ GenJobsMgr.allow({
         if (userId)
             return userId;
         else {
+            var idx = '$set';
+            var delkeys = [];
             //only allow pass through of updates to notes and submitted
-            var keys = Object.keys(modifier['$set']);
-            keys = _.difference(keys, ['notes', 'submitted', 'timed']); //only allow notes and submitted when not logged in
-            if (keys.length)
-                console.warn('GenJobsMgr del: ');
-            for (var i = 0; i < keys.length; i++) {
-                console.warn(keys[i]);
-                delete modifier['$set'][keys[i]];
+            if (modifier['$set']) {
+                var keys = Object.keys(modifier['$set']);
+                _.each(keys, function (k) {
+                    if (!(k.match(/notes/g) || k.match(/timed/g)))
+                        delkeys.push(k);
+                });
+            }
+            else {
+                if (modifier['$addToSet']) {
+                    idx = '$addToSet';
+                    var keys = Object.keys(modifier['$addToSet']);
+                    var delkeys = [];
+                    _.each(keys, function (k) {
+                        if (!k.match(/submitted/g))
+                            delkeys.push(k);
+                    });
+                }
+                else
+                    return null;
+            }
+            if (delkeys.length)
+                console.warn('GenJobsMgr ' + idx + ' del: ');
+            for (var i = 0; i < delkeys.length; i++) {
+                console.warn(delkeys[i]);
+                delete modifier[idx][delkeys[i]];
             }
             return 'anonymous';
         }
