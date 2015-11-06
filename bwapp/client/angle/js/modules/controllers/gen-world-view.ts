@@ -753,15 +753,15 @@ angular.module('angle').controller('genWorldCtrl',
       }, 100);
     };
 
-    var showFrame = function(state, cb?: ()=>void){
+    var showFrame = function(state:iBlockStates, cb?: ()=>void){
       $scope.resetWorld();
       setTimeout(function(){
         if(state.block_state){
           state.block_state.forEach(function(frame){
             var c = get3DCubeById(frame.id);
-            c.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
+            c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
             if(frame.rotation)
-              c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation.x, frame.rotation.y, frame.rotation.z, frame.rotation.w);
+              c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
             c.isVisible = true;
             if(hasPhysics) c.setPhysicsState({
               impostor: BABYLON.PhysicsEngine.BoxImpostor,
@@ -1086,7 +1086,7 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.resetWorld();
     };
 
-    $scope.saveImport = function(savename){
+    $scope.saveImport = function(savename:string){
       $scope.impFilename = null;
       $scope.enableImpSave = false;
       var cubesused:number[] = [];
@@ -1096,7 +1096,7 @@ angular.module('angle').controller('genWorldCtrl',
       cubesused = _.uniq(cubesused);
       $scope.curState.name = savename;
       console.warn('saveImport');
-      var params = {itr: 0, cubesused: cubesused};
+      var params:iMoveItr = {itr: 0, startMove: null, cubesused: cubesused};
       setTimeout(function(){waitForSSAndSave(params, 
         function(err, savedsid){
           console.warn('saveimpor wait for');
@@ -1120,7 +1120,7 @@ angular.module('angle').controller('genWorldCtrl',
         //read file
         var reader = new FileReader();
         reader.onload = function(){
-          var filedata = JSON.parse(reader.result);
+          var filedata:iBlockMeta = JSON.parse(reader.result);
           if(filedata.blocks && filedata.blocks.length){
             $scope.$apply(function(){
               $scope.curState.clear();
@@ -1139,6 +1139,19 @@ angular.module('angle').controller('genWorldCtrl',
       console.warn($scope.metafilename);
     };
 
+    interface iBlockStateSerial{id: number, position: string, rotation:string}
+    interface iBlockStatesSerial{block_state: iBlockStateSerial[]}
+    interface iBlockImport{
+      _id: string,
+      public: boolean,
+      name: string,
+      created: number,
+      creator: string,
+      block_meta: iBlockMeta,
+      block_states?: iBlockStatesSerial[]
+      block_state?: iBlockStateSerial[]
+    }
+
     /**
      * loads a json state file with the CURRENT state iteration set to 0
      */
@@ -1147,7 +1160,7 @@ angular.module('angle').controller('genWorldCtrl',
         //read file
         var reader = new FileReader();
         reader.onload = function(){
-          var filedata = JSON.parse(reader.result);
+          var filedata:iBlockImport = JSON.parse(reader.result);
           if(filedata.block_state && filedata.block_state.length
             && filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length){
             if(filedata.block_meta.blocks.length != filedata.block_state.length) return $scope.$apply(function(){
@@ -1162,8 +1175,9 @@ angular.module('angle').controller('genWorldCtrl',
             console.warn($scope.curState.block_meta);
             createObjects($scope.curState.block_meta.blocks);
             //mung block_state
-            filedata.block_state = mungeBlockState(filedata.block_state);
-            showFrame(filedata, function(){
+            //filedata.block_state = mungeBlockState(filedata.block_state);
+            var block_state:iBlockState[] = mungeBlockState(filedata.block_state);
+            showFrame({block_state: block_state}, function(){
               $scope.$apply(function(){
                 if(filedata.name) $scope.impFilename = filedata.name;
                 else $scope.impFilename = $scope.statefilename[0].name.toLowerCase().replace(/\.json/g, '');
@@ -1181,13 +1195,13 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.$apply(function(){$scope.statefilename = event.target.files;});
       console.warn($scope.statefilename);
     };
-
+    
     $scope.loadStates = function(){
       if($scope.statesfilename && $scope.statesfilename.length){
         //read file
         var reader = new FileReader();
         reader.onload = function(){
-          var filedata = JSON.parse(reader.result);
+          var filedata:iBlockImport = JSON.parse(reader.result);
           if(filedata.block_states && filedata.block_states.length
             && filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length){
             if(filedata.block_meta.blocks.length != filedata.block_states[0].block_state.length) return $scope.$apply(function(){
@@ -1204,7 +1218,7 @@ angular.module('angle').controller('genWorldCtrl',
             //mung block_states
             $scope.curState.block_states = mungeBlockStates(filedata.block_states);
             
-            var itrFrame = function(idx, block_states, cb){
+            var itrFrame = function(idx:number, block_states:iBlockStates, cb:()=>void){
               if(_.isUndefined(block_states[idx])){
                 $scope.$apply(function(){
                   if(filedata.name) $scope.impFilename = filedata.name;
@@ -1221,13 +1235,13 @@ angular.module('angle').controller('genWorldCtrl',
                     var sc = BABYLON.Tools.CreateScreenshot(engine, camera, {
                       width: canvas.width, height: canvas.height
                     }, function(b64i: string){
-                      var b64img = LZString.compressToUTF16(b64i);
+                      var b64img:string = LZString.compressToUTF16(b64i);
                       /*console.warn('len', b64i.length, b64img.length);
                       console.warn('b64i', b64i);
                       console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
                       block_states[idx].screencap = b64img;
                       block_states[idx].created = (new Date).getTime();
-                      var attachid = createButtons('stateimg', idx);
+                      var attachid:string = createButtons('stateimg', idx);
                       showImage(b64img, 'Move #: ' + idx, attachid);
                       itrFrame(idx + 1, block_states, cb);
                     });
@@ -1250,46 +1264,49 @@ angular.module('angle').controller('genWorldCtrl',
       $scope.$apply(function(){$scope.statesfilename = event.target.files;});
       console.warn($scope.statesfilename);
     };
-
-    var mungeBlockStates = function(bss){
-      var newbss = [];
+    
+    var mungeBlockStates = function(bss:iBlockStatesSerial[]):iBlockStates[]{
+      var newbss:iBlockStates[] = [];
       for(var i = 0; i < bss.length; i++){
         newbss.push({block_state: mungeBlockState(bss[i].block_state)});
       }
       return newbss;
     };
-    
+
+
     /**
      * Transform text block state from cwic to internal block states
      * @param bs
      * @returns {Array}
      */
-    var mungeBlockState = function(bs){
-      var newBS = [];
+    var mungeBlockState = function(bs:iBlockStateSerial[]):iBlockState[]{
+      var newBS:iBlockState[] = [];
       bs.forEach(function(b){
-        var l = b.position.split(',');
-        l.forEach(function(v,i){l[i]=Number(v)});
+        var li:string[] = b.position.split(',');
+        var lv:number[] = [];
+        li.forEach(function(v,i){lv.push(Number(v))});
         if(b.rotation){
-          var r = b.rotation.split(',');
-          r.forEach(function(v, i){
-            r[i] = Number(v)
+          var ri:string[] = b.rotation.split(',');
+          var rv:number[] = [];
+          ri.forEach(function(v, i){
+            rv.push(Number(v))
           });
           newBS.push({id: b.id, position: {
-            x: l[0], y: l[1], z: l[2]
+            x: lv[0], y: lv[1], z: lv[2]
           }, rotation: {
-            x: r[0], y: r[1], z: r[2], w: r[3]
+            x: rv[0], y: rv[1], z: rv[2], w: rv[3]
           }})
         }
         else
           newBS.push({id: b.id, position: {
-            x: l[0], y: l[1], z: l[2]
+            x: lv[0], y: lv[1], z: lv[2]
           }})
 
       });
       return newBS;
     };
     
-    $scope.startMove = function(itr){
+    $scope.startMove = function(itr:number){
       console.warn(itr);
       itr = Number(itr);
       $scope.isgen = true;
@@ -1342,8 +1359,6 @@ angular.module('angle').controller('genWorldCtrl',
       })
     };
 
-    interface iBlockStateSerial{id: number, position: string, rotation:string}
-    
     $scope.dlScene = function(){
       var tempframe = {_id: $scope.curState._id,
         public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,

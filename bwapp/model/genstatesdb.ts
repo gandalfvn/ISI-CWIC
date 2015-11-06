@@ -15,15 +15,15 @@ interface iGenStates {
 }
 
 interface iBlockStates{
-  created: number,
-  screencapid: string,
+  created?: number,
+  screencapid?: string,
   block_state: iBlockState[]
 }
 
 interface iBlockState{
   id: number,
   position: iPosRot,
-  rotation: iPosRot
+  rotation?: iPosRot
 }
 
 interface iPosRot{

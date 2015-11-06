@@ -749,9 +749,9 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 if (state.block_state) {
                     state.block_state.forEach(function (frame) {
                         var c = get3DCubeById(frame.id);
-                        c.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
+                        c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
                         if (frame.rotation)
-                            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation.x, frame.rotation.y, frame.rotation.z, frame.rotation.w);
+                            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
                         c.isVisible = true;
                         if (hasPhysics)
                             c.setPhysicsState({
@@ -1072,7 +1072,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
             cubesused = _.uniq(cubesused);
             $scope.curState.name = savename;
             console.warn('saveImport');
-            var params = { itr: 0, cubesused: cubesused };
+            var params = { itr: 0, startMove: null, cubesused: cubesused };
             setTimeout(function () {
                 waitForSSAndSave(params, function (err, savedsid) {
                     console.warn('saveimpor wait for');
@@ -1136,8 +1136,9 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                         console.warn($scope.curState.block_meta);
                         createObjects($scope.curState.block_meta.blocks);
                         //mung block_state
-                        filedata.block_state = mungeBlockState(filedata.block_state);
-                        showFrame(filedata, function () {
+                        //filedata.block_state = mungeBlockState(filedata.block_state);
+                        var block_state = mungeBlockState(filedata.block_state);
+                        showFrame({ block_state: block_state }, function () {
                             $scope.$apply(function () {
                                 if (filedata.name)
                                     $scope.impFilename = filedata.name;
@@ -1240,22 +1241,24 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
         var mungeBlockState = function (bs) {
             var newBS = [];
             bs.forEach(function (b) {
-                var l = b.position.split(',');
-                l.forEach(function (v, i) { l[i] = Number(v); });
+                var li = b.position.split(',');
+                var lv = [];
+                li.forEach(function (v, i) { lv.push(Number(v)); });
                 if (b.rotation) {
-                    var r = b.rotation.split(',');
-                    r.forEach(function (v, i) {
-                        r[i] = Number(v);
+                    var ri = b.rotation.split(',');
+                    var rv = [];
+                    ri.forEach(function (v, i) {
+                        rv.push(Number(v));
                     });
                     newBS.push({ id: b.id, position: {
-                            x: l[0], y: l[1], z: l[2]
+                            x: lv[0], y: lv[1], z: lv[2]
                         }, rotation: {
-                            x: r[0], y: r[1], z: r[2], w: r[3]
+                            x: rv[0], y: rv[1], z: rv[2], w: rv[3]
                         } });
                 }
                 else
                     newBS.push({ id: b.id, position: {
-                            x: l[0], y: l[1], z: l[2]
+                            x: lv[0], y: lv[1], z: lv[2]
                         } });
             });
             return newBS;
