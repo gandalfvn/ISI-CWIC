@@ -1,13 +1,13 @@
 /**
  * Created by wjwong on 11/5/15.
  */
+
 interface iDataReady {
   update:(data:string)=>void
 }
 
 declare var cDataReady:any;
-
-cDataReady = class cDataReadyDef{
+cDataReady = class cDataReadyRef{
   private ready:string[];
   private readylim:number;
   private cb:() => void;

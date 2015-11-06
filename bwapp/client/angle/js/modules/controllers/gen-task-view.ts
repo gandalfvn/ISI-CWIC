@@ -48,7 +48,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       return;
     }
     if ($stateParams.taskId){ //get task information and start loading
-      $scope.taskdata = GenJobsMgr.findOne($stateParams.taskId);
+      $scope.taskdata = <iGenJobsMgr>GenJobsMgr.findOne($stateParams.taskId);
       if (!$scope.taskdata) {
         $rootScope.dataloaded = true;
         $scope.assignmentId = null;
@@ -62,7 +62,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       var isValid:boolean = true;
       if ($scope.hitId) {
         //load hit
-        $scope.hitdata = GenJobsMgr.findOne('H_' + $scope.hitId);
+        $scope.hitdata = <iGenJobsHIT>GenJobsMgr.findOne('H_' + $scope.hitId);
         if ($scope.hitdata && $scope.hitdata.submitted && isValid && $scope.workerId && $scope.workerId !== 'EXAMPLE') {
           var subfound:{name:string, time: number, aid: string} = <{name:string, time: number, aid: string}>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
           if (!_.isUndefined(subfound)) {
@@ -74,7 +74,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       var sid:string = $scope.taskdata.stateid;
       $scope.$meteorSubscribe("genstates", sid).then(
         function(sub) {
-          $scope.curState = GenStates.findOne(sid);
+          $scope.curState = <iGenStates>GenStates.findOne(sid);
           //console.warn('curState',$scope.curState);
           $scope.taskidx = 0;
           if ($stateParams.report) { //report view
@@ -117,8 +117,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
       $scope.$meteorSubscribe('screencaps', scids).then(
         function(sub){
-          var screena = ScreenCaps.findOne(scids[0]);
-          var screenb = ScreenCaps.findOne(scids[1]);
+          var screena:iScreenCaps = ScreenCaps.findOne(scids[0]);
+          var screenb:iScreenCaps = ScreenCaps.findOne(scids[1]);
           showImage(screena.data, 'Before', null, 'statea'+idx);
           showImage(screenb.data, 'After', null, 'stateb'+idx);
           renderReport(idx+1);
@@ -152,8 +152,8 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
       var scids:string[] = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
       $scope.$meteorSubscribe('screencaps', scids).then(
         function(sub){
-          var screena = ScreenCaps.findOne(scids[0]);
-          var screenb = ScreenCaps.findOne(scids[1]);
+          var screena:iScreenCaps = ScreenCaps.findOne(scids[0]);
+          var screenb:iScreenCaps = ScreenCaps.findOne(scids[1]);
           showImage(screena.data, 'Before', null, 'statea');
           showImage(screenb.data, 'After', null, 'stateb');
           $rootScope.dataloaded = true;

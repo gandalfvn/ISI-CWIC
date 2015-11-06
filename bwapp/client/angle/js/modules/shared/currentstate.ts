@@ -2,11 +2,7 @@
  * Created by wjwong on 11/5/15.
  */
 /// <reference path="../../../../../server/typings/underscore/underscore.d.ts" />
-
-interface iCurrentSate{
-  _id: string;
-}
-
+  
 declare var cCurrentState:any;
 
 cCurrentState = class cCurrentStateDef{

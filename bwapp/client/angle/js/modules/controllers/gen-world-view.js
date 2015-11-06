@@ -1267,7 +1267,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
             stateNStats.near = 0;
             stateNStats.far = 0;
             stateNStats.stack = 0;
-            var params = { itr: itr, startMove: $scope.startMove };
+            var params = { itr: itr, startMove: $scope.startMove, cubesused: null };
             $scope.genStateN(params);
         };
         var nextItr = function (params) {
@@ -1276,8 +1276,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                     toaster.pop('warn', err);
                 if (savedsid) {
                     if (params.itr > 1) {
-                        if (params.startGen)
-                            params.startGen(params.itr - 1);
+                        //if(params.startGen) params.startGen(params.itr - 1);
                         if (params.startMove)
                             params.startMove(params.itr - 1);
                     }
@@ -1290,8 +1289,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 else {
                     //don't iterate since we had error with previous insert
                     //which means we need to make a new init state
-                    if (params.startGen)
-                        params.startGen(params.itr);
+                    //if(params.startGen) params.startGen(params.itr);
                     if (params.startMove)
                         params.startMove(params.itr);
                 }

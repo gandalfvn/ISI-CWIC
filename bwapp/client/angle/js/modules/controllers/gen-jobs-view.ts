@@ -86,26 +86,21 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     $scope.activeHITs = getActiveHITs();
   };
   
-  interface iFindHITs {
-    _id: string, tid: string, submitted: [{name: string, time: number}], islive: boolean
-    , created?: number
-    , hitcontent?: {MaxAssignments: number}
-  }
-  
   interface iSortHITs {
-    time: number, name?: string, 
+    time: number, 
+    name?: string, 
     names?: string[],
     tid: string, hid: string, islive: boolean
   }
 
   var getDoneHITs= function(): iSortHITs[]{
-    var jobs:iFindHITs[] = GenJobsMgr.find(
+    var jobs:iGenJobsHIT[] = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
       , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1}}
       , {sort: {'submitted.time': -1}}
     ).fetch();
     var sortedjobs = [];
-    _.each<iFindHITs>(jobs, function(j){
+    _.each(jobs, function(j){
       j.submitted.forEach(function(h){
         sortedjobs.push({time: h.time, name: h.name, tid: j.tid, hid: j._id.split('_')[1], islive: j.islive})
       })
@@ -116,13 +111,13 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   };
 
   var getActiveHITs= function(): iSortHITs[]{
-    var jobs:iFindHITs[] = GenJobsMgr.find(
+    var jobs:iGenJobsHIT[] = GenJobsMgr.find(
       {HITId: {$exists: true}}
       , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'created': 1, 'islive': 1}}
       , {sort: {'created': -1}}
     ).fetch();
     var sortedjobs = [];
-    _.each<iFindHITs>(jobs, function(j){
+    _.each(jobs, function(j){
       var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
       if(asnleft){
         var names = null;
@@ -159,7 +154,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     //we must get the state for this sid
     $scope.$meteorSubscribe("genstates", sid).then(
       function(sub){
-        var myframe:iCurrentSate = GenStates.findOne({_id: sid});
+        var myframe:iGenStates = GenStates.findOne({_id: sid});
         if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
         $scope.curState.clear();
         $scope.curState.copy(myframe);
@@ -174,7 +169,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     $scope.$meteorSubscribe('screencaps', scid).then(
       function(sub){
         var retid:string = navImgButtons('imgpreview', i);
-        var screen = ScreenCaps.findOne({_id: scid});
+        var screen:iScreenCaps = ScreenCaps.findOne({_id: scid});
         showImage(screen.data, 'Move #: '+i, retid);
       }
     );
@@ -307,11 +302,11 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   };
   
   $scope.selectJob = function(jid:string){
-    var job = GenJobsMgr.findOne({_id: jid});
+    var job:iGenJobsMgr = GenJobsMgr.findOne({_id: jid});
     $scope.jobid = jid;
     $scope.jobinfo = [];
     job.list.forEach(function(tid){
-      var task = GenJobsMgr.findOne({_id: tid});
+      var task:iGenJobsMgr = GenJobsMgr.findOne({_id: tid});
       $scope.jobinfo.push(task);
     });
   };
@@ -319,9 +314,9 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   $scope.remJob = function(jid:string){
     $scope.jobid = null;
     $scope.jobinfo = null; //null out job in case its the one deleted
-    var deljob = GenJobsMgr.findOne({_id: jid});
+    var deljob:iGenJobsMgr = GenJobsMgr.findOne({_id: jid});
     deljob.list.forEach(function(j){
-      var deltask = GenJobsMgr.findOne({_id: j});
+      var deltask:iGenJobsMgr = GenJobsMgr.findOne({_id: j});
       if(deltask && deltask.hitlist)
         deltask.hitlist.forEach(function(h){
           GenJobsMgr.remove(h);

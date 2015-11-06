@@ -19,7 +19,7 @@ interface iMeshMod extends BABYLON.Mesh {
 angular.module('angle').controller('genWorldCtrl',
   ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'Utils', 'ngTableParams', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, utils, ngTableParams){
     "use strict";
-
+    
     var hasPhysics = true;
     var fric = 0.1;
     var rest = 0.2;
@@ -606,11 +606,12 @@ angular.module('angle').controller('genWorldCtrl',
     };
 
     var stateNStats = {near: 0, far: 0, stack: 0};
+    interface iMoveItr {itr: number, startMove:(number)=>void, cubesused:number[]}
     /**
      * Append moves to end of the states list
      * @param params
      */
-    $scope.genStateN = function(params){
+    $scope.genStateN = function(params:iMoveItr){
       console.warn('genStateN', params);
       //we must get the state for this params.sid
       if($scope.curState._id){
@@ -991,7 +992,7 @@ angular.module('angle').controller('genWorldCtrl',
       //we must get the state for this sid
       $scope.$meteorSubscribe("genstates", sid).then(
         function(sub){
-          var myframe = GenStates.findOne({_id: sid});
+          var myframe:iGenStates = GenStates.findOne({_id: sid});
           if(!myframe) return toaster.pop('warn', 'Invalid State ID');
           //update the meta
           $scope.curitr = myframe.block_states.length-1;
@@ -1004,8 +1005,8 @@ angular.module('angle').controller('genWorldCtrl',
             if(_.isUndefined(list[idx])) return cb();
             var scid = list[idx].screencapid;
             $scope.$meteorSubscribe("screencaps", scid).then(function(sub){
-              var screen = ScreenCaps.findOne({_id: scid});
-              var attachid = createButtons('stateimg', idx);
+              var screen:iScreenCaps = ScreenCaps.findOne({_id: scid});
+              var attachid:string = createButtons('stateimg', idx);
               showImage(screen.data, 'Move #:' + idx, attachid);
               itrScreencap(idx+1, list, cb);
             });
@@ -1038,7 +1039,7 @@ angular.module('angle').controller('genWorldCtrl',
       if(sid){
         $scope.$meteorSubscribe("genstates", sid).then(
           function(sub){
-            var myframe = GenStates.findOne({_id: sid});
+            var myframe:iGenStates = GenStates.findOne({_id: sid});
             myframe.block_states.forEach(function(s){
               screencaps.remove(s.screencapid);
             })
@@ -1287,7 +1288,7 @@ angular.module('angle').controller('genWorldCtrl',
       });
       return newBS;
     };
-
+    
     $scope.startMove = function(itr){
       console.warn(itr);
       itr = Number(itr);
@@ -1296,16 +1297,16 @@ angular.module('angle').controller('genWorldCtrl',
       stateNStats.near = 0;
       stateNStats.far = 0;
       stateNStats.stack = 0;
-      var params = {itr: itr, startMove: $scope.startMove};
+      var params:iMoveItr = {itr: itr, startMove: $scope.startMove, cubesused: null};
       $scope.genStateN(params);
     };
 
-    var nextItr = function(params){
+    var nextItr = function(params:iMoveItr){
       return function(err, savedsid){
         if(err) toaster.pop('warn', err);
         if(savedsid){
           if(params.itr > 1){
-            if(params.startGen) params.startGen(params.itr - 1);
+            //if(params.startGen) params.startGen(params.itr - 1);
             if(params.startMove) params.startMove(params.itr - 1);
           }
           else{
@@ -1317,14 +1318,14 @@ angular.module('angle').controller('genWorldCtrl',
         else{
           //don't iterate since we had error with previous insert
           //which means we need to make a new init state
-          if(params.startGen) params.startGen(params.itr);
+          //if(params.startGen) params.startGen(params.itr);
           if(params.startMove) params.startMove(params.itr);
         }
       };
     };
 
-    $scope.cloneMove = function(idx){
-      var prevState = _.extend({}, $scope.curState);
+    $scope.cloneMove = function(idx:number){
+      var prevState:iGenStates = _.extend({}, $scope.curState);
       $scope.curState.clear();
       $scope.curState.block_meta = prevState.block_meta;
       $scope.curState.public = true;
@@ -1341,14 +1342,16 @@ angular.module('angle').controller('genWorldCtrl',
       })
     };
 
+    interface iBlockStateSerial{id: number, position: string, rotation:string}
+    
     $scope.dlScene = function(){
       var tempframe = {_id: $scope.curState._id,
         public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
         creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: []};
 
       for(var idx = 0; idx < $scope.curState.block_states.length; idx++){
-        var block_state = $scope.curState.block_states[idx].block_state;
-        var newblock_state = [];
+        var block_state:iBlockState[] = $scope.curState.block_states[idx].block_state;
+        var newblock_state:iBlockStateSerial[] = [];
         for(var i = 0; i < block_state.length; i++){
           var s = block_state[i];
           var pos = '', rot = '';
@@ -1364,16 +1367,16 @@ angular.module('angle').controller('genWorldCtrl',
         }
         tempframe.block_states.push({block_state: newblock_state});
       }
-      var content = JSON.stringify(tempframe, null, 2);
-      var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
+      var content:string = JSON.stringify(tempframe, null, 2);
+      var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
       saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
     };
 
-    $scope.getMove = function(idx){
-      var tempframe = {block_meta: $scope.curState.block_meta, block_state: []};
-      var block_state = $scope.curState.block_states[idx].block_state;
+    $scope.getMove = function(idx:number){
+      var tempframe:{block_meta: iBlockMeta, block_state:iBlockStateSerial[]} = {block_meta: $scope.curState.block_meta, block_state: []};
+      var block_state:iBlockState[] = $scope.curState.block_states[idx].block_state;
       for(var i = 0; i < block_state.length; i++){
-        var s = block_state[i];
+        var s:iBlockState = block_state[i];
         var pos = '', rot = '';
         _.each(s.position, function(v){
           if(pos.length) pos += ',';
@@ -1385,13 +1388,13 @@ angular.module('angle').controller('genWorldCtrl',
         });
         tempframe.block_state.push({id: s.id, position: pos, rotation: rot})
       }
-      var content = JSON.stringify(tempframe, null, 2);
-      var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
+      var content:string = JSON.stringify(tempframe, null, 2);
+      var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
       saveAs(uriContent, 'bw_state_'+$scope.curState._id+'_'+idx+'.json');
     };
 
-    $scope.delMove = function(idx){
-      var count = $scope.curState.block_states.length-idx;
+    $scope.delMove = function(idx:number){
+      var count:number = $scope.curState.block_states.length-idx;
       $scope.curState.block_states.splice(idx, count);
       genstates.save($scope.curState).then(function(val){
         $scope.clearMeta();
