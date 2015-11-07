@@ -2,7 +2,7 @@
  * Module: mturkhelper.ts
  * Created by wjwong on 10/27/15.
  =========================================================*/
-/// <reference path="./config.ts" />
+/// <reference path="./config.d.ts" />
 /// <reference path="../model/genjobsmgrdb.ts" />
 /// <reference path="./typings/underscore/underscore.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
