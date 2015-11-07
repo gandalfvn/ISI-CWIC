@@ -47,7 +47,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         };
         $scope.dtOptionsTask = {
             "lengthMenu": [[10], [10]],
-            "order": [[0, "asc"]],
+            "order": [[0, "desc"]],
             "language": { "paginate": { "next": '>', "previous": '<' } },
             "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
         };
