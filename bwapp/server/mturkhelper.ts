@@ -31,8 +31,8 @@ Meteor.methods({
     var anttimeact = [1.6, 2, 2.5];
     
     var turk = Async.runSync(function(done){
-      var taskdata = GenJobsMgr.findOne({_id: p.tid});
-      var len = taskdata.idxlist.length;
+      var taskdata:iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
+      var len:number = taskdata.idxlist.length;
 
       var mturkconf:iMTurk = _.extend({}, serverconfig.mturk);
       mturkconf.sandbox = !p.islive;
