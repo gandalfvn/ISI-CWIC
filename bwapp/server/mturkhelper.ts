@@ -7,6 +7,8 @@
 /// <reference path="./typings/underscore/underscore.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 
+declare var Async:any;
+
 interface iHITContent{
   Title: string,
   Description: string,
@@ -21,14 +23,16 @@ interface iHITContent{
   MaxAssignments: number
 }
 
-declare var Async:any;
+interface iTurkCreateParam{
+  jid: string, tid: string, islive: boolean
+}
 
 Meteor.methods({
-  mturkCreateHIT: function(p){
+  mturkCreateHIT: function(p:iTurkCreateParam){
     console.warn(p);
     var mturk = Meteor['npmRequire']('mturk-api');
-    var antpriceact = [0.6, 1.1, 1.5];
-    var anttimeact = [1.6, 2, 2.5];
+    var antpriceact:number[] = [0.6, 1.1, 1.5];
+    var anttimeact:number[] = [1.6, 2, 2.5];
     
     var turk = Async.runSync(function(done){
       var taskdata:iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
@@ -37,9 +41,9 @@ Meteor.methods({
       var mturkconf:iMTurk = _.extend({}, serverconfig.mturk);
       mturkconf.sandbox = !p.islive;
       mturk.connect(mturkconf).then(function(api){
-        var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
+        var quest:string = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
 
-        var hitcontent = {
+        var hitcontent:iHITContent = {
           Title: 'Describe this Image ' + p.jid,
           Description: 'Tagging image with a description.',
           Question: quest,

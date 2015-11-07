@@ -10,6 +10,7 @@
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
+/// <reference path="../../../../../server/mturkhelper.ts" />
 /// <reference path="../shared/dataready.ts" />
 /// <reference path="../shared/currentstate.ts" />
 /*
