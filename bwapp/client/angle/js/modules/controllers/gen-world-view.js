@@ -332,7 +332,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
             return cubeslist[cubesdata[cid].objidx];
         };
         //**start app logic============================================================
-        $scope.showLogos = false;
+        $scope.showLogos = true;
         $scope.limStack = true;
         $scope.limStackToggle = function () {
             $scope.limStack = !$scope.limStack;

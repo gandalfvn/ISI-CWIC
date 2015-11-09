@@ -372,7 +372,7 @@ angular.module('angle').controller('genWorldCtrl',
     };
 
     //**start app logic============================================================
-    $scope.showLogos = false;
+    $scope.showLogos = true;
     $scope.limStack = true;
     $scope.limStackToggle = function(){
       $scope.limStack = !$scope.limStack;
