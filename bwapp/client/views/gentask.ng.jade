@@ -35,9 +35,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     .col-sm-12(ng-if='submitter')
       .label.label-warning Read Only
       i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
-    .col-sm-6
+    .col-md-6
       #statea
-    .col-sm-6
+    .col-md-6
       #stateb
     .col-sm-12
       hr
@@ -80,11 +80,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   .col-sm-12(ng-repeat='notes in hitdata.notes[workerId] track by $index')
     .col-sm-12
       h3.pull-left {{$index+1}}
-      .col-sm-5
+      .col-sm-6
         div(id='statea{{$index}}')
-      .col-sm-1(style="margin-top: 1em; font-size: 60px;")
-        .fa.fa-chevron-right
-      .col-sm-5
+      .col-sm-6
         div(id='stateb{{$index}}')
     .col-sm-12
       div.mb-sm(ng-repeat='note in notes track by $index')
