@@ -35,7 +35,7 @@
 angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
   "use strict";
 
-  var canvas = {width: 384, height: 264};
+  var canvas = {width: 480, height: 360};
   $scope.dtOptionsAvail = {
     "lengthMenu": [[5], [5]],
     "order": [[1, "asc"]],
@@ -203,7 +203,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     //var eleLabelID:string = 'h4' + $('h4').length; // Unique ID
     var htmlout:string = '';
     if(text) htmlout += '<b>'+text+'</b><br>';
-    htmlout += '<img id="'+eleImgID+'" style="width:'+canvas.width*2/3+'px;height:'+canvas.height*2/3+'px"></img>';
+    htmlout += '<img id="'+eleImgID+'" style="width:'+canvas.width*4/5+'px;height:'+canvas.height*4/5+'px"></img>';
     // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
     $('<div>').attr({
       id: eleDivID

@@ -54,7 +54,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               td(title="'Created'", sortable="'created'", ng-click='showState(s._id)')
                 | {{s.created | date:"MM/dd/yyyy"}}
 .row-fluid.col-sm-12
-  .row-fluid.col-sm-5
+  .row-fluid.col-sm-6
     h3 Scene
     div.col-sm-7
       b(ng-show='curcnt > -1', style='font-size:1.25em') Create Count: {{curcnt}}
@@ -63,7 +63,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     div.col-sm-5
       | Move camera by clicking and dragging in scene
     div.col-sm-12
-      canvas(id="renderCanvasBab", style='width: 384px; height: 264px;')
+      canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
       canvas(id="canvas_2D")
   .row-fluid.col-sm-3(ng-if='!isgen && enableImpSave && curState.block_meta.blocks')
     div.well

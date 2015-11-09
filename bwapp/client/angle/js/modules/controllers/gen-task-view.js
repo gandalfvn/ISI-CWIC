@@ -74,8 +74,16 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
                             toaster.pop('error', 'Missing annotations');
                         }
                     }
-                    else if (isValid)
-                        renderTask($scope.taskidx); //single item view
+                    else {
+                        if (isValid)
+                            renderTask($scope.taskidx);
+                        $scope.logolist = [];
+                        console.warn($scope.curState.block_meta);
+                        _.each($scope.curState.block_meta.blocks, function (b) {
+                            $scope.logolist.push({ name: b.name, imgref: "img/textures/logos/" + b.name.replace(/ /g, '') + '.png' });
+                        });
+                        console.warn($scope.logolist);
+                    }
                     /*Meteor.call('mturkReviewableHITs', {hid: $scope.hitId},  function(err, resp){
                      console.warn(err,resp);
                      })*/
@@ -144,7 +152,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         var showImage = function (b64i, title, caption, attachID) {
             if (!attachID)
                 return console.warn('Missing dom attach id');
-            var canvas = { width: 384, height: 264 };
+            var canvas = { width: 480, height: 360 };
             var b64img = LZString.decompressFromUTF16(b64i);
             var eleDivID = 'div' + $('div').length; // Unique ID
             var eleImgID = 'img' + $('img').length; // Unique ID
