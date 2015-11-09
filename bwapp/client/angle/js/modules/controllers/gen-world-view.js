@@ -349,10 +349,11 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
         var updateTableStateParams = function () {
             var data = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
             $scope.tableStateParams = new ngTableParams({
-                count: 5
+                count: 5,
+                sorting: { created: 'desc' }
             }, { counts: [5, 10, 20],
                 paginationMaxBlocks: 8,
-                paginationMinBlcoks: 2,
+                paginationMinBlocks: 2,
                 data: data });
         };
         $scope.resetWorld = function () {
