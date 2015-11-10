@@ -215,6 +215,17 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
           $rootScope.dataloaded = true;
           return;
         }
+        //check for number of words
+        var validWords:boolean = true;
+        _.each(notes, function(n){
+          if(n.split(' ').length < 4) validWords = false;
+        });
+        if(!validWords){
+          toaster.pop('error', 'Not enough words used in description');
+          $rootScope.dataloaded = true;
+          return;
+        }
+
         var previdx:number = $scope.taskidx;
         $scope.taskidx+=vdir;
         if($scope.taskidx != 0) $scope.isOpenDir = false;
