@@ -31,7 +31,7 @@ Meteor.methods({
   mturkCreateHIT: function(p:iTurkCreateParam){
     console.warn(p);
     var mturk = Meteor['npmRequire']('mturk-api');
-    var antpriceact:number[] = [0.6, 1.2, 1.5];
+    var antpriceact:number[] = [0.6, 1.1, 1.5];
     var anttimeact:number[] = [2, 2.5, 3];
     
     var turk = Async.runSync(function(done){
