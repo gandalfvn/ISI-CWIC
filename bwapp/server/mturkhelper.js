@@ -10,8 +10,8 @@ Meteor.methods({
     mturkCreateHIT: function (p) {
         console.warn(p);
         var mturk = Meteor['npmRequire']('mturk-api');
-        var antpriceact = [0.5, 1, 1.2];
-        var anttimeact = [1.6, 2, 2.5];
+        var antpriceact = [0.6, 1.2, 1.5];
+        var anttimeact = [2, 2.5, 3];
         var turk = Async.runSync(function (done) {
             var taskdata = GenJobsMgr.findOne({ _id: p.tid });
             var len = taskdata.idxlist.length;

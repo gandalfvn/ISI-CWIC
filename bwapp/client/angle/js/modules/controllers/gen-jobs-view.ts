@@ -11,28 +11,9 @@
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../../../../../server/mturkhelper.ts" />
-/// <reference path="../shared/dataready.ts" />
-/// <reference path="../shared/currentstate.ts" />
+/// <reference path="../services/apputils.ts" />
 
-/*
-*  
-   class cDataReady {
- private ready:string[];
- private readylim:number;
- private cb: () => void;
- constructor(readylim:number, cb:()=>void){
- this.readylim = readylim;
- this.cb = cb;
- this.ready = [];
- }
- update(data:string) {
- console.warn('data ready ', data, (new Date).getTime());
- this.ready.push(data);
- if (this.ready.length > this.readylim) return this.cb();
- };
- }
- */
-angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
+angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils){
   "use strict";
 
   var canvas = {width: 480, height: 360};
@@ -75,7 +56,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     function(err){ console.log("error", arguments, err); }
   );
   
-  var dataReady:iDataReady = new cDataReady(2, function():void{
+  var dataReady:iDataReady = new apputils.cDataReady(2, function():void{
     $rootScope.dataloaded = true;
     updateTableStateParams();
     updateJobMgr();
@@ -83,8 +64,8 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   });
 
   var updateHITs = function(){
-    $scope.doneHITs = getDoneHITs();
-    $scope.activeHITs = getActiveHITs();
+    $scope.doneASNs = getDoneASNs();
+    $scope.allHITs = getAllHITs();
   };
   
   interface iSortHITs {
@@ -94,7 +75,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     tid: string, hid: string, islive: boolean
   }
 
-  var getDoneHITs= function(): iSortHITs[]{
+  var getDoneASNs = function(): iSortHITs[]{
     var jobs:iGenJobsHIT[] = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
       , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1}}
@@ -111,36 +92,60 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     return null;
   };
 
-  var getActiveHITs= function(): iSortHITs[]{
+  var getAllHITs= function(): {active: iSortHITs[], done: iSortHITs[]}{
     var jobs:iGenJobsHIT[] = GenJobsMgr.find(
       {HITId: {$exists: true}}
       , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'created': 1, 'islive': 1}}
       , {sort: {'created': -1}}
     ).fetch();
-    var sortedjobs = [];
+    var activeHITs = [];
+    var doneHITs = [];
     _.each(jobs, function(j){
       var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
-      if(asnleft){
-        var names = null;
-        if(j.submitted){
-          names = [];
-          j.submitted.forEach(function(h){
-            names.push(h.name);
-          })
-        }
-        sortedjobs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive});
+      var names = null;
+      if(j.submitted){
+        names = [];
+        j.submitted.forEach(function(h){
+          names.push(h.name);
+        })
       }
+      if(asnleft)
+        activeHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive});
+      else
+        doneHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive});
     });
-    if(sortedjobs.length)
-      return sortedjobs.sort(function(a:{time: number},b:{time: number}):number{return a.time - b.time});
+    if(activeHITs.length || doneHITs.length) {
+      if (activeHITs.length)
+        activeHITs.sort(function (a:{time: number}, b:{time: number}):number {
+          return a.time - b.time
+        });
+      if (doneHITs.length)
+        doneHITs.sort(function (a:{time: number}, b:{time: number}):number {
+          return a.time - b.time
+        });
+      return {active: activeHITs, done: doneHITs}
+    }
     return null;
+  };
+
+  $scope.dlLinks = function(task:iSortHITs){
+    console.warn(task);
+    var content:string[] = [];
+    content.push($state.href('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, {absolute: true}));
+    _.each(task.names, function(n){
+      content.push($state.href('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, {absolute: true}));
+    });
+    
+    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content.join('\n'));
+    console.warn(uriContent);
+    apputils.saveAs(uriContent, 'bw_links_'+task.tid+'.json');
   };
 
   var updateTableStateParams = function(){
     $scope.stateslist = GenStates.find({}, {sort: {"_id": 1}}).fetch();
   };
 
-  $scope.curState = new cCurrentState();
+  $scope.curState = new apputils.cCurrentState();
 
   $scope.remState = function(sid:string){
     if(sid){
@@ -215,7 +220,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   };
 
   $scope.taskGen = function(tasktype:string, movedir:string, bundle:number, asncnt:number, antcnt:number){
-    var statelist:string[] = utils.mdbArray(GenStates, {}, {
+    var statelist:string[] = apputils.mdbArray(GenStates, {}, {
       sort: {"_id": 1}}, "_id");
     console.warn(statelist);
     if(statelist.length){
@@ -356,7 +361,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
     });
   };
 
-  $scope.stateGo = utils.stateGo($state);
+  $scope.stateGo = apputils.stateGo($state);
 
   $scope.options = {}; //angular has issues with updating primitives
   $scope.options.isLive = false;

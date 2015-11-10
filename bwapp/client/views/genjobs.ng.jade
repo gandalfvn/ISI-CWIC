@@ -144,7 +144,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               span(ng-repeat='hit in task.hitlist') {{hit}} &nbsp;
 .row
   accordion.col-sm-12
-    accordion-group.panel-primary.shadowbox(ng-if='activeHITs', ng-init="isOpen = true", is-open="isOpen")
+    accordion-group.panel-primary.shadowbox(ng-if='allHITs.active.length', ng-init="isOpen = true", is-open="isOpen")
       accordion-heading
         h4.panel-title
           i.fa.fa-flag-checkered
@@ -158,7 +158,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Task Id
             th Turker
         tbody
-          tr(ng-repeat='task in activeHITs')
+          tr(ng-repeat='task in allHITs.active')
             td {{task.time | date:"MM/dd/yyyy H:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
@@ -173,9 +173,43 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                   i.fa.fa-eye
                   | &nbsp;{{n}}
                 | &nbsp;&nbsp;
+
 .row
   accordion.col-sm-12
-    accordion-group.panel-primary.shadowbox(ng-if='doneHITs', ng-init="isOpen = true", is-open="isOpen")
+    accordion-group.panel-primary.shadowbox(ng-if='allHITs.done.length', ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title
+          i.fa.fa-flag-checkered
+          | &nbsp; Done HITs
+      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+        thead
+          tr
+            th Time
+            th HIT Id
+            th Task Id
+            th Turker
+        tbody
+          tr(ng-repeat='task in allHITs.done')
+            td 
+              button.btn.btn-xs.btn-primary(title='Download list of links for this HIT', ng-click='dlLinks(task)')
+                .fa.fa-download
+              | &nbsp;{{task.time | date:"MM/dd/yyyy H:mm"}}
+            td {{task.hid}}  
+              b(ng-show='task.islive', style='color:green') Live
+              span(ng-show='!task.islive', style='color:grey') Sandbox
+            td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
+              i.fa.fa-eye
+              | &nbsp;{{task.tid}}
+            td
+              span(ng-repeat='n in task.names')
+                button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
+                  i.fa.fa-eye
+                  | &nbsp;{{n}}
+                | &nbsp;&nbsp;
+
+.row
+  accordion.col-sm-12
+    accordion-group.panel-primary.shadowbox(ng-if='doneASNs', ng-init="isOpen = true", is-open="isOpen")
       accordion-heading
         h4.panel-title
           i.fa.fa-flag-checkered
@@ -188,7 +222,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Task Id
             th Turker
         tbody
-          tr(ng-repeat='task in doneHITs')
+          tr(ng-repeat='task in doneASNs')
             td {{task.time | date:"MM/dd/yyyy H:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live

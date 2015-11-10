@@ -10,11 +10,11 @@
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
-/// <reference path="../shared/dataready.ts" />
+/// <reference path="../services/apputils.ts" />
 
 //?taskid=2kw6CqcqjRzsHBWD2&assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&hitId=123RVWYBAZW00EXAMPLE&turkSubmitTo=https://www.mturk.com/&workerId=AZ3456EXAMPLE
 
-angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'Utils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, utils){
+angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils){
   "use strict";
   
   $scope.date = (new Date()).getTime();
@@ -41,7 +41,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
   $scope.taskdata;
   $scope.taskidx = 0;
   $scope.notes = null;
-  var dataReady:iDataReady = new cDataReady(2, function():void {
+  var dataReady:iDataReady = new apputils.cDataReady(2, function():void {
     var isAdminUser = ($rootScope.currentUser) ? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
     if ($stateParams.report && !isAdminUser) { //not admin we just leave it blank
       $rootScope.dataloaded = true;
@@ -272,32 +272,18 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     }
     var content:string = JSON.stringify(tempframe, null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
+    apputils.saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
   };
 
   $scope.dlStates = function(){
     var content:string = JSON.stringify($scope.taskdata, null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    saveAs(uriContent, 'bw_states_'+$scope.taskdata._id+'.json');
+    apputils.saveAs(uriContent, 'bw_states_'+$scope.taskdata._id+'.json');
   };
 
   $scope.dlNotes = function(){
     var content:string = JSON.stringify($scope.hitdata, null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
+    apputils.saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
   };
-  
-  function saveAs(uri:string, filename:string) {
-    var link:HTMLAnchorElement = <HTMLAnchorElement>document.createElement('a');
-    if (typeof link['download'] === 'string') {
-      link.href = uri;
-      link['download'] = filename;
-      //Firefox requires the link to be in the body
-      document.body.appendChild(link);
-      //simulate click
-      link.click();
-      //remove the link when done
-      document.body.removeChild(link);
-    } else window.open(uri);
-  }
 }]);

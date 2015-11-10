@@ -9,9 +9,8 @@
 /// <reference path="../../../../../public/vendor/babylonjs/babylon.2.2.d.ts" />
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
-/// <reference path="../shared/dataready.ts" />
-/// <reference path="../shared/currentstate.ts" />
-angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'Utils', 'ngTableParams', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, utils, ngTableParams) {
+/// <reference path="../services/apputils.ts" />
+angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, ngTableParams, apputils) {
         "use strict";
         var hasPhysics = true;
         var fric = 0.1;
@@ -242,13 +241,13 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 table.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move: false });
             table.checkCollisions = true;
             table.receiveShadows = true;
-            var gridmat = new BABYLON.StandardMaterial("grid", scene);
+            /*var gridmat:BABYLON.StandardMaterial = new BABYLON.StandardMaterial("grid", scene);
             gridmat.wireframe = true; //create wireframe
             gridmat.diffuseColor = BABYLON.Color3.Gray();
             grid = BABYLON.Mesh.CreateGround("grid", APP_CONST.fieldsize, APP_CONST.fieldsize, 6, scene, false); //used to show grid
             grid.position.y = 0.01;
             grid.scaling.y = 0.001;
-            grid.material = gridmat;
+            grid.material = gridmat;*/
             var animate = function () {
                 isSteadyState = true;
                 cubeslist.forEach(function (c) {
@@ -337,12 +336,12 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
         $scope.limStackToggle = function () {
             $scope.limStack = !$scope.limStack;
         };
-        $scope.curState = new cCurrentState();
+        $scope.curState = new apputils.cCurrentState();
         var genstates = $scope.$meteorCollection(GenStates);
         $scope.$meteorSubscribe("genstates").then(function (sid) { dataReady.update('genstates'); }, function (err) { console.log("error", arguments, err); });
         var screencaps = $scope.$meteorCollection(ScreenCaps);
         $scope.$meteorSubscribe("screencaps").then(function (sid) { dataReady.update('screencaps'); }, function (err) { console.log("error", arguments, err); });
-        var dataReady = new cDataReady(2, function () {
+        var dataReady = new apputils.cDataReady(2, function () {
             updateTableStateParams();
             $rootScope.dataloaded = true;
         });
@@ -437,7 +436,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 var myArr = used; //its an array
                 var halfsize = size / 2;
                 var halfrad = APP_CONST.fieldsize / 4; //near radius
-                var anchorIdx = myArr[utils.rndInt(0, myArr.length - 1)];
+                var anchorIdx = myArr[apputils.rndInt(0, myArr.length - 1)];
                 var aPos = idxdata[anchorIdx].position;
                 var fieldmin = -(APP_CONST.fieldsize / 2) + (size / 2);
                 var fieldmax = (APP_CONST.fieldsize / 2) - (size / 2);
@@ -446,7 +445,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 var val = APP_CONST.fieldsize;
                 var it = 0;
                 while (val > fieldmax || val < fieldmin) {
-                    val = utils.rndInt(min * mult, max * mult) / mult + aPos.x;
+                    val = apputils.rndInt(min * mult, max * mult) / mult + aPos.x;
                     if (it > 50) {
                         console.warn('it > 50 posx:', val);
                     }
@@ -456,7 +455,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 val = APP_CONST.fieldsize;
                 it = 0;
                 while (val > fieldmax || val < fieldmin) {
-                    val = utils.rndInt(min * mult, max * mult) / mult + aPos.z;
+                    val = apputils.rndInt(min * mult, max * mult) / mult + aPos.z;
                     if (it > 50) {
                         console.warn('it > 50 posz:', val);
                     }
@@ -473,7 +472,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 var myArr = used; //its an array
                 var halfsize = size / 2;
                 var halfrad = APP_CONST.fieldsize / 4; //avoid radius
-                var anchorIdx = myArr[utils.rndInt(0, myArr.length - 1)];
+                var anchorIdx = myArr[apputils.rndInt(0, myArr.length - 1)];
                 var aPos = idxdata[anchorIdx].position;
                 var fieldmin = -(APP_CONST.fieldsize / 2) + (size / 2);
                 var fieldmax = (APP_CONST.fieldsize / 2) - (size / 2);
@@ -485,8 +484,8 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                     val.z > fieldmax || val.z < fieldmin ||
                     (val.x > aPos.x + min && val.x < aPos.x + max
                         && val.z > aPos.z + min && val.z < aPos.z + max)) {
-                    val.x = utils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
-                    val.z = utils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
+                    val.x = apputils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
+                    val.z = apputils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
                     it++;
                     if (it > 50)
                         console.warn('it > 50 pos:', val);
@@ -506,7 +505,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
         var genCubeStack = function (size, used, idxdata) {
             if (used.length) {
                 var myArr = used; //its an array
-                var aidx = utils.rndInt(0, myArr.length - 1); //cube to move
+                var aidx = apputils.rndInt(0, myArr.length - 1); //cube to move
                 var anchorIdx = myArr[aidx];
                 var halfsize = idxdata[anchorIdx].prop.size / 2;
                 var aPos = idxdata[anchorIdx].position;
@@ -520,7 +519,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
         var genCubeState0 = function (used, idxdata) {
             var cid = null;
             while (cid === null || _.indexOf(used, cid) > -1) {
-                cid = Number(cubesid[utils.rndInt(0, cubesid.length - 1)]);
+                cid = Number(cubesid[apputils.rndInt(0, cubesid.length - 1)]);
             }
             var max = APP_CONST.fieldsize / 2 + 0.001; //give it a little wiggle room
             var min = -max;
@@ -534,7 +533,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
             var isRegen = true;
             while (isRegen) {
                 if (used.length) {
-                    var ltype = utils.rndInt(0, 9);
+                    var ltype = apputils.rndInt(0, 9);
                     if (ltype < 5) {
                         //console.warn('state0 near');
                         var cubeDat = genCubeNear(data.prop.size, used, idxdata);
@@ -557,7 +556,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 else {
                     var minloc = (-(APP_CONST.fieldsize / 2) + (data.prop.size / 2)) * mult;
                     var maxloc = ((APP_CONST.fieldsize / 2) - (data.prop.size / 2)) * mult;
-                    data.position = new BABYLON.Vector3(utils.rndInt(minloc, maxloc) / mult, (data.prop.size / 2), utils.rndInt(minloc, maxloc) / mult);
+                    data.position = new BABYLON.Vector3(apputils.rndInt(minloc, maxloc) / mult, (data.prop.size / 2), apputils.rndInt(minloc, maxloc) / mult);
                 }
                 if ((data.position.x - data.prop.size / 2) >= min && (data.position.x + data.prop.size / 2) <= max &&
                     (data.position.z - data.prop.size / 2) >= min && (data.position.z + data.prop.size / 2) <= max) {
@@ -621,9 +620,9 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 var cubeDat, acube, cubeStack;
                 while (isRegen) {
                     //let gencube choose a cube and create a position based on it
-                    var ltype = utils.rndInt(0, 19);
+                    var ltype = apputils.rndInt(0, 19);
                     if (cidlist.length < 2) {
-                        ltype = utils.rndInt(0, 9);
+                        ltype = apputils.rndInt(0, 9);
                     }
                     if (ltype < 10) {
                         if (ltype < 5) {
@@ -639,7 +638,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                     //now we randomly choose a cube outside of the anchor cube id to move to the new position
                     var mycid = cubeDat.anchorCid;
                     while (mycid == cubeDat.anchorCid && block_state.length > 1) {
-                        mycid = block_state[utils.rndInt(0, block_state.length - 1)].id;
+                        mycid = block_state[apputils.rndInt(0, block_state.length - 1)].id;
                     }
                     acube = cubeInWorld[mycid];
                     //check Y because we will move this stack
@@ -1314,7 +1313,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
             }
             var content = JSON.stringify(tempframe, null, 2);
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
-            saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
+            apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
         };
         $scope.getMove = function (idx) {
             var tempframe = { block_meta: $scope.curState.block_meta, block_state: [] };
@@ -1336,7 +1335,7 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
             }
             var content = JSON.stringify(tempframe, null, 2);
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
-            saveAs(uriContent, 'bw_state_' + $scope.curState._id + '_' + idx + '.json');
+            apputils.saveAs(uriContent, 'bw_state_' + $scope.curState._id + '_' + idx + '.json');
         };
         $scope.delMove = function (idx) {
             var count = $scope.curState.block_states.length - idx;
@@ -1348,21 +1347,6 @@ angular.module('angle').controller('genWorldCtrl', ['$rootScope', '$scope', '$st
                 console.warn(err.reason);
             });
         };
-        function saveAs(uri, filename) {
-            var link = document.createElement('a');
-            if (typeof link['download'] === 'string') {
-                link.href = uri;
-                link['download'] = filename;
-                //Firefox requires the link to be in the body
-                document.body.appendChild(link);
-                //simulate click
-                link.click();
-                //remove the link when done
-                document.body.removeChild(link);
-            }
-            else
-                window.open(uri);
-        }
         // Start by calling the createScene function that you just finished creating
         var scene;
         var grid;
