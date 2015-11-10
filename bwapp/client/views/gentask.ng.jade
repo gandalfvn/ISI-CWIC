@@ -40,7 +40,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       #stateb
     .col-sm-12
       hr
-      .fa.fa-exclamation-triangle(style='color:red') There are {{notes.length}} description entrie(s).  Each description MUST describe the scene completely.  Ensure each alternative description is DIFFERENT.
+      div(style='color:red;font-size:1.1em')
+        .fa.fa-exclamation-triangle
+        | There are {{notes.length}} description entrie(s).  Each description MUST describe the scene completely.  Ensure each alternative description is 
+        b DIFFERENT.
     h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
     .col-sm-11
       form(name='submitForm', action='{{submitTo}}', method='post')
@@ -54,7 +57,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             //-button.btn.btn-xs.btn-danger(title='Remove Description')
               .fa.fa-remove(ng-click='removeNote($index)')
           .col-sm-12(ng-show='$index > 0 && notes[$index-1].length > 13')
-            | Create another description different from the previous
+            | Create another description 
+            b DIFFERENT 
+            | from the previous
           .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
             b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
               .fa.fa-asterisk
