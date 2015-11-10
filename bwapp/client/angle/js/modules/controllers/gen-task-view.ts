@@ -207,11 +207,13 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
         var fixedNotes:string[] = _.compact(notes);
         if(!fixedNotes.length || fixedNotes.length != notes.length ){
           toaster.pop('error', 'All entries must be filled.');
+          $rootScope.dataloaded = true;
           return;
         }
         fixedNotes = _.uniq(fixedNotes);
         if(!fixedNotes.length || fixedNotes.length != notes.length ){
-          toaster.pop('error', 'Each description my be different.');
+          toaster.pop('error', 'Each description must be different.');
+          $rootScope.dataloaded = true;
           return;
         }
         
