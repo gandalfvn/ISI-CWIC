@@ -203,6 +203,18 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     }
     else{//new entry save as we go
       if($scope.hitId){
+        //error check length
+        var fixedNotes:string[] = _.compact(notes);
+        if(!fixedNotes.length || fixedNotes.length != notes.length ){
+          toaster.pop('error', 'All entries must be filled.');
+          return;
+        }
+        fixedNotes = _.uniq(fixedNotes);
+        if(!fixedNotes.length || fixedNotes.length != notes.length ){
+          toaster.pop('error', 'Each description my be different.');
+          return;
+        }
+        
         if(!$scope.hitdata.timed) $scope.hitdata.timed = {};
         if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
         if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();

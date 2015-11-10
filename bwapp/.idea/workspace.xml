@@ -2,29 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/angle/js/modules/services/apputils.ts" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/shared/currentstate.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/shared/currentstate.js.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/shared/currentstate.ts" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/shared/dataready.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/shared/dataready.js.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/shared/dataready.ts" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/services/utils.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/services/utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genjobs.ng.jade" afterPath="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/config.js" afterPath="$PROJECT_DIR$/server/config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js" afterPath="$PROJECT_DIR$/server/mturkhelper.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js.map" afterPath="$PROJECT_DIR$/server/mturkhelper.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.ts" afterPath="$PROJECT_DIR$/server/mturkhelper.ts" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -67,11 +49,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27402598">
-              <caret line="236" column="18" selection-start-line="236" selection-start-column="18" selection-end-line="236" selection-end-column="18" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="251" column="28" selection-start-line="251" selection-start-column="28" selection-end-line="251" selection-end-column="28" />
               <folding>
                 <marker date="1447183803000" expanded="true" signature="10175:10309" placeholder="{&quot;islist&quot;: false...}" />
               </folding>
@@ -89,11 +71,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-task-view.ts" pinned="false" current-in-tab="false">
+      <file leaf-file-name="gen-task-view.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="288" column="0" selection-start-line="288" selection-start-column="0" selection-end-line="288" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.52489907">
+              <caret line="216" column="0" selection-start-line="216" selection-start-column="0" selection-end-line="216" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-16.407408">
+              <caret line="64" column="292" selection-start-line="64" selection-start-column="288" selection-end-line="64" selection-end-column="296" />
               <folding />
             </state>
           </provider>
@@ -164,10 +156,10 @@
         <option value="$PROJECT_DIR$/client/angle/js/modules/shared/apputils.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/services/utils.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/services/apputils.ts" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-world-view.ts" />
         <option value="$PROJECT_DIR$/server/mturkhelper.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.ts" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.ts" />
       </list>
     </option>
   </component>
@@ -1149,14 +1141,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.5925926">
-          <caret line="10" column="33" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
@@ -1223,14 +1207,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="288" column="0" selection-start-line="288" selection-start-column="0" selection-end-line="288" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-17.518518">
@@ -1241,11 +1217,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-jobs-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27402598">
-          <caret line="236" column="18" selection-start-line="236" selection-start-column="18" selection-end-line="236" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="251" column="28" selection-start-line="251" selection-start-column="28" selection-end-line="251" selection-end-column="28" />
           <folding>
             <marker date="1447183803000" expanded="true" signature="10175:10309" placeholder="{&quot;islist&quot;: false...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-16.407408">
+          <caret line="64" column="292" selection-start-line="64" selection-start-column="288" selection-end-line="64" selection-end-column="296" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/controllers/gen-task-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.52489907">
+          <caret line="216" column="0" selection-start-line="216" selection-start-column="0" selection-end-line="216" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

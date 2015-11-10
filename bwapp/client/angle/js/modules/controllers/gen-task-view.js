@@ -185,6 +185,17 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             }
             else {
                 if ($scope.hitId) {
+                    //error check length
+                    var fixedNotes = _.compact(notes);
+                    if (!fixedNotes.length || fixedNotes.length != notes.length) {
+                        toaster.pop('error', 'All entries must be filled.');
+                        return;
+                    }
+                    fixedNotes = _.uniq(fixedNotes);
+                    if (!fixedNotes.length || fixedNotes.length != notes.length) {
+                        toaster.pop('error', 'Each description my be different.');
+                        return;
+                    }
                     if (!$scope.hitdata.timed)
                         $scope.hitdata.timed = {};
                     if (!$scope.hitdata.timed[$scope.workerId])
