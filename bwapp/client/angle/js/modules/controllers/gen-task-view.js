@@ -170,14 +170,13 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             img.src = b64img;
         };
         $scope.itrAnnot = function (notes, vdir) {
-            var previdx = $scope.taskidx;
-            $scope.taskidx += vdir;
-            if ($scope.taskidx != 0)
-                $scope.isOpenDir = false;
-            else
-                $scope.isOpenDir = true;
             $rootScope.dataloaded = false;
             if ($scope.submitter) {
+                $scope.taskidx += vdir;
+                if ($scope.taskidx != 0)
+                    $scope.isOpenDir = false;
+                else
+                    $scope.isOpenDir = true;
                 //read only submission already done
                 if ($scope.taskidx >= $scope.taskdata.idxlist.length)
                     $scope.taskidx = 0;
@@ -198,6 +197,12 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
                         $rootScope.dataloaded = true;
                         return;
                     }
+                    var previdx = $scope.taskidx;
+                    $scope.taskidx += vdir;
+                    if ($scope.taskidx != 0)
+                        $scope.isOpenDir = false;
+                    else
+                        $scope.isOpenDir = true;
                     if (!$scope.hitdata.timed)
                         $scope.hitdata.timed = {};
                     if (!$scope.hitdata.timed[$scope.workerId])
