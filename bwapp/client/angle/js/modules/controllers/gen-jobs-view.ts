@@ -19,7 +19,7 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
   var canvas = {width: 480, height: 360};
   $scope.dtOptionsAvail = {
     "lengthMenu": [[5], [5]],
-    "order": [[1, "asc"]],
+    "order": [[3, "desc"]],
     "language": {"paginate": {"next": '>', "previous": '<'}},
     "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
   };
