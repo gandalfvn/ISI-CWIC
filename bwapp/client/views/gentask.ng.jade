@@ -40,7 +40,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       #stateb
     .col-sm-12
       hr
-      .fa.fa-exclamation-triangle(style='color:red') Ensure each textbox description is DIFFERENT.
+      .fa.fa-exclamation-triangle(style='color:red') Ensure each alternative description is DIFFERENT.
     h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
     .col-sm-11
       form(name='submitForm', action='{{submitTo}}', method='post')
@@ -53,16 +53,18 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           //-.col-sm-1
             //-button.btn.btn-xs.btn-danger(title='Remove Description')
               .fa.fa-remove(ng-click='removeNote($index)')
-          .col-sm-12
-            b.pull-left(ng-show='!note.length || note.length < 10', style='font-size: 16px; color: red; width:2%; float: left')
+          .col-sm-12(ng-show='$index > 0 && notes[$index-1].length > 13')
+            | Please create another description different from the previous
+          .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
+            b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
               .fa.fa-asterisk
-            b.pull-left(ng-show='note.length > 9', style='font-size: 16px; color: green; width:2%;').fa.fa-check
+            b.pull-left(ng-show='note.length > 13', style='font-size: 16px; color: green; width:2%;').fa.fa-check
             .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
               textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
               textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
         button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
-        button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 9 && (notes[1] == undefined || notes[1].length > 9) && (notes[2] == undefined || notes[2].length > 9) && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-        button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 9 && (notes[1] == undefined || notes[1].length > 9) && (notes[2] == undefined || notes[2].length > 9) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
+        button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
+        button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
         h4(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
         
   .row-fluid.well.col-sm-12(ng-if='!assignmentId')
