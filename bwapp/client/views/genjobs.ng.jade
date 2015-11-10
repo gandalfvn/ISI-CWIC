@@ -120,7 +120,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-file-text-o
           | &nbsp; Job {{jobid}} Information
-      button.btn.btn-default(type='button', ng-model='options.isLive', btn-checkbox)
+      button.btn.btn-default.btn-xs(type='button', ng-model='options.isLive', btn-checkbox)
         .fa.fa-toggle-off(ng-show='!options.isLive')
           | &nbsp;Sandbox
         .fa.fa-toggle-on(ng-show='options.isLive')
