@@ -164,7 +164,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
                 htmlout += '<label id="' + eleLabelID + '" class="mb">' + caption + '</label>';
             $('<div>').attr({
                 id: eleDivID
-            }).addClass('col-sm-7')
+            }).addClass('col-sm-12')
                 .html(htmlout).css({}).appendTo('#' + attachID);
             var img = document.getElementById(eleImgID); // Use the created element
             img.src = b64img;

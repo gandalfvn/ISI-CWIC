@@ -183,7 +183,7 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
     if(caption) htmlout += '<label id="'+eleLabelID+'" class="mb">'+caption+'</label>';
     $('<div>').attr({
       id: eleDivID
-    }).addClass('col-sm-7')
+    }).addClass('col-sm-12')
       .html(htmlout).css({}).appendTo('#'+attachID);
 
     var img:HTMLImageElement = <HTMLImageElement>document.getElementById(eleImgID); // Use the created element
