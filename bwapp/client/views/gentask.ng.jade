@@ -87,9 +87,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   .col-sm-12(ng-repeat='notes in hitdata.notes[workerId] track by $index')
     .col-sm-12
       h3.pull-left {{$index+1}}
-      .col-sm-6
+      .col-sm-5
         div(id='statea{{$index}}')
-      .col-sm-6
+      .col-sm-5
         div(id='stateb{{$index}}')
     .col-sm-12
       div.mb-sm(ng-repeat='note in notes track by $index')
