@@ -99,13 +99,15 @@ angular.module('angle').controller('genWorldCtrl',
       //boxmat.specularColor = BABYLON.Color3.Black();
       boxmat.alpha = 1.0;
       //boxmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 1.0);
-      var boxt:BABYLON.Texture;
-      if($scope.showLogos)
-        boxt = new BABYLON.Texture("img/textures/logos/" + block.name.replace(/ /g, '') + '.png', scene);
-      else
-        boxt = numTextures[block.id];
-      boxt.uScale = boxt.vScale = 1;
-      boxmat.diffuseTexture = boxt;
+      if($scope.opt.showImages) {
+        var boxt:BABYLON.Texture;
+        if ($scope.opt.showLogos)
+          boxt = new BABYLON.Texture("img/textures/logos/" + block.name.replace(/ /g, '') + '.png', scene);
+        else
+          boxt = numTextures[block.id];
+        boxt.uScale = boxt.vScale = 1;
+        boxmat.diffuseTexture = boxt;
+      }
       //boxmat.diffuseColor = boxcolor;
       //boxmat.alpha = 0.8;
       /*var hSpriteNb =  14;  // 6 sprites per raw
@@ -371,11 +373,10 @@ angular.module('angle').controller('genWorldCtrl',
     };
 
     //**start app logic============================================================
-    $scope.showLogos = true;
-    $scope.limStack = true;
-    $scope.limStackToggle = function(){
-      $scope.limStack = !$scope.limStack;
-    };
+    $scope.opt = {};
+    $scope.opt.showImages = true;
+    $scope.opt.showLogos = true;
+    $scope.opt.limStack = true;
 
     $scope.curState = new apputils.cCurrentState();
 
@@ -681,8 +682,8 @@ angular.module('angle').controller('genWorldCtrl',
           cubeStack = getStackCubes(acube, used, mycid, true);
           //check stack for more than stack of 2 - meaning no stacking on top of stacks or move stacks on another
           var anchorStack:iCubeState[];
-          console.warn('$scope.limStack', $scope.limStack);
-          if($scope.limStack){ //check for stacking above two
+          console.warn('$scope.opt.limStack', $scope.opt.limStack);
+          if($scope.opt.limStack){ //check for stacking above two
             if(!cubeStack.length){
               //don't check Y because this is the base stack where things will move to
               //we also don't need to reference cube but by position
@@ -898,7 +899,7 @@ angular.module('angle').controller('genWorldCtrl',
       if(attachID) attachTo = '#'+attachID;
       $('<div>').attr({
         id: eleDivID
-      }).addClass('col-sm-4')
+      }).addClass('col-sm-12')
       .html(htmlout).css({}).appendTo(attachTo);
 
       var img:HTMLImageElement = <HTMLImageElement>document.getElementById(eleImgID); // Use the created element

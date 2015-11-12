@@ -95,13 +95,15 @@ angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$sta
         $scope.dlLinks = function (task) {
             console.warn(task);
             var content = [];
+            content.push('Example:');
             content.push($state.href('gentask', { taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE' }, { absolute: true }));
+            content.push('Results:');
             _.each(task.names, function (n) {
                 content.push($state.href('gentask', { taskId: task.tid, workerId: n, hitId: task.hid, report: 1 }, { absolute: true }));
             });
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content.join('\n'));
             console.warn(uriContent);
-            apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.json');
+            apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.txt');
         };
         var updateTableStateParams = function () {
             $scope.stateslist = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
