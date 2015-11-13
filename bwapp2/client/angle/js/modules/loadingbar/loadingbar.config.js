@@ -7,7 +7,8 @@
         ;
     loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
     function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
+      console.warn('LOAding BAR!!!')
+      cfpLoadingBarProvider.includeBar = false; //wjw no loading bar
       cfpLoadingBarProvider.includeSpinner = false;
       cfpLoadingBarProvider.latencyThreshold = 500;
       cfpLoadingBarProvider.parentSelector = '.wrapper > section';

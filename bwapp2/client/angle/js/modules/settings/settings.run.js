@@ -12,8 +12,8 @@
       // Global Settings
       // ----------------------------------- 
       $rootScope.app = {
-        name: 'Angle',
-        description: 'Angular Bootstrap Admin Template',
+        name: 'CWC ISI',
+        description: 'CWC ISI',
         year: ((new Date()).getFullYear()),
         layout: {
           isFixed: true,

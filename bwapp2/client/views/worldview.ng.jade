@@ -1,0 +1,78 @@
+//-**=========================================================
+  * Module: worldview.ng.jade
+  * Created by wjwong on 7/27/15.
+  =========================================================*/
+//-h3
+  | Welcome to {{app.name}}
+  small
+  //-small {{ "dashboard.WELCOME" | translate:{ appName: } }} !
+toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
+.row
+  div(style="position: absolute; z-index: 10;" class="col-sm-12")
+    div(style='margin-top: 14px')
+      .btn-group.mb-sm.pull-right(dropdown="dropdown")
+        button.btn.dropdown-toggle.btn-default(type="button", ng-disabled="disabled", dropdown-toggle="", aria-haspopup="true", aria-expanded="true")
+          .fa.fa-cog &nbsp;Settings&nbsp;
+          span.caret
+        ul.dropdown-menu(role="menu")
+          li
+            a(ng-click='resetWorld();')
+              .fa.fa-refresh  Reset
+          li
+            a(ng-click='toggleGrid();')
+              .fa.fa-th-large  Grid
+      .pull-right &nbsp;&nbsp;
+      button.btn.btn-default.pull-right(ng-show='recstatus === "s" && !replaydata.act.length', ng-click='setRecStat("r")')
+        .glyphicons.record Record
+      button.btn.btn-default.pull-right(ng-show='recstatus === "r" && replaydata.act.length',ng-click='setRecStat("s")')
+        .glyphicons.stop Stop
+      .btn-group.mb-sm.pull-right(ng-show='recstatus === "s" && replaydata.act.length',dropdown="dropdown")
+        button.btn.dropdown-toggle.btn-default(type="button", ng-disabled="disabled", dropdown-toggle="", aria-haspopup="true", aria-expanded="true")
+          .fa.fa-video-camera &nbsp;Capture&nbsp;
+          span.caret
+        ul.dropdown-menu(role="menu")
+          li(ng-show='recstatus === "s"')
+            a(ng-click='setRecStat("r")')
+              .glyphicons.record(ng-show='!replaydata.act.length') Record
+              .glyphicons.record(ng-show='replaydata.act.length') Cont' Record
+          li(ng-show='replaydata.act.length && recstatus === "s"')
+            a(ng-click='setRecStat("d")')
+              .glyphicons.remove_2 Clear
+          li.divider(ng-show='replaydata.act.length && recstatus === "s"')
+          li(ng-show='replaydata.act.length && recstatus === "s"')
+            a(ng-click='saveReplay()')
+              .glyphicons.floppy_save Save
+      .pull-right &nbsp;&nbsp;
+    #panelInst.panel.panel-default.notouch.col-sm-4.shadowbox(style='background-color: rgba(255,255,255,0.5)')
+      .panel-heading(ng-class="{'panel-heading-collapsed':panelInst}", style='background-color: rgba(255,255,255,0.0)')
+        strong Navigation
+        paneltool(tool-collapse, ng-init="panelInst=false")
+      .panel-wrapper(collapse="panelInst")
+        .panel-body
+          strong Move Camera: 
+          | Use WASD keys
+          br
+          strong Move Blocks: 
+          | Click and hold to drag and drop blocks
+          br
+          strong Point Camera: 
+          | Click and move mouse to pivot camera
+          br
+          strong Move Up/Down: 
+          | Hold block, then press SHIFT key
+          br
+          | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and move mouse up/down
+          br
+          strong Rotate: 
+          | Hold block, then press ALT key
+
+  canvas(id="renderCanvasBab" style='width: 100%; height: 800px;')
+  canvas(id="canvas_2D")
+  
+script#didReplayName(type="text/ng-template")
+  form.form-inline.ng-pristine.ng-valid(role="form",novalidate, name='replayname', ng-submit='closeThisDialog(savename)')
+    .form-group
+      input.form-control(type="text", placeholder="Recording Name", required, ng-minlength="4" ng-model='savename', name="name")
+      button.btn.btn-default(ng-show='replayname.$valid', type="submit") Save
+      label.error(style='color:red', ng-show="replayname.name.$error.required", title='Required field') *Required 
+      label.error(style='color:red', ng-show="replayname.name.$error.minlength", title='Must have at least 4 characters') Too short!

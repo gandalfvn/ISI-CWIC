@@ -1,68 +1,87 @@
 (function() {
-    'use strict';
+  'use strict';
 
-    angular
-        .module('app.core')
-        .run(appRun);
+  angular
+      .module('app.core')
+      .run(appRun);
 
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
+  appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+  
+  function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
 
-      // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });*/
+    // Set reference to access them from any scope
+    $rootScope.$state = $state;
+    $rootScope.$stateParams = $stateParams;
+    $rootScope.$storage = $window.localStorage;
 
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
+    // Uncomment this to disable template cache
+    /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+     if (typeof(toState) !== 'undefined'){
+     $templateCache.remove(toState.templateUrl);
+     }
+     });*/
 
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
+    // Allows to use branding color with interpolation
+    // {{ colorByName('primary') }}
+    $rootScope.colorByName = Colors.byName;
 
-      // Hooks Example
-      // ----------------------------------- 
+    // cancel click event easily
+    $rootScope.cancel = function ($event) {
+      $event.stopPropagation();
+    };
 
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
+    // Hooks Example
+    // ----------------------------------- 
+    $rootScope.isRole = function(usr, role){
+      return (usr.profile.roles.indexOf(role) > -1)
+    };
 
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
+    // Hook not found
+    $rootScope.$on('$stateNotFound',
+      function (event, unfoundState/*, fromState, fromParams*/) {
+        console.log(unfoundState.to); // "lazy.state"
+        console.log(unfoundState.toParams); // {a:1, b:2}
+        console.log(unfoundState.options); // {inherit:false} + default options
+      });
+    // Hook error
+    $rootScope.$on('$stateChangeError',
+      function (event, toState, toParams, fromState, fromParams, error) {
+        // We can catch the error thrown when the $requireUser promise is rejected
+        // and redirect the user back to the main page
+        if (error === "AUTH_REQUIRED") {
+          $state.go('main');
+        }
+        else if (error === "FORBIDDEN") {
+          $state.go('app.root');
+        }
+        else console.warn(error);
+      });
+    // Hook success
+    $rootScope.$on('$stateChangeSuccess',
+      function (/*event, toState, toParams, fromState, fromParams*/) {
+        // display new view from top
+        $window.scrollTo(0, 0);
+        // Save the route title
+        $rootScope.currTitle = $state.current.title;
+      });
 
-    }
+    //setup account callbacks
+    accountsUIBootstrap3.logoutCallback = function (err) {
+      console.warn('logout');
+      if (err) console.log("Error:" + err);
+      $state.go('main');
+    };
+    Accounts.config({forbidClientAccountCreation: true});
+
+    // Load a title dynamically
+    $rootScope.currTitle = $state.current.title;
+    $rootScope.pageTitle = function () {
+      var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+      document.title = title;
+      return title;
+    };
+
+  }
 
 })();
 

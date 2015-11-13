@@ -4,10 +4,31 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-platform
-autopublish
 insecure
 less
-urigo:angular
 http
 cfs:http-methods
+standard-minifiers
+meteor-base
+mobile-experience
+mongo
+blaze-html-templates
+session
+jquery
+tracker
+logging
+reload
+random
+ejson
+spacebars
+check
+accounts-password
+angular-with-blaze
+civilframe:angular-jade
+ian:accounts-ui-bootstrap-3
+meteorhacks:npm
+
+
+npm-container
+urigo:angular-blaze-template
+twbs:bootstrap
