@@ -106,7 +106,6 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             if ($scope.taskdata.tasktype == 'action') {
                 var aidx = $scope.taskdata.idxlist[idx][0];
                 var bidx = $scope.taskdata.idxlist[idx][1];
-                console.warn('aidx', aidx, $scope.curState.block_states[aidx], $scope.hitdata.notes[$scope.workerId]);
                 $('#statea' + idx).empty();
                 $('#stateb' + idx).empty();
                 var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
