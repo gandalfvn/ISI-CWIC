@@ -4,8 +4,8 @@
  =========================================================*/
 serverconfig = {
   mturk: {
-    access: '',
-    secret: '',
+    access: 'AKIAIBBUCNZECQMX3JDQ',
+    secret: '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',
     sandbox: true
   }
 };

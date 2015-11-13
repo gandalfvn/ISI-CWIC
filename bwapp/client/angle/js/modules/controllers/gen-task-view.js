@@ -46,6 +46,9 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
                 if ($scope.workerId === 'EXAMPLE')
                     $scope.submitter = true;
                 var isValid = true;
+                if (!$scope.assignmentId && !$stateParams.report) {
+                    return $rootScope.dataloaded = true;
+                }
                 if ($scope.hitId) {
                     //load hit
                     $scope.hitdata = GenJobsMgr.findOne('H_' + $scope.hitId);
@@ -96,13 +99,14 @@ angular.module('angle').controller('genTaskCtrl', ['$rootScope', '$scope', '$sta
             }
         });
         var renderReport = function (idx) {
-            if (_.isUndefined($scope.taskdata.idxlist[idx])) {
+            if (_.isUndefined($scope.hitdata.notes[$scope.workerId][idx])) {
                 $rootScope.dataloaded = true;
                 return;
             }
             if ($scope.taskdata.tasktype == 'action') {
                 var aidx = $scope.taskdata.idxlist[idx][0];
                 var bidx = $scope.taskdata.idxlist[idx][1];
+                console.warn('aidx', aidx, $scope.curState.block_states[aidx], $scope.hitdata.notes[$scope.workerId]);
                 $('#statea' + idx).empty();
                 $('#stateb' + idx).empty();
                 var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];

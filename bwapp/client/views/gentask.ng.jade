@@ -8,7 +8,7 @@
       i.fa.fa-4x.fa-spin.fa-cube
       h3(style="color:#23b7e5;") Loading...
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
-.container-fluid(ng-if='!report')
+.container-fluid(ng-if='!report && assignmentId')
   accordion(ng-if='taskdata.tasktype == "action"')
     accordion-group.panel-primary(is-open="isOpenDir")
       accordion-heading
@@ -72,9 +72,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
         h4(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
         
-  .row-fluid.well.col-sm-12(ng-if='!assignmentId')
-    .col-sm-12
-      h3(style='color: red') This Job is unavailable.
+.row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
+  .col-sm-12
+    h3(style='color: red') This Job is unavailable.
 //-report view
 .container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
   .row-fluid
