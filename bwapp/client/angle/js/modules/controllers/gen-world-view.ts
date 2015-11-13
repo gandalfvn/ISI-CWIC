@@ -99,6 +99,7 @@ angular.module('angle').controller('genWorldCtrl',
       //boxmat.specularColor = BABYLON.Color3.Black();
       boxmat.alpha = 1.0;
       //boxmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 1.0);
+      var faceCol:BABYLON.Color4[] = new Array(6);
       if($scope.opt.showImages) {
         var boxt:BABYLON.Texture;
         if ($scope.opt.showLogos)
@@ -107,6 +108,16 @@ angular.module('angle').controller('genWorldCtrl',
           boxt = numTextures[block.id];
         boxt.uScale = boxt.vScale = 1;
         boxmat.diffuseTexture = boxt;
+        for (var i = 0; i < 6; i++) {
+          var cv:BABYLON.Color3 = colorids[block.shape.shape_params['face_'+(i+1)].color];
+          faceCol[i] = new BABYLON.Color4(cv.r, cv.g, cv.b, 1);
+        }
+      }
+      else{
+        var cv:BABYLON.Color3 = colorids['yellow'];
+        for (var i = 0; i < 6; i++) {
+          faceCol[i] = new BABYLON.Color4(cv.r, cv.g, cv.b, 1);
+        }
       }
       //boxmat.diffuseColor = boxcolor;
       //boxmat.alpha = 0.8;
@@ -116,11 +127,6 @@ angular.module('angle').controller('genWorldCtrl',
       for (var i = 0; i < 6; i++) {
         faceUV[i] = new BABYLON.Vector4(0/hSpriteNb, 0, 1/hSpriteNb, 1 / vSpriteNb);
       }*/
-      var faceCol:BABYLON.Color4[] = new Array(6);
-      for (var i = 0; i < 6; i++) {
-        var cv:BABYLON.Color3 = colorids[block.shape.shape_params['face_'+(i+1)].color];
-        faceCol[i] = new BABYLON.Color4(cv.r, cv.g, cv.b, 1);
-      }
       var opt = {
         width: boxsize,
         height: boxsize,
