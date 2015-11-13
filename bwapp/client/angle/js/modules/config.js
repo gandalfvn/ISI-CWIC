@@ -212,8 +212,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper, $sceDel
 
 }]).config(['$ocLazyLoadProvider', 'APP_REQUIRES', function ($ocLazyLoadProvider, APP_REQUIRES) {
     'use strict';
-
-    // Lazy Load modules configuration
+  
+  // Lazy Load modules configuration
     $ocLazyLoadProvider.config({
       debug: false,
       events: true,
