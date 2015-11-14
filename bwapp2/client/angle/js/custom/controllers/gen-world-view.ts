@@ -34,7 +34,7 @@ interface iBlockImport{
   block_state?: iBlockStateSerial[]
 }
 
-angular.module('angle').controller('genWorldCtrl',
+angular.module('app.generate').controller('genWorldCtrl',
   ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, ngTableParams, apputils){
     "use strict";
     

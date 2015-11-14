@@ -12,7 +12,7 @@
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../../../../../server/mturkhelper.ts" />
 /// <reference path="../services/apputils.ts" />
-angular.module('angle').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function ($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils) {
+angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function ($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils) {
         "use strict";
         var canvas = { width: 480, height: 360 };
         $scope.dtOptionsAvail = {
