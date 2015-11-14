@@ -13,30 +13,37 @@
 /// <reference path="../../../../../server/mturkhelper.ts" />
 /// <reference path="../services/apputils.ts" />
 
-angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils){
+angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', 'DTOptionsBuilder', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils, DTOptionsBuilder){
   "use strict";
 
   var canvas = {width: 480, height: 360};
-  $scope.dtOptionsAvail = {
-    "lengthMenu": [[5], [5]],
-    "order": [[3, "desc"]],
-    "language": {"paginate": {"next": '>', "previous": '<'}},
-    "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-  };
 
-  $scope.dtOptionsGrp = {
+  $scope.dtOptionsBootstrap = DTOptionsBuilder.newOptions()
+    .withBootstrap()
+    .withBootstrapOptions({
+      pagination: {
+        classes: {
+          ul: 'pagination pagination-sm'
+        }
+      }
+    });
+
+  $scope.dtOptionsAvail = _.extend({}, $scope.dtOptionsBootstrap, {
+   "lengthMenu": [[5], [5]],
+   "order": [[3, "desc"]],
+   "language": {"paginate": {"next": '▶', "previous": '◀'}},
+   "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
+   });
+
+  $scope.dtOptionsGrp = _.extend({}, $scope.dtOptionsAvail, {
     "lengthMenu": [[10], [10]],
     "order": [[2, "desc"]],
-    "language": {"paginate": {"next": '>', "previous": '<'}},
-    "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-  };
+  });
 
-  $scope.dtOptionsTask = {
+  $scope.dtOptionsTask = _.extend({}, $scope.dtOptionsAvail, {
     "lengthMenu": [[10], [10]],
     "order": [[0, "desc"]],
-    "language": {"paginate": {"next": '>', "previous": '<'}},
-    "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
-  };
+  });
 
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(

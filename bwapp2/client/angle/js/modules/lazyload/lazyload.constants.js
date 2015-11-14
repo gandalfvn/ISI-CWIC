@@ -45,9 +45,14 @@
               'vendor/ng-table/dist/ng-table.js'
             ]},
             {name: 'datatables',              files: [
-              'vendor/datatables/media/css/jquery.dataTables.css',
-              'vendor/datatables/media/js/jquery.dataTables.js',
-              'vendor/angular-datatables/dist/angular-datatables.min.js'], serie: true}
+              //'vendor/datatables/media/css/jquery.dataTables.css',
+              'vendor/datatables/media/js/jquery.dataTables.min.js',
+              //'vendor/datatables/media/css/dataTables.bootstrap.css',
+              //'vendor/datatables/media/js/dataTables.bootstrap.js',
+              'vendor/angular-datatables/dist/angular-datatables.min.js',
+              'vendor/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
+              'vendor/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css'
+            ], serie: true}
           ]
         })
         ;
