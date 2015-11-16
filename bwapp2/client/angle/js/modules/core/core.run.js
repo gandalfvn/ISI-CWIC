@@ -63,6 +63,7 @@
         $window.scrollTo(0, 0);
         // Save the route title
         $rootScope.currTitle = $state.current.title;
+        $rootScope.dataloaded = false;
       });
 
     //setup account callbacks

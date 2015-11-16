@@ -26,7 +26,8 @@
             'app.translate',
             'app.settings',
             'app.utils',
-            'app.generate'
+            'app.generate',
+            'app.togglestate'
         ]);
     
     if (Meteor.isCordova)

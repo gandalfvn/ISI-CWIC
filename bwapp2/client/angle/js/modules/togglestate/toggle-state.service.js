@@ -3,7 +3,7 @@
  * Services to share toggle state functionality
  =========================================================*/
 
-angular.module('angle').service('toggleStateService', ['$rootScope', function($rootScope) {
+angular.module('app.togglestate').service('toggleStateService', ['$rootScope', function($rootScope) {
 
   var storageKeyName  = 'toggleState';
 

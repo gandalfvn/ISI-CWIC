@@ -6,7 +6,7 @@
  * User no-persist to avoid saving the sate in browser storage
  =========================================================*/
 
-angular.module('angle').directive('toggleState', ['toggleStateService', function(toggle) {
+angular.module('app.togglestate').directive('toggleState', ['toggleStateService', function(toggle) {
   'use strict';
   
   return {

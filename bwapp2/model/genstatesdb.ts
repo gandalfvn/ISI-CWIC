@@ -4,6 +4,20 @@
  =========================================================*/
 /// <reference path="../server/typings/meteor/meteor.d.ts" />
 
+declare var cBlockDecor:any;
+
+cBlockDecor = class cBlockDecorDef{
+  static digit = 'digit';
+  static logo = 'logo';
+  static blank = 'blank';
+};
+
+interface iBlockDecor{
+  digit: string,
+  logo: string,
+  blank: string
+}
+
 interface iGenStates {
   _id: string,
   block_meta: iBlockMeta,
@@ -31,6 +45,7 @@ interface iPosRot{
 }
 
 interface iBlockMeta {
+  decoration?: iBlockDecor,
   blocks: Array<iBlockMetaEle>
 }
 

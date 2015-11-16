@@ -1101,6 +1101,14 @@ angular.module('app.generate').controller('genWorldCtrl',
         cubesused.push(b.id);
       });
       cubesused = _.uniq(cubesused);
+      if(!$scope.curState.block_meta.decoration){
+        //set decoration if we don't have one
+        if(!$scope.opt.showImages) $scope.curState.block_meta.decoration = cBlockDecor.blank;
+        else{
+          if($scope.opt.showLogos) $scope.curState.block_meta.decoration = cBlockDecor.logo;
+          else $scope.curState.block_meta.decoration = cBlockDecor.digit;
+        }
+      }
       $scope.curState.name = savename;
       console.warn('saveImport');
       var params:iMoveItr = {itr: 0, startMove: null, cubesused: cubesused};
@@ -1165,6 +1173,7 @@ angular.module('app.generate').controller('genWorldCtrl',
             $scope.curState.public = true;
             $scope.curState.created = (new Date).getTime();
             $scope.curState.creator = $rootScope.currentUser._id;
+            setDecorVal(filedata.block_meta.decoration);
             
             console.warn($scope.curState.block_meta);
             createObjects($scope.curState.block_meta.blocks);
@@ -1190,6 +1199,28 @@ angular.module('app.generate').controller('genWorldCtrl',
       console.warn($scope.statefilename);
     };
     
+    var setDecorVal = function(decor){
+      if(decor){
+        $scope.$apply(function(){
+          //set switches
+          switch(decor){
+            case cBlockDecor.digit:
+              $scope.opt.showImages = true;
+              $scope.opt.showLogos = false;
+              break;
+            case cBlockDecor.logo:
+              $scope.opt.showImages = true;
+              $scope.opt.showLogos = true;
+              break;
+            case cBlockDecor.blank:
+              $scope.opt.showImages = false;
+              $scope.opt.showLogos = false;
+              break;
+          }
+        })
+      }
+    }
+
     $scope.loadStates = function(){
       if($scope.statesfilename && $scope.statesfilename.length){
         //read file
@@ -1206,6 +1237,7 @@ angular.module('app.generate').controller('genWorldCtrl',
             $scope.curState.public = true;
             $scope.curState.created = (new Date).getTime();
             $scope.curState.creator = $rootScope.currentUser._id;
+            setDecorVal(filedata.block_meta.decoration);
 
             console.warn($scope.curState.block_meta);
             createObjects($scope.curState.block_meta.blocks);

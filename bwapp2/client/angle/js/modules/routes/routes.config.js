@@ -28,7 +28,6 @@
         url: '',
         abstract: true,
         templateUrl: helper.basepath('app.html'),
-        controller: 'AppController',
         resolve: helper.resolveFor('modernizr', 'icons', 'toaster')
       })
       .state('app.root', {
