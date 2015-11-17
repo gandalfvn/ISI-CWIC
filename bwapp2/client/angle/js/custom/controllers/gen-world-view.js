@@ -1131,6 +1131,11 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         createObjects($scope.curState.block_meta.blocks);
                         //mung block_state
                         //filedata.block_state = mungeBlockState(filedata.block_state);
+                        $scope.$apply(function () {
+                            $scope.impFilename = null;
+                            $scope.enableImpSave = false;
+                            $scope.isgen = true;
+                        });
                         var block_state = mungeBlockState(filedata.block_state);
                         showFrame({ block_state: block_state }, function () {
                             $scope.$apply(function () {
@@ -1139,6 +1144,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                                 else
                                     $scope.impFilename = $scope.statefilename[0].name.toLowerCase().replace(/\.json/g, '');
                                 $scope.enableImpSave = true;
+                                $scope.isgen = false;
                             });
                         });
                     }
@@ -1195,6 +1201,11 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         createObjects($scope.curState.block_meta.blocks);
                         //mung block_states
                         $scope.curState.block_states = mungeBlockStates(filedata.block_states);
+                        $scope.$apply(function () {
+                            $scope.impFilename = null;
+                            $scope.enableImpSave = false;
+                            $scope.isgen = true;
+                        });
                         var itrFrame = function (idx, block_states, cb) {
                             if (_.isUndefined(block_states[idx])) {
                                 $scope.$apply(function () {
@@ -1203,6 +1214,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                                     else
                                         $scope.impFilename = $scope.statesfilename[0].name.toLowerCase().replace(/\.json/g, '');
                                     $scope.enableImpSave = true;
+                                    $scope.isgen = false;
                                 });
                                 return cb();
                             }

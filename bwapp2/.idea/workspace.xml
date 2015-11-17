@@ -2,22 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/lib/js/togglestate.module.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/main.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/directives/toggle-state.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/services/toggle-state.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../bwapp/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp/server/config.js" afterPath="$PROJECT_DIR$/../bwapp/server/config.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/core/core.run.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/core/core.run.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/lib/js/app.module.js" afterPath="$PROJECT_DIR$/client/lib/js/app.module.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/genstatesdb.js" afterPath="$PROJECT_DIR$/model/genstatesdb.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/genstatesdb.js.map" afterPath="$PROJECT_DIR$/model/genstatesdb.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/genstatesdb.ts" afterPath="$PROJECT_DIR$/model/genstatesdb.ts" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,8 +30,8 @@
       <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6554509">
-              <caret line="1216" column="43" selection-start-line="1216" selection-start-column="43" selection-end-line="1216" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.6769852">
+              <caret line="1264" column="39" selection-start-line="1264" selection-start-column="39" selection-end-line="1264" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -51,18 +40,8 @@
       <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-38.333332">
-              <caret line="69" column="52" selection-start-line="69" selection-start-column="48" selection-end-line="69" selection-end-column="52" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bw_scene_2iyTqdXdAfRXt8NQ5.json" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Downloads/bwdata/bw_scene_2iyTqdXdAfRXt8NQ5.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.375">
-              <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+            <state vertical-scroll-proportion="-16.37037">
+              <caret line="97" column="35" selection-start-line="97" selection-start-column="30" selection-end-line="97" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -1180,22 +1159,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/directives/panel-tools.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="44" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/lib/js/core.module.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/modules/colors/colors.contant.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1564,14 +1527,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-38.333332">
-          <caret line="69" column="52" selection-start-line="69" selection-start-column="48" selection-end-line="69" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/genstatesdb.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1588,10 +1543,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../digitstates/MTurk/Dev/17_Num1.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5410292">
+          <caret line="0" column="17457" selection-start-line="0" selection-start-column="17457" selection-end-line="0" selection-end-column="17457" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../digitstates/MTurk/Dev/7_Num0.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5978552">
+          <caret line="0" column="23607" selection-start-line="0" selection-start-column="23607" selection-end-line="0" selection-end-column="23607" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-16.37037">
+          <caret line="97" column="35" selection-start-line="97" selection-start-column="30" selection-end-line="97" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6554509">
-          <caret line="1216" column="43" selection-start-line="1216" selection-start-column="43" selection-end-line="1216" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.6769852">
+          <caret line="1264" column="39" selection-start-line="1264" selection-start-column="39" selection-end-line="1264" selection-end-column="39" />
           <folding />
         </state>
       </provider>
