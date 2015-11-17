@@ -154,7 +154,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr
             th Created
             th HIT Id
-            th #Assign
+            th Info
             th Task Id
             th Turker
         tbody
@@ -163,7 +163,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
               span(ng-show='!task.islive', style='color:grey') Sandbox
-            td {{task.asnleft}}
+            td Asn: {{task.asnleft}} &nbsp; {{task.reward.Amount | currency: '$'}}
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}

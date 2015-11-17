@@ -79,7 +79,11 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     time: number, 
     name?: string, 
     names?: string[],
-    tid: string, hid: string, islive: boolean
+    tid: string, hid: string, islive: boolean,
+    reward: {
+      Amount: number,
+      CurrencyCode: string
+    }
   }
 
   var getDoneASNs = function(): iSortHITs[]{
@@ -102,9 +106,10 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   var getAllHITs= function(): {active: iSortHITs[], done: iSortHITs[]}{
     var jobs:iGenJobsHIT[] = GenJobsMgr.find(
       {HITId: {$exists: true}}
-      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'created': 1, 'islive': 1}}
+      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1}}
       , {sort: {'created': -1}}
     ).fetch();
+    console.warn('jobs', jobs);
     var activeHITs = [];
     var doneHITs = [];
     _.each(jobs, function(j){
@@ -117,9 +122,9 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
         })
       }
       if(asnleft)
-        activeHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive});
+        activeHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
       else
-        doneHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive});
+        doneHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
     });
     if(activeHITs.length || doneHITs.length) {
       if (activeHITs.length)
