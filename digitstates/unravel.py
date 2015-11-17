@@ -1,5 +1,11 @@
 import os,sys,math,random,json
 
+firstBlock = {}
+# Closest to recent and center of mass
+for line in open("map.txt",'r'):
+  line = line.split()
+  firstBlock[line[0]] = int(line[1])
+
 # Set of brands for labeling blocks
 brands = [ \
 'adidas', 'bmw', 'burger king', 'coca cola', 'esso',  \
@@ -45,8 +51,7 @@ def location(blockid, locations):
 def dist(ax,ay,az,x,y,z):
   return math.sqrt((ax-x)**2 + (ay-y)**2 + (az-z)**2)
 
-def closest_block(anchor, moveable, locations):
-  xa,ya,za = location(anchor, locations)
+def closest_block( (xa, ya, za) , moveable, locations):
   smallest = 100
   smallest_block = -1
   for (blockid,x,y,z) in locations:
@@ -105,23 +110,40 @@ for i in range(len(ids)):
         tomove.append( uniq_id+1 )
         uniq_id += 1
 
-    # Choose a random initial block
-    #moving = tomove[random.randint(0,len(tomove)-1)]
-
     # Choose an "outlier" initial block
-    average_x = 0
-    average_z = 0
-    for block,x,y,z in blocks:
-      average_x += x
-      average_z += z
-    average_x /= len(blocks)
-    average_z /= len(blocks)
-    moving = furthest(average_x, average_z, blocks)
+    # Option 1:   Look it up
+    #   moving = firstBlock[imageID]
+    # Option 2:   Outlier:  fewest blocks in radius < 0.25
+    radius = {}
+    for block in blocks:
+      radius[block[0]] = []
+      for other in blocks:
+        if other != block and dist(block[1],block[2],block[3],other[1],other[2],other[3]) < 0.25:
+          radius[block[0]].append(other)
 
+    moving = 1
+    for block in radius:
+      if len(radius[block]) < len(radius[moving]):
+        moving = block
+
+    (mx,my,mz) = location(moving, blocks)
+    (cx,cy,cz) = random_not_intersecting(blocks)
+    j["block_states"].append({"block_state":[]})
+    for i in range(len(blocks)):
+      block,x,y,z = blocks[i]
+      if block != moving:
+        j["block_states"][len(j["block_states"])-1]["block_state"].append( \
+            {"id": block, "position": "%f,%f,%f" % (x,y,z)})
+      else:
+        j["block_states"][len(j["block_states"])-1]["block_state"].append( \
+            {"id": moving, "position": "%f,%f,%f" % (cx,cy,cz)})
+        blocks[i] = (moving,cx,cy,cz)
     tomove.remove(moving)
+
     # Unravel backwards
     while len(tomove) > 0:
-      closest = closest_block(moving,tomove,blocks)
+      closest = closest_block((mx,my,mz),tomove,blocks)
+      (mx,my,mz) = location(closest, blocks)
       (cx,cy,cz) = random_not_intersecting(blocks)
       j["block_states"].append({"block_state":[]})
       for i in range(len(blocks)):
@@ -134,6 +156,7 @@ for i in range(len(ids)):
               {"id": closest, "position": "%f,%f,%f" % (cx,cy,cz)})
           blocks[i] = (closest,cx,cy,cz)
       tomove.remove(closest)
+      moving = closest
 
     # Reverse the movements
     j["block_states"] = j["block_states"][::-1]
