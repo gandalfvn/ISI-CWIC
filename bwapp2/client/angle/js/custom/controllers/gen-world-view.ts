@@ -1094,6 +1094,8 @@ angular.module('app.generate').controller('genWorldCtrl',
     };
 
     $scope.saveImport = function(savename:string){
+      $rootScope.dataloaded = false;
+
       $scope.impFilename = null;
       $scope.enableImpSave = false;
       var cubesused:number[] = [];
@@ -1121,6 +1123,7 @@ angular.module('app.generate').controller('genWorldCtrl',
             $scope.curcnt = 0;
             updateTableStateParams();
           }
+          $rootScope.dataloaded = true;
         });
       }, 400);
     };

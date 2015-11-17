@@ -1045,6 +1045,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             $scope.resetWorld();
         };
         $scope.saveImport = function (savename) {
+            $rootScope.dataloaded = false;
             $scope.impFilename = null;
             $scope.enableImpSave = false;
             var cubesused = [];
@@ -1076,6 +1077,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         $scope.curcnt = 0;
                         updateTableStateParams();
                     }
+                    $rootScope.dataloaded = true;
                 });
             }, 400);
         };
