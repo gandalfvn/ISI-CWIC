@@ -956,6 +956,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
          * @param sid
          */
         $scope.showState = function (sid) {
+            $rootScope.dataloaded = false;
             $scope.enableImpSave = false;
             //we must get the state for this sid
             $scope.$meteorSubscribe("genstates", sid).then(function (sub) {
@@ -970,8 +971,10 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 createObjects($scope.curState.block_meta.blocks);
                 showFrame(myframe.block_states[$scope.curitr]);
                 function itrScreencap(idx, list, cb) {
-                    if (_.isUndefined(list[idx]))
+                    if (_.isUndefined(list[idx])) {
+                        $rootScope.dataloaded = true;
                         return cb();
+                    }
                     var scid = list[idx].screencapid;
                     $scope.$meteorSubscribe("screencaps", scid).then(function (sub) {
                         var screen = ScreenCaps.findOne({ _id: scid });
