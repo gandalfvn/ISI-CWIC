@@ -1,13 +1,16 @@
 import math
 import numpy as np
 
+
 class Data:
-  def oneHot(self, num, dim):
-    v = [0]*dim
+  @staticmethod
+  def onehot(num, dim):
+    v = [0] * dim
     v[num] = 1
     return v
 
-  def numbers(self, mat):
+  @staticmethod
+  def numbers(mat):
     num = []
     for vec in mat:
       n = 0
@@ -25,73 +28,73 @@ class Data:
     for each dimension, subtract its mean over the dataset
     and divide by (its std over the dataset + 1e-6)
   """
-  def norm(self,vec, mu, sig):
-    nVec = []
-    for i in range(len(vec)):
-      nVec.append((float(vec[i])-mu[i])/sig[i])
-    return nVec
 
-  def __init__(self, maxLines=1000000, separate=True, onehot=True):
+  @staticmethod
+  def norm(vec, mu, sig):
+    nvec = []
+    for i in range(len(vec)):
+      nvec.append((float(vec[i]) - mu[i]) / sig[i])
+    return nvec
+
+  def __init__(self, maxlines=1000000, separate=True, onehot=True):
     ## Build Vocabulary ##
-    Vocab = {}
-    Vocab["UNK"] = 0
+    vocab = {"UNK": 0}
     count = 1
-    for line in open("source.txt",'r'):
-      for word in line.split()[:len(line.split())-57]:
-        if word not in Vocab:
-          Vocab[word] = count
+    for line in open("source.txt", 'r'):
+      for word in line.split()[:len(line.split()) - 57]:
+        if word not in vocab:
+          vocab[word] = count
           count += 1
 
     longest_sentence = 61
-    V = len(Vocab)
-    inputNodes = longest_sentence*len(Vocab) + 57
-    UNK = [0]*len(Vocab)
-    UNK[0] = 1
+    vocabsize = len(vocab)
+    unk = [0] * len(vocab)
+    unk[0] = 1
 
-    print "Created Vocabulary: ", V
+    print "Created Vocabulary: ", vocabsize
     ## Read Training Data ##
 
     count = 0
     ## Compute mean/std per dimension ##
-    allLocations = [[]]*57
-    meanWorld = []
-    stdDev = []
-    for line in open("source.txt",'r'):
-        line = line.split()
-        for i in range(57):
-          allLocations[i].append(float(line[len(line)-57+i]))
+    all_locations = [[]] * 57
+    mean_world = []
+    std_dev = []
+    for line in open("source.txt", 'r'):
+      line = line.split()
+      for i in range(57):
+        all_locations[i].append(float(line[len(line) - 57 + i]))
     for i in range(57):
-      meanWorld.append(sum(allLocations[i])/len(allLocations[i]))
-      stdDev.append(math.sqrt(sum([(v - meanWorld[i])**2 for v in allLocations[i]])/len(allLocations[i])))
+      mean_world.append(sum(all_locations[i]) / len(all_locations[i]))
+      std_dev.append(math.sqrt(sum([(v - mean_world[i]) ** 2 for v in all_locations[i]]) / len(all_locations[i])))
 
     locations = []
     utterances = []
-    for line in open("source.txt",'r'):
-      if count < maxLines:
+    for line in open("source.txt", 'r'):
+      if count < maxlines:
         line = line.split()
-        world = line[len(line)-57:]
-        words = line[:len(line)-57]
+        world = line[len(line) - 57:]
+        words = line[:len(line) - 57]
         representation = []
         for i in range(longest_sentence):
           if i < len(words):
-            representation.extend(self.oneHot(Vocab[words[i]], len(Vocab)))
+            representation.extend(self.onehot(vocab[words[i]], len(vocab)))
           else:
-            representation.extend(UNK)
-        #world = self.norm(world, meanWorld, stdDev)
+            representation.extend(unk)
+        # world = self.norm(world, meanWorld, stdDev)
         utterances.append(representation)
         locations.append(world)
-        count +=1 
+        count += 1
       else:
         break
 
     actions = []
     classes = []
     count = 0
-    for line in open("target.txt",'r'):
-      if count < maxLines:
+    for line in open("target.txt", 'r'):
+      if count < maxlines:
         line = line.split()
         actions.append([float(v) for v in line[1:4]])
-        classes.append(self.oneHot(int(line[0]), 21))
+        classes.append(self.onehot(int(line[0]), 21))
         count += 1
       else:
         break
@@ -99,32 +102,30 @@ class Data:
     print "Read Train: ", len(locations)
 
     ## Read Test Data ## 
-    
+
     locations_test = []
     utterances_test = []
-    for line in open("source.orig.txt",'r'):
+    for line in open("source.orig.txt", 'r'):
       line = line.split()
-      world = [float(v) for v in line[len(line)-57:]]
-      words = line[:len(line)-57]
+      world = [float(v) for v in line[len(line) - 57:]]
+      words = line[:len(line) - 57]
       representation = []
       for i in range(longest_sentence):
         if i < len(words):
-          representation.extend(self.oneHot(Vocab[words[i]], len(Vocab)))
+          representation.extend(self.onehot(vocab[words[i]], len(vocab)))
         else:
-          representation.extend(UNK)
+          representation.extend(unk)
       utterances_test.append(representation)
       locations_test.append(world)
-    
-    
+
     actions_test = []
     classes_test = []
-    for line in open("target.orig.txt",'r'):
+    for line in open("target.orig.txt", 'r'):
       line = line.split()
       actions_test.append([float(v) for v in line[1:4]])
-      classes_test.append(self.oneHot(int(line[0]), 21))
-    
-    print "Read Test: ", len(locations_test)
+      classes_test.append(self.onehot(int(line[0]), 21))
 
+    print "Read Test: ", len(locations_test)
 
     self.Train = {}
     self.Test = {}
@@ -139,16 +140,16 @@ class Data:
       self.Test["classes"] = np.array(classes_test)
       self.Test["actions"] = np.array(actions_test)
     elif onehot and not separate:
-      self.Train["input"]  = np.concatenate( (np.array(utterances), np.array(locations)), axis=1 )
-      self.Train["output"] = np.concatenate( (np.array(classes), np.array(actions)), axis=1 )
+      self.Train["input"] = np.concatenate((np.array(utterances), np.array(locations)), axis=1)
+      self.Train["output"] = np.concatenate((np.array(classes), np.array(actions)), axis=1)
 
-      self.Test["input"]  = np.concatenate( (np.array(utterances_test), np.array(locations_test)), axis=1 )
-      self.Test["output"] = np.concatenate( (np.array(classes_test), np.array(actions_test)), axis=1 )
+      self.Test["input"] = np.concatenate((np.array(utterances_test), np.array(locations_test)), axis=1)
+      self.Test["output"] = np.concatenate((np.array(classes_test), np.array(actions_test)), axis=1)
     elif not onehot and not separate:
-      self.Train["input"]  = np.concatenate( (np.array(utterances), np.array(locations)), axis=1 )
-      self.Train["output"] = np.concatenate( (self.numbers(np.array(classes)), np.array(actions)), axis=1)
+      self.Train["input"] = np.concatenate((np.array(utterances), np.array(locations)), axis=1)
+      self.Train["output"] = np.concatenate((self.numbers(np.array(classes)), np.array(actions)), axis=1)
 
-      self.Test["input"]  = np.concatenate( (np.array(utterances_test), np.array(locations_test)), axis=1 )
-      self.Test["output"] = np.concatenate( (self.numbers(np.array("classes")), np.array(actions_test)), axis=1 )
+      self.Test["input"] = np.concatenate((np.array(utterances_test), np.array(locations_test)), axis=1)
+      self.Test["output"] = np.concatenate((self.numbers(np.array("classes")), np.array(actions_test)), axis=1)
     else:
       print "Fuck you"
