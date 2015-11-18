@@ -16,3 +16,6 @@ class Layers:
     return tf.Variable(tf.random_uniform([input_dim, output_dim], minval=-0.05, maxval=0.05), name=name)
   def uniform_b(self, dim=100, name="B"):
     return tf.Variable(tf.random_uniform([dim], minval=-0.05, maxval=0.05), name=name)
+
+  def placeholder(self, dim, name):
+    return tf.placeholder("float", shape=[None, dim], name=name)

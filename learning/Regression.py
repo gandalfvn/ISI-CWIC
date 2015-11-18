@@ -12,12 +12,19 @@ L = Layers()
 print "Read Data"
 
 ############################# Create a Session ################################
+###  Input:   1 Hot representation of the sentence (up to length 60)
+###           (x,y,z) coordinates for every block in the environment (floats)
+###  Output:  4 floats
+###  Model:   1 uniform hidden layer with a tanh
+###           1 linear prediction layer
+###  Loss:    Mean Squared Error
+
 sess = tf.Session()
 input_dim = len(D.Train["input"][0])
 output_dim = len(D.Train["output"][0])
 
-x = tf.placeholder("float", shape=[None, input_dim], name='input')
-y_ = tf.placeholder("float", shape=[None, output_dim], name='output')
+x = L.placeholder(input_dim, 'input')
+y_ = L.placeholder(output_dim, 'output')
 
 # Model variables
 W = L.uniform_W(input_dim, name='W')
@@ -33,7 +40,6 @@ y = tf.matmul(h, W_o) + b_o
 loss = tf.reduce_mean(tf.square(tf.sub(y_, y)))
 
 ############################# Train Model #####################################
-
 print "Training"
 
 merged_summary_op = tf.merge_all_summaries()

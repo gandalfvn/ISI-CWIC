@@ -17,10 +17,20 @@ output_dim = len(D.Train["actions"][0])
 print "Read Data"
 
 ############################# Create a Session ################################
+###  Input:   1 Hot representation of the sentence (up to length 60)
+###           (x,y,z) coordinates for every block in the environment (floats)
+###  Output:  3 floats    (x,y,z)
+###           1 int       Predicted Block ID
+###  Model:   1 uniform hidden layer with a tanh
+###           1 linear prediction layer for (x,y,z)
+###           1 softmax layer for ID
+###  Loss:    3 * Mean Squared Error
+###           1 * Mean Cross Entropy
+
 sess = tf.Session()
-x = tf.placeholder("float", shape=[None, input_dim], name='x')
-y_A = tf.placeholder("float", shape=[None, output_dim], name='y_Action')
-y_C = tf.placeholder("float", shape=[None, 21], name='y_Class')  # 20 blocks
+x = L.placeholder(input_dim, 'x')
+y_A = L.placeholder(output_dim, 'y_Action')
+y_C = L.placeholder(21, 'y_Class')  # 20 blocks
 
 # Model variables with hidden layers initialized uniformly
 W1 = L.uniform_W(input_dim, output_dim, 'W1')
