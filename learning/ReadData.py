@@ -7,6 +7,8 @@ class Data:
   def onehot(num, dim):
     """
     Creates an empty vector of dimentionality dim with a single unit activated
+    :param dim: dimentionality of the vector
+    :param num: which dimension should be turned on
     """
     v = [0] * dim
     v[num] = 1
@@ -16,6 +18,7 @@ class Data:
   def numbers(mat):
     """
     Convertes one hot vectors into a number based on the index
+    :param mat: Input one hot vectors
     """
     num = []
     for vec in mat:
@@ -28,12 +31,13 @@ class Data:
     return np.array(num)
 
   @staticmethod
-  def minibatch(arrays, batches=16):
+  def minibatch(arrays, batch_size=16):
     """
     Creates Minibatches of 16 data points
+    :param arrays:  a list of datasets (train, test, ... )
+    :param batch_size: Number of data points per batch
     """
-    num_batches = len(arrays[0]) / batches
-    batch_size = len(arrays[0]) / num_batches
+    num_batches = len(arrays[0]) / batch_size
     minibatches = []
     for i in range(num_batches):
       minibatches.append([])
@@ -49,6 +53,9 @@ class Data:
       I would suggest normalizing the input in the following way
       for each dimension, subtract its mean over the dataset
       and divide by (its std over the dataset + 1e-6)
+      :param vec:   Original vector
+      :param mu:    Mean
+      :param sig:   Standard Deviation
     """
     nvec = []
     for i in range(len(vec)):
