@@ -109,7 +109,6 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
       , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1}}
       , {sort: {'created': -1}}
     ).fetch();
-    console.warn('jobs', jobs);
     var activeHITs = [];
     var doneHITs = [];
     _.each(jobs, function(j){
