@@ -995,6 +995,7 @@ angular.module('app.generate').controller('genWorldCtrl',
      * @param sid
      */
     $scope.showState = function(sid:string){
+      $rootScope.dataloaded = false;
       $scope.enableImpSave = false;
       //we must get the state for this sid
       $scope.$meteorSubscribe("genstates", sid).then(
@@ -1009,7 +1010,10 @@ angular.module('app.generate').controller('genWorldCtrl',
           createObjects($scope.curState.block_meta.blocks);
           showFrame(myframe.block_states[$scope.curitr]);
           function itrScreencap(idx, list, cb){
-            if(_.isUndefined(list[idx])) return cb();
+            if(_.isUndefined(list[idx])){
+              $rootScope.dataloaded = true;
+              return cb();
+            }
             var scid:string = list[idx].screencapid;
             $scope.$meteorSubscribe("screencaps", scid).then(function(sub){
               var screen:iScreenCaps = ScreenCaps.findOne({_id: scid});
@@ -1094,6 +1098,8 @@ angular.module('app.generate').controller('genWorldCtrl',
     };
 
     $scope.saveImport = function(savename:string){
+      $rootScope.dataloaded = false;
+
       $scope.impFilename = null;
       $scope.enableImpSave = false;
       var cubesused:number[] = [];
@@ -1121,6 +1127,7 @@ angular.module('app.generate').controller('genWorldCtrl',
             $scope.curcnt = 0;
             updateTableStateParams();
           }
+          $rootScope.dataloaded = true;
         });
       }, 400);
     };
@@ -1179,12 +1186,19 @@ angular.module('app.generate').controller('genWorldCtrl',
             createObjects($scope.curState.block_meta.blocks);
             //mung block_state
             //filedata.block_state = mungeBlockState(filedata.block_state);
+            $scope.$apply(function(){
+              $scope.impFilename = null;
+              $scope.enableImpSave = false;
+              $scope.isgen = true;
+            });
+            
             var block_state:iBlockState[] = mungeBlockState(filedata.block_state);
             showFrame({block_state: block_state}, function(){
               $scope.$apply(function(){
                 if(filedata.name) $scope.impFilename = filedata.name;
                 else $scope.impFilename = $scope.statefilename[0].name.toLowerCase().replace(/\.json/g, '');
                 $scope.enableImpSave = true;
+                $scope.isgen = false;
               });
             })
           }
@@ -1243,6 +1257,11 @@ angular.module('app.generate').controller('genWorldCtrl',
             createObjects($scope.curState.block_meta.blocks);
             //mung block_states
             $scope.curState.block_states = mungeBlockStates(filedata.block_states);
+            $scope.$apply(function(){
+              $scope.impFilename = null;
+              $scope.enableImpSave = false;
+              $scope.isgen = true;
+            });
             
             var itrFrame = function(idx:number, block_states:iBlockStates, cb:()=>void){
               if(_.isUndefined(block_states[idx])){
@@ -1250,6 +1269,7 @@ angular.module('app.generate').controller('genWorldCtrl',
                   if(filedata.name) $scope.impFilename = filedata.name;
                   else $scope.impFilename = $scope.statesfilename[0].name.toLowerCase().replace(/\.json/g, '');
                   $scope.enableImpSave = true;
+                  $scope.isgen = false;
                 });
                 return cb();
               }

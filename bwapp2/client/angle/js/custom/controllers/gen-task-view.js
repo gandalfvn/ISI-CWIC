@@ -47,7 +47,8 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                     $scope.submitter = true;
                 var isValid = true;
                 if (!$scope.assignmentId && !$stateParams.report) {
-                    return $rootScope.dataloaded = true;
+                    $rootScope.dataloaded = true;
+                    return;
                 }
                 if ($scope.hitId) {
                     //load hit
@@ -254,7 +255,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                                     console.warn('hit', err, ret);
                                     if (err)
                                         return toaster.pop('error', err);
-                                    toaster.pop('info', 'HIT Task Submitted');
+                                    $scope.$apply(function () { toaster.pop('info', 'HIT Task Submitted'); });
                                     $('form[name="submitForm"]').submit(); //submit to turk
                                 });
                             }

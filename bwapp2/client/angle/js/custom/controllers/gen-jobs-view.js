@@ -67,7 +67,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             return null;
         };
         var getAllHITs = function () {
-            var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
+            var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
+            console.warn('jobs', jobs);
             var activeHITs = [];
             var doneHITs = [];
             _.each(jobs, function (j) {
@@ -80,9 +81,9 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                     });
                 }
                 if (asnleft)
-                    activeHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive });
+                    activeHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
                 else
-                    doneHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive });
+                    doneHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
             });
             if (activeHITs.length || doneHITs.length) {
                 if (activeHITs.length)
@@ -287,6 +288,16 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             GenJobsMgr.remove(jid);
             updateJobMgr();
             updateHITs();
+        };
+        $scope.remHIT = function (tid, hid) {
+            $scope.jobid = null;
+            $scope.jobinfo = null; //null out job in case its the one deleted
+            var deltask = GenJobsMgr.findOne({ _id: tid });
+            if (deltask && deltask.hitlist) {
+                GenJobsMgr.remove(hid);
+                GenJobsMgr.update({ _id: tid }, { $pull: { hitlist: hid } });
+                updateHITs();
+            }
         };
         $scope.createHIT = function (jid, tid) {
             Meteor.call('mturkCreateHIT', { jid: jid, tid: tid, islive: $scope.options.isLive }, function (err, ret) {

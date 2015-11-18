@@ -29,7 +29,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               td(title="'Name'", filter="{ name: 'text'}", sortable="'name'", ng-click='chooseState(s._id)')
                 | {{s.name}}
               td(title="'Created'", sortable="'created'", ng-click='chooseState(s._id)')
-                | {{s.created | date:"MM/dd/yyyy"}}
+                | {{s.created | date:"MM/dd/yyyy H:mm"}}
     accordion.col-sm-6(ng-show='curState._id')
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
         accordion-heading
@@ -141,7 +141,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               | &nbsp;{{task._id}}
             td Ent: {{task.idxlist.length}} &nbsp;&nbsp; Ant: {{task.antcnt}} &nbsp;&nbsp; Asn: {{task.asncnt}}
             td
-              span(ng-repeat='hit in task.hitlist') {{hit}} &nbsp;
+              span(ng-repeat='hit in task.hitlist')
+                button.btn.btn-xs.btn-danger(ng-click='remHIT(task._id, hit)')
+                  .fa.fa-remove
+                | {{hit}} &nbsp;&nbsp;
 .row
   accordion.col-sm-12
     accordion-group.panel-primary.shadowbox(ng-if='allHITs.active.length', ng-init="isOpen = true", is-open="isOpen")
@@ -154,7 +157,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr
             th Created
             th HIT Id
-            th #Assign
+            th Info
             th Task Id
             th Turker
         tbody
@@ -163,7 +166,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
               span(ng-show='!task.islive', style='color:grey') Sandbox
-            td {{task.asnleft}}
+            td Asn: {{task.asnleft}} &nbsp; {{task.reward.Amount | currency: '$'}}
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
