@@ -347,7 +347,18 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     updateJobMgr();
     updateHITs();
   };
-  
+
+  $scope.remHIT = function(tid:string, hid: string){
+    $scope.jobid = null;
+    $scope.jobinfo = null; //null out job in case its the one deleted
+    var deltask:iGenJobsMgr = GenJobsMgr.findOne({_id: tid});
+    if(deltask && deltask.hitlist) {
+      GenJobsMgr.remove(hid);
+      GenJobsMgr.update({_id: tid}, {$pull: {hitlist: hid}});
+      updateHITs();
+    }
+  };
+
   $scope.createHIT = function(jid:string, tid:string){
     Meteor.call('mturkCreateHIT', {jid: jid, tid: tid, islive: $scope.options.isLive}, function(err, ret){
       if(err) return $scope.$apply(function(){toaster.pop('error', err)});

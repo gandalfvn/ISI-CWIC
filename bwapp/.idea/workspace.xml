@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ee68b7-0184-493a-bee7-b31bb6595ea4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/config.js" afterPath="$PROJECT_DIR$/server/config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp2/server/mturkhelper.js" afterPath="$PROJECT_DIR$/../bwapp2/server/mturkhelper.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp2/server/mturkhelper.ts" afterPath="$PROJECT_DIR$/../bwapp2/server/mturkhelper.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp2/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../bwapp2/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp2/client/angle/js/custom/controllers/gen-jobs-view.js" afterPath="$PROJECT_DIR$/../bwapp2/client/angle/js/custom/controllers/gen-jobs-view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp2/client/angle/js/custom/controllers/gen-jobs-view.js.map" afterPath="$PROJECT_DIR$/../bwapp2/client/angle/js/custom/controllers/gen-jobs-view.js.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp2/client/angle/js/custom/controllers/gen-jobs-view.ts" afterPath="$PROJECT_DIR$/../bwapp2/client/angle/js/custom/controllers/gen-jobs-view.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp2/client/views/genjobs.ng.jade" afterPath="$PROJECT_DIR$/../bwapp2/client/views/genjobs.ng.jade" />
     </list>
     <ignored path="bwapp.iws" />
     <ignored path=".idea/workspace.xml" />
