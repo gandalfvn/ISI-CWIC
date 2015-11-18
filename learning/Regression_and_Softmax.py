@@ -3,9 +3,11 @@ import tensorflow as tf
 import math
 import sys
 from ReadData import Data
+import Layer as Layers
 np.set_printoptions(threshold=np.nan)
 
 D = Data(10000)
+L = Layers()
 X_train = np.concatenate((D.Train["text"], D.Train["world"]), axis=1)
 y_actiontrain = D.Train["actions"]
 y_classtrain = D.Train["classes"]
@@ -26,10 +28,10 @@ y_A = tf.placeholder("float", shape=[None, output_dim], name='y_Action')
 y_C = tf.placeholder("float", shape=[None, 21], name='y_Class')  # 20 blocks
 
 # Model variables with hidden layers initialized uniformly
-W1 = tf.Variable(tf.random_uniform([input_dim, output_dim], minval=-0.05, maxval=0.05), name='W1')
-b1 = tf.Variable(tf.random_uniform([output_dim], minval=-0.05, maxval=0.05), name='b1')
-W2 = tf.Variable(tf.random_uniform([input_dim, 21], minval=-0.05, maxval=0.05), name='W2')
-b2 = tf.Variable(tf.random_uniform([21], minval=-0.05, maxval=0.05), name='b2')
+W1 = L.uniform_W(input_dim, output_dim, 'W1')
+b1 = L.uniform_b(output_dim, 'b1')
+W2 = L.uniform_W(input_dim, 21, 'W2')
+b2 = L.uniform_b(21, 'b2')
 
 # Model structure
 y_re = tf.matmul(x, W1) + b1
@@ -74,14 +76,7 @@ oldLoss_mse = compute_loss_mse()
 print "iter %-10s  %-10s  %-10s   -->   %-11s" % ("Loss", "Mean CE", "MSE", "% Change")
 
 ## Create Minibatches ##
-num_batches = 16
-batch_size = len(X_train) / num_batches
-batches = []
-for i in range(num_batches):
-  batches.append((X_train[i * batch_size:(i + 1) * batch_size],
-                  y_actiontrain[i * batch_size:(i + 1) * batch_size],
-                  y_classtrain[i * batch_size:(i + 1) * batch_size]))
-
+batches = D.minibatch([X_train, y_actiontrain, y_classtrain])
 
 ## Train for 10 Epochs ##
 for i in range(10):
