@@ -2,21 +2,21 @@ import math
 import numpy as np
 
 class Data:
-  def oneHot(self,num, dim):
+  def oneHot(self, num, dim):
     v = [0]*dim
     v[num] = 1
     return v
 
-  def numbers(mat):
-  num = []
-  for vec in mat:
-    n = 0
-    for v in vec:
-      if v == 1:
-        num.append([n])
-        break
-      n += 1
-  return np.array(num)
+  def numbers(self, mat):
+    num = []
+    for vec in mat:
+      n = 0
+      for v in vec:
+        if v == 1:
+          num.append([n])
+          break
+        n += 1
+    return np.array(num)
 
   """
     Tom Paine:
@@ -140,15 +140,15 @@ class Data:
       self.Test["actions"] = np.array(actions_test)
     elif onehot and not separate:
       self.Train["input"]  = np.concatenate( (np.array(utterances), np.array(locations)), axis=1 )
-      seff.Train["output"] = np.concatenate( (np.array(classes), np.array(actions)), axis=1 )
+      self.Train["output"] = np.concatenate( (np.array(classes), np.array(actions)), axis=1 )
 
       self.Test["input"]  = np.concatenate( (np.array(utterances_test), np.array(locations_test)), axis=1 )
-      seff.Test["output"] = np.concatenate( (np.array(classes_test), np.array(actions_test)), axis=1 )
+      self.Test["output"] = np.concatenate( (np.array(classes_test), np.array(actions_test)), axis=1 )
     elif not onehot and not separate:
       self.Train["input"]  = np.concatenate( (np.array(utterances), np.array(locations)), axis=1 )
-      self.Train["output"] = np.concatenate( (numbers(np.array(classes)), np.array(actions)), axis=1)
+      self.Train["output"] = np.concatenate( (self.numbers(np.array(classes)), np.array(actions)), axis=1)
 
-      self.Test["input"]  = np.concatenate( (np.array(utterances_test), np.array(locations_test), axis=1 )
-      self.Test["output"] = np.concatenate( (numbers(D.Test["classes"]), np.array(actions_test)), axis=1 )
+      self.Test["input"]  = np.concatenate( (np.array(utterances_test), np.array(locations_test)), axis=1 )
+      self.Test["output"] = np.concatenate( (self.numbers(np.array("classes")), np.array(actions_test)), axis=1 )
     else:
       print "Fuck you"
