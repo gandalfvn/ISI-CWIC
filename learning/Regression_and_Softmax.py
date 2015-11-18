@@ -3,21 +3,16 @@ import tensorflow as tf
 import math
 import sys
 from ReadData import Data
-import Layer as Layers
+from Layer import Layers
 np.set_printoptions(threshold=np.nan)
 
 D = Data(10000)
 L = Layers()
-X_train = np.concatenate((D.Train["text"], D.Train["world"]), axis=1)
-y_actiontrain = D.Train["actions"]
-y_classtrain = D.Train["classes"]
+D.Train["input"] = np.concatenate((D.Train["text"], D.Train["world"]), axis=1)
+D.Test["input"] = np.concatenate((D.Test["text"], D.Test["world"]), axis=1)
 
-X_test = np.concatenate((D.Test["text"], D.Test["world"]), axis=1)
-y_actiontest = D.Test["actions"]
-y_classtest = D.Test["classes"]
-
-input_dim = len(X_train[0])
-output_dim = len(y_actiontrain[0])
+input_dim = len(D.Train["input"][0])
+output_dim = len(D.Train["actions"][0])
 
 print "Read Data"
 
@@ -48,11 +43,11 @@ loss_mse = tf.reduce_mean(tf.square(tf.sub(y_A, y_re)))  # Three predictions
 loss = loss_sf + 3 * loss_mse
 
 def compute_loss():
-  return sess.run(loss, feed_dict={x: X_train, y_A: y_actiontrain, y_C: y_classtrain})
+  return sess.run(loss, feed_dict={x: D.Train["input"], y_A: D.Train["actions"], y_C: D.Train["classes"]})
 def compute_loss_sf():
-  return sess.run(loss_sf, feed_dict={x: X_train, y_A: y_actiontrain, y_C: y_classtrain})
+  return sess.run(loss_sf, feed_dict={x: D.Train["input"], y_A: D.Train["actions"], y_C: D.Train["classes"]})
 def compute_loss_mse():
-  return sess.run(loss_mse, feed_dict={x: X_train, y_A: y_actiontrain, y_C: y_classtrain})
+  return sess.run(loss_mse, feed_dict={x: D.Train["input"], y_A: D.Train["actions"], y_C: D.Train["classes"]})
 
 ############################# Train Model #####################################
 
@@ -76,7 +71,7 @@ oldLoss_mse = compute_loss_mse()
 print "iter %-10s  %-10s  %-10s   -->   %-11s" % ("Loss", "Mean CE", "MSE", "% Change")
 
 ## Create Minibatches ##
-batches = D.minibatch([X_train, y_actiontrain, y_classtrain])
+batches = D.minibatch([D.Train["input"], D.Train["actions"], D.Train["classes"]])
 
 ## Train for 10 Epochs ##
 for i in range(10):
@@ -97,8 +92,8 @@ for i in range(10):
 
 ############################# Predict From Model ##############################
 print "Testing"
-predicted_sf = sess.run(y_sf, feed_dict={x: X_test})
-predicted_re = sess.run(y_re, feed_dict={x: X_test})
+predicted_sf = sess.run(y_sf, feed_dict={x: D.Test["input"]})
+predicted_re = sess.run(y_re, feed_dict={x: D.Test["input"]})
 
 out = open("predictions.txt", 'w')
 print len(predicted_re)
@@ -107,4 +102,4 @@ for i in range(len(predicted_re)):
   out.write("%s %s\n" % (sess.run(tf.argmax(predicted_sf[i], 0)), str(predicted_re[i, :])))
 
 out.close()
-print "Test loss ", sess.run(loss, feed_dict={x: X_test, y_A: y_actiontest, y_C: y_classtest})
+print "Test loss ", sess.run(loss, feed_dict={x: D.Test["input"], y_A: D.Test["actions"], y_C: D.Test["classes"]})

@@ -9,18 +9,12 @@ np.set_printoptions(threshold=np.nan)
 D = Data(10000, separate=False, onehot=False)
 L = Layers()
 
-X_train = D.Train["input"]
-y_train = D.Train["output"]
-
-X_test = D.Test["input"]
-y_test = D.Test["output"]
-
 print "Read Data"
 
 ############################# Create a Session ################################
 sess = tf.Session()
-input_dim = len(X_train[0])
-output_dim = len(y_train[0])
+input_dim = len(D.Train["input"][0])
+output_dim = len(D.Train["output"][0])
 
 x = tf.placeholder("float", shape=[None, input_dim], name='input')
 y_ = tf.placeholder("float", shape=[None, output_dim], name='output')
@@ -55,16 +49,16 @@ train_step = tf.train.GradientDescentOptimizer(starter_learning_rate).minimize(l
 sess.run(tf.initialize_all_variables())
 
 ## Create Minibatches ##
-batches = D.minibatch([X_train, y_train])
+batches = D.minibatch([D.Train["input"], D.Train["output"]])
 
 ## Train for 10 Epochs ##
 print "Regression"
-oldLoss = sess.run(loss, feed_dict={x: X_train, y_: y_train})
+oldLoss = sess.run(loss, feed_dict={x: D.Train["input"], y_: D.Train["output"]})
 for i in range(10):
   for (a, b) in batches:
     sess.run(train_step, feed_dict={x: a, y_: b})
 
-  newLoss = sess.run(loss, feed_dict={x: X_train, y_: y_train})
+  newLoss = sess.run(loss, feed_dict={x: D.Train["input"], y_: D.Train["output"]})
   print "%3d %10.7f  -->   %11.10f" % (i, newLoss, (oldLoss - newLoss) / oldLoss)
   if math.isnan(newLoss) or math.isinf(newLoss):
     print "Check yo gradients: ", newLoss
@@ -72,7 +66,7 @@ for i in range(10):
 
 ############################# Predict From Model ##############################
 print "Testing"
-predicted_re = sess.run(y, feed_dict={x: X_test})
+predicted_re = sess.run(y, feed_dict={x: D.Test["input"]})
 
 out = open("predictions.txt", 'w')
 print len(predicted_re)

@@ -172,3 +172,5 @@ class Data:
       self.Test["output"] = np.concatenate((self.numbers(np.array(classes_test)), np.array(actions_test)), axis=1)
     else:
       print "Fuck you"
+
+    print "Converted Data"
