@@ -26,9 +26,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         br
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
-      div.text-center(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
+      div.text-center.col-md-12(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
+        i.fa.fa-hand-o-right(style='font-size:2em')
+        | &nbsp;&nbsp;
         button.btn.btn-danger.shadowbox(style='font-size:1.3em', ng-click='opt.bAgreed=true')
-          .fa.fa-check-square &nbsp;
+          .fa.fa-square &nbsp;
           | I will NOT write sequences of events in each textbox
   
   h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
