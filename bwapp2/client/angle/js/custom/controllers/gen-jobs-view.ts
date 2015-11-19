@@ -120,7 +120,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
           names.push(h.name);
         })
       }
-      if(asnleft)
+      if(asnleft > 0)
         activeHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
       else
         doneHITs.push({time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
