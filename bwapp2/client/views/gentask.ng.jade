@@ -30,6 +30,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         button.btn.btn-danger.shadowbox(style='font-size:1.3em', ng-click='opt.bAgreed=true')
           .fa.fa-check-square &nbsp;
           | I will NOT write sequences of events in each textbox
+  
+  h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
 
   div(ng-show='opt.bAgreed || workerId ==="EXAMPLE"')
     accordion(ng-if="curState.block_meta.decoration=='logo'")
@@ -84,7 +86,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
           button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
           button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
-          h4(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
           
 .row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
   .col-sm-12
