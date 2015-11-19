@@ -29,7 +29,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               td(title="'Name'", filter="{ name: 'text'}", sortable="'name'", ng-click='chooseState(s._id)')
                 | {{s.name}}
               td(title="'Created'", sortable="'created'", ng-click='chooseState(s._id)')
-                | {{s.created | date:"MM/dd/yyyy H:mm"}}
+                | {{s.created | date:"MM/dd/yyyy HH:mm"}}
     accordion.col-sm-6(ng-show='curState._id')
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
         accordion-heading
@@ -106,7 +106,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               button.btn.btn-xs.btn-danger(ng-click='remJob(job._id)')
                 .fa.fa-remove
             td(title='{{job._id}}', ng-click='selectJob(job._id)') {{job._id}}
-            td {{job.created | date:"MM/dd/yyyy H:mm" }}
+            td {{job.created | date:"MM/dd/yyyy HH:mm" }}
             td(title='{{job.tasktype}}') {{job.tasktype}}
             td(title='{{job.stateid}}', ng-click='chooseState(job.stateid)') {{job.stateid}}
             td(title='{{job.bundle}}') {{job.bundle}}
@@ -162,7 +162,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.active')
-            td {{task.time | date:"MM/dd/yyyy H:mm"}}
+            td {{task.time | date:"MM/dd/yyyy HH:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
               span(ng-show='!task.islive', style='color:grey') Sandbox
@@ -196,7 +196,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td 
               button.btn.btn-xs.btn-primary(title='Download list of links for this HIT', ng-click='dlLinks(task)')
                 .fa.fa-download
-              | &nbsp;{{task.time | date:"MM/dd/yyyy H:mm"}}
+              | &nbsp;{{task.time | date:"MM/dd/yyyy HH:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
               span(ng-show='!task.islive', style='color:grey') Sandbox
@@ -226,7 +226,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Turker
         tbody
           tr(ng-repeat='task in doneASNs')
-            td {{task.time | date:"MM/dd/yyyy H:mm"}}
+            td {{task.time | date:"MM/dd/yyyy HH:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
               span(ng-show='!task.islive', style='color:grey') Sandbox
