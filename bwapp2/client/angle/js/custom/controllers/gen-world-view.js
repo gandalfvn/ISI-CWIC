@@ -76,7 +76,9 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                     boxt = new BABYLON.Texture("img/textures/logos/" + block.name.replace(/ /g, '') + '.png', scene);
                 else
                     boxt = numTextures[block.id];
-                boxt.uScale = boxt.vScale = 1;
+                boxt.uScale = 1;
+                boxt.vScale = 1;
+                boxt.wAng = Math.PI / 2;
                 boxmat.diffuseTexture = boxt;
                 for (var i = 0; i < 6; i++) {
                     var cv = colorids[block.shape.shape_params['face_' + (i + 1)].color];
