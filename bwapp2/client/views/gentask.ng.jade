@@ -6,7 +6,7 @@
   #loadoverlay.container-fluid
     #loadoverlay-image.text-center(style="position:fixed;top:50%;left:50%; color:#23b7e5;")
       i.fa.fa-4x.fa-spin.fa-cube
-      h3(style="color:#23b7e5;") Loading...
+      h3(style="color:#23b7e5;") Processing...
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .container-fluid(ng-if='!report && assignmentId')
   accordion(ng-if='taskdata.tasktype == "action"')
