@@ -42,8 +42,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       hr
       div(style='color:red;font-size:1.1em')
         .fa.fa-exclamation-triangle
-        | There are {{notes.length}} description entrie(s).  Each description MUST describe the scene completely.  Ensure each alternative description is 
-        b DIFFERENT.
+        | There are {{notes.length}} description entrie(s).  Each description MUST describe the scene completely.  
+        span(ng-show='notes.length > 1')
+          | Ensure each alternative description is 
+          b DIFFERENT.
     h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
     .col-sm-11
       form(name='submitForm', action='{{submitTo}}', method='post')
