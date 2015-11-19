@@ -15,6 +15,7 @@
 angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils) {
         "use strict";
         $scope.date = (new Date()).getTime();
+        $scope.opt = { bAgreed: false };
         var genstates = $scope.$meteorCollection(GenStates);
         $scope.$meteorSubscribe("genstates").then(function (sid) { dataReady.update('genstates'); }, function (err) { console.log("error", arguments, err); });
         var screencaps = $scope.$meteorCollection(ScreenCaps);

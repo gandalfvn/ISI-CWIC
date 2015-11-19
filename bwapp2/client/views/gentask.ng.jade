@@ -21,59 +21,71 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
         label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
 
-  accordion(ng-if="curState.block_meta.decoration=='logo'")
-    accordion-group.panel-info(is-open='true')
-      accordion-heading
-        h4.panel-title Logo Key
-      span(ng-repeat='l in logolist', style='display:inline-block;padding-right:6px')
-        img(src='{{l.imgref}}', height='64', width='64')
-        div
-          label {{l.name | uppercase}}
+        h4(style='color:red') DO NOT WRITE SEQUENCES OF EVENTS IN EACH TEXTBOX:
+        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
+        br
+        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
+        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
+      div.text-center(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
+        button.btn.btn-danger.shadowbox(style='font-size:1.3em', ng-click='opt.bAgreed=true')
+          .fa.fa-check-square &nbsp;
+          | I will NOT write sequences of events in each textbox
 
-  .row-fluid.well.col-sm-12(ng-if='taskdata.tasktype == "action"')
-    .col-sm-12(ng-if='submitter')
-      .label.label-warning Read Only
-      i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
-    .col-md-6
-      #statea
-    .col-md-6
-      #stateb
-    .col-sm-12
-      hr
-      div(style='color:red;font-size:1.1em')
-        .fa.fa-exclamation-triangle
-        | There are {{notes.length}} description entrie(s).  Each description MUST describe the scene completely.  
-        span(ng-show='notes.length > 1')
-          | Ensure each alternative description is 
-          b DIFFERENT.
-    h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
-    .col-sm-11
-      form(name='submitForm', action='{{submitTo}}', method='post')
-        input(type="hidden", name="assignmentId", value="{{assignmentId}}")
-        input(type="hidden", name="created", value="{{date}}")
-        //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
-
-      form.ng-pristine.ng-valid(name='annotForm')
-        div(ng-repeat='note in notes track by $index')
-          //-.col-sm-1
-            //-button.btn.btn-xs.btn-danger(title='Remove Description')
-              .fa.fa-remove(ng-click='removeNote($index)')
-          .col-sm-12(ng-show='$index > 0 && notes[$index-1].length > 13')
-            | Create another description 
-            b DIFFERENT 
-            | from the previous
-          .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
-            b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
-              .fa.fa-asterisk
-            b.pull-left(ng-show='note.length > 13', style='font-size: 16px; color: green; width:2%;').fa.fa-check
-            .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-              textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
-              textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
-        button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
-        button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-        button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
-        h4(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
-        
+  div(ng-show='opt.bAgreed || workerId ==="EXAMPLE"')
+    accordion(ng-if="curState.block_meta.decoration=='logo'")
+      accordion-group.panel-info(is-open='true')
+        accordion-heading
+          h4.panel-title Logo Key
+        span(ng-repeat='l in logolist', style='display:inline-block;padding-right:6px')
+          img(src='{{l.imgref}}', height='64', width='64')
+          div
+            label {{l.name | uppercase}}
+  
+    .row-fluid.well.col-sm-12(ng-if='taskdata.tasktype == "action"')
+      .col-sm-12(ng-if='submitter')
+        .label.label-warning Read Only
+        i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
+      .col-md-6
+        #statea
+      .col-md-6
+        #stateb
+      .col-sm-12
+        hr
+        div(style='color:red;font-size:1.1em')
+          .fa.fa-exclamation-triangle
+          | There are {{notes.length}} description entrie(s).  Each description MUST describe the scene completely.  
+          span(ng-show='notes.length > 1')
+            | Ensure each alternative description is 
+            b DIFFERENT.
+      h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
+      .col-sm-11
+        form(name='submitForm', action='{{submitTo}}', method='post')
+          input(type="hidden", name="assignmentId", value="{{assignmentId}}")
+          input(type="hidden", name="created", value="{{date}}")
+          //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
+  
+        form.ng-pristine.ng-valid(name='annotForm')
+          div(ng-repeat='note in notes track by $index')
+            //-.col-sm-1
+              //-button.btn.btn-xs.btn-danger(title='Remove Description')
+                .fa.fa-remove(ng-click='removeNote($index)')
+            .col-sm-12(ng-show='$index > 0 && notes[$index-1].length > 13')
+              | Create another description 
+              b DIFFERENT 
+              | from the previous 
+              b(style='color:red') NOT IN SEQUNECE
+            .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
+              b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
+                .fa.fa-asterisk
+              b.pull-left(ng-show='note.length > 13', style='font-size: 16px; color: green; width:2%;').fa.fa-check
+              .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
+                textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
+                textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
+          button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
+          button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
+          button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
+          h4(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
+          
 .row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
   .col-sm-12
     h3(style='color: red') This Job is unavailable.
