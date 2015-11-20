@@ -13,25 +13,26 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     accordion-group.panel-primary(is-open="isOpenDir")
       accordion-heading
         h4.panel-title Directions
-      h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.
+      h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Each description must be complete on its own.
       .well.col-sm-8.col-sm-offset-2
         h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
         img.center-block(src='img/example.png')
-        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take block 14 and place it next to block 17. The down right corner of block 14 should touch the upper left corner of block 17.
-        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
-        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
+        h4(style='color:green') VALID Example:
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take block 14 and place it next to block 17. The down right corner of block 14 should touch the upper left corner of block 17.
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
 
-        h4(style='color:red') DO NOT WRITE SEQUENCES OF EVENTS IN EACH TEXTBOX:
-        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
+        h4(style='color:red') DO NOT use the textboxes to create a sequence of events:
+        label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
         br
-        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
-        label.mb-sm(style='border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
+        label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
+        label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
       div.text-center.col-md-12(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
         i.fa.fa-hand-o-right(style='font-size:2em')
         | &nbsp;&nbsp;
         button.btn.btn-danger.shadowbox(style='font-size:1.3em', ng-click='opt.bAgreed=true')
           .fa.fa-square &nbsp;
-          | I will NOT write sequences of events in each textbox
+          | I will write unique self-contained descriptions in each textbox
   
   h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
 
