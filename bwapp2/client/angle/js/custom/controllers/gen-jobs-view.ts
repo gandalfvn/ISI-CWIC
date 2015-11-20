@@ -359,7 +359,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   };
 
   $scope.createHIT = function(jid:string, tid:string){
-    Meteor.call('mturkCreateHIT', {jid: jid, tid: tid, islive: $scope.options.isLive}, function(err, ret){
+    var params:iTurkCreateParam = {jid: jid, tid: tid, islive: $scope.opt.isLive, useQual: $scope.opt.useQual};
+    Meteor.call('mturkCreateHIT', params, function(err, ret){
       if(err) return $scope.$apply(function(){toaster.pop('error', err)});
       if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
       //create the HITId system
@@ -371,7 +372,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
         hitcontent: res.hitcontent,
         tid: tid,
         jid: jid,
-        islive: $scope.options.isLive,
+        islive: $scope.opt.isLive,
         created: (new Date()).getTime()
       };
       $scope.$apply(function(){toaster.pop('info', 'HIT created: '+ hitdata._id)});
@@ -387,6 +388,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
 
   $scope.stateGo = apputils.stateGo($state);
 
-  $scope.options = {}; //angular has issues with updating primitives
-  $scope.options.isLive = false;
+  $scope.opt= {}; //angular has issues with updating primitives
+  $scope.opt.isLive = false;
+  $scope.opt.useQual = true;
 }]);

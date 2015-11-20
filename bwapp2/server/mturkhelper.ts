@@ -20,11 +20,16 @@ interface iHITContent{
   AssignmentDurationInSeconds: number,
   LifetimeInSeconds: number,
   Keywords: string,
-  MaxAssignments: number
+  MaxAssignments: number,
+  QualificationRequirement?: {
+    QualificationTypeId: string,
+    Comparator: string,
+    IntegerValue: string
+  }[]
 }
 
 interface iTurkCreateParam{
-  jid: string, tid: string, islive: boolean
+  jid: string, tid: string, islive: boolean, useQual: boolean
 }
 
 Meteor.methods({
@@ -54,8 +59,22 @@ Meteor.methods({
           AssignmentDurationInSeconds: len * 3 * 60,
           LifetimeInSeconds: 4 * 24 * 60 * 60,
           Keywords: 'image, identification, recognition, tagging, description',
-          MaxAssignments: taskdata.asncnt
+          MaxAssignments: taskdata.asncnt,
         };
+        if(p.useQual){
+          hitcontent.QualificationRequirement = [
+            {
+              QualificationTypeId: "000000000000000000L0",
+              Comparator: "GreaterThanOrEqualTo",
+              IntegerValue: "97"
+            },
+            {
+              QualificationTypeId: "00000000000000000040",
+              Comparator: "GreaterThanOrEqualTo",
+              IntegerValue: "3000"
+            }
+          ];
+        }
         if(taskdata.tasktype === 'action'){
           hitcontent.Title = 'Describe this Image Sequence ' + p.jid;
           hitcontent.Description = 'Tagging image transitions with a description.';

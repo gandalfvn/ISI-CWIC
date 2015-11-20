@@ -120,11 +120,17 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-file-text-o
           | &nbsp; Job {{jobid}} Information
-      button.btn.btn-default.btn-xs(type='button', ng-model='options.isLive', btn-checkbox)
-        .fa.fa-toggle-off(ng-show='!options.isLive')
+      button.btn.btn-default.btn-xs(type='button', ng-model='opt.isLive', btn-checkbox)
+        .fa.fa-toggle-off(ng-show='!opt.isLive')
           | &nbsp;Sandbox
-        .fa.fa-toggle-on(ng-show='options.isLive')
+        .fa.fa-toggle-on(ng-show='opt.isLive')
           | &nbsp;Production
+      | &nbsp; 
+      button.btn.btn-default.btn-xs(type='button', ng-model='opt.useQual', btn-checkbox)
+        .fa.fa-toggle-off(ng-show='!opt.useQual')
+          | &nbsp;No Qualifications
+        .fa.fa-toggle-on(ng-show='opt.useQual')
+          | &nbsp;Use Qualificatins
       table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
