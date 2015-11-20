@@ -46,7 +46,7 @@ Meteor.methods({
       var mturkconf:iMTurk = _.extend({}, serverconfig.mturk);
       mturkconf.sandbox = !p.islive;
       mturk.connect(mturkconf).then(function(api){
-        var quest:string = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
+        var quest:string = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>800</FrameHeight> </ExternalQuestion>';
 
         var hitcontent:iHITContent = {
           Title: 'Describe this Image ' + p.jid,
