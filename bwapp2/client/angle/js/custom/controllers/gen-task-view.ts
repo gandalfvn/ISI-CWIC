@@ -18,7 +18,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
   "use strict";
   
   $scope.date = (new Date()).getTime();
-  $scope.opt = {bAgreed: false};
+  $scope.opt = {bAgreed: true};
 
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(

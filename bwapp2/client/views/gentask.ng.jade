@@ -17,18 +17,18 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       .well.col-sm-8.col-sm-offset-2
         h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
         img.center-block(src='img/example.png')
-        h4(style='color:green') VALID Example:
+        //-h4(style='color:green') VALID Example:
         label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take block 14 and place it next to block 17. The down right corner of block 14 should touch the upper left corner of block 17.
         label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
         label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
 
-        h4(style='color:red') DO NOT use the textboxes to create a sequence of events:
-        label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
-        br
-        label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
-        br
-        label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
-      div.text-center.col-md-12(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
+        //-h4(style='color:red') DO NOT use the textboxes to create a sequence of events:
+          label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
+          br
+          label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
+          br
+          label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
+      //-div.text-center.col-md-12(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
         i.fa.fa-hand-o-right(style='font-size:2em')
         | &nbsp;&nbsp;
         button.btn.btn-danger.shadowbox(style='font-size:1.3em', ng-click='opt.bAgreed=true')
@@ -59,7 +59,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         hr
         div(style='color:red;font-size:1.1em')
           .fa.fa-exclamation-triangle
-          | Each description MUST describe the scene completely.  
+          | Each description MUST describe the action completely.  
           //-span(ng-show='notes.length > 1')
             | Ensure each alternative description is 
             b DIFFERENT.
@@ -85,8 +85,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 .fa.fa-asterisk
               b.pull-left(ng-show='note.length > 13', style='font-size: 16px; color: green; width:2%;').fa.fa-check
               .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-                textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
-                textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
+                textarea.form-control(ng-if='submitter || $index < curantpass', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter || $index < curantpass')
+                textarea.form-control(ng-if='!submitter && $index == curantpass', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
           button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
           button.btn.btn-primary(ng-if='workerId && hitId && notes[curantpass].length > 13 && taskidx+1 >= maxtask && !submitter', ng-click='itrAnnot(notes, 1)') Submit
           button.btn.btn-primary(ng-if='(workerId && hitId && (notes[curantpass].length > 13 && taskidx+1 < maxtask) || (submitter && taskidx+1 < maxtask))', ng-click='itrAnnot(notes, 1)') Next
