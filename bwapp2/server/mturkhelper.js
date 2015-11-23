@@ -37,12 +37,12 @@ Meteor.methods({
                         {
                             QualificationTypeId: "000000000000000000L0",
                             Comparator: "GreaterThanOrEqualTo",
-                            IntegerValue: "97"
+                            IntegerValue: "95"
                         },
                         {
                             QualificationTypeId: "00000000000000000040",
                             Comparator: "GreaterThanOrEqualTo",
-                            IntegerValue: "3000"
+                            IntegerValue: "1000"
                         }
                     ];
                 }

@@ -59,11 +59,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         hr
         div(style='color:red;font-size:1.1em')
           .fa.fa-exclamation-triangle
-          | There are {{notes.length}} description entrie(s).  Each description MUST describe the scene completely.  
-          span(ng-show='notes.length > 1')
+          | Each description MUST describe the scene completely.  
+          //-span(ng-show='notes.length > 1')
             | Ensure each alternative description is 
             b DIFFERENT.
-      h4.pull-left {{taskidx+1}}/{{taskdata.idxlist.length}}
+      h4.pull-left(ng-if='submitter') {{taskidx+1}}/{{taskdata.idxlist.length}}
+      h4.pull-left(ng-if='!submitter') {{taskidx+1}}/{{maxtask}}
       .col-sm-11
         form(name='submitForm', action='{{submitTo}}', method='post')
           input(type="hidden", name="assignmentId", value="{{assignmentId}}")
@@ -71,15 +72,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
   
         form.ng-pristine.ng-valid(name='annotForm')
-          div(ng-repeat='note in notes track by $index')
+          div(ng-repeat='note in notes track by $index', ng-if='$index <= curantpass')
             //-.col-sm-1
               //-button.btn.btn-xs.btn-danger(title='Remove Description')
                 .fa.fa-remove(ng-click='removeNote($index)')
-            .col-sm-12(ng-show='$index > 0 && notes[$index-1].length > 13')
-              | Create another description 
-              b DIFFERENT 
-              | from the previous 
-              b(style='color:red') NOT IN SEQUNECE
+            .col-sm-12(ng-if='$index > 0 && notes[$index-1].length > 13')
+              | Create a 
+              b(style='color:red') COMPLETELY NEW ALTERNATIVE
+              |  description of the action
             .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
               b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
                 .fa.fa-asterisk
@@ -88,8 +88,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 textarea.form-control(ng-if='submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter')
                 textarea.form-control(ng-if='!submitter', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
           button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
-          button.btn.btn-primary(ng-if='workerId && hitId && notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 == taskdata.idxlist.length && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-          button.btn.btn-primary(ng-if='(workerId && hitId && (notes[0].length > 13 && (notes[1] == undefined || notes[1].length > 13) && (notes[2] == undefined || notes[2].length > 13) && taskidx+1 < taskdata.idxlist.length) || (submitter && taskidx+1 < taskdata.idxlist.length))', ng-click='itrAnnot(notes, 1)') Next
+          button.btn.btn-primary(ng-if='workerId && hitId && notes[curantpass].length > 13 && taskidx+1 >= maxtask && !submitter', ng-click='itrAnnot(notes, 1)') Submit
+          button.btn.btn-primary(ng-if='(workerId && hitId && (notes[curantpass].length > 13 && taskidx+1 < maxtask) || (submitter && taskidx+1 < maxtask))', ng-click='itrAnnot(notes, 1)') Next
           
 .row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
   .col-sm-12
