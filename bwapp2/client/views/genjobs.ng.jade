@@ -168,7 +168,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.active')
-            td {{task.time | date:"MM/dd/yyyy HH:mm"}}
+            td
+              button.btn.btn-xs.btn-danger(ng-click='remHIT(task.tid, "H_"+task.hid)', title='Remove HIT {{task.hid}} from {{task.tid}}')
+                .fa.fa-remove
+              | &nbsp;&nbsp;{{task.time | date:"MM/dd/yyyy HH:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
               span(ng-show='!task.islive', style='color:grey') Sandbox
