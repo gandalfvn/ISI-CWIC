@@ -43,6 +43,18 @@ Meteor.methods({
                             QualificationTypeId: "00000000000000000040",
                             Comparator: "GreaterThanOrEqualTo",
                             IntegerValue: "1000"
+                        },
+                        {
+                            QualificationTypeId: "00000000000000000071",
+                            Comparator: "In",
+                            LocaleValue: [
+                                {
+                                    Country: "US"
+                                },
+                                {
+                                    Country: "CA"
+                                }
+                            ]
                         }
                     ];
                 }
@@ -56,7 +68,7 @@ Meteor.methods({
                     .then(function (resp) {
                     done(null, { hit: resp.HIT, hitcontent: hitcontent });
                 }, function (err) {
-                    //console.warn('CREATEHITS', err);
+                    console.warn('CREATEHITS ERR', err);
                     done(err);
                 });
                 /*//Example operation, no params
