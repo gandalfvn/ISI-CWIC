@@ -140,18 +140,38 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   };
 
   $scope.dlLinks = function(task:iSortHITs){
-    console.warn(task);
     var content:string[] = [];
+    var htmlcontent:{ex: string, res: string[], st: string} = {ex: '', res: [], st: ''};
+    var href:string = '';
     content.push('Example:');
-    content.push($state.href('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, {absolute: true}));
+    href = $state.href('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, {absolute: true});
+    content.push(href);
+    htmlcontent.ex = href;
     content.push('Results:');
     _.each(task.names, function(n){
-      content.push($state.href('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, {absolute: true}));
+      href = $state.href('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, {absolute: true});
+      content.push(href);
+      htmlcontent.res.push(href);
     });
-    
+
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content.join('\n'));
-    console.warn(uriContent);
     apputils.saveAs(uriContent, 'bw_links_'+task.tid+'.txt');
+
+
+    var mytask:iGenJobsMgr = GenJobsMgr.findOne({_id: task.tid});
+    htmlcontent.st = $state.href('app.genworld',{sid: mytask.stateid}, {absolute: true});
+    var htmldata = "<body>";
+    htmldata += "<h2>HIT: "+task.hid+"</h2>";
+    htmldata += "<h4>State</h4>";
+    htmldata += "<a href='"+htmlcontent.st+"' target='_blank'>"+htmlcontent.st+"</a><br>";
+    htmldata += "<h4>Example</h4>";
+    htmldata += "<a href='"+htmlcontent.ex+"' target='_blank'>"+htmlcontent.ex+"</a><br>";
+    htmldata += "<h4>Results:</h4>";
+    _.each(htmlcontent.res, function(n){
+      htmldata += "<a href='"+n+"' target='_blank'>"+n+"</a><br>";
+    });
+    uriContent = "data:application/octet-stream," + encodeURIComponent(htmldata);
+    apputils.saveAs(uriContent, 'bw_links_'+task.tid+'.html');
   };
 
   var updateTableStateParams = function(){

@@ -402,7 +402,10 @@ angular.module('app.generate').controller('genWorldCtrl',
 
     var dataReady:iDataReady = new apputils.cDataReady(2, function():void{
       updateTableStateParams();
-      $rootScope.dataloaded = true;
+      if($stateParams.sid){
+        $scope.showState($stateParams.sid);
+      }
+      else $rootScope.dataloaded = true;
     });
     
     var updateTableStateParams = function(){
@@ -997,6 +1000,7 @@ angular.module('app.generate').controller('genWorldCtrl',
      * @param sid
      */
     $scope.showState = function(sid:string){
+      $state.transitionTo('app.genworld', {sid: sid}, {notify: false});
       $rootScope.dataloaded = false;
       $scope.enableImpSave = false;
       //we must get the state for this sid
@@ -1122,12 +1126,13 @@ angular.module('app.generate').controller('genWorldCtrl',
       var params:iMoveItr = {itr: 0, startMove: null, cubesused: cubesused};
       setTimeout(function(){waitForSSAndSave(params, 
         function(err:any, savedsid:string){
-          console.warn('saveimpor wait for');
+          console.warn('saveimport wait for');
           if(err) toaster.pop('warn', err);
           if(savedsid){
             $scope.curitr = $scope.curState.stateitr;
             $scope.curcnt = 0;
             updateTableStateParams();
+            $state.transitionTo('app.genworld', {sid: savedsid}, {notify: false});
           }
           $rootScope.dataloaded = true;
         });
@@ -1137,6 +1142,7 @@ angular.module('app.generate').controller('genWorldCtrl',
     $scope.clearMeta = function(){
       $('#galleryarea').empty();
       $scope.curState.clear();
+      $state.transitionTo('app.genworld', {}, {notify: false});
     };
 
     $scope.loadMeta = function(){
