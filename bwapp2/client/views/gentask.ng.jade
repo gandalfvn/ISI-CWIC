@@ -45,14 +45,17 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           div
             label {{l.name | uppercase}}
   
-    .row-fluid.well.col-sm-12(ng-if='taskdata.tasktype == "action"')
+    .row-fluid.well.col-md-12(ng-if='taskdata.tasktype == "action"')
       .col-sm-12(ng-if='submitter')
         .label.label-warning Read Only
         i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
-      .col-md-6
-        #statea
-      .col-md-6
-        #stateb
+      .col-md-12
+        .col-md-6
+          #statea
+        .col-md-1(style='width:4%')
+          i.fa.fa-chevron-right(style='font-size:6em;margin-top:2.5em;margin-left: -0.1em;')
+        .col-md-5
+          #stateb
       .col-sm-12
         hr
         div(style='color:red;font-size:1.1em')
