@@ -103,15 +103,22 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     button.btn.btn-primary(ng-click='dlStates()') Get States JSON
     | &nbsp;&nbsp;
     button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
-  .col-sm-12(ng-repeat='notes in hitdata.notes[workerId] track by $index')
+  .col-sm-12(ng-repeat='(nidx,notes) in hitdata.notes[workerId]')
     .col-sm-12
-      h3.pull-left {{$index+1}}
+      h3.pull-left {{nidx}}
       .col-sm-6
-        div(id='statea{{$index}}')
+        div(id='statea{{nidx}}')
       .col-sm-5
-        div(id='stateb{{$index}}')
+        div(id='stateb{{nidx}}')
     .col-sm-12
-      div.mb-sm(ng-repeat='note in notes track by $index')
-        label.form-control {{notes[$index]}}
+      form.ng-pristine.ng-valid.novalidate(name='reportForm[{{nidx}}]')
+        div.mb-sm(ng-repeat='note in notes track by $index')
+          .col-sm-12
+            b.pull-left(ng-show="reportForm[nidx]['repnote['+$index+']'].$dirty", style='font-size: 16px; color: red; width:2%; float: left')
+              .fa.fa-asterisk
+            .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
+              textarea.form-control(type='text', name='repnote[{{$index}}]', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
+      button.btn.btn-warning(ng-show='reportForm[nidx].$dirty', ng-click='updateReport(nidx, reportForm[nidx])') Update
+
     .col-sm-12
       hr

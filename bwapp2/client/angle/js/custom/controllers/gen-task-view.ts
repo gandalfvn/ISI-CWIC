@@ -313,6 +313,17 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
     }
   };
 
+  $scope.updateReport = function(idx: number, form: angular.IFormController){
+    var setdata:{[x: string]:any} = {};
+    setdata['notes.'+$scope.workerId] = $scope.hitdata.notes[$scope.workerId];
+    GenJobsMgr.update({_id: $scope.hitdata._id}, {
+      $set: setdata
+    }, function(err, ret){
+      if(err) return toaster.pop('error', err.reason);
+      form.$setPristine();
+    });
+  };
+
   $scope.dlScene = function(){
     var tempframe = {_id: $scope.curState._id,
       public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,

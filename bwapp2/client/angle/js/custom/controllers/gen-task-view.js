@@ -302,6 +302,17 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                     toaster.pop('error', 'Missing HIT Id');
             }
         };
+        $scope.updateReport = function (idx, form) {
+            var setdata = {};
+            setdata['notes.' + $scope.workerId] = $scope.hitdata.notes[$scope.workerId];
+            GenJobsMgr.update({ _id: $scope.hitdata._id }, {
+                $set: setdata
+            }, function (err, ret) {
+                if (err)
+                    return toaster.pop('error', err.reason);
+                form.$setPristine();
+            });
+        };
         $scope.dlScene = function () {
             var tempframe = { _id: $scope.curState._id,
                 public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
