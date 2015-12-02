@@ -1,5 +1,6 @@
 accounts-base@1.2.2
 accounts-password@1.1.4
+alethes:lodash@0.7.1
 angular-blaze-templates-compiler@0.0.1
 angular-meteor-data@0.0.6
 angular-with-blaze@1.2.1

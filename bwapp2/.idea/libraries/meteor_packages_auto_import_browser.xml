@@ -79,6 +79,7 @@
         <item url="file://$USER_HOME$/.meteor/packages/ddp-common/1.2.2/web.browser/utils.js" />
         <item url="file://$USER_HOME$/.meteor/packages/ddp-common/1.2.2/web.browser/heartbeat.js" />
         <item url="file://$USER_HOME$/.meteor/packages/diff-sequence/1.0.1/web.browser/packages/diff-sequence.js" />
+        <item url="file://$USER_HOME$/.meteor/packages/alethes_lodash/0.7.1/web.browser/packages/alethes:lodash.js" />
         <item url="file://$USER_HOME$/.meteor/packages/ecmascript-runtime/0.2.6/web.browser/.npm/package/node_modules/meteor-ecmascript-runtime/client.js" />
         <item url="file://$USER_HOME$/.meteor/packages/ejson/1.0.7/web.browser/packages/ejson.js" />
         <item url="file://$USER_HOME$/.meteor/packages/accounts-base/1.2.2/web.browser/url_client.js" />
@@ -201,6 +202,7 @@
       <root url="file://$USER_HOME$/.meteor/packages/ddp-common/1.2.2/web.browser/utils.js" />
       <root url="file://$USER_HOME$/.meteor/packages/ddp-common/1.2.2/web.browser/heartbeat.js" />
       <root url="file://$USER_HOME$/.meteor/packages/diff-sequence/1.0.1/web.browser/packages/diff-sequence.js" />
+      <root url="file://$USER_HOME$/.meteor/packages/alethes_lodash/0.7.1/web.browser/packages/alethes:lodash.js" />
       <root url="file://$USER_HOME$/.meteor/packages/ecmascript-runtime/0.2.6/web.browser/.npm/package/node_modules/meteor-ecmascript-runtime/client.js" />
       <root url="file://$USER_HOME$/.meteor/packages/ejson/1.0.7/web.browser/packages/ejson.js" />
       <root url="file://$USER_HOME$/.meteor/packages/accounts-base/1.2.2/web.browser/url_client.js" />

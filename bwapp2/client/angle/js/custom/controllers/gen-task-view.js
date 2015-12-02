@@ -6,7 +6,7 @@
 /// <reference path="../../../../../model/genstatesdb.ts" />
 /// <reference path="../../../../../model/screencapdb.ts" />
 /// <reference path="../../../../../public/vendor/lz-string/typings/lz-string.d.ts" />
-/// <reference path="../../../../../server/typings/underscore/underscore.d.ts" />
+/// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
@@ -15,7 +15,7 @@
 angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils) {
         "use strict";
         $scope.date = (new Date()).getTime();
-        $scope.opt = { bAgreed: true };
+        $scope.opt = { bAgreed: true, repvalidlist: [mGenJobsMgr.eRepValid[0], mGenJobsMgr.eRepValid[1], mGenJobsMgr.eRepValid[2]], repvalid: '' };
         var genstates = $scope.$meteorCollection(GenStates);
         $scope.$meteorSubscribe("genstates").then(function (sid) { dataReady.update('genstates'); }, function (err) { console.log("error", arguments, err); });
         var screencaps = $scope.$meteorCollection(ScreenCaps);
@@ -67,6 +67,10 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                     //console.warn('curState',$scope.curState);
                     if ($stateParams.report) {
                         $scope.report = $stateParams.report;
+                        if ($scope.submitter.valid)
+                            $scope.opt.repvalid = $scope.submitter.valid;
+                        else
+                            $scope.opt.repvalid = 'tbd';
                         if ($scope.hitdata.notes[$scope.workerId]) {
                             $timeout(function () {
                                 renderReport(0);
@@ -312,6 +316,20 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                     return toaster.pop('error', err.reason);
                 form.$setPristine();
             });
+        };
+        $scope.validateReport = function (opt) {
+            var subidx = _.findIndex($scope.hitdata.submitted, function (v) { return v.name == $scope.workerId; });
+            if (subidx > -1) {
+                $scope.submitter.valid = opt;
+                var setdata = {};
+                setdata['submitted.' + subidx] = $scope.submitter;
+                GenJobsMgr.update({ _id: $scope.hitdata._id }, {
+                    $set: setdata
+                }, function (err, ret) {
+                    if (err)
+                        return toaster.pop('error', err.reason);
+                });
+            }
         };
         $scope.dlScene = function () {
             var tempframe = { _id: $scope.curState._id,

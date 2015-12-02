@@ -6,7 +6,7 @@
 /// <reference path="../../../../../model/genstatesdb.ts" />
 /// <reference path="../../../../../model/screencapdb.ts" />
 /// <reference path="../../../../../public/vendor/lz-string/typings/lz-string.d.ts" />
-/// <reference path="../../../../../server/typings/underscore/underscore.d.ts" />
+/// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
@@ -18,8 +18,8 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
   "use strict";
   
   $scope.date = (new Date()).getTime();
-  $scope.opt = {bAgreed: true};
-
+  $scope.opt = {bAgreed: true, repvalidlist: [mGenJobsMgr.eRepValid[0], mGenJobsMgr.eRepValid[1], mGenJobsMgr.eRepValid[2]], repvalid: ''};
+  
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
     function(sid){dataReady.update('genstates');},
@@ -51,7 +51,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       return;
     }
     if ($stateParams.taskId){ //get task information and start loading
-      $scope.taskdata = <iGenJobsMgr>GenJobsMgr.findOne($stateParams.taskId);
+      $scope.taskdata = <miGenJobsMgr.iGenJobsMgr>GenJobsMgr.findOne($stateParams.taskId);
       if (!$scope.taskdata) {
         $rootScope.dataloaded = true;
         $scope.assignmentId = null;
@@ -66,9 +66,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       }
       if ($scope.hitId) {
         //load hit
-        $scope.hitdata = <iGenJobsHIT>GenJobsMgr.findOne('H_' + $scope.hitId);
+        $scope.hitdata = <miGenJobsMgr.iGenJobsHIT>GenJobsMgr.findOne('H_' + $scope.hitId);
         if ($scope.hitdata && $scope.hitdata.submitted && $scope.workerId && $scope.workerId !== 'EXAMPLE') {
-          var subfound:{name:string, time: number, aid: string} = <{name:string, time: number, aid: string}>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
+          var subfound:miGenJobsMgr.iSubmitEle = <miGenJobsMgr.iSubmitEle>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
           if (!_.isUndefined(subfound)) {//check if its already submitted by this worker
             //worker already submitted
             $scope.submitter = subfound;
@@ -82,6 +82,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
           //console.warn('curState',$scope.curState);
           if ($stateParams.report) { //report view
             $scope.report = $stateParams.report;
+            if($scope.submitter.valid)
+              $scope.opt.repvalid = $scope.submitter.valid;
+            else $scope.opt.repvalid = 'tbd';
             if ($scope.hitdata.notes[$scope.workerId]) {
               $timeout(function () {
                 renderReport(0)
@@ -283,7 +286,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
           if($scope.taskidx >= $scope.maxtask && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
             //submission assignment as done
             if(!$scope.hitdata.submitted) $scope.hitdata.submitted = [];
-            var subfound:{name:string, time: number, aid: string} = <{name:string, time: number, aid: string}>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
+            var subfound:miGenJobsMgr.iSubmitEle = <miGenJobsMgr.iSubmitEle>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
             if(_.isUndefined(subfound)){
               $scope.hitdata.submitted.push({
                 name: $scope.workerId,
@@ -322,6 +325,20 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       if(err) return toaster.pop('error', err.reason);
       form.$setPristine();
     });
+  };
+  
+  $scope.validateReport = function(opt: string){
+    var subidx:number = _.findIndex<miGenJobsMgr.iSubmitEle>($scope.hitdata.submitted, function(v:miGenJobsMgr.iSubmitEle){return v.name == $scope.workerId});
+    if(subidx>-1) {
+      $scope.submitter.valid = opt;
+      var setdata:{[x: string]:any} = {};
+      setdata['submitted.'+subidx] = $scope.submitter;
+      GenJobsMgr.update({_id: $scope.hitdata._id}, {
+        $set: setdata
+      }, function(err, ret){
+        if(err) return toaster.pop('error', err.reason);
+      });
+    }
   };
 
   $scope.dlScene = function(){

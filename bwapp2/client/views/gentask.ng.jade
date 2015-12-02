@@ -101,6 +101,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
   .row-fluid
     h3 Report for Submitter {{workerId}}
+    label(style='font-size:1.1em') Valid:
+    select(style='font-size:1.5em', ng-model ='opt.repvalid', ng-change='validateReport(opt.repvalid)')
+      option(ng-repeat='n in opt.repvalidlist', value='{{n}}') {{n | uppercase}}
+    | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
     | &nbsp;&nbsp;
     button.btn.btn-primary(ng-click='dlStates()') Get States JSON

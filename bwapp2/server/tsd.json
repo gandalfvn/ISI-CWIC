@@ -5,9 +5,6 @@
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
-    "underscore/underscore.d.ts": {
-      "commit": "001ca36ba58cef903c4c063555afb07bbc36bb58"
-    },
     "jquery/jquery.d.ts": {
       "commit": "001ca36ba58cef903c4c063555afb07bbc36bb58"
     },
@@ -16,6 +13,9 @@
     },
     "meteor/meteor.d.ts": {
       "commit": "001ca36ba58cef903c4c063555afb07bbc36bb58"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "715df764419937a75a25dcd76bfc954157bc7b96"
     }
   }
 }
