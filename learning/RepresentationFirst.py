@@ -5,7 +5,7 @@ import tensorflow as tf
 from ReadData import Data
 from Layer import Layers
 
-D = Data(10000)
+D = Data(10000, sequence=False)
 L = Layers()
 
 input_dim = len(D.Train["text"][0])
@@ -122,12 +122,10 @@ print "Testing"
 predicted_sf = sess.run(y_sf, feed_dict={x_t: D.Test["text"], x_w: D.Test["world"]})
 predicted_re = sess.run(y_re, feed_dict={x_t: D.Test["text"], x_w: D.Test["world"]})
 
-out = open("predictions.txt", 'w')
-print len(predicted_re)
-np.set_printoptions(suppress=True)
-for i in range(len(predicted_re)):
-  out.write("%s %s\n" % (sess.run(tf.argmax(predicted_sf[i], 0)), str(predicted_re[i, :])))
-
-out.close()
 print "Test loss ", sess.run(loss, feed_dict={x_t: D.Test["text"],
                                               x_w: D.Test["world"], y_A: D.Test["actions"], y_C: D.Test["classes"]})
+
+predicted_id = []
+for i in range(len(predicted_re)):
+  predicted_id.append([sess.run(tf.argmax(predicted_sf[i], 0))])
+D.write_predictions(np.concatenate((predicted_id, predicted_re), axis=1))

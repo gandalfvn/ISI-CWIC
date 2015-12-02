@@ -6,7 +6,7 @@ from ReadData import Data
 from Layer import Layers
 np.set_printoptions(threshold=np.nan)
 
-D = Data(10000, separate=False, onehot=False)
+D = Data(maxlines=100, separate=False, onehot=False, sequence=False)
 L = Layers()
 
 print "Read Data"
@@ -74,9 +74,4 @@ for i in range(10):
 print "Testing"
 predicted_re = sess.run(y, feed_dict={x: D.Test["input"]})
 
-out = open("predictions.txt", 'w')
-print len(predicted_re)
-for i in range(len(predicted_re)):
-  out.write("%s\n" % str(predicted_re[i, :]))
-
-out.close()
+D.write_predictions(predicted_re)
