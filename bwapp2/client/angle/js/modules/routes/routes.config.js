@@ -46,7 +46,7 @@
         }]
       })
       .state('app.genworld', {
-        url: '/genworld',
+        url: '/genworld?sid',
         title: 'Generate World',
         templateUrl: helper.basepath('genworld.html'),
         resolve: angular.extend(

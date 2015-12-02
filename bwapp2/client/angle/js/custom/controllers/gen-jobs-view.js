@@ -68,7 +68,6 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
         };
         var getAllHITs = function () {
             var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
-            console.warn('jobs', jobs);
             var activeHITs = [];
             var doneHITs = [];
             _.each(jobs, function (j) {
@@ -80,7 +79,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                         names.push(h.name);
                     });
                 }
-                if (asnleft)
+                if (asnleft > 0)
                     activeHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
                 else
                     doneHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
@@ -99,17 +98,35 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             return null;
         };
         $scope.dlLinks = function (task) {
-            console.warn(task);
             var content = [];
+            var htmlcontent = { ex: '', res: [], st: '' };
+            var href = '';
             content.push('Example:');
-            content.push($state.href('gentask', { taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE' }, { absolute: true }));
+            href = $state.href('gentask', { taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE' }, { absolute: true });
+            content.push(href);
+            htmlcontent.ex = href;
             content.push('Results:');
             _.each(task.names, function (n) {
-                content.push($state.href('gentask', { taskId: task.tid, workerId: n, hitId: task.hid, report: 1 }, { absolute: true }));
+                href = $state.href('gentask', { taskId: task.tid, workerId: n, hitId: task.hid, report: 1 }, { absolute: true });
+                content.push(href);
+                htmlcontent.res.push(href);
             });
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content.join('\n'));
-            console.warn(uriContent);
             apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.txt');
+            var mytask = GenJobsMgr.findOne({ _id: task.tid });
+            htmlcontent.st = $state.href('app.genworld', { sid: mytask.stateid }, { absolute: true });
+            var htmldata = "<body>";
+            htmldata += "<h2>HIT: " + task.hid + "</h2>";
+            htmldata += "<h4>State</h4>";
+            htmldata += "<a href='" + htmlcontent.st + "' target='_blank'>" + htmlcontent.st + "</a><br>";
+            htmldata += "<h4>Example</h4>";
+            htmldata += "<a href='" + htmlcontent.ex + "' target='_blank'>" + htmlcontent.ex + "</a><br>";
+            htmldata += "<h4>Results:</h4>";
+            _.each(htmlcontent.res, function (n) {
+                htmldata += "<a href='" + n + "' target='_blank'>" + n + "</a><br>";
+            });
+            uriContent = "data:application/octet-stream," + encodeURIComponent(htmldata);
+            apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.html');
         };
         var updateTableStateParams = function () {
             $scope.stateslist = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
@@ -300,7 +317,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             }
         };
         $scope.createHIT = function (jid, tid) {
-            Meteor.call('mturkCreateHIT', { jid: jid, tid: tid, islive: $scope.options.isLive }, function (err, ret) {
+            var params = { jid: jid, tid: tid, islive: $scope.opt.isLive, useQual: $scope.opt.useQual };
+            Meteor.call('mturkCreateHIT', params, function (err, ret) {
                 if (err)
                     return $scope.$apply(function () { toaster.pop('error', err); });
                 if (ret.error)
@@ -314,7 +332,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                     hitcontent: res.hitcontent,
                     tid: tid,
                     jid: jid,
-                    islive: $scope.options.isLive,
+                    islive: $scope.opt.isLive,
                     created: (new Date()).getTime()
                 };
                 $scope.$apply(function () { toaster.pop('info', 'HIT created: ' + hitdata._id); });
@@ -329,7 +347,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             });
         };
         $scope.stateGo = apputils.stateGo($state);
-        $scope.options = {}; //angular has issues with updating primitives
-        $scope.options.isLive = false;
+        $scope.opt = {}; //angular has issues with updating primitives
+        $scope.opt.isLive = false;
+        $scope.opt.useQual = true;
     }]);
 //# sourceMappingURL=gen-jobs-view.js.map

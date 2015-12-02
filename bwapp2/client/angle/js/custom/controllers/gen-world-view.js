@@ -76,7 +76,9 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                     boxt = new BABYLON.Texture("img/textures/logos/" + block.name.replace(/ /g, '') + '.png', scene);
                 else
                     boxt = numTextures[block.id];
-                boxt.uScale = boxt.vScale = 1;
+                boxt.uScale = 1;
+                boxt.vScale = 1;
+                boxt.wAng = Math.PI / 2;
                 boxmat.diffuseTexture = boxt;
                 for (var i = 0; i < 6; i++) {
                     var cv = colorids[block.shape.shape_params['face_' + (i + 1)].color];
@@ -350,7 +352,11 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         $scope.$meteorSubscribe("screencaps").then(function (sid) { dataReady.update('screencaps'); }, function (err) { console.log("error", arguments, err); });
         var dataReady = new apputils.cDataReady(2, function () {
             updateTableStateParams();
-            $rootScope.dataloaded = true;
+            if ($stateParams.sid) {
+                $scope.showState($stateParams.sid);
+            }
+            else
+                $rootScope.dataloaded = true;
         });
         var updateTableStateParams = function () {
             var data = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
@@ -956,6 +962,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
          * @param sid
          */
         $scope.showState = function (sid) {
+            $state.transitionTo('app.genworld', { sid: sid }, { notify: false });
             $rootScope.dataloaded = false;
             $scope.enableImpSave = false;
             //we must get the state for this sid
@@ -1072,13 +1079,14 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             var params = { itr: 0, startMove: null, cubesused: cubesused };
             setTimeout(function () {
                 waitForSSAndSave(params, function (err, savedsid) {
-                    console.warn('saveimpor wait for');
+                    console.warn('saveimport wait for');
                     if (err)
                         toaster.pop('warn', err);
                     if (savedsid) {
                         $scope.curitr = $scope.curState.stateitr;
                         $scope.curcnt = 0;
                         updateTableStateParams();
+                        $state.transitionTo('app.genworld', { sid: savedsid }, { notify: false });
                     }
                     $rootScope.dataloaded = true;
                 });
@@ -1087,6 +1095,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         $scope.clearMeta = function () {
             $('#galleryarea').empty();
             $scope.curState.clear();
+            $state.transitionTo('app.genworld', {}, { notify: false });
         };
         $scope.loadMeta = function () {
             if ($scope.metafilename && $scope.metafilename.length) {

@@ -10,15 +10,15 @@ Meteor.methods({
     mturkCreateHIT: function (p) {
         console.warn(p);
         var mturk = Meteor['npmRequire']('mturk-api');
-        var antpriceact = [0.6, 1.1, 1.5];
-        var anttimeact = [2.5, 3, 3.5];
+        var antpriceact = [0.5, 1.0, 1.5];
+        var anttimeact = [3, 3.5, 4];
         var turk = Async.runSync(function (done) {
             var taskdata = GenJobsMgr.findOne({ _id: p.tid });
             var len = taskdata.idxlist.length;
             var mturkconf = _.extend({}, serverconfig.mturk);
             mturkconf.sandbox = !p.islive;
             mturk.connect(mturkconf).then(function (api) {
-                var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId=' + p.tid + '</ExternalURL> <FrameHeight>600</FrameHeight> </ExternalQuestion>';
+                var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId=' + p.tid + '</ExternalURL> <FrameHeight>800</FrameHeight> </ExternalQuestion>';
                 var hitcontent = {
                     Title: 'Describe this Image ' + p.jid,
                     Description: 'Tagging image with a description.',
@@ -32,6 +32,32 @@ Meteor.methods({
                     Keywords: 'image, identification, recognition, tagging, description',
                     MaxAssignments: taskdata.asncnt
                 };
+                if (p.useQual) {
+                    hitcontent.QualificationRequirement = [
+                        {
+                            QualificationTypeId: "000000000000000000L0",
+                            Comparator: "GreaterThanOrEqualTo",
+                            IntegerValue: "95"
+                        },
+                        {
+                            QualificationTypeId: "00000000000000000040",
+                            Comparator: "GreaterThanOrEqualTo",
+                            IntegerValue: "1000"
+                        },
+                        {
+                            QualificationTypeId: "00000000000000000071",
+                            Comparator: "In",
+                            LocaleValue: [
+                                {
+                                    Country: "US"
+                                },
+                                {
+                                    Country: "CA"
+                                }
+                            ]
+                        }
+                    ];
+                }
                 if (taskdata.tasktype === 'action') {
                     hitcontent.Title = 'Describe this Image Sequence ' + p.jid;
                     hitcontent.Description = 'Tagging image transitions with a description.';
@@ -42,7 +68,7 @@ Meteor.methods({
                     .then(function (resp) {
                     done(null, { hit: resp.HIT, hitcontent: hitcontent });
                 }, function (err) {
-                    //console.warn('CREATEHITS', err);
+                    console.warn('CREATEHITS ERR', err);
                     done(err);
                 });
                 /*//Example operation, no params

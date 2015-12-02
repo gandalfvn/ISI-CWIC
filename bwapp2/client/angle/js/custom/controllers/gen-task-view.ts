@@ -18,6 +18,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
   "use strict";
   
   $scope.date = (new Date()).getTime();
+  $scope.opt = {bAgreed: true};
 
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
@@ -39,7 +40,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
 
   $scope.isOpenDir = true;
   $scope.taskdata;
-  $scope.taskidx = 0;
+  $scope.taskidx = -1;
+  $scope.maxtask = -1;
+  $scope.curantpass = -1;
   $scope.notes = null;
   var dataReady:iDataReady = new apputils.cDataReady(2, function():void {
     var isAdminUser = ($rootScope.currentUser) ? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
@@ -56,10 +59,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       }
       $scope = _.extend($scope, $stateParams);
       if ($scope.turkSubmitTo) $scope.submitTo = $scope.turkSubmitTo + '/mturk/externalSubmit';
-      //if($stateParams.workerId) $scope.workerId = $stateParams.workerId;
-      //if($stateParams.assignmentId) $scope.assignmentId = $stateParams.assignmentId;
       if ($scope.workerId === 'EXAMPLE') $scope.submitter = true;
-      var isValid:boolean = true;
       if(!$scope.assignmentId && !$stateParams.report){
         $rootScope.dataloaded = true;
         return;
@@ -67,9 +67,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       if ($scope.hitId) {
         //load hit
         $scope.hitdata = <iGenJobsHIT>GenJobsMgr.findOne('H_' + $scope.hitId);
-        if ($scope.hitdata && $scope.hitdata.submitted && isValid && $scope.workerId && $scope.workerId !== 'EXAMPLE') {
+        if ($scope.hitdata && $scope.hitdata.submitted && $scope.workerId && $scope.workerId !== 'EXAMPLE') {
           var subfound:{name:string, time: number, aid: string} = <{name:string, time: number, aid: string}>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
-          if (!_.isUndefined(subfound)) {
+          if (!_.isUndefined(subfound)) {//check if its already submitted by this worker
             //worker already submitted
             $scope.submitter = subfound;
           }
@@ -80,7 +80,6 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
         function(sub) {
           $scope.curState = <iGenStates>GenStates.findOne(sid);
           //console.warn('curState',$scope.curState);
-          $scope.taskidx = 0;
           if ($stateParams.report) { //report view
             $scope.report = $stateParams.report;
             if ($scope.hitdata.notes[$scope.workerId]) {
@@ -94,7 +93,28 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
             }
           }
           else{//single item view
-            if (isValid) renderTask($scope.taskidx);
+            $scope.maxtask = $scope.taskdata.idxlist.length * $scope.taskdata.antcnt;
+            $scope.taskidx = 0;
+            if($scope.submitter){
+              $scope.curantpass = $scope.taskdata.antcnt;
+            }
+            else {
+              if ($scope.hitdata && $scope.hitdata.notes && $scope.hitdata.notes[$scope.workerId]) {
+                //we have hit data lets fast forward to the correct item to work on
+                //assume that we fill notes from pass 1 then pass 2 etc. there are no holes in the list
+                var mynotes:string[][] = $scope.hitdata.notes[$scope.workerId];
+                _.each(mynotes, function (n) {
+                  n.forEach(function (i) {
+                    if (i.length) $scope.taskidx++;
+                  })
+                })
+              }
+              $scope.curantpass = Math.floor($scope.taskidx / $scope.taskdata.idxlist.length);
+            }
+            if($scope.taskidx || $scope.submitter) $scope.opt.bAgreed = true;
+            console.warn('$scope.taskdata', $scope.taskdata);
+            console.warn('$scope.hitdata', $scope.hitdata);
+            renderTask($scope.taskidx);
             $scope.logolist = [];
             console.warn($scope.curState.block_meta);
             _.each($scope.curState.block_meta.blocks, function(b:iBlockMetaEle){
@@ -139,7 +159,11 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
     }
   };
   
-  var renderTask = function(idx:number){
+  var renderTask = function(tidx:number){
+    if($scope.taskidx != 0) $scope.isOpenDir = false;
+    else $scope.isOpenDir = true;
+    //convert to actual index
+    var idx:number = tidx%$scope.taskdata.idxlist.length;
     //create the annotations
     if($scope.hitdata){
       if(!$scope.hitdata.notes) $scope.hitdata.notes = {};
@@ -151,10 +175,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       }
       $scope.notes = $scope.hitdata.notes[$scope.workerId][idx];
     }
-    else{//only an example no HIT id
+    else{//only an example no HIT id - only need to show 1 note
       $scope.notes = [];
-      for(var i =0; i < $scope.taskdata.antcnt; i++)
-        $scope.notes.push('');
+      $scope.notes.push('');
     }
     if($scope.taskdata.tasktype == 'action'){
       var aidx:number = $scope.taskdata.idxlist[idx][0];
@@ -200,40 +223,50 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       $scope.taskidx+=vdir;
       if($scope.taskidx != 0) $scope.isOpenDir = false;
       else $scope.isOpenDir = true;
-      //read only submission already done
+      //read only - submission already done
       if($scope.taskidx >= $scope.taskdata.idxlist.length) $scope.taskidx = 0;
+      $scope.curantpass = $scope.taskdata.asncnt;
       renderTask($scope.taskidx);
     }
     else{//new entry save as we go
       if($scope.hitId){
+        if(vdir<0){
+          $scope.taskidx+=vdir;
+          $scope.curantpass = Math.floor($scope.taskidx/$scope.taskdata.idxlist.length);
+          renderTask($scope.taskidx);
+          return;
+        }
         //error check length
         var fixedNotes:string[] = _.compact(notes);
-        if(!fixedNotes.length || fixedNotes.length != notes.length ){
+        console.warn(fixedNotes, $scope.curantpass);
+        //since we are filling in annotates 1 at a time over N passes - we just need to check length based on currant whole pass + 1
+        if(!fixedNotes.length || fixedNotes.length != $scope.curantpass+1 ){
           toaster.pop('error', 'All entries must be filled.');
           $rootScope.dataloaded = true;
           return;
         }
+        //check uniq entries
         fixedNotes = _.uniq(fixedNotes);
-        if(!fixedNotes.length || fixedNotes.length != notes.length ){
+        if(!fixedNotes.length || fixedNotes.length != $scope.curantpass+1 ){
           toaster.pop('error', 'Each description must be different.');
           $rootScope.dataloaded = true;
           return;
         }
         //check for number of words
-        var validWords:boolean = true;
+        /*var validWords:boolean = true;
         _.each(notes, function(n){
           if(n.split(' ').length < 4) validWords = false;
         });
-        if(!validWords){
+        if(!validWords){*/
+        if(notes[$scope.curantpass].split(' ').length < 4){
           toaster.pop('error', 'Not enough words used in description');
           $rootScope.dataloaded = true;
           return;
         }
 
-        var previdx:number = $scope.taskidx;
+        var previdx:number = ($scope.taskidx)%$scope.taskdata.idxlist.length; //get actual index
         $scope.taskidx+=vdir;
-        if($scope.taskidx != 0) $scope.isOpenDir = false;
-        else $scope.isOpenDir = true;
+        $scope.curantpass = Math.floor($scope.taskidx/$scope.taskdata.idxlist.length);
         
         if(!$scope.hitdata.timed) $scope.hitdata.timed = {};
         if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
@@ -247,7 +280,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
           $set: setdata
         }, function(err, ret){
           if(err) return toaster.pop('error', err.reason);
-          if($scope.taskidx >= $scope.taskdata.idxlist.length && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
+          if($scope.taskidx >= $scope.maxtask && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
             //submission assignment as done
             if(!$scope.hitdata.submitted) $scope.hitdata.submitted = [];
             var subfound:{name:string, time: number, aid: string} = <{name:string, time: number, aid: string}>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
@@ -260,6 +293,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
               });
               $scope.submitter = $scope.hitdata.submitted[$scope.hitdata.submitted.length-1];
               $scope.taskidx = 0;
+              $scope.curantpass = 0;
               GenJobsMgr.update({_id: $scope.hitdata._id}, {
                 $addToSet: {
                   submitted: $scope.submitter
@@ -277,6 +311,17 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       }
       else toaster.pop('error', 'Missing HIT Id');
     }
+  };
+
+  $scope.updateReport = function(idx: number, form: angular.IFormController){
+    var setdata:{[x: string]:any} = {};
+    setdata['notes.'+$scope.workerId] = $scope.hitdata.notes[$scope.workerId];
+    GenJobsMgr.update({_id: $scope.hitdata._id}, {
+      $set: setdata
+    }, function(err, ret){
+      if(err) return toaster.pop('error', err.reason);
+      form.$setPristine();
+    });
   };
 
   $scope.dlScene = function(){
