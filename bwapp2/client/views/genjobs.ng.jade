@@ -6,6 +6,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .row-fluid
   h2 Action and Description Jobs
   .row
+    .well.col-sm-3
+      label Block Id: 
+      input(ng-model='btid')
+      br
+      label Reason:
+      input(ng-model='btreason')
+      button(ng-show='btid.length && btreason.length', ng-click='blockTurker(btid, btreason)') Go
+  .row
     accordion.col-sm-6
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
         accordion-heading

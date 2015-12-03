@@ -346,6 +346,16 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 });
             });
         };
+        $scope.blockTurker = function (tuid, reason) {
+            var params = { WorkerId: tuid, Reason: reason };
+            Meteor.call('mturkBlockTurker', params, function (err, ret) {
+                if (err)
+                    return $scope.$apply(function () { toaster.pop('error', JSON.stringify(err, null, 2)); });
+                if (ret.error)
+                    return $scope.$apply(function () { toaster.pop('error', JSON.stringify(ret.error, null, 2)); });
+                $scope.$apply(function () { toaster.pop('info', JSON.stringify(ret.result, null, 2)); });
+            });
+        };
         $scope.stateGo = apputils.stateGo($state);
         $scope.opt = {}; //angular has issues with updating primitives
         $scope.opt.isLive = false;

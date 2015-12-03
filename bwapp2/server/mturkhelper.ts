@@ -35,6 +35,11 @@ interface iTurkCreateParam{
   jid: string, tid: string, islive: boolean, useQual: boolean
 }
 
+interface iBlockTurker{
+  WorkerId: string,
+  Reason: string
+}
+
 Meteor.methods({
   mturkCreateHIT: function(p:iTurkCreateParam){
     console.warn(p);
@@ -121,23 +126,23 @@ Meteor.methods({
     return turk;
   },
   
-  mturkReviewableHITs: function(p){
+  mturkBlockTurker: function(p:iBlockTurker){
     var mturk = Meteor['npmRequire']('mturk-api');
 
     var turk = Async.runSync(function(done){
-      mturk.connect(serverconfig.mturk).then(function(api){
-        api.req('GetAssignmentsForHIT', {HITId: p.hid})
+      var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);
+      mturkconf.sandbox = false; //always operate in live env.
+      mturk.connect(mturkconf).then(function(api){
+        api.req('BlockWorker', p)
           .then(function(resp){
-            console.warn('GetReviewableHITs', resp);
             done(null, resp);
           }, function(err){
-            console.warn('GetReviewableHITs', err);
+            console.warn('BlockWorker err', err);
             done(err);
           });
       })
     });
 
     return turk;
-  },
-  
+  }
 });
