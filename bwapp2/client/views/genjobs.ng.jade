@@ -199,6 +199,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Done
             th HIT Id
             th Task Id
+            th Job Id
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.done')
@@ -212,6 +213,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
+            td {{task.jid}}
             td
               span(ng-repeat='n in task.names')
                 button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")

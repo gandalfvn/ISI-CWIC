@@ -4,4 +4,3 @@
  =========================================================*/
 // Use lodash instead of underscore
 _ = lodash;
-console.warn('lodash set');

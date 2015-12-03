@@ -4,7 +4,7 @@
  =========================================================*/
 /// <reference path="./config.d.ts" />
 /// <reference path="../model/genjobsmgrdb.ts" />
-/// <reference path="./typings/underscore/underscore.d.ts" />
+/// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 
 declare var Async:any;
@@ -43,10 +43,10 @@ Meteor.methods({
     var anttimeact:number[] = [3, 3.5, 4];
     
     var turk = Async.runSync(function(done){
-      var taskdata:iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
+      var taskdata:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
       var len:number = taskdata.idxlist.length;
 
-      var mturkconf:iMTurk = _.extend({}, serverconfig.mturk);
+      var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);
       mturkconf.sandbox = !p.islive;
       mturk.connect(mturkconf).then(function(api){
         var quest:string = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>800</FrameHeight> </ExternalQuestion>';
