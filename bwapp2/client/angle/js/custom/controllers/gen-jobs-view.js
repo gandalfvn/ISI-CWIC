@@ -80,7 +80,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                     });
                 }
                 if (asnleft > 0)
-                    activeHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                    activeHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
                 else
                     doneHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
             });
