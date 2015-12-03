@@ -207,9 +207,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
 
     var eleDivID:string = 'div' + $('div').length; // Unique ID
     var eleImgID:string = 'img' + $('img').length; // Unique ID
-    var eleLabelID:string = 'h4' + $('h4').length; // Unique ID
+    var eleLabelID:string = 'label' + $('label').length; // Unique ID
     var htmlout = '<img id="'+eleImgID+'" style="width:'+canvas.width+'px;height:'+canvas.height+'px"></img>';
-    if(title) htmlout = '<h4>'+title+'</h4>' + htmlout;
+    if(title) htmlout = '<h3>'+title+'</h3>' + htmlout;
     if(caption) htmlout += '<label id="'+eleLabelID+'" class="mb">'+caption+'</label>';
     $('<div>').attr({
       id: eleDivID
