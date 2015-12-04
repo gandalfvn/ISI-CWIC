@@ -34,8 +34,8 @@ interface iBlockImport{
   block_state?: iBlockStateSerial[]
 }
 
-angular.module('app.generate').controller('genWorldCtrl',
-  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, ngTableParams, apputils){
+angular.module('app.generate').controller('genPredCtrl',
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, ngTableParams, apputils){
     "use strict";
     
     var hasPhysics:boolean = true;

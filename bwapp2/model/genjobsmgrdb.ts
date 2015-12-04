@@ -53,7 +53,7 @@ module miGenJobsMgr {
     name: string,
     time: string,
     aid: string,
-    valid?: eRepValid
+    valid?: string
   }
 
 }

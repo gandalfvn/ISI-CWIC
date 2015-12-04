@@ -67,22 +67,27 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             return null;
         };
         var getAllHITs = function () {
-            var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, jid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
+            var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, jid: 1, 'submitted.name': 1, 'submitted.valid': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
             var activeHITs = [];
             var doneHITs = [];
             _.each(jobs, function (j) {
                 var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
-                var names = null;
+                var names = null, repvalid = null;
                 if (j.submitted) {
                     names = [];
+                    repvalid = {};
                     j.submitted.forEach(function (h) {
                         names.push(h.name);
+                        if (h.valid)
+                            repvalid[h.name] = h.valid;
+                        else
+                            repvalid[h.name] = mGenJobsMgr.eRepValid[mGenJobsMgr.eRepValid.tbd];
                     });
                 }
                 if (asnleft > 0)
                     activeHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
                 else
-                    doneHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                    doneHITs.push({ time: j.created, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
             });
             if (activeHITs.length || doneHITs.length) {
                 if (activeHITs.length)
@@ -97,7 +102,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             }
             return null;
         };
-        $scope.dlLinks = function (task) {
+        $scope.dlLinks = function (task, onlyValid) {
             var content = [];
             var htmlcontent = { ex: '', res: [], st: '' };
             var href = '';
@@ -107,13 +112,18 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             htmlcontent.ex = href;
             content.push('Results:');
             _.each(task.names, function (n) {
-                href = $state.href('gentask', { taskId: task.tid, workerId: n, hitId: task.hid, report: 1 }, { absolute: true });
-                content.push(href);
-                htmlcontent.res.push(href);
+                console.warn(n, task.repvalid[n], onlyValid);
+                if (!onlyValid || task.repvalid[n] === mGenJobsMgr.eRepValid[mGenJobsMgr.eRepValid.yes]) {
+                    href = $state.href('gentask', { taskId: task.tid, workerId: n, hitId: task.hid, report: 1 }, { absolute: true });
+                    content.push(href);
+                    htmlcontent.res.push(href);
+                }
             });
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content.join('\n'));
-            apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.txt');
+            var fname = 'bw_links_' + task.tid + ((onlyValid) ? '_v' : '') + '.txt';
+            apputils.saveAs(uriContent, fname);
             var mytask = GenJobsMgr.findOne({ _id: task.tid });
+            console.warn(mytask, task);
             htmlcontent.st = $state.href('app.genworld', { sid: mytask.stateid }, { absolute: true });
             var htmldata = "<body>";
             htmldata += "<h2>HIT: " + task.hid + "</h2>";
@@ -126,7 +136,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 htmldata += "<a href='" + n + "' target='_blank'>" + n + "</a><br>";
             });
             uriContent = "data:application/octet-stream," + encodeURIComponent(htmldata);
-            apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.html');
+            fname = 'bw_links_' + task.tid + ((onlyValid) ? '_v' : '') + '.html';
+            apputils.saveAs(uriContent, fname);
         };
         var updateTableStateParams = function () {
             $scope.stateslist = GenStates.find({}, { sort: { "_id": 1 } }).fetch();

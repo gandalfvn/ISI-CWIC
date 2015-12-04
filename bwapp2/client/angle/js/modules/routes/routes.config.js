@@ -61,6 +61,22 @@
         ),
         controller: 'genWorldCtrl'
       })
+      .state('app.genpred', {
+        url: '/genpred?sid',
+        title: 'Generate World',
+        templateUrl: helper.basepath('genpred.html'),
+        resolve: angular.extend(
+          {
+            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
+              return $meteor.requireValidUser(function (user) {
+                return !$rootScope.isRole(user, 'agent');
+              });
+            }]
+          },  //simple functions appear first so data is loaded
+          helper.resolveFor('babylonjs', 'ngTable', 'lzString')
+        ),
+        controller: 'genPredCtrl'
+      })
       .state('app.genjobs', {
         url: '/genjobs',
         title: 'Generate Tasks View',

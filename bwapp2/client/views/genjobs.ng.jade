@@ -214,8 +214,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         tbody
           tr(ng-repeat='task in allHITs.done')
             td 
-              button.btn.btn-xs.btn-primary(title='Download list of links for this HIT', ng-click='dlLinks(task)')
+              button.btn.btn-xs.btn-primary(title='Download list of links for this HIT', ng-click='dlLinks(task, false)')
                 .fa.fa-download
+              | &nbsp;&nbsp;
+              button.btn.btn-xs.btn-success(title='Download list of VALID links for this HIT', ng-click='dlLinks(task, true)')
+                .fa.fa-thumbs-up
               | &nbsp;{{task.time | date:"MM/dd/yyyy HH:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
