@@ -2,7 +2,7 @@
   * Module: gentask.ng.jade
   * Created by wjwong on 10/5/15.
   =========================================================*/
-pre(ng-if='jsonDump') {{jsonDump}}
+pre#jsondump(ng-if='jsonDump') {{jsonDump}}
 div(ng-if='!jsonDump')
   .row-fluid(ng-show='!dataloaded')
     #loadoverlay.container-fluid
