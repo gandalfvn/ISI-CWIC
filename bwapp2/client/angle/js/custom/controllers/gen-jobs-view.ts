@@ -148,9 +148,14 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   };
 
   $scope.dlLinks = function(task:iSortHITs, onlyValid:boolean){
+    var mytask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: task.tid});
+    var mystate:iGenStates = GenStates.findOne({_id: mytask.stateid});
+
     var content:string[] = [];
     var htmlcontent:{ex: string, res: string[], st: string} = {ex: '', res: [], st: ''};
     var href:string = '';
+    content.push('HIT: '+task.hid);
+    content.push('State: '+mystate._id+'  Name: '+mystate.name);
     content.push('Example:');
     href = $state.href('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, {absolute: true});
     content.push(href);
@@ -170,13 +175,12 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     apputils.saveAs(uriContent, fname);
 
 
-    var mytask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: task.tid});
-    console.warn(mytask, task);
     htmlcontent.st = $state.href('app.genworld',{sid: mytask.stateid}, {absolute: true});
     var htmldata = "<body>";
     htmldata += "<h2>HIT: "+task.hid+"</h2>";
     htmldata += "<h4>State</h4>";
     htmldata += "<a href='"+htmlcontent.st+"' target='_blank'>"+htmlcontent.st+"</a><br>";
+    htmldata += "<h4>Name: "+mystate.name+"</h4>";
     htmldata += "<h4>Example</h4>";
     htmldata += "<a href='"+htmlcontent.ex+"' target='_blank'>"+htmlcontent.ex+"</a><br>";
     htmldata += "<h4>Results:</h4>";
