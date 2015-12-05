@@ -2,134 +2,136 @@
   * Module: gentask.ng.jade
   * Created by wjwong on 10/5/15.
   =========================================================*/
-.row-fluid(ng-show='!dataloaded')
-  #loadoverlay.container-fluid
-    #loadoverlay-image.text-center(style="position:fixed;top:50%;left:50%; color:#23b7e5;")
-      i.fa.fa-4x.fa-spin.fa-cube
-      h3(style="color:#23b7e5;") Processing...
-toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
-.container-fluid(ng-if='!report && assignmentId')
-  accordion(ng-if='taskdata.tasktype == "action"')
-    accordion-group.panel-primary(is-open="isOpenDir")
-      accordion-heading
-        h4.panel-title Directions
-      h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Each description must be complete on its own.
-      .well.col-sm-8.col-sm-offset-2
-        h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
-        img.center-block(src='img/example.png')
-        //-h4(style='color:green') VALID Example:
-        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take block 14 and place it next to block 17. The down right corner of block 14 should touch the upper left corner of block 17.
-        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
-        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
-      .col-sm-12
-        h3(ng-if='!opt.isValidBrowser', style='color:red')
-          i.fa.fa-exclamation-triangle
-          | &nbsp; Error: Please use the GOOGLE CHROME BROWSER
-
-        //-h4(style='color:red') DO NOT use the textboxes to create a sequence of events:
-          label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
-          br
-          label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
-          br
-          label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
-      //-div.text-center.col-md-12(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
-        i.fa.fa-hand-o-right(style='font-size:2em')
-        | &nbsp;&nbsp;
-        button.btn.btn-danger.shadowbox(style='font-size:1.3em', ng-click='opt.bAgreed=true')
-          .fa.fa-square &nbsp;
-          | I will write unique self-contained descriptions in each textbox
-
-  div(ng-show='(opt.bAgreed || workerId ==="EXAMPLE") && opt.isValidBrowser')
-    accordion(ng-if="curState.block_meta.decoration=='logo'")
-      accordion-group.panel-info(is-open='true')
+pre(ng-if='jsonDump') {{jsonDump}}
+div(ng-if='!jsonDump')
+  .row-fluid(ng-show='!dataloaded')
+    #loadoverlay.container-fluid
+      #loadoverlay-image.text-center(style="position:fixed;top:50%;left:50%; color:#23b7e5;")
+        i.fa.fa-4x.fa-spin.fa-cube
+        h3(style="color:#23b7e5;") Processing...
+  toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
+  .container-fluid(ng-if='!report && assignmentId')
+    accordion(ng-if='taskdata.tasktype == "action"')
+      accordion-group.panel-primary(is-open="isOpenDir")
         accordion-heading
-          h4.panel-title Logo Key
-        span(ng-repeat='l in logolist', style='display:inline-block;padding-right:6px')
-          img(src='{{l.imgref}}', height='64', width='64')
-          div
-            label {{l.name | uppercase}}
+          h4.panel-title Directions
+        h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Each description must be complete on its own.
+        .well.col-sm-8.col-sm-offset-2
+          h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
+          img.center-block(src='img/example.png')
+          //-h4(style='color:green') VALID Example:
+          label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take block 14 and place it next to block 17. The down right corner of block 14 should touch the upper left corner of block 17.
+          label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
+          label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
+        .col-sm-12
+          h3(ng-if='!opt.isValidBrowser', style='color:red')
+            i.fa.fa-exclamation-triangle
+            | &nbsp; Error: Please use the GOOGLE CHROME BROWSER
   
-    .row-fluid.well.col-md-12(ng-if='taskdata.tasktype == "action"')
-      .col-sm-12(ng-if='submitter')
-        .label.label-warning Read Only
-        i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
-      .col-md-12
-        .col-md-6
-          #statea
-        .col-md-1(style='width:4%')
-          i.fa.fa-chevron-right(style='font-size:6em;margin-top:2.5em;margin-left: -0.1em;')
-        .col-md-5
-          #stateb
+          //-h4(style='color:red') DO NOT use the textboxes to create a sequence of events:
+            label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
+            br
+            label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move it close to block 17.
+            br
+            label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Place it at the same level with block 17 and on the same vertical line as block 5.
+        //-div.text-center.col-md-12(ng-show='!opt.bAgreed && workerId !=="EXAMPLE"')
+          i.fa.fa-hand-o-right(style='font-size:2em')
+          | &nbsp;&nbsp;
+          button.btn.btn-danger.shadowbox(style='font-size:1.3em', ng-click='opt.bAgreed=true')
+            .fa.fa-square &nbsp;
+            | I will write unique self-contained descriptions in each textbox
+  
+    div(ng-show='(opt.bAgreed || workerId ==="EXAMPLE") && opt.isValidBrowser')
+      accordion(ng-if="curState.block_meta.decoration=='logo'")
+        accordion-group.panel-info(is-open='true')
+          accordion-heading
+            h4.panel-title Logo Key
+          span(ng-repeat='l in logolist', style='display:inline-block;padding-right:6px')
+            img(src='{{l.imgref}}', height='64', width='64')
+            div
+              label {{l.name | uppercase}}
+    
+      .row-fluid.well.col-md-12(ng-if='taskdata.tasktype == "action"')
+        .col-sm-12(ng-if='submitter')
+          .label.label-warning Read Only
+          i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
+        .col-md-12
+          .col-md-6
+            #statea
+          .col-md-1(style='width:4%')
+            i.fa.fa-chevron-right(style='font-size:6em;margin-top:2.5em;margin-left: -0.1em;')
+          .col-md-5
+            #stateb
+        .col-sm-12
+          hr
+          div(style='color:red;font-size:1.1em')
+            .fa.fa-exclamation-triangle
+            | Each description MUST describe the action completely.  
+            //-span(ng-show='notes.length > 1')
+              | Ensure each alternative description is 
+              b DIFFERENT.
+        h4.pull-left(ng-if='submitter') {{taskidx+1}}/{{taskdata.idxlist.length}}
+        h4.pull-left(ng-if='!submitter') {{taskidx+1}}/{{maxtask}}
+        .col-sm-11
+          form(name='submitForm', action='{{submitTo}}', method='post')
+            input(type="hidden", name="assignmentId", value="{{assignmentId}}")
+            input(type="hidden", name="created", value="{{date}}")
+            //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
+    
+          form.ng-pristine.ng-valid(name='annotForm')
+            div(ng-repeat='note in notes track by $index', ng-if='$index <= curantpass')
+              //-.col-sm-1
+                //-button.btn.btn-xs.btn-danger(title='Remove Description')
+                  .fa.fa-remove(ng-click='removeNote($index)')
+              .col-sm-12(ng-if='$index > 0 && notes[$index-1].length > 13')
+                | Create a 
+                b(style='color:red') COMPLETELY NEW ALTERNATIVE
+                |  description of the action
+              .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
+                b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
+                  .fa.fa-asterisk
+                b.pull-left(ng-show='note.length > 13', style='font-size: 16px; color: green; width:2%;').fa.fa-check
+                .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
+                  textarea.form-control(ng-if='submitter || $index < curantpass', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter || $index < curantpass')
+                  textarea.form-control(ng-if='!submitter && $index == curantpass', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
+            button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
+            button.btn.btn-primary(ng-if='workerId && hitId && notes[curantpass].length > 13 && taskidx+1 >= maxtask && !submitter', ng-click='itrAnnot(notes, 1)') Submit
+            button.btn.btn-primary(ng-if='(workerId && hitId && (notes[curantpass].length > 13 && taskidx+1 < maxtask) || (submitter && taskidx+1 < maxtask))', ng-click='itrAnnot(notes, 1)') Next
+    h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
+  
+  
+  .row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
+    .col-sm-12
+      h3(style='color: red') This Job is unavailable.
+  //-report view
+  .container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
+    .row-fluid
+      h3 Report for Submitter {{workerId}}
+      label(style='font-size:1.1em') Valid:
+      select(style='font-size:1.5em', ng-model ='opt.repvalid', ng-change='validateReport(opt.repvalid)')
+        option(ng-repeat='n in opt.repvalidlist', value='{{n}}') {{n | uppercase}}
+      | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
+      | &nbsp;&nbsp;
+      button.btn.btn-primary(ng-click='dlStates()') Get States JSON
+      | &nbsp;&nbsp;
+      button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
+    .col-sm-12(ng-repeat='(nidx,notes) in hitdata.notes[workerId]')
+      .col-sm-12
+        h3.pull-left {{nidx}}
+        .col-sm-6
+          div(id='statea{{nidx}}')
+        .col-sm-5
+          div(id='stateb{{nidx}}')
+      .col-sm-12
+        form.ng-pristine.ng-valid.novalidate(name='reportForm[{{nidx}}]')
+          div.mb-sm(ng-repeat='note in notes track by $index')
+            .col-sm-12
+              b.pull-left(ng-show="reportForm[nidx]['repnote['+$index+']'].$dirty", style='font-size: 16px; color: red; width:2%; float: left')
+                .fa.fa-asterisk
+              .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
+                textarea.form-control(type='text', name='repnote[{{$index}}]', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
+        button.btn.btn-warning(ng-show='reportForm[nidx].$dirty', ng-click='updateReport(nidx, reportForm[nidx])') Update
+  
       .col-sm-12
         hr
-        div(style='color:red;font-size:1.1em')
-          .fa.fa-exclamation-triangle
-          | Each description MUST describe the action completely.  
-          //-span(ng-show='notes.length > 1')
-            | Ensure each alternative description is 
-            b DIFFERENT.
-      h4.pull-left(ng-if='submitter') {{taskidx+1}}/{{taskdata.idxlist.length}}
-      h4.pull-left(ng-if='!submitter') {{taskidx+1}}/{{maxtask}}
-      .col-sm-11
-        form(name='submitForm', action='{{submitTo}}', method='post')
-          input(type="hidden", name="assignmentId", value="{{assignmentId}}")
-          input(type="hidden", name="created", value="{{date}}")
-          //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
-  
-        form.ng-pristine.ng-valid(name='annotForm')
-          div(ng-repeat='note in notes track by $index', ng-if='$index <= curantpass')
-            //-.col-sm-1
-              //-button.btn.btn-xs.btn-danger(title='Remove Description')
-                .fa.fa-remove(ng-click='removeNote($index)')
-            .col-sm-12(ng-if='$index > 0 && notes[$index-1].length > 13')
-              | Create a 
-              b(style='color:red') COMPLETELY NEW ALTERNATIVE
-              |  description of the action
-            .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
-              b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
-                .fa.fa-asterisk
-              b.pull-left(ng-show='note.length > 13', style='font-size: 16px; color: green; width:2%;').fa.fa-check
-              .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-                textarea.form-control(ng-if='submitter || $index < curantpass', type='text', ng-model='notes[$index]', style='padding-left: 26px;', ng-readonly='submitter || $index < curantpass')
-                textarea.form-control(ng-if='!submitter && $index == curantpass', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
-          button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
-          button.btn.btn-primary(ng-if='workerId && hitId && notes[curantpass].length > 13 && taskidx+1 >= maxtask && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-          button.btn.btn-primary(ng-if='(workerId && hitId && (notes[curantpass].length > 13 && taskidx+1 < maxtask) || (submitter && taskidx+1 < maxtask))', ng-click='itrAnnot(notes, 1)') Next
-  h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
-
-
-.row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
-  .col-sm-12
-    h3(style='color: red') This Job is unavailable.
-//-report view
-.container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
-  .row-fluid
-    h3 Report for Submitter {{workerId}}
-    label(style='font-size:1.1em') Valid:
-    select(style='font-size:1.5em', ng-model ='opt.repvalid', ng-change='validateReport(opt.repvalid)')
-      option(ng-repeat='n in opt.repvalidlist', value='{{n}}') {{n | uppercase}}
-    | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
-    | &nbsp;&nbsp;
-    button.btn.btn-primary(ng-click='dlStates()') Get States JSON
-    | &nbsp;&nbsp;
-    button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
-  .col-sm-12(ng-repeat='(nidx,notes) in hitdata.notes[workerId]')
-    .col-sm-12
-      h3.pull-left {{nidx}}
-      .col-sm-6
-        div(id='statea{{nidx}}')
-      .col-sm-5
-        div(id='stateb{{nidx}}')
-    .col-sm-12
-      form.ng-pristine.ng-valid.novalidate(name='reportForm[{{nidx}}]')
-        div.mb-sm(ng-repeat='note in notes track by $index')
-          .col-sm-12
-            b.pull-left(ng-show="reportForm[nidx]['repnote['+$index+']'].$dirty", style='font-size: 16px; color: red; width:2%; float: left')
-              .fa.fa-asterisk
-            .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-              textarea.form-control(type='text', name='repnote[{{$index}}]', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
-      button.btn.btn-warning(ng-show='reportForm[nidx].$dirty', ng-click='updateReport(nidx, reportForm[nidx])') Update
-
-    .col-sm-12
-      hr
