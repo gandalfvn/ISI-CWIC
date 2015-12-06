@@ -13,7 +13,6 @@
 /// <reference path="../services/apputils.ts" />
 angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', 'deviceDetector', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils, devDetect) {
         "use strict";
-        $scope.jsonDump = null;
         $scope.date = (new Date()).getTime();
         $scope.opt = { bAgreed: true, repvalidlist: [mGenJobsMgr.eRepValid[0], mGenJobsMgr.eRepValid[1], mGenJobsMgr.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome') };
         var genstates = $scope.$meteorCollection(GenStates);
@@ -336,35 +335,33 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                 });
             }
         };
-        var compileScene = function () {
-            var tempframe = { _id: $scope.curState._id,
-                public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
-                creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: [] };
-            for (var idx = 0; idx < $scope.curState.block_states.length; idx++) {
-                var block_state = $scope.curState.block_states[idx].block_state;
-                var newblock_state = [];
-                for (var i = 0; i < block_state.length; i++) {
-                    var s = block_state[i];
-                    var pos = '', rot = '';
-                    _.each(s.position, function (v) {
-                        if (pos.length)
-                            pos += ',';
-                        pos += v;
-                    });
-                    _.each(s.rotation, function (v) {
-                        if (rot.length)
-                            rot += ',';
-                        rot += v;
-                    });
-                    newblock_state.push({ id: s.id, position: pos, rotation: rot });
-                }
-                tempframe.block_states.push({ block_state: newblock_state });
+        /*var compileScene = function():iSceneInfo{
+          var tempframe:iSceneInfo = {_id: $scope.curState._id,
+            public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
+            creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: []};
+      
+          for(var idx = 0; idx < $scope.curState.block_states.length; idx++){
+            var block_state = $scope.curState.block_states[idx].block_state;
+            var newblock_state = [];
+            for(var i = 0; i < block_state.length; i++){
+              var s = block_state[i];
+              var pos = '', rot = '';
+              _.each(s.position, function(v){
+                if(pos.length) pos += ',';
+                pos += v;
+              });
+              _.each(s.rotation, function(v){
+                if(rot.length) rot += ',';
+                rot += v;
+              });
+              newblock_state.push({id: s.id, position: pos, rotation: rot})
             }
-            return tempframe;
-        };
+            tempframe.block_states.push({block_state: newblock_state});
+          }
+          return tempframe;
+        };*/
         $scope.dlScene = function () {
-            var tempframe = compileScene();
-            var content = JSON.stringify(tempframe, null, 2);
+            var content = JSON.stringify($scope.curState, null, 2);
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
             apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
         };
@@ -377,27 +374,6 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
             var content = JSON.stringify($scope.hitdata, null, 2);
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
             apputils.saveAs(uriContent, 'bw_notes_' + $scope.hitdata.HITId + '.json'); //+'_'+$scope.workerId+'.json');
-        };
-        var dlJson = function (type) {
-            switch (type) {
-                case 'scene':
-                    $scope.jsonDump = compileScene();
-                    break;
-                case 'states':
-                    $scope.jsonDump = $scope.taskdata;
-                    break;
-                case 'notes':
-                    $scope.jsonDump = $scope.hitdata;
-                    break;
-                case 'all':
-                    var jscene = compileScene();
-                    $scope.jsonDump = {
-                        scene: jscene,
-                        states: $scope.taskdata,
-                        notes: $scope.hitdata
-                    };
-                    break;
-            }
         };
     }]);
 //# sourceMappingURL=gen-task-view.js.map

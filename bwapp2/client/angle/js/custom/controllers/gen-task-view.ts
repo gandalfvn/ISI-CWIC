@@ -22,7 +22,6 @@ interface iSceneInfo {
 angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', 'deviceDetector', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils, devDetect){
   "use strict";
 
-  $scope.jsonDump = null;
   $scope.date = (new Date()).getTime();
   $scope.opt = {bAgreed: true, repvalidlist: [mGenJobsMgr.eRepValid[0], mGenJobsMgr.eRepValid[1], mGenJobsMgr.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome')};
   
@@ -353,7 +352,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
     }
   };
   
-  var compileScene = function():iSceneInfo{
+  /*var compileScene = function():iSceneInfo{
     var tempframe:iSceneInfo = {_id: $scope.curState._id,
       public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
       creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: []};
@@ -377,11 +376,10 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       tempframe.block_states.push({block_state: newblock_state});
     }
     return tempframe;
-  };
+  };*/
   
   $scope.dlScene = function(){
-    var tempframe:iSceneInfo = compileScene();
-    var content:string = JSON.stringify(tempframe, null, 2);
+    var content:string = JSON.stringify($scope.curState, null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
     apputils.saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
   };
@@ -398,25 +396,4 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
     apputils.saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
   };
   
-  var dlJson = function(type){
-    switch(type){
-      case 'scene':
-        $scope.jsonDump = compileScene();
-        break;
-      case 'states':
-        $scope.jsonDump = $scope.taskdata;
-        break;
-      case 'notes':
-        $scope.jsonDump = $scope.hitdata;
-        break;
-      case 'all':
-        var jscene:iSceneInfo = compileScene();
-        $scope.jsonDump = {
-          scene: jscene,
-          states: $scope.taskdata,
-          notes: $scope.hitdata
-        };
-        break;
-    }
-  };
 }]);

@@ -94,7 +94,7 @@
         controller: 'genJobsCtrl'
       })
       .state('gentask', {
-        url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report&json',
+        url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
         title: 'Annotation Task',
         templateUrl: helper.basepath('gentask.html'),
         resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables', 'lzString','ngDeviceDetect'),
