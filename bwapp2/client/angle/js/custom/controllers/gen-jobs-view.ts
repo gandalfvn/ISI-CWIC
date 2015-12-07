@@ -91,6 +91,11 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     $scope.allHITs = getAllHITs();
   };
   
+  $scope.refreshHITs = function(){
+    updateHITs();
+    toaster.pop('info', 'Refreshing HITs');
+  };
+
   var getDoneASNs = function(): iSortHITs[]{
     var jobs:miGenJobsMgr.iGenJobsHIT[] = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}

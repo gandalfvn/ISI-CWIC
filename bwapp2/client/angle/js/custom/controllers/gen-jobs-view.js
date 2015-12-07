@@ -54,6 +54,10 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             $scope.doneASNs = getDoneASNs();
             $scope.allHITs = getAllHITs();
         };
+        $scope.refreshHITs = function () {
+            updateHITs();
+            toaster.pop('info', 'Refreshing HITs');
+        };
         var getDoneASNs = function () {
             var jobs = GenJobsMgr.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1 } }, { sort: { 'submitted.time': -1 } }).fetch();
             var sortedjobs = [];
