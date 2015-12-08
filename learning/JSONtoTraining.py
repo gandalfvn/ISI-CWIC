@@ -1,5 +1,7 @@
 import json
 import math
+import gzip
+import sys
 import random
 
 random.seed(11032015)
@@ -62,7 +64,6 @@ def world(arr):
 def semantics(time_t, time_tp1):
   # Find the largest change
   maxval = 0
-  maxrot = 0
   for b_id in range(len(time_t)):
     # If the state has changed
     if time_t[b_id] != time_tp1[b_id]:
@@ -70,25 +71,19 @@ def semantics(time_t, time_tp1):
       after = time_tp1[b_id]
 
       pos_dist = size(vec(before[1], after[1]))
-      rot_dist = size(vec(before[2], after[2]))
-      if pos_dist > maxval or rot_dist > maxval:
+      if pos_dist > maxval:
         changed = after
-        maxrot = rot_dist
-        maxval = max(pos_dist, maxrot)
+        maxval = pos_dist
 
-  # If the rotation is insignificant, ignore it
-  if maxrot < 0.1:
-    return "%2d  %s   0.00  0.00  0.00" % (changed[0], strvec(changed[1]))
-  # Otherwise, produce location and rotation
-  return "%2d  %s  %s" % (changed[0], strvec(changed[1]), strvec(changed[2]))
+  return {"id": changed[0], "loc": strvec(changed[1])}
 
 
 ############################ Generating New Examples ##########################
 
 def shift(state, x, z):
   newstate = []
-  for bid, pos, rot in state:
-    newstate.append((bid, [pos[0] + x, pos[1], pos[2] + z], rot))
+  for bid, pos in state:
+    newstate.append((bid, [pos[0] + x, pos[1], pos[2] + z]))
   return newstate
 
 
@@ -96,7 +91,7 @@ def displace(tuples):
   newtuples = []
   newtuples.extend(tuples)
   factor = 1
-  while factor < 1000:
+  while factor < 100:
     print "Displacing: ", factor
     factor += 1
     x = random.random() - 0.5
@@ -112,57 +107,23 @@ def displace(tuples):
 
 ############################ Main Body ########################################
 
-# Read all the annotations
-notes = []
-for i in range(0, 19):
-  notes.append([])
 
-Submitted = set()
+def shrinkWorld(W):
+  current = {}
+  for ID in range(len(W)):
+    block = W[ID]
+    current[block["id"]] = shrink(block["position"])
+  return [(ID,current[ID]) for ID in range(1,len(W)+1)]
 
-m = 0
-notes_json = json.load(open("TurkJobs/Task5_LogoNoSquare/notes.json", 'r'))
-for person in notes_json["submitted"]:
-  Submitted.add(person["name"])
-for person in notes_json["notes"]:
-  if person in Submitted:
-    for stage in notes_json["notes"][person]:
-      notes[int(stage)].extend(notes_json["notes"][person][stage])
-      if int(stage) > m:
-        m = int(stage)
+anno_worlds = gzip.open(sys.argv[1],'r')
+inittuples = []
+for line in anno_worlds:
+  j = json.loads(line)
+  before = shrinkWorld(j["current"])
+  after  = shrinkWorld(j["next"])
+  utterance = clean_note(j["utterance"])
+  inittuples.append((before, after, utterance))
 
-m += 1
-n = 0
-notes_json = json.load(open("TurkJobs/Task6_LogoNoSquare/notes.json", 'r'))
-for person in notes_json["submitted"]:
-  Submitted.add(person["name"])
-for person in notes_json["notes"]:
-  if person in Submitted:
-    for stage in notes_json["notes"][person]:
-      notes[m + int(stage)].extend(notes_json["notes"][person][stage])
-      if int(stage) > n:
-        n = int(stage)
-
-# Read the scene
-scene_json = json.load(open("TurkJobs/Task6_LogoNoSquare/scene.json", 'r'))
-states = []
-for state in scene_json["block_states"]:
-  current = []
-  for block in state["block_state"]:
-    if len(block["rotation"]) != 0:
-      current.append((block["id"], shrink(block["position"]), shrink(block["rotation"])))
-    else:
-      current.append((block["id"], shrink(block["position"]), [0, 0, 0]))
-  states.append(current)
-
-# Reverse the order of the states
-states = states[::-1]
-
-tuples = []
-# Create Pairs
-for i in range(0, m + n):
-  before = states[i]
-  after = states[i + 1]
-  tuples.append((before, after, notes[i]))
 
 print "Read Data"
 
@@ -170,28 +131,26 @@ print "Read Data"
 newTuples = []
 addDisplacement = True
 if addDisplacement:
-  newTuples = displace(tuples)
+  newTuples = displace(inittuples)
 
 # Training Files
-source = open("source.txt", 'w')
-target = open("target.txt", 'w')
-for before, after, noteArr in newTuples:
-  sem = semantics(before, after)
-  wod = world(before)
-  for note in noteArr:
-    source.write("%-80s     %s\n" % (clean_note(note), wod))
-    target.write(sem + "\n")
+source = gzip.open("source.json.gz", 'w')
+target = gzip.open("target.json.gz", 'w')
+num = 0
+for before, after, note in newTuples:
+  source.write(json.dumps({"ex": num, "world": world(before), "text": note}) + "\n")
+  target.write(json.dumps({"ex": num, "action": semantics(before, after)}) + "\n")
+  num += 1
 source.close()
 target.close()
 
 # Training Files
-source = open("source.orig.txt", 'w')
-target = open("target.orig.txt", 'w')
-for before, after, noteArr in tuples:
-  sem = semantics(before, after)
-  wod = world(before)
-  for note in noteArr:
-    source.write("%-80s     %s\n" % (clean_note(note), wod))
-    target.write(sem + "\n")
+source = gzip.open("source.orig.json.gz", 'w')
+target = gzip.open("target.orig.json.gz", 'w')
+num = 0
+for before, after, note in inittuples:
+  source.write(json.dumps({"ex": num, "world": world(before), "text": note}) + "\n")
+  target.write(json.dumps({"ex": num, "action": semantics(before, after)}) + "\n")
+  num += 1
 source.close()
 target.close()
