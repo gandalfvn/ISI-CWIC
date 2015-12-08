@@ -35,7 +35,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   hr
   .well.row
     h3 Prediction
-      span(ng-show='predictions.length')
+      span(ng-show='predictions.length && !isgen')
         button.btn.btn-primary(ng-show='curitr > 0', ng-click='showPrediction(curitr-1)')
           i.fa.fa-chevron-left
         | &nbsp;&nbsp;
