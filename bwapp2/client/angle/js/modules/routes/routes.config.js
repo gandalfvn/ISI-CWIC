@@ -63,7 +63,7 @@
       })
       .state('app.genpred', {
         url: '/genpred?sid',
-        title: 'Generate World',
+        title: 'Generate Prediction',
         templateUrl: helper.basepath('genpred.html'),
         resolve: angular.extend(
           {
