@@ -26,10 +26,7 @@ angular-with-blaze
 civilframe:angular-jade
 ian:accounts-ui-bootstrap-3
 meteorhacks:npm
-
-
 urigo:angular-blaze-template
 twbs:bootstrap
-
-
 npm-container
+alethes:lodash

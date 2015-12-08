@@ -4,12 +4,12 @@
  =========================================================*/
 /// <reference path="../server/typings/meteor/meteor.d.ts" />
 cBlockDecor = (function () {
-    function cBlockDecorDef() {
+    function ciBlockDecor() {
     }
-    cBlockDecorDef.digit = 'digit';
-    cBlockDecorDef.logo = 'logo';
-    cBlockDecorDef.blank = 'blank';
-    return cBlockDecorDef;
+    ciBlockDecor.digit = 'digit';
+    ciBlockDecor.logo = 'logo';
+    ciBlockDecor.blank = 'blank';
+    return ciBlockDecor;
 })();
 GenStates = new Mongo.Collection('genstates');
 //# sourceMappingURL=genstatesdb.js.map

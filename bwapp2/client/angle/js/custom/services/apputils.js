@@ -1,6 +1,6 @@
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
-/// <reference path="../../../../../server/typings/underscore/underscore.d.ts" />
+/// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
 angular.module('angle').service('AppUtils', [function () {
         'use strict';
         return {

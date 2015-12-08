@@ -6,7 +6,7 @@
 /// <reference path="../../../../../model/genstatesdb.ts" />
 /// <reference path="../../../../../model/screencapdb.ts" />
 /// <reference path="../../../../../public/vendor/lz-string/typings/lz-string.d.ts" />
-/// <reference path="../../../../../server/typings/underscore/underscore.d.ts" />
+/// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
@@ -14,12 +14,17 @@
 
 //?taskid=2kw6CqcqjRzsHBWD2&assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&hitId=123RVWYBAZW00EXAMPLE&turkSubmitTo=https://www.mturk.com/&workerId=AZ3456EXAMPLE
 
-angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils){
-  "use strict";
-  
-  $scope.date = (new Date()).getTime();
-  $scope.opt = {bAgreed: true};
+interface iSceneInfo {
+  _id: string, public: string, name: string, created: string,
+  creator: string, block_meta: iBlockMeta, block_states: iBlockStates[]
+}
 
+angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', 'deviceDetector', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils, devDetect){
+  "use strict";
+
+  $scope.date = (new Date()).getTime();
+  $scope.opt = {bAgreed: true, repvalidlist: [mGenJobsMgr.eRepValid[0], mGenJobsMgr.eRepValid[1], mGenJobsMgr.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome')};
+  
   var genstates = $scope.$meteorCollection(GenStates);
   $scope.$meteorSubscribe("genstates").then(
     function(sid){dataReady.update('genstates');},
@@ -51,7 +56,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       return;
     }
     if ($stateParams.taskId){ //get task information and start loading
-      $scope.taskdata = <iGenJobsMgr>GenJobsMgr.findOne($stateParams.taskId);
+      $scope.taskdata = <miGenJobsMgr.iGenJobsMgr>GenJobsMgr.findOne($stateParams.taskId);
       if (!$scope.taskdata) {
         $rootScope.dataloaded = true;
         $scope.assignmentId = null;
@@ -60,15 +65,16 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       $scope = _.extend($scope, $stateParams);
       if ($scope.turkSubmitTo) $scope.submitTo = $scope.turkSubmitTo + '/mturk/externalSubmit';
       if ($scope.workerId === 'EXAMPLE') $scope.submitter = true;
-      if(!$scope.assignmentId && !$stateParams.report){
+      if(!$scope.assignmentId && !$stateParams.report && !$stateParams.json){
         $rootScope.dataloaded = true;
         return;
       }
+
       if ($scope.hitId) {
         //load hit
-        $scope.hitdata = <iGenJobsHIT>GenJobsMgr.findOne('H_' + $scope.hitId);
+        $scope.hitdata = <miGenJobsMgr.iGenJobsHIT>GenJobsMgr.findOne('H_' + $scope.hitId);
         if ($scope.hitdata && $scope.hitdata.submitted && $scope.workerId && $scope.workerId !== 'EXAMPLE') {
-          var subfound:{name:string, time: number, aid: string} = <{name:string, time: number, aid: string}>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
+          var subfound:miGenJobsMgr.iSubmitEle = <miGenJobsMgr.iSubmitEle>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
           if (!_.isUndefined(subfound)) {//check if its already submitted by this worker
             //worker already submitted
             $scope.submitter = subfound;
@@ -80,9 +86,17 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
         function(sub) {
           $scope.curState = <iGenStates>GenStates.findOne(sid);
           //console.warn('curState',$scope.curState);
-          if ($stateParams.report) { //report view
+          if($stateParams.json){//json dl
+            dlJson($stateParams.json);
+            console.warn('here!!')
+          }
+          else if ($stateParams.report) { //report view
             $scope.report = $stateParams.report;
+            if($scope.submitter.valid)
+              $scope.opt.repvalid = $scope.submitter.valid;
+            else $scope.opt.repvalid = 'tbd';
             if ($scope.hitdata.notes[$scope.workerId]) {
+              $rootScope.dataloaded = true;  //turn off loading so one can quickly get data.
               $timeout(function () {
                 renderReport(0)
               });
@@ -204,9 +218,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
 
     var eleDivID:string = 'div' + $('div').length; // Unique ID
     var eleImgID:string = 'img' + $('img').length; // Unique ID
-    var eleLabelID:string = 'h4' + $('h4').length; // Unique ID
+    var eleLabelID:string = 'label' + $('label').length; // Unique ID
     var htmlout = '<img id="'+eleImgID+'" style="width:'+canvas.width+'px;height:'+canvas.height+'px"></img>';
-    if(title) htmlout = '<h4>'+title+'</h4>' + htmlout;
+    if(title) htmlout = '<h3>'+title+'</h3>' + htmlout;
     if(caption) htmlout += '<label id="'+eleLabelID+'" class="mb">'+caption+'</label>';
     $('<div>').attr({
       id: eleDivID
@@ -283,7 +297,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
           if($scope.taskidx >= $scope.maxtask && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
             //submission assignment as done
             if(!$scope.hitdata.submitted) $scope.hitdata.submitted = [];
-            var subfound:{name:string, time: number, aid: string} = <{name:string, time: number, aid: string}>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
+            var subfound:miGenJobsMgr.iSubmitEle = <miGenJobsMgr.iSubmitEle>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
             if(_.isUndefined(subfound)){
               $scope.hitdata.submitted.push({
                 name: $scope.workerId,
@@ -323,9 +337,23 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       form.$setPristine();
     });
   };
-
-  $scope.dlScene = function(){
-    var tempframe = {_id: $scope.curState._id,
+  
+  $scope.validateReport = function(opt: string){
+    var subidx:number = _.findIndex<miGenJobsMgr.iSubmitEle>($scope.hitdata.submitted, function(v:miGenJobsMgr.iSubmitEle){return v.name == $scope.workerId});
+    if(subidx>-1) {
+      $scope.submitter.valid = opt;
+      var setdata:{[x: string]:any} = {};
+      setdata['submitted.'+subidx] = $scope.submitter;
+      GenJobsMgr.update({_id: $scope.hitdata._id}, {
+        $set: setdata
+      }, function(err, ret){
+        if(err) return toaster.pop('error', err.reason);
+      });
+    }
+  };
+  
+  /*var compileScene = function():iSceneInfo{
+    var tempframe:iSceneInfo = {_id: $scope.curState._id,
       public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
       creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: []};
 
@@ -347,7 +375,11 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       }
       tempframe.block_states.push({block_state: newblock_state});
     }
-    var content:string = JSON.stringify(tempframe, null, 2);
+    return tempframe;
+  };*/
+  
+  $scope.dlScene = function(){
+    var content:string = JSON.stringify($scope.curState, null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
     apputils.saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
   };
@@ -363,4 +395,5 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
     apputils.saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
   };
+  
 }]);

@@ -6,7 +6,7 @@
 /// <reference path="../../../../../model/genstatesdb.ts" />
 /// <reference path="../../../../../model/screencapdb.ts" />
 /// <reference path="../../../../../public/vendor/lz-string/typings/lz-string.d.ts" />
-/// <reference path="../../../../../server/typings/underscore/underscore.d.ts" />
+/// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/jquery/jquery.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
@@ -54,6 +54,10 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             $scope.doneASNs = getDoneASNs();
             $scope.allHITs = getAllHITs();
         };
+        $scope.refreshHITs = function () {
+            updateHITs();
+            toaster.pop('info', 'Refreshing HITs');
+        };
         var getDoneASNs = function () {
             var jobs = GenJobsMgr.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1 } }, { sort: { 'submitted.time': -1 } }).fetch();
             var sortedjobs = [];
@@ -67,22 +71,27 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             return null;
         };
         var getAllHITs = function () {
-            var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
+            var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, jid: 1, 'submitted.name': 1, 'submitted.valid': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
             var activeHITs = [];
             var doneHITs = [];
             _.each(jobs, function (j) {
                 var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
-                var names = null;
+                var names = null, repvalid = null;
                 if (j.submitted) {
                     names = [];
+                    repvalid = {};
                     j.submitted.forEach(function (h) {
                         names.push(h.name);
+                        if (h.valid)
+                            repvalid[h.name] = h.valid;
+                        else
+                            repvalid[h.name] = mGenJobsMgr.eRepValid[mGenJobsMgr.eRepValid.tbd];
                     });
                 }
                 if (asnleft > 0)
-                    activeHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                    activeHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
                 else
-                    doneHITs.push({ time: j.created, names: names, tid: j.tid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                    doneHITs.push({ time: j.created, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
             });
             if (activeHITs.length || doneHITs.length) {
                 if (activeHITs.length)
@@ -97,28 +106,36 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             }
             return null;
         };
-        $scope.dlLinks = function (task) {
+        $scope.dlLinks = function (task, onlyValid) {
+            var mytask = GenJobsMgr.findOne({ _id: task.tid });
+            var mystate = GenStates.findOne({ _id: mytask.stateid });
             var content = [];
             var htmlcontent = { ex: '', res: [], st: '' };
             var href = '';
+            content.push('HIT: ' + task.hid);
+            content.push('State: ' + mystate._id + '  Name: ' + mystate.name);
             content.push('Example:');
             href = $state.href('gentask', { taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE' }, { absolute: true });
             content.push(href);
             htmlcontent.ex = href;
             content.push('Results:');
             _.each(task.names, function (n) {
-                href = $state.href('gentask', { taskId: task.tid, workerId: n, hitId: task.hid, report: 1 }, { absolute: true });
-                content.push(href);
-                htmlcontent.res.push(href);
+                console.warn(n, task.repvalid[n], onlyValid);
+                if (!onlyValid || task.repvalid[n] === mGenJobsMgr.eRepValid[mGenJobsMgr.eRepValid.yes]) {
+                    href = $state.href('gentask', { taskId: task.tid, workerId: n, hitId: task.hid, report: 1 }, { absolute: true });
+                    content.push(href);
+                    htmlcontent.res.push(href);
+                }
             });
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content.join('\n'));
-            apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.txt');
-            var mytask = GenJobsMgr.findOne({ _id: task.tid });
+            var fname = 'bw_links_' + task.tid + ((onlyValid) ? '_v' : '') + '.txt';
+            apputils.saveAs(uriContent, fname);
             htmlcontent.st = $state.href('app.genworld', { sid: mytask.stateid }, { absolute: true });
             var htmldata = "<body>";
             htmldata += "<h2>HIT: " + task.hid + "</h2>";
             htmldata += "<h4>State</h4>";
             htmldata += "<a href='" + htmlcontent.st + "' target='_blank'>" + htmlcontent.st + "</a><br>";
+            htmldata += "<h4>Name: " + mystate.name + "</h4>";
             htmldata += "<h4>Example</h4>";
             htmldata += "<a href='" + htmlcontent.ex + "' target='_blank'>" + htmlcontent.ex + "</a><br>";
             htmldata += "<h4>Results:</h4>";
@@ -126,7 +143,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 htmldata += "<a href='" + n + "' target='_blank'>" + n + "</a><br>";
             });
             uriContent = "data:application/octet-stream," + encodeURIComponent(htmldata);
-            apputils.saveAs(uriContent, 'bw_links_' + task.tid + '.html');
+            fname = 'bw_links_' + task.tid + ((onlyValid) ? '_v' : '') + '.html';
+            apputils.saveAs(uriContent, fname);
         };
         var updateTableStateParams = function () {
             $scope.stateslist = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
@@ -344,6 +362,16 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                     $scope.selectJob($scope.jobid);
                     updateHITs();
                 });
+            });
+        };
+        $scope.blockTurker = function (tuid, reason) {
+            var params = { WorkerId: tuid, Reason: reason };
+            Meteor.call('mturkBlockTurker', params, function (err, ret) {
+                if (err)
+                    return $scope.$apply(function () { toaster.pop('error', JSON.stringify(err, null, 2)); });
+                if (ret.error)
+                    return $scope.$apply(function () { toaster.pop('error', JSON.stringify(ret.error, null, 2)); });
+                $scope.$apply(function () { toaster.pop('info', JSON.stringify(ret.result, null, 2)); });
             });
         };
         $scope.stateGo = apputils.stateGo($state);

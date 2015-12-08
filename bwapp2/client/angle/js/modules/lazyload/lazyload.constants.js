@@ -9,12 +9,12 @@
             'modernizr':          ['vendor/modernizr/modernizr.js'],
             'icons':              ['vendor/fontawesome/css/font-awesome.min.css',
                                    'vendor/simple-line-icons/css/simple-line-icons.css'],
-            'glyphiconspro':      [
+            /*'glyphiconspro':      [
               'vendor/glyphicons-pro/glyphicons_halflings/web/html_css/css/halflings.css',
               'vendor/glyphicons-pro/glyphicons/web/html_css/css/glyphicons.css',
               'vendor/glyphicons-pro/glyphicons_social/web/html_css/css/social.css',
               'vendor/glyphicons-pro/glyphicons_filetypes/web/html_css/css/filetypes.css'
-            ],
+            ],*/
             'babylonjs':          [
               'vendor/babylonjs/babylon.2.2.js',
               'vendor/babylonjs/Oimo.js',
@@ -52,7 +52,11 @@
               'vendor/angular-datatables/dist/angular-datatables.min.js',
               'vendor/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
               'vendor/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css'
-            ], serie: true}
+            ], serie: true},
+            {name: 'ngDeviceDetect',                 files: [
+              'vendor/ng-device-detector/ng-device-detector.min.js',
+              'vendor/re-tree/re-tree.min.js'
+            ]},
           ]
         })
         ;

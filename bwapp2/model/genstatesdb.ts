@@ -6,7 +6,7 @@
 
 declare var cBlockDecor:any;
 
-cBlockDecor = class cBlockDecorDef{
+cBlockDecor = class ciBlockDecor{
   static digit = 'digit';
   static logo = 'logo';
   static blank = 'blank';

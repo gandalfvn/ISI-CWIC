@@ -6,6 +6,19 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .row-fluid
   h2 Action and Description Jobs
   .row
+    .well.col-sm-3
+      label Block Id: 
+      input(ng-model='btid')
+      br
+      label Reason:
+      input(ng-model='btreason')
+      button.btn(ng-show='btid.length && btreason.length', ng-click='blockTurker(btid, btreason)') Go
+    .col-sm-1
+    .well.col-sm-2
+      button.btn(ng-click='refreshHITs()') 
+        i.fa.fa-refresh
+        |  Refresh HITs
+  .row
     accordion.col-sm-6
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
         accordion-heading
@@ -165,6 +178,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th HIT Id
             th Info
             th Task Id
+            th Job Id
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.active')
@@ -179,6 +193,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
+            td {{task.jid}}
             td
               span(ng-repeat='n in task.names')
                 button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
@@ -199,12 +214,16 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Done
             th HIT Id
             th Task Id
+            th Job Id
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.done')
             td 
-              button.btn.btn-xs.btn-primary(title='Download list of links for this HIT', ng-click='dlLinks(task)')
+              button.btn.btn-xs.btn-primary(title='Download list of links for this HIT', ng-click='dlLinks(task, false)')
                 .fa.fa-download
+              | &nbsp;&nbsp;
+              button.btn.btn-xs.btn-success(title='Download list of VALID links for this HIT', ng-click='dlLinks(task, true)')
+                .fa.fa-thumbs-up
               | &nbsp;{{task.time | date:"MM/dd/yyyy HH:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
@@ -212,6 +231,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
+            td {{task.jid}}
             td
               span(ng-repeat='n in task.names')
                 button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")

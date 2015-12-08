@@ -13,7 +13,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         .fa.fa-toggle-on(ng-show='opt.showLogos') &nbsp;On Logos
         .fa.fa-toggle-off(ng-show='!opt.showLogos') &nbsp;Off Logos
   div(ng-show='curState.block_meta.blocks')
-    h4 Active State: {{curState._id}}
+    h4 Active State: {{curState._id}} &nbsp;&nbsp; {{curState.name}}
     h4 # Moves: {{curState.block_states.length}} &nbsp; # Blocks: {{curState.block_meta.blocks.length}}
     span(ng-repeat='block in curState.block_meta.blocks')
       | &nbsp;&nbsp;
@@ -62,7 +62,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       b(ng-show='curcnt > -1', style='font-size:1.25em') Create Count: {{curcnt}}
       br
       b(ng-show='curitr > -1', style='font-size:1.25em') Current State: {{curitr}}
-    div.col-sm-5
+    //-div.col-sm-5
       | Move camera by clicking and dragging in scene
     div.col-sm-12
       canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')

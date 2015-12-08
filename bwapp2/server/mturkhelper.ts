@@ -4,7 +4,7 @@
  =========================================================*/
 /// <reference path="./config.d.ts" />
 /// <reference path="../model/genjobsmgrdb.ts" />
-/// <reference path="./typings/underscore/underscore.d.ts" />
+/// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 
 declare var Async:any;
@@ -35,18 +35,23 @@ interface iTurkCreateParam{
   jid: string, tid: string, islive: boolean, useQual: boolean
 }
 
+interface iBlockTurker{
+  WorkerId: string,
+  Reason: string
+}
+
 Meteor.methods({
   mturkCreateHIT: function(p:iTurkCreateParam){
     console.warn(p);
     var mturk = Meteor['npmRequire']('mturk-api');
     var antpriceact:number[] = [0.5, 1.0, 1.5];
-    var anttimeact:number[] = [3, 3.5, 4];
+    var anttimeact:number[] = [4, 4.5, 5];
     
     var turk = Async.runSync(function(done){
-      var taskdata:iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
+      var taskdata:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
       var len:number = taskdata.idxlist.length;
 
-      var mturkconf:iMTurk = _.extend({}, serverconfig.mturk);
+      var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);
       mturkconf.sandbox = !p.islive;
       mturk.connect(mturkconf).then(function(api){
         var quest:string = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId='+ p.tid+'</ExternalURL> <FrameHeight>800</FrameHeight> </ExternalQuestion>';
@@ -121,23 +126,23 @@ Meteor.methods({
     return turk;
   },
   
-  mturkReviewableHITs: function(p){
+  mturkBlockTurker: function(p:iBlockTurker){
     var mturk = Meteor['npmRequire']('mturk-api');
 
     var turk = Async.runSync(function(done){
-      mturk.connect(serverconfig.mturk).then(function(api){
-        api.req('GetAssignmentsForHIT', {HITId: p.hid})
+      var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);
+      mturkconf.sandbox = false; //always operate in live env.
+      mturk.connect(mturkconf).then(function(api){
+        api.req('BlockWorker', p)
           .then(function(resp){
-            console.warn('GetReviewableHITs', resp);
             done(null, resp);
           }, function(err){
-            console.warn('GetReviewableHITs', err);
+            console.warn('BlockWorker err', err);
             done(err);
           });
       })
     });
 
     return turk;
-  },
-  
+  }
 });

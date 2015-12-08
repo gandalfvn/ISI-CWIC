@@ -57,9 +57,25 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'glyphiconspro', 'ngDialog', 'ngTable', 'lzString')
+          helper.resolveFor('babylonjs', 'ngDialog', 'ngTable', 'lzString')
         ),
         controller: 'genWorldCtrl'
+      })
+      .state('app.genpred', {
+        url: '/genpred?sid',
+        title: 'Generate Prediction',
+        templateUrl: helper.basepath('genpred.html'),
+        resolve: angular.extend(
+          {
+            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
+              return $meteor.requireValidUser(function (user) {
+                return !$rootScope.isRole(user, 'agent');
+              });
+            }]
+          },  //simple functions appear first so data is loaded
+          helper.resolveFor('babylonjs', 'ngTable', 'lzString')
+        ),
+        controller: 'genPredCtrl'
       })
       .state('app.genjobs', {
         url: '/genjobs',
@@ -81,7 +97,7 @@
         url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
         title: 'Annotation Task',
         templateUrl: helper.basepath('gentask.html'),
-        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'glyphiconspro', 'ngDialog', 'datatables', 'lzString'),
+        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables', 'lzString','ngDeviceDetect'),
         controller: 'genTaskCtrl'
       })
       .state('app.worldview', {
@@ -96,7 +112,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'glyphiconspro', 'ngDialog')
+          helper.resolveFor('babylonjs', 'ngDialog')
         ),
         controller: 'worldCtrl'
       })
@@ -128,7 +144,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'glyphiconspro', 'ngDialog', 'datatables')
+          helper.resolveFor('babylonjs', 'ngDialog', 'datatables')
         ),
         controller: 'replayCtrl'
       })
@@ -144,7 +160,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'glyphiconspro', 'ngDialog', 'datatables')
+          helper.resolveFor('babylonjs', 'ngDialog', 'datatables')
         ),
         controller: 'describeCtrl'
       })
@@ -192,7 +208,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'glyphiconspro', 'ngDialog')
+          helper.resolveFor('babylonjs', 'ngDialog')
         ),
         controller: 'gameCtrl'
       })
@@ -208,7 +224,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('modernizr', 'icons', 'toaster', 'babylonjs', 'glyphiconspro', 'ngDialog')
+          helper.resolveFor('modernizr', 'icons', 'toaster', 'babylonjs', 'ngDialog')
         ),
         controller: 'goalCtrl'
       })

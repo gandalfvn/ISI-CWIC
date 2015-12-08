@@ -4,14 +4,14 @@
  =========================================================*/
 /// <reference path="./config.d.ts" />
 /// <reference path="../model/genjobsmgrdb.ts" />
-/// <reference path="./typings/underscore/underscore.d.ts" />
+/// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 Meteor.methods({
     mturkCreateHIT: function (p) {
         console.warn(p);
         var mturk = Meteor['npmRequire']('mturk-api');
         var antpriceact = [0.5, 1.0, 1.5];
-        var anttimeact = [3, 3.5, 4];
+        var anttimeact = [4, 4.5, 5];
         var turk = Async.runSync(function (done) {
             var taskdata = GenJobsMgr.findOne({ _id: p.tid });
             var len = taskdata.idxlist.length;
@@ -85,16 +85,17 @@ Meteor.methods({
         });
         return turk;
     },
-    mturkReviewableHITs: function (p) {
+    mturkBlockTurker: function (p) {
         var mturk = Meteor['npmRequire']('mturk-api');
         var turk = Async.runSync(function (done) {
-            mturk.connect(serverconfig.mturk).then(function (api) {
-                api.req('GetAssignmentsForHIT', { HITId: p.hid })
+            var mturkconf = _.extend({}, serverconfig.mturk);
+            mturkconf.sandbox = false; //always operate in live env.
+            mturk.connect(mturkconf).then(function (api) {
+                api.req('BlockWorker', p)
                     .then(function (resp) {
-                    console.warn('GetReviewableHITs', resp);
                     done(null, resp);
                 }, function (err) {
-                    console.warn('GetReviewableHITs', err);
+                    console.warn('BlockWorker err', err);
                     done(err);
                 });
             });
