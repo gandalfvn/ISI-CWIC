@@ -149,6 +149,7 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                 var reader = new FileReader();
                 reader.onload = function () {
                     var filedata = JSON.parse(reader.result);
+                    var diffbm = JSON.parse(reader.result).block_meta; //store a copy of the blockmeta for use in diff view
                     console.warn(filedata);
                     if (filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length
                         && filedata.predictions && filedata.predictions.length) {
@@ -156,9 +157,13 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                         $scope.curState.clear();
                         $scope.curState.block_meta = _.extend({}, filedata.block_meta);
                         //create a copy of cubes it for gold or predicted view
-                        _.each(filedata.block_meta.blocks, function (b) {
+                        _.each(diffbm.blocks, function (b) {
                             var bl = _.extend({}, b);
                             bl.id = Number(bl.id) + 100; //stagger by 100 in the id
+                            _.each(bl.shape.shape_params, function (v, k) {
+                                if (v.color)
+                                    bl.shape.shape_params[k].color = 'cyan';
+                            });
                             $scope.curState.block_meta.blocks.push(bl); //save this copy
                         });
                         $scope.curState.public = true;
@@ -251,6 +256,11 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                     pred[aid] = { block_state: mungeBlockState(rawP[aid].block_state) };
             });
             pred.diff_state = { block_state: diffPrediction(idx) };
+            $scope.utterance = '';
+            _.each(pred.utterance, function (s) {
+                $scope.utterance += s.join(' ');
+            });
+            $scope.utterance = $scope.utterance.toUpperCase();
             renderPrediction(pred);
         };
         var renderPrediction = function (pred) {

@@ -438,6 +438,42 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     });
   };
 
+  interface iJTHInfo{
+    sid:string,
+    jid:string,
+    tid:string,
+    hid:string,
+    url:string
+  }
+  $scope.getURLHITs = function(jid){
+    var myjob:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: jid});
+    console.warn(myjob);
+    var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
+    var hitlist:iJTHInfo[] = [];
+    _.each(myjob.list, function(tid){
+      var mytask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: tid});
+      console.warn(mytask);
+      _.each(mytask.hitlist, function(h){
+        var hid = h.replace(/H_/,'');
+        hitlist.push({jid: jid, tid: tid, hid: hid, sid: mytask.stateid, url: turkreqlink+hid});
+      });
+    });
+    console.warn(hitlist);
+    var dialog = ngDialog.open({
+      template: 'didTurkURLs',
+      data: hitlist,
+      className: 'ngdialog-theme-default width60perc'
+      controller: ['$scope', function($scope){
+      }]
+    });
+    dialog.closePromise.then(function(data){
+      console.log('ngDialog closed', data);
+      if(data.value){
+      }
+    });
+
+  };
+
   $scope.stateGo = apputils.stateGo($state);
 
   $scope.opt= {}; //angular has issues with updating primitives

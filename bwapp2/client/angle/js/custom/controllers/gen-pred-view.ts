@@ -193,6 +193,7 @@ angular.module('app.generate').controller('genPredCtrl',
         var reader = new FileReader();
         reader.onload = function(){
           var filedata:iPredBlock = JSON.parse(reader.result);
+          var diffbm:iBlockMeta = JSON.parse(reader.result).block_meta; //store a copy of the blockmeta for use in diff view
           console.warn(filedata);
           if(filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length
             && filedata.predictions && filedata.predictions.length){
@@ -200,11 +201,15 @@ angular.module('app.generate').controller('genPredCtrl',
             $scope.curState.clear();
             $scope.curState.block_meta = _.extend({}, filedata.block_meta);
             //create a copy of cubes it for gold or predicted view
-            _.each(filedata.block_meta.blocks, function(b:iBlockMetaEle){
+            _.each(diffbm.blocks, function(b:iBlockMetaEle){
               var bl:iBlockMetaEle = <iBlockMetaEle>_.extend({}, b);
               bl.id = Number(bl.id)+100; //stagger by 100 in the id
+              _.each(bl.shape.shape_params, function(v,k){
+                if(v.color)
+                  bl.shape.shape_params[k].color = 'cyan';
+              });
               $scope.curState.block_meta.blocks.push(bl); //save this copy
-            })
+            });
             $scope.curState.public = true;
             $scope.curState.created = (new Date).getTime();
             $scope.curState.creator = $rootScope.currentUser._id;
@@ -301,10 +306,15 @@ angular.module('app.generate').controller('genPredCtrl',
       _.each(pidx, function(aid) {
         if(aid !== 'diff_state')
           pred[aid] = {block_state: mungeBlockState(rawP[aid].block_state)};
-      });
+      })
       pred.diff_state = {block_state: diffPrediction(idx)};
+      $scope.utterance = '';
+      _.each(pred.utterance, function(s:string[]){
+        $scope.utterance += s.join(' ');
+      })
+      $scope.utterance = $scope.utterance.toUpperCase();
       renderPrediction(pred);
-    }
+    };
 
     var renderPrediction = function(pred:iPredPUGS){
       if(_.isUndefined(pred)) return;

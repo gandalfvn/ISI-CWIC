@@ -56,18 +56,19 @@ interface iBlockMetaEle
   shape: iShapeMeta
 }
 
+interface iShapeParams{
+  face_1: iFaceEle,
+  face_2: iFaceEle,
+  face_3: iFaceEle,
+  face_4: iFaceEle,
+  face_5: iFaceEle,
+  face_6: iFaceEle,
+  side_length: number
+}
 interface iShapeMeta{
   type: string,
   size: number,
-  shape_params: {
-    face_1: iFaceEle,
-    face_2: iFaceEle,
-    face_3: iFaceEle,
-    face_4: iFaceEle,
-    face_5: iFaceEle,
-    face_6: iFaceEle,
-    side_length: number
-  }
+  shape_params: iShapeParams
 }
 
 interface iFaceEle{
