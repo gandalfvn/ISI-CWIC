@@ -24,7 +24,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       .col-sm-12
         h3(ng-if='!opt.isValidBrowser', style='color:red')
           i.fa.fa-exclamation-triangle
-          | &nbsp; Error: Please use the GOOGLE CHROME BROWSER
+          | &nbsp; GOOGLE CHROME BROWSER Recommended
 
         //-h4(style='color:red') DO NOT use the textboxes to create a sequence of events:
           label.mb-sm(style='color:orange;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5.
@@ -39,7 +39,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           .fa.fa-square &nbsp;
           | I will write unique self-contained descriptions in each textbox
 
-  div(ng-show='(opt.bAgreed || workerId ==="EXAMPLE") && opt.isValidBrowser')
+  div(ng-show='(opt.bAgreed || workerId ==="EXAMPLE")')
     accordion(ng-if="curState.block_meta.decoration=='logo'")
       accordion-group.panel-info(is-open='true')
         accordion-heading
