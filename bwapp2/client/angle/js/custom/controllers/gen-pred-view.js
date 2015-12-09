@@ -153,12 +153,14 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                     if (filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length
                         && filedata.predictions && filedata.predictions.length) {
                         console.warn('valid file');
-                        /*$scope.$apply(function(){
-                         $scope.impFilename = null;
-                         $scope.enableImpSave = false;
-                         });*/
                         $scope.curState.clear();
-                        $scope.curState.block_meta = filedata.block_meta;
+                        $scope.curState.block_meta = _.extend({}, filedata.block_meta);
+                        //create a copy of cubes it for gold or predicted view
+                        _.each(filedata.block_meta.blocks, function (b) {
+                            var bl = _.extend({}, b);
+                            bl.id = Number(bl.id) + 100; //stagger by 100 in the id
+                            $scope.curState.block_meta.blocks.push(bl); //save this copy
+                        });
                         $scope.curState.public = true;
                         $scope.curState.created = (new Date).getTime();
                         $scope.curState.creator = $rootScope.currentUser._id;
@@ -167,7 +169,6 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                         setDecorVal(filedata.block_meta.decoration);
                         myengine.createObjects($scope.curState.block_meta.blocks);
                         console.warn($scope.curState.block_meta);
-                        diffPrediction(0);
                         $scope.showPrediction(0);
                     }
                     else
@@ -204,7 +205,6 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                     }
                 });
                 if (!bFound) {
-                    gbs[idx]['type'] = 'g'; //hack a type into this :)
                     uniqs.push(gbs[idx]);
                 }
                 remOverlap(idx + 1, gbs, predl, uniqs, cb);
@@ -213,8 +213,7 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             remOverlap(0, goldbs, predlist, uniqlist, function () {
                 //save whats left of blocks in predicted view
                 _.each(predlist, function (p, k) {
-                    var val = { id: k, position: p };
-                    val['type'] = 'p'; //hack a type into this :)
+                    var val = { id: Number(k) + 100, position: p };
                     uniqlist.push(val);
                 });
             });
@@ -235,26 +234,36 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             });
             return isz;
         };
+        var pidx = ['start_state', 'gold_state', 'predicted_state', 'diff_state'];
         $scope.showPrediction = function (idx) {
-            if (_.isUndefined($scope.predictions[idx]))
-                return;
             $scope.isgen = true;
             $scope.curitr = idx;
-            var pidx = ['start_state', 'gold_state', 'predicted_state'];
+            var rawP = $scope.predictions[idx];
+            var pred = {
+                predicted_state: null,
+                utterance: rawP.utterance,
+                gold_state: null,
+                start_state: null,
+                diff_state: null
+            };
+            _.each(pidx, function (aid) {
+                if (aid !== 'diff_state')
+                    pred[aid] = { block_state: mungeBlockState(rawP[aid].block_state) };
+            });
+            pred.diff_state = { block_state: diffPrediction(idx) };
+            renderPrediction(pred);
+        };
+        var renderPrediction = function (pred) {
+            if (_.isUndefined(pred))
+                return;
             _.each(pidx, function (aid) {
                 $('#' + aid).empty();
             });
-            function itrFrame(idx, idxlist, cb) {
+            function itrFrame(idx, idxlist, pred, cb) {
                 if (_.isUndefined(idxlist[idx]))
                     return cb();
                 var k = idxlist[idx];
-                var blockdata = $scope.predictions[idx][k];
-                if ($scope.curState.block_meta.blocks.length != blockdata.block_state.length)
-                    return $scope.$apply(function () {
-                        toaster.pop('error', 'Block META and STATE mismatch!');
-                    });
-                //mung block_states
-                var block_state = { block_state: mungeBlockState(blockdata.block_state) };
+                var block_state = pred[k];
                 showFrame(block_state, function () {
                     //wait for steady state
                     checkFnSS = setInterval(function () {
@@ -268,13 +277,13 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                                 //block_state.created = (new Date).getTime();
                                 //var attachid:string = createButtons('stateimg', idx);
                                 showImage(b64img, k.toUpperCase().replace(/_/g, ' '), k);
-                                itrFrame(idx + 1, idxlist, cb);
+                                itrFrame(idx + 1, idxlist, pred, cb);
                             });
                         }
                     }, 100);
                 });
             }
-            itrFrame(0, pidx, function () {
+            itrFrame(0, pidx, pred, function () {
                 $scope.$apply(function () {
                     $scope.isgen = false;
                 });

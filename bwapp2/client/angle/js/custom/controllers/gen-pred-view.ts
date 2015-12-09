@@ -12,16 +12,28 @@
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
 
-interface iPredPUGS {
+interface iPredPUGSRaw {
   predicted_state: miGen3DEngine.iBlockStatesSerial,
   utterance: string[][]
   gold_state: miGen3DEngine.iBlockStatesSerial,
-  start_state: miGen3DEngine.iBlockStatesSerial
+  start_state: miGen3DEngine.iBlockStatesSerial,
 }
+
 interface iPredBlock {
   block_meta: iBlockMeta,
-  predictions: iPredPUGS[]
+  predictions: iPredPUGSRaw[]
 }
+
+interface iPredBS {block_state: iBlockState[]}
+
+interface iPredPUGS {
+  predicted_state: iPredBS,
+  utterance: string[][]
+  gold_state: iPredBS,
+  start_state: iPredBS,
+  diff_state: iPredBS
+}
+
 
 angular.module('app.generate').controller('genPredCtrl',
   ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, ngTableParams, apputils){
@@ -185,12 +197,14 @@ angular.module('app.generate').controller('genPredCtrl',
           if(filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length
             && filedata.predictions && filedata.predictions.length){
             console.warn('valid file');
-            /*$scope.$apply(function(){
-             $scope.impFilename = null;
-             $scope.enableImpSave = false;
-             });*/
             $scope.curState.clear();
-            $scope.curState.block_meta = filedata.block_meta;
+            $scope.curState.block_meta = _.extend({}, filedata.block_meta);
+            //create a copy of cubes it for gold or predicted view
+            _.each(filedata.block_meta.blocks, function(b:iBlockMetaEle){
+              var bl:iBlockMetaEle = <iBlockMetaEle>_.extend({}, b);
+              bl.id = Number(bl.id)+100; //stagger by 100 in the id
+              $scope.curState.block_meta.blocks.push(bl); //save this copy
+            })
             $scope.curState.public = true;
             $scope.curState.created = (new Date).getTime();
             $scope.curState.creator = $rootScope.currentUser._id;
@@ -199,7 +213,6 @@ angular.module('app.generate').controller('genPredCtrl',
             setDecorVal(filedata.block_meta.decoration);
             myengine.createObjects($scope.curState.block_meta.blocks);
             console.warn($scope.curState.block_meta);
-            diffPrediction(0);
             $scope.showPrediction(0);
           }
           else $scope.$apply(function(){toaster.pop('warn', 'Invalid JSON STATE file')});
@@ -239,7 +252,6 @@ angular.module('app.generate').controller('genPredCtrl',
           }
         })
         if(!bFound){
-          gbs[idx]['type'] = 'g'; //hack a type into this :)
           uniqs.push(gbs[idx]);
         }
         remOverlap(idx+1, gbs, predl, uniqs, cb);
@@ -249,11 +261,10 @@ angular.module('app.generate').controller('genPredCtrl',
       remOverlap(0, goldbs, predlist, uniqlist, function(){
         //save whats left of blocks in predicted view
         _.each(predlist, function(p:iPosRot,k){
-          var val:iBlockState = {id: k, position: p};
-          val['type'] = 'p'; //hack a type into this :)
+          var val:iBlockState = {id: Number(k)+100, position: p};
           uniqlist.push(val);
         })
-      })
+      });
 
       return uniqlist;
     };
@@ -262,35 +273,48 @@ angular.module('app.generate').controller('genPredCtrl',
       var retv:iPosRot = <iPosRot>_.extend({}, a);
       _.each(retv, function(v,k){
         retv[k] = retv[k] - b[k];
-      })
+      });
       return retv;
-    }
+    };
 
     var isZeroPos = function(p:iPosRot):boolean{
       var isz = true;
       _.each(p, function(v){
         if (v < -0.001 || v > 0.001) isz = false;
-      })
+      });
       return isz;
-    }
+    };
 
+
+    var pidx = ['start_state', 'gold_state', 'predicted_state', 'diff_state'];
     $scope.showPrediction = function(idx:number){
-      if(_.isUndefined($scope.predictions[idx])) return;
       $scope.isgen = true;
       $scope.curitr = idx;
-      var pidx = ['start_state', 'gold_state', 'predicted_state'];
+      var rawP = $scope.predictions[idx];
+      var pred:iPredPUGS = {
+        predicted_state: null,
+        utterance: rawP.utterance,
+        gold_state: null,
+        start_state: null,
+        diff_state: null
+      };
+      _.each(pidx, function(aid) {
+        if(aid !== 'diff_state')
+          pred[aid] = {block_state: mungeBlockState(rawP[aid].block_state)};
+      });
+      pred.diff_state = {block_state: diffPrediction(idx)};
+      renderPrediction(pred);
+    }
+
+    var renderPrediction = function(pred:iPredPUGS){
+      if(_.isUndefined(pred)) return;
       _.each(pidx, function(aid){
         $('#'+aid).empty();
-      })
-      function itrFrame(idx: number, idxlist:string[], cb:()=>void){
+      });
+      function itrFrame(idx: number, idxlist:string[], pred:iPredPUGS, cb:()=>void){
         if(_.isUndefined(idxlist[idx])) return cb();
         var k = idxlist[idx];
-        var blockdata:miGen3DEngine.iBlockStatesSerial = $scope.predictions[idx][k];
-        if($scope.curState.block_meta.blocks.length != blockdata.block_state.length) return $scope.$apply(function(){
-          toaster.pop('error', 'Block META and STATE mismatch!');
-        });
-        //mung block_states
-        var block_state:iBlockStates = {block_state: mungeBlockState(blockdata.block_state)};
+        var block_state:iBlockStates = pred[k];
 
         showFrame(block_state, function(){
           //wait for steady state
@@ -305,14 +329,14 @@ angular.module('app.generate').controller('genPredCtrl',
                 //block_state.created = (new Date).getTime();
                 //var attachid:string = createButtons('stateimg', idx);
                 showImage(b64img, k.toUpperCase().replace(/_/g,' '), k);
-                itrFrame(idx+1, idxlist, cb);
+                itrFrame(idx+1, idxlist, pred, cb);
               });
             }
           }, 100);
         });
       }
 
-      itrFrame(0, pidx, function(){
+      itrFrame(0, pidx, pred, function(){
         $scope.$apply(function(){
           $scope.isgen = false;
         })
