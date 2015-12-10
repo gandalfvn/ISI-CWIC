@@ -64,11 +64,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                 $scope.$meteorSubscribe("genstates", sid).then(function (sub) {
                     $scope.curState = GenStates.findOne(sid);
                     //console.warn('curState',$scope.curState);
-                    if ($stateParams.json) {
-                        dlJson($stateParams.json);
-                        console.warn('here!!');
-                    }
-                    else if ($stateParams.report) {
+                    if ($stateParams.report) {
                         $scope.report = $stateParams.report;
                         if ($scope.submitter.valid)
                             $scope.opt.repvalid = $scope.submitter.valid;

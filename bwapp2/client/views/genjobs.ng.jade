@@ -13,9 +13,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       label Reason:
       input(ng-model='btreason')
       button.btn(ng-show='btid.length && btreason.length', ng-click='blockTurker(btid, btreason)') Go
-    .col-sm-1
+    .well.col-sm-3
+      label Job Id: 
+      input(ng-model='jid')
+      button.btn(ng-show='jid.length', ng-click='getURLHITs(jid)') Go
     .well.col-sm-2
-      button.btn(ng-click='refreshHITs()') 
+      button.btn(ng-click='refreshHITs()')
         i.fa.fa-refresh
         |  Refresh HITs
   .row
@@ -266,3 +269,15 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               i.fa.fa-eye
               | &nbsp;{{task.name}} 
    
+script#didTurkURLs(type="text/ng-template")
+  form.form-inline.ng-pristine.ng-valid(role="form",novalidate, name='turkurls', ng-submit='closeThisDialog()')
+    //pre {{ngDialogData}}
+    h4 Job: {{ngDialogData[0].jid}}
+    .form-group(ng-repeat='n in ngDialogData')
+      a(href='{{n.url}}', target='_blank')  T:{{n.tid}} H:{{n.hid}}
+      br
+    //-.form-group
+      input.form-control(type="text", placeholder="Recording Name", required, ng-minlength="4" ng-model='savename', name="name")
+      button.btn.btn-default(ng-show='replayname.$valid', type="submit") Save
+      label.error(style='color:red', ng-show="replayname.name.$error.required", title='Required field') *Required 
+      label.error(style='color:red', ng-show="replayname.name.$error.minlength", title='Must have at least 4 characters') Too short!

@@ -86,11 +86,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
         function(sub) {
           $scope.curState = <iGenStates>GenStates.findOne(sid);
           //console.warn('curState',$scope.curState);
-          if($stateParams.json){//json dl
-            dlJson($stateParams.json);
-            console.warn('here!!')
-          }
-          else if ($stateParams.report) { //report view
+          if ($stateParams.report) { //report view
             $scope.report = $stateParams.report;
             if($scope.submitter.valid)
               $scope.opt.repvalid = $scope.submitter.valid;
