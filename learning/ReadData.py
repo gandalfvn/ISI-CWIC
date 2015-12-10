@@ -2,9 +2,12 @@ import copy
 import math
 import numpy as np
 import json
+import gzip
 
 
 class Data:
+
+
   @staticmethod
   def onehot(num, dim):
     """
@@ -15,6 +18,12 @@ class Data:
     v = [0] * dim
     v[num] = 1
     return v
+
+  @staticmethod
+  def extend(world, dim):
+    while len(world) < dim:
+      world.append(0)
+    return world
 
   @staticmethod
   def numbers(mat):
@@ -61,20 +70,39 @@ class Data:
     """
     nvec = []
     for i in range(len(vec)):
-      nvec.append((float(vec[i]) - mu[i]) / sig[i])
+      nvec.append((vec[i] - mu[i]) / sig[i])
     return nvec
 
   def __init__(self, maxlines=1000000, sequence=False, separate=True, onehot=True):
+    trainingfile_input  = "Data/logos/Dev.input.json.gz"
+    trainingfile_output = "Data/logos/Dev.output.json.gz"
+    testingfile_input   = "Data/logos/Dev.input.orig.json.gz"
+    testingfile_output  = "Data/logos/Dev.output.orig.json.gz"
+
+    self.TrainingInput = []
+    self.TrainingOutput = []
+
     ## Build Vocabulary ##
     vocab = {"UNK": 0}
     count = 1
-    for line in open("Data/source.txt", 'r'):
-      for word in line.split()[:len(line.split()) - 57]:
-        if word not in vocab:
-          vocab[word] = count
-          count += 1
+    longest_sentence = 0
+    self.world_dim = 0
+    linecount = 0
+    for line in gzip.open(trainingfile_input, 'r'):
+      if linecount < maxlines:
+        j = json.loads(line)
+        self.TrainingInput.append(j)
+        spl = j["text"].split()
+        for word in spl:
+          if word not in vocab:
+            vocab[word] = count
+            count += 1
+        if len(spl) > longest_sentence:
+          longest_sentence = len(spl)
+        if len(j["world"]) > self.world_dim:
+          self.world_dim = len(j["world"])
+        linecount += 1
 
-    longest_sentence = 61
     vocabsize = len(vocab)
     unk = [0] * len(vocab)
     unk[0] = 1
@@ -83,49 +111,41 @@ class Data:
     ## Read Training Data ##
 
     ## Compute mean/std per dimension ##
-    all_locations = [[]] * 57
+    all_locations = [[]] * self.world_dim
     mean_world = []
     std_dev = []
-    count = 0
-    for line in open("Data/source.txt", 'r'):
-      if count < maxlines:
-        line = line.split()
-        for i in range(57):
-          all_locations[i].append(float(line[len(line) - 57 + i]))
-        count += 1
-    for i in range(57):
+    for j in self.TrainingInput:
+      world = self.extend(j["world"], self.world_dim)
+      for i in range(self.world_dim):
+        all_locations[i].append(world[i])
+    for i in range(self.world_dim):
       mean_world.append(sum(all_locations[i]) / len(all_locations[i]))
       std_dev.append(math.sqrt(sum([(v - mean_world[i]) ** 2 for v in all_locations[i]]) / len(all_locations[i])))
 
-    count = 0
     locations = []
     utterances = []
-    for line in open("Data/source.txt", 'r'):
-      if count < maxlines:
-        line = line.split()
-        world = line[len(line) - 57:]
-        words = line[:len(line) - 57]
-        representation = []
-        for i in range(longest_sentence):
-          if i < len(words):
-            representation.append(self.onehot(vocab[words[i]], len(vocab)))
-          else:
-            representation.append(unk)
-        # world = self.norm(world, meanWorld, stdDev)
-        utterances.append(representation)
-        locations.append(world)
-        count += 1
-      else:
-        break
+    for j in self.TrainingInput:
+      world = self.extend(j["world"], self.world_dim)
+      words = j["text"].strip().split()
+      representation = []
+      for i in range(longest_sentence):
+        if i < len(words):
+          representation.append(self.onehot(vocab[words[i]], vocabsize))
+        else:
+          representation.append(unk)
+      #world = self.norm(world, mean_world, std_dev)
+      utterances.append(representation)
+      locations.append(world)
 
     actions = []
     classes = []
     count = 0
-    for line in open("Data/target.txt", 'r'):
+    for line in gzip.open(trainingfile_output, 'r'):
       if count < maxlines:
-        line = line.split()
-        actions.append([float(v) for v in line[1:4]])
-        classes.append(self.onehot(int(line[0]), 21))
+        j = json.loads(line)
+        self.TrainingOutput.append(j)
+        actions.append(j["loc"])
+        classes.append(self.onehot(j["id"], 21))
         count += 1
       else:
         break
@@ -133,21 +153,19 @@ class Data:
     print "Read Train: ", len(locations)
 
     ## Read Test Data ## 
-    self.TestUtterances = []      # For printing JSONs
-    self.TestActions = []      # For printing JSONs
-    self.TestWorlds = []
+    self.TestingInput  = []      # For printing JSONs
+    self.TestingOutput = []      # For printing JSONs
 
     locations_test = []
     utterances_test = []
-    for line in open("Data/source.orig.txt", 'r'):
-      line = line.split()
-      world = [float(v) for v in line[len(line) - 57:]]
-      words = line[:len(line) - 57]
-      self.TestUtterances.append(words)
-      self.TestWorlds.append(world)
+    for line in gzip.open(testingfile_input, 'r'):
+      j = json.loads(line)
+      self.TestingInput.append(j)
+      world = self.extend(j["world"], self.world_dim)
+      words = j["text"].strip().split()
       representation = []
       for i in range(longest_sentence):
-        if i < len(words):
+        if i < len(words) and words[i] in vocab:
           representation.append(self.onehot(vocab[words[i]], len(vocab)))
         else:
           representation.append(unk)
@@ -156,17 +174,17 @@ class Data:
 
     actions_test = []
     classes_test = []
-    for line in open("Data/target.orig.txt", 'r'):
-      line = line.split()
-      self.TestActions.append(line)
-      actions_test.append([float(v) for v in line[1:4]])
-      classes_test.append(self.onehot(int(line[0]), 21))
+    for line in gzip.open(testingfile_output, 'r'):
+      j = json.loads(line)
+      self.TestingOutput.append(j)
+      actions_test.append(j["loc"])
+      classes_test.append(self.onehot(j["id"], 21))
 
     print "Read Test: ", len(locations_test)
 
     ## Data Representation  x  Sentence in Corpus
     # utterances:  words, 1hot
-    # locations:   57 (3*19) x,y,z coordinates
+    # locations:   ~57 (3*19) x,y,z coordinates
     # classes:     1-hot ID \in {1,20}
     # actions:     new (x,y,z) location
 
@@ -238,34 +256,35 @@ class Data:
     :param locations:
     :return:
     """
-    j = {"block_meta":{"blocks":[]}}
-    # Give each white square a block (and brand)
-    for coord in range(len(locations) / 3):
-      j["block_meta"]["blocks"].append({"name": self.brands[coord], "id":(coord + 1), "shape": self.shape})
-
     # Assign a location to each block
     uniq_id = 0
-    j["block_state"] = []
+    j = {"block_state":[]}
     for coord in range(len(locations)/3):
-      x = locations[coord*3]
-      y = locations[coord*3+1]
-      z = locations[coord*3+2]
+      x = locations[coord * 3]
+      y = locations[coord * 3 + 1]
+      z = locations[coord * 3 + 2]
       j["block_state"].append({"id": (coord + 1), "position": "%f,%f,%f" % (x, y, z)})
     return j
 
-  def write_predictions(self, predictions, filename="predictions.json"):
+  def write_predictions(self, predictions, filename="predictions"):
     """
     Produce a series of JSONs with  (input, gold, predicted) and utterance
     :param predictions:   System's predictions
     :param filename:      Output filename
     :return:
     """
-    f = open(filename, 'w')
+    f = open("out/" + filename + ".json", 'w')
     l = []
+    full = {"block_meta": {"blocks": []}}
+    # Give each white square a block (and brand)
+    for coord in range(self.world_dim / 3):
+      full["block_meta"]["blocks"].append({"name": self.brands[coord], "id": (coord + 1), "shape": self.shape})
+    full["block_meta"]["decoration"] = "logo"
+
     for i in range(len(predictions)):
-      j = {"utterance": self.TestUtterances[i]}
-      plocations = copy.deepcopy(self.TestWorlds[i])
-      glocations = copy.deepcopy(self.TestWorlds[i])
+      j = {"utterance": [self.TestingInput[i]["text"]]}
+      plocations = copy.deepcopy(self.TestingInput[i]["world"])
+      glocations = copy.deepcopy(self.TestingInput[i]["world"])
       j["start_state"] = self.convert_to_world(glocations)
 
       # Update location of predicted block
@@ -276,18 +295,20 @@ class Data:
       j["predicted_state"] = self.convert_to_world(plocations)
 
       # Update location of gold block
-      action = self.TestActions[i]
-      glocations[(int(action[0]) - 1) * 3] = float(action[1])
-      glocations[(int(action[0]) - 1) * 3 + 1] = float(action[2])
-      glocations[(int(action[0]) - 1) * 3 + 2] = float(action[3])
+      action = self.TestingOutput[i]["loc"]
+      blockID = self.TestingOutput[i]["id"]
+      glocations[(blockID - 1) * 3] = float(action[0])
+      glocations[(blockID - 1) * 3 + 1] = float(action[1])
+      glocations[(blockID - 1) * 3 + 2] = float(action[2])
       j["gold_state"] = self.convert_to_world(glocations)
 
       l.append(j)
-    f.write(json.dumps(l) + "\n")
+    full["predictions"] = l
+    f.write(json.dumps(full) + "\n")
     f.close()
 
     # Simple human readable format
-    out = open("human." + filename, 'w')
-    for i in range(predictions):
-      out.write("%s\n" % (" ".join(predictions[i])))
+    out = open("out/human." + filename + ".txt", 'w')
+    for i in range(len(predictions)):
+      out.write("%s\n" % str(predictions[i]))
     out.close()

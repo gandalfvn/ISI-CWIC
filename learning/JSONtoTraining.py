@@ -54,10 +54,10 @@ def clean_note(toclean):
 
 # Concatenate the locations of all the blocks (in order)
 def world(arr):
-  w = ""
+  worldvec = []
   for block in arr:
-    w += "%5.2f %5.2f %5.2f " % (block[1][0], block[1][1], block[1][2])
-  return w
+    worldvec.extend(block[1])
+  return worldvec
 
 
 # Action representation
@@ -75,7 +75,7 @@ def semantics(time_t, time_tp1):
         changed = after
         maxval = pos_dist
 
-  return {"id": changed[0], "loc": strvec(changed[1])}
+  return {"id": changed[0], "loc": changed[1]}
 
 
 ############################ Generating New Examples ##########################
@@ -139,7 +139,9 @@ target = gzip.open("out/target.json.gz", 'w')
 num = 0
 for before, after, note in newTuples:
   source.write(json.dumps({"ex": num, "world": world(before), "text": note}) + "\n")
-  target.write(json.dumps({"ex": num, "action": semantics(before, after)}) + "\n")
+  sem = semantics(before, after);
+  sem["ex"] = num
+  target.write(json.dumps(sem) + "\n")
   num += 1
 source.close()
 target.close()
@@ -150,7 +152,9 @@ target = gzip.open("out/target.orig.json.gz", 'w')
 num = 0
 for before, after, note in inittuples:
   source.write(json.dumps({"ex": num, "world": world(before), "text": note}) + "\n")
-  target.write(json.dumps({"ex": num, "action": semantics(before, after)}) + "\n")
+  sem = semantics(before, after)
+  sem["ex"] = num
+  target.write(json.dumps(sem) + "\n")
   num += 1
 source.close()
 target.close()

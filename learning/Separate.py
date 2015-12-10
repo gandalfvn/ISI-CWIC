@@ -5,7 +5,7 @@ import tensorflow as tf
 from ReadData import Data
 from Layer import Layers
 
-D = Data(100, sequence=False)
+D = Data(10000, sequence=False)
 L = Layers()
 
 ############################# Create a Session ################################

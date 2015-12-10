@@ -27,7 +27,7 @@ print "Converted Data"
 
 sess = tf.Session()
 x_t = L.placeholder(input_dim, 'Text')
-x_w = L.placeholder(57, 'World')  # 20 blocks
+x_w = L.placeholder(D.world_dim, 'World')  # 20 blocks
 y_A = L.placeholder(output_dim, 'Action')
 y_C = L.placeholder(21, 'Class')  # 20 blocks
 
@@ -39,7 +39,7 @@ W_t2 = L.uniform_W(name='W_t2')
 b_t2 = L.uniform_b(name='b_t2')
 
 # Words + World
-W_a1 = L.uniform_W(input_dim=157, name='W_a1')
+W_a1 = L.uniform_W(input_dim=(100 + D.world_dim), name='W_a1')
 b_a1 = L.uniform_b(name='b_a1')
 W_a2 = L.uniform_W(name='W_a2')
 b_a2 = L.uniform_b(name='b_a2')

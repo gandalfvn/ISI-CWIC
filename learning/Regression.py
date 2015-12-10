@@ -6,7 +6,7 @@ from ReadData import Data
 from Layer import Layers
 np.set_printoptions(threshold=np.nan)
 
-D = Data(maxlines=100, separate=False, onehot=False, sequence=False)
+D = Data(maxlines=1000, separate=False, onehot=False, sequence=False)
 L = Layers()
 
 print "Read Data"

@@ -1,14 +1,15 @@
+import gzip,json
 def diff(x, y):
   return abs(x[0] - y[0]) + abs(x[1] - y[1]) + abs(x[2] - y[2])
 
 
 G = []
-for line in open("Data/target.orig.txt", 'r'):
-  line = line.split()
-  G.append((int(line[0]), [float(v) for v in line[1:4]]))
+for line in gzip.open("Data/logos/Dev.output.orig.json.gz", 'r'):
+  j = json.loads(line)
+  G.append((j["id"], j["loc"]))
 
 S = []
-for line in open('predictions.txt', 'r'):
+for line in open('out/human.predictions.txt', 'r'):
   line = line.replace("[", "").replace("]", "").split()
   S.append((int(float(line[0])), [float(v) for v in line[1:4]]))
 
