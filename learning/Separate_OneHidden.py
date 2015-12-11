@@ -82,7 +82,7 @@ print "Softmax"
 batches = D.minibatch([D.Train["text"], D.Train["classes"]])
 oldLoss = compute_loss_sf()
 for i in range(10):
-  for a,b in batches:
+  for a,b in D.scrambled(batches):
     sess.run(train_step_sf, feed_dict={x_t: a, y_C: b})
   newLoss = compute_loss_sf()
   print "%3d %10.7f  -->   %11.10f" % (i, newLoss, (oldLoss - newLoss) / oldLoss)

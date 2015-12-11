@@ -61,7 +61,7 @@ batches = D.minibatch([D.Train["input"], D.Train["output"]])
 print "Regression"
 oldLoss = sess.run(loss, feed_dict={x: D.Train["input"], y_: D.Train["output"]})
 for i in range(10):
-  for (a, b) in batches:
+  for (a, b) in D.scrambled(batches):
     sess.run(train_step, feed_dict={x: a, y_: b})
 
   newLoss = sess.run(loss, feed_dict={x: D.Train["input"], y_: D.Train["output"]})

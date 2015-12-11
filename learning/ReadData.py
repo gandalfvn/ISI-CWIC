@@ -3,7 +3,7 @@ import math
 import numpy as np
 import json
 import gzip
-
+import random
 
 class Data:
 
@@ -55,6 +55,12 @@ class Data:
       for array in arrays:
         minibatches[len(minibatches)-1].append(array[i * batch_size:(i + 1) * batch_size])
     return minibatches
+
+  @staticmethod
+  def scrambled(arrays):
+    random.seed(1292015)
+    random.shuffle(arrays)
+    return arrays
 
   @staticmethod
   def norm(vec, mu, sig):

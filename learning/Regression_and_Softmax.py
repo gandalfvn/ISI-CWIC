@@ -85,7 +85,7 @@ batches = D.minibatch([D.Train["input"], D.Train["actions"], D.Train["classes"]]
 
 ## Train for 10 Epochs ##
 for i in range(10):
-  for (a, b, c) in batches:
+  for (a, b, c) in D.scrambled(batches):
     sess.run(train_step, feed_dict={x: a, y_A: b, y_C: c})
   newLoss = compute_loss()
   newLoss_sf = compute_loss_sf()

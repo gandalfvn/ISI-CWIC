@@ -101,7 +101,7 @@ oldLoss_sf = compute_loss_sf()
 oldLoss_mse = compute_loss_mse()
 print "iter %-10s  %-10s  %-10s   -->   %-11s" % ("Loss", "Mean CE", "MSE", "% Change")
 for i in range(10):
-  for (a, b, c, d) in batches:
+  for (a, b, c, d) in D.scrambled(batches):
     sess.run(train_step, feed_dict={x_t: a, x_w: b, y_A: c, y_C : d})
 
   newLoss = compute_loss()
