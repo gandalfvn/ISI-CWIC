@@ -57,7 +57,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'ngDialog', 'ngTable', 'lzString')
+          helper.resolveFor('babylonjs', 'ngDialog', 'ngTable')
         ),
         controller: 'genWorldCtrl'
       })
@@ -73,7 +73,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'ngTable', 'lzString')
+          helper.resolveFor('babylonjs', 'ngTable')
         ),
         controller: 'genPredCtrl'
       })
@@ -89,7 +89,7 @@
               });
             }]
           },  //simple functions appear first so data is loaded
-          helper.resolveFor('ngDialog', 'datatables', 'lzString')
+          helper.resolveFor('ngDialog', 'datatables')
         ),
         controller: 'genJobsCtrl'
       })
@@ -97,7 +97,7 @@
         url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
         title: 'Annotation Task',
         templateUrl: helper.basepath('gentask.html'),
-        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables', 'lzString','ngDeviceDetect'),
+        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect'),
         controller: 'genTaskCtrl'
       })
       .state('app.worldview', {

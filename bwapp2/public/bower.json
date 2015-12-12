@@ -28,7 +28,6 @@
     "angular-datatables": "0.4.3",
     "angularjs-toaster": "0.4.8",
     "ng-table": "*",
-    "lz-string": "*",
     "ng-device-detector": "~2.0.2"
   }
 }
