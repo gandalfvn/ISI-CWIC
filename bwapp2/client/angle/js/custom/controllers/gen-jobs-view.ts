@@ -167,7 +167,6 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     htmlcontent.ex = href;
     content.push('Results:');
     _.each(task.names, function(n){
-      console.warn(n, task.repvalid[n], onlyValid);
       if(!onlyValid || task.repvalid[n] === mGenJobsMgr.eRepValid[mGenJobsMgr.eRepValid.yes] ){
         href = $state.href('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, {absolute: true});
         content.push(href);
@@ -278,7 +277,6 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   $scope.taskGen = function(tasktype:string, movedir:string, bundle:number, asncnt:number, antcnt:number){
     var statelist:string[] = apputils.mdbArray(GenStates, {}, {
       sort: {"_id": 1}}, "_id");
-    console.warn(statelist);
     if(statelist.length){
       var jobdata = {
         stateid: $scope.curState._id,
@@ -457,7 +455,6 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
           hitlist.push({jid: jid, tid: tid, hid: hid, sid: mytask.stateid, url: turkreqlink+hid});
         });
       });
-      console.warn(hitlist);
       var dialog = ngDialog.open({
         template: 'didTurkURLs',
         data: hitlist,
