@@ -3,7 +3,9 @@
  */
 /// <reference path="../model/genjobsmgrdb.ts" />
 /// <reference path="../model/genstatesdb.ts" />
+/// <reference path="../model/screencapdb.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
+/// <reference path="./typings/lz-string/lz-string.d.ts" />
 
 HTTP['methods']({
   '/api/hit/:id': {
@@ -19,6 +21,13 @@ HTTP['methods']({
   '/api/state/:id': {
     get: function() {
       return <iGenStates>GenStates.findOne(this.params.id);
+    }
+  },
+  '/api/screencap/:id': {
+    get: function() {
+      var sc = <iScreenCaps>ScreenCaps.findOne(this.params.id);
+      var b64img:string = LZString.decompressFromUTF16(sc.data);
+      return b64img;
     }
   }
 

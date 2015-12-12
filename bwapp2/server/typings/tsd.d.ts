@@ -3,3 +3,4 @@
 /// <reference path="meteor/meteor.d.ts" />
 /// <reference path="underscore/underscore.d.ts" />
 /// <reference path="lodash/lodash.d.ts" />
+/// <reference path="lz-string/lz-string.d.ts" />

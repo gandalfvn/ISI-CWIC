@@ -5,9 +5,9 @@
 /// <reference path="gen-3d-engine.ts" />
 /// <reference path="../../../../../model/genstatesdb.ts" />
 /// <reference path="../../../../../model/screencapdb.ts" />
-/// <reference path="../../../../../public/vendor/lz-string/typings/lz-string.d.ts" />
 /// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
+/// <reference path="../../../../../server/typings/lz-string/lz-string.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
 angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, ngTableParams, apputils) {
