@@ -12,7 +12,7 @@ logos = [ \
 
 ## Read in the world configurations ##
 worlds = {}
-for root,folders,files in os.walk("../digitstates/MTurk/Test",'r'):
+for root,folders,files in os.walk(sys.argv[1],'r'):
   for name in files:
     justname = name.split(".json")[0].lower()
     worlds[justname] = json.load(open(os.path.join(root, name)))
@@ -22,7 +22,7 @@ for name in worlds:
 
 out = gzip.open("data.json.gz", 'w')
 ## Read in the annotations JSONs ##
-for line in gzip.open(sys.argv[1],'r'):
+for line in gzip.open(sys.argv[2],'r'):
   j = json.loads(line)
   world = worlds[j["file"]]
   print j["file"], world["block_meta"]["decoration"]
@@ -32,7 +32,7 @@ for line in gzip.open(sys.argv[1],'r'):
   for job in j["HIT"]["submitted"]:
     if "valid" not in job or job["valid"] == "yes":
       approved.append(job["name"])
-  for idxlist in j["state"]["idxlist"]:
+  for idxlist in j["task"]["idxlist"]:
     tasks[index] = idxlist
     index += 1
   for user in j["HIT"]["notes"]:

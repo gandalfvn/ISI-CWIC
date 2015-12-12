@@ -80,8 +80,8 @@ class Data:
     return nvec
 
   def __init__(self, maxlines=1000000, sequence=False, separate=True, onehot=True):
-    trainingfile_input  = "Data/logos/Dev.input.json.gz"
-    trainingfile_output = "Data/logos/Dev.output.json.gz"
+    trainingfile_input  = "Data/logos/Train.input.json.gz"
+    trainingfile_output = "Data/logos/Train.output.json.gz"
     testingfile_input   = "Data/logos/Dev.input.orig.json.gz"
     testingfile_output  = "Data/logos/Dev.output.orig.json.gz"
 

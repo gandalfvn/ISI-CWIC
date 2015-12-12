@@ -1,4 +1,4 @@
-import os,sys,commands,json,gzip,ast
+import os,sys,commands,json,gzip
 
 o = gzip.open("out.json.gz", 'w')
 for root,folders,files in os.walk(sys.argv[1],'r'):
@@ -17,7 +17,7 @@ for root,folders,files in os.walk(sys.argv[1],'r'):
           task = line[0].split("&")[0].split("=")[1]
           a,b = commands.getstatusoutput("curl http://cwc-isi.org/api/task/%s -o tmp.json" % task)
           task = json.load(open("tmp.json"))
-          a,b = commands.getstatusoutput("curl htpp://cwc-isi.org/api/state/%s -o tmp.json" % task["stateid"])
+          a,b = commands.getstatusoutput("curl http://cwc-isi.org/api/state/%s -o tmp.json" % task["stateid"])
           state = json.load(open("tmp.json"))
           J["file"] = filename
           J["HIT"] = hit
