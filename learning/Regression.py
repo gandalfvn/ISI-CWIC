@@ -15,8 +15,7 @@ print "Read Data"
 ###  Input:   1 Hot representation of the sentence (up to length 60)
 ###           (x,y,z) coordinates for every block in the environment (floats)
 ###  Output:  4 floats
-###  Model:   1 uniform hidden layer with a tanh
-###           1 linear prediction layer
+###  Model:   (text,world) -> uniform tanh -> uniform linear -> (id,x,y,z)
 ###  Loss:    Mean Squared Error
 
 sess = tf.Session()

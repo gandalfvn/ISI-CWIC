@@ -21,9 +21,8 @@ print "Read Data"
 ###           (x,y,z) coordinates for every block in the environment (floats)
 ###  Output:  3 floats    (x,y,z)
 ###           1 int       Predicted Block ID
-###  Model:   1 uniform hidden layer with a tanh
-###           1 linear prediction layer for (x,y,z)
-###           1 softmax layer for ID
+###  Model:   (text,world) -> uniform tanh -> uniform linear -> (x,y,z)
+###                                        -> softmax layer for ID
 ###  Loss:    3 * Mean Squared Error
 ###           1 * Mean Cross Entropy
 

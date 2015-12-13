@@ -4,6 +4,7 @@ import numpy as np
 import json
 import gzip
 import random
+from nltk.tokenize import TreebankWordTokenizer
 
 class Data:
 
@@ -22,7 +23,7 @@ class Data:
   @staticmethod
   def extend(world, dim):
     while len(world) < dim:
-      world.append(0)
+      world.append(-1)
     return world
 
   @staticmethod
@@ -98,7 +99,7 @@ class Data:
       if linecount < maxlines:
         j = json.loads(line)
         self.TrainingInput.append(j)
-        spl = j["text"].split()
+        spl = TreebankWordTokenizer().tokenize(j["text"])
         for word in spl:
           if word not in vocab:
             vocab[word] = count
@@ -132,7 +133,7 @@ class Data:
     utterances = []
     for j in self.TrainingInput:
       world = self.extend(j["world"], self.world_dim)
-      words = j["text"].strip().split()
+      words = TreebankWordTokenizer().tokenize(j["text"])
       representation = []
       for i in range(longest_sentence):
         if i < len(words):
@@ -168,7 +169,7 @@ class Data:
       j = json.loads(line)
       self.TestingInput.append(j)
       world = self.extend(j["world"], self.world_dim)
-      words = j["text"].strip().split()
+      words = TreebankWordTokenizer().tokenize(j["text"])
       representation = []
       for i in range(longest_sentence):
         if i < len(words) and words[i] in vocab:
@@ -288,7 +289,8 @@ class Data:
     full["block_meta"]["decoration"] = "logo"
 
     for i in range(len(predictions)):
-      j = {"utterance": [self.TestingInput[i]["text"]]}
+      words = TreebankWordTokenizer().tokenize(self.TestingInput[i]["text"])
+      j = {"utterance": [words]}
       plocations = copy.deepcopy(self.TestingInput[i]["world"])
       glocations = copy.deepcopy(self.TestingInput[i]["world"])
       j["start_state"] = self.convert_to_world(glocations)
