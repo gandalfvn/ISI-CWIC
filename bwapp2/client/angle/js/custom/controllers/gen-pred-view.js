@@ -257,10 +257,14 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             });
             pred.diff_state = { block_state: diffPrediction(idx) };
             $scope.utterance = '';
-            _.each(pred.utterance, function (s) {
-                $scope.utterance += s.join(' ');
-            });
-            $scope.utterance = $scope.utterance.toUpperCase();
+            if (_.isArray(pred.utterance) && _.isArray(pred.utterance[0])) {
+                _.each(pred.utterance, function (s) {
+                    $scope.utterance += s.join(' ');
+                });
+                $scope.utterance = $scope.utterance.toUpperCase();
+            }
+            else
+                $scope.$apply(function () { toaster.pop('error', 'Missing Utterance string[][]'); });
             renderPrediction(pred);
         };
         var renderPrediction = function (pred) {
