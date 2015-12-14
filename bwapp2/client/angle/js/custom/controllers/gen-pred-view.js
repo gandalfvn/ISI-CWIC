@@ -240,13 +240,15 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             return isz;
         };
         var pidx = ['start_state', 'gold_state', 'predicted_state', 'diff_state'];
-        $scope.showPrediction = function (idx) {
+        $scope.showPrediction = function (i) {
+            var idx = Number(i); //ensure text string turns into number
             $scope.isgen = true;
             $scope.curitr = idx;
+            $scope.textitr = idx;
             var rawP = $scope.predictions[idx];
             var pred = {
                 predicted_state: null,
-                utterance: rawP.utterance,
+                utterance: (rawP.utterance) ? rawP.utterance : null,
                 gold_state: null,
                 start_state: null,
                 diff_state: null
@@ -264,7 +266,7 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                 $scope.utterance = $scope.utterance.toUpperCase();
             }
             else
-                $scope.$apply(function () { toaster.pop('error', 'Missing Utterance string[][]'); });
+                toaster.pop('error', 'Missing Utterance string[][]');
             renderPrediction(pred);
         };
         var renderPrediction = function (pred) {

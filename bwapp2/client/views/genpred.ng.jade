@@ -35,13 +35,16 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   hr
   .well.row
     h3 Prediction
-      span(ng-show='predictions.length && !isgen')
-        button.btn.btn-primary(ng-show='curitr > 0', ng-click='showPrediction(curitr-1)')
-          i.fa.fa-chevron-left
-        | &nbsp;&nbsp;
-        button.btn.btn-primary(ng-show='curitr+1 < predictions.length', ng-click='showPrediction(curitr+1)')
-          i.fa.fa-chevron-right
-        .pull-right(style='font-size:1.25em') {{curitr+1}}/{{predictions.length}}
+      .pull-right(ng-show='predictions.length && !isgen', style='font-size:1.25em') {{curitr}}/{{predictions.length-1}}
+    span(ng-show='predictions.length && !isgen')
+      form.pull-left(ng-submit='showPrediction(textitr)')
+        input.form-control(style='width:48px', type='text', ng-model='textitr')
+      | &nbsp;&nbsp;
+      button.btn.btn-primary(ng-show='curitr > 0', ng-click='showPrediction(curitr-1)')
+        i.fa.fa-chevron-left
+      | &nbsp;&nbsp;
+      button.btn.btn-primary(ng-show='curitr+1 < predictions.length', ng-click='showPrediction(curitr+1)')
+        i.fa.fa-chevron-right
     br
     h4 {{utterance}}
     .col-md-6.mb-lg
