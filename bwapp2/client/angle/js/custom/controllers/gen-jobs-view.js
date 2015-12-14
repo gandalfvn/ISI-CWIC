@@ -48,14 +48,16 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             $rootScope.dataloaded = true;
             updateTableStateParams();
             updateJobMgr();
-            updateHITs();
+            $scope.refreshHITs();
         });
-        var updateHITs = function () {
-            $scope.doneASNs = getDoneASNs();
-            $scope.allHITs = getAllHITs();
-        };
+        /*var updateHITs = function(){
+          //$scope.doneASNs = getDoneASNs();
+          $scope.allHITs = getAllHITs();
+        };*/
         $scope.refreshHITs = function () {
-            updateHITs();
+            $scope.goodHITsData = true;
+            $scope.allHITs = getAllHITs();
+            //updateHITs();
             toaster.pop('info', 'Refreshing HITs');
         };
         var getDoneASNs = function () {
@@ -74,6 +76,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             var jobs = GenJobsMgr.find({ HITId: { $exists: true } }, { fields: { tid: 1, jid: 1, 'submitted.name': 1, 'submitted.valid': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1 } }, { sort: { 'created': -1 } }).fetch();
             var activeHITs = [];
             var doneHITs = [];
+            var sortedjobs = [];
             _.each(jobs, function (j) {
                 var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
                 var names = null, repvalid = null;
@@ -86,6 +89,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                             repvalid[h.name] = h.valid;
                         else
                             repvalid[h.name] = mGenJobsMgr.eRepValid[mGenJobsMgr.eRepValid.tbd];
+                        sortedjobs.push({ time: h.time, name: h.name, tid: j.tid, hid: j._id.split('_')[1], islive: j.islive });
                     });
                 }
                 if (asnleft > 0)
@@ -93,7 +97,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 else
                     doneHITs.push({ time: j.created, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
             });
-            if (activeHITs.length || doneHITs.length) {
+            if (activeHITs.length || doneHITs.length || sortedjobs.length) {
                 if (activeHITs.length)
                     activeHITs.sort(function (a, b) {
                         return a.time - b.time;
@@ -102,7 +106,9 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                     doneHITs.sort(function (a, b) {
                         return a.time - b.time;
                     });
-                return { active: activeHITs, done: doneHITs };
+                if (sortedjobs.length)
+                    sortedjobs.sort(function (a, b) { return a.time - b.time; });
+                return { active: activeHITs, done: doneHITs, doneASNs: sortedjobs };
             }
             return null;
         };
@@ -320,7 +326,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             });
             GenJobsMgr.remove(jid);
             updateJobMgr();
-            updateHITs();
+            $scope.goodHITsData = false;
         };
         $scope.remHIT = function (tid, hid) {
             $scope.jobid = null;
@@ -329,7 +335,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             if (deltask && deltask.hitlist) {
                 GenJobsMgr.remove(hid);
                 GenJobsMgr.update({ _id: tid }, { $pull: { hitlist: hid } });
-                updateHITs();
+                $scope.goodHITsData = false;
             }
         };
         $scope.createHIT = function (jid, tid) {
@@ -358,7 +364,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                         return $scope.$apply(function () { toaster.pop('error', err); });
                     GenJobsMgr.update({ _id: tid }, { $addToSet: { hitlist: hid } });
                     $scope.selectJob($scope.jobid);
-                    updateHITs();
+                    $scope.goodHITsData = false;
                 });
             });
         };
