@@ -375,7 +375,7 @@ module miGen3DEngine {
           scene: this.scene,
           block: blocks[j],
           isVisible: true
-        });
+        }); 
         if (i > 3) {
           i = 0;
           z++;
@@ -437,5 +437,5 @@ module miGen3DEngine {
   }
 }
 
-declare var mGen3DEngine:any;
+declare var mGen3DEngine;
 mGen3DEngine = miGen3DEngine;

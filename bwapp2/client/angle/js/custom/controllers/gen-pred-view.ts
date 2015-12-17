@@ -34,43 +34,19 @@ interface iPredPUGS {
   diff_state: iPredBS
 }
 
-
 angular.module('app.generate').controller('genPredCtrl',
-  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, ngTableParams, apputils){
+  ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, apputils){
     "use strict";
 
     var mult:number = 100; //position multiplier for int random
     var checkFnSS:number; //store steady state check
 
     $scope.curState = new apputils.cCurrentState();
-
-    var genstates = $scope.$meteorCollection(GenStates);
-    $scope.$meteorSubscribe("genstates").then(
-      function(sid){dataReady.update('genstates');},
-      function(err){ console.log("error", arguments, err); }
-    );
-
-    var screencaps = $scope.$meteorCollection(ScreenCaps);
-    $scope.$meteorSubscribe("screencaps").then(
-      function(sid){dataReady.update('screencaps');},
-      function(err){ console.log("error", arguments, err); }
-    );
-
-    var dataReady:iDataReady = new apputils.cDataReady(2, function():void{
-      updateTableStateParams();
+    
+    var dataReady:iDataReady = new apputils.cDataReady(0, function():void{
       $rootScope.dataloaded = true;
     });
 
-    var updateTableStateParams = function(){
-      var data:iGenStates[] = GenStates.find({}, {sort: {"_id": 1}}).fetch();
-      $scope.tableStateParams = new ngTableParams({
-        count: 5,
-        sorting: {created: 'desc'}
-      }, {counts: [5,10,20],
-        paginationMaxBlocks: 8,
-        paginationMinBlocks: 2,
-        data: data});
-    };
 
     $scope.resetWorld = function(){
       //resetworld 
@@ -101,7 +77,23 @@ angular.module('app.generate').controller('genPredCtrl',
       }, 100);
     };
 
-    var showImage = function(b64i:string, text:string, attachID?:string){
+    var createLayout = function(id:string, i:number, attachID?:string):string{
+      var lenID:number = $('div').length;
+      var eleDivID:string = 'rowdiv' + lenID; // Unique ID
+      var retId:string = id+lenID;
+      var htmlout:string =
+        //'<button onclick="angular.element(this).scope().showPrediction('+i+')" class="btn btn-xs btn-info"> View </button>'+
+        '<div id="'+retId+'" onclick="angular.element(this).scope().showPrediction('+i+')"></div>';
+      var attachTo:string = '#galleryarea';
+      if(attachID) attachTo = '#'+attachID;
+      $('<div>').attr({
+        id: eleDivID
+      }).addClass('col-sm-4')
+        .html(htmlout).css({"border-bottom": '1px solid #e4eaec'}).appendTo(attachTo);
+      return retId;
+    };
+
+    var showImage = function(b64i:string, text:string, attachID?:string, scale?:number){
       var b64img:string = LZString.decompressFromUTF16(b64i);
 
       var eleDivID:string = 'div' + $('div').length; // Unique ID
@@ -109,7 +101,9 @@ angular.module('app.generate').controller('genPredCtrl',
       //var eleLabelID:string = 'h4' + $('h4').length; // Unique ID
       var htmlout:string = '';
       if(text) htmlout += '<b>'+text+'</b><br>';
-      htmlout += '<img id="'+eleImgID+'" style="width:'+myengine.canvas.width+'px;height:'+myengine.canvas.height+'px"></img>';
+      var width = myengine.canvas.width*((scale)?scale:1);
+      var height = myengine.canvas.height*((scale)?scale:1);
+      htmlout += '<img id="'+eleImgID+'" style="width:'+width+'px;height:'+height+'px"></img>';
       // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
       var attachTo = '#galleryarea';
       if(attachID) attachTo = '#'+attachID;
@@ -194,10 +188,8 @@ angular.module('app.generate').controller('genPredCtrl',
         reader.onload = function(){
           var filedata:iPredBlock = JSON.parse(reader.result);
           var diffbm:iBlockMeta = JSON.parse(reader.result).block_meta; //store a copy of the blockmeta for use in diff view
-          console.warn(filedata);
           if(filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length
             && filedata.predictions && filedata.predictions.length){
-            console.warn('valid file');
             $scope.curState.clear();
             $scope.curState.block_meta = _.extend({}, filedata.block_meta);
             //create a copy of cubes it for gold or predicted view
@@ -217,8 +209,11 @@ angular.module('app.generate').controller('genPredCtrl',
             $scope.predictions = filedata.predictions;
             setDecorVal(filedata.block_meta.decoration);
             myengine.createObjects($scope.curState.block_meta.blocks);
-            console.warn($scope.curState.block_meta);
-            $scope.showPrediction(0);
+            //$scope.showPrediction(0);
+            $scope.diffPredictions = <iPredPUGS[]>[];
+            procDiff(0, $scope.diffPredictions, function(){
+              if($scope.diffPredictions.length) renderGallery(0, function(){});
+            });
           }
           else $scope.$apply(function(){toaster.pop('warn', 'Invalid JSON STATE file')});
         };
@@ -226,7 +221,6 @@ angular.module('app.generate').controller('genPredCtrl',
         reader.readAsText($scope.statesfilename[0]);
       }
     };
-
     
     var diffPrediction = function(idx:number):iBlockState[]{
       var p = $scope.predictions[idx];
@@ -239,8 +233,7 @@ angular.module('app.generate').controller('genPredCtrl',
       var predlist:iIDPosRot = {};
       _.each(predbs, function(p){
         predlist[p.id] = p.position;
-      })
-      console.warn(predlist);
+      });
       //now iterate gold blocks list and start removing prediction blocks when they cover each other
       //whats left in predlist and not found from gold is the non overlap 
       function remOverlap(idx:number, gbs:iBlockState[], predl:iIDPosRot,uniqs:iBlockState[], cb:()=>void){
@@ -255,7 +248,7 @@ angular.module('app.generate').controller('genPredCtrl',
               bFound = true;
             }
           }
-        })
+        });
         if(!bFound){
           uniqs.push(gbs[idx]);
         }
@@ -283,7 +276,7 @@ angular.module('app.generate').controller('genPredCtrl',
     };
 
     var isZeroPos = function(p:iPosRot):boolean{
-      var isz = true;
+      var isz:boolean = true;
       _.each(p, function(v){
         if (v < -0.001 || v > 0.001) isz = false;
       });
@@ -291,14 +284,14 @@ angular.module('app.generate').controller('genPredCtrl',
     };
 
 
-    var pidx = ['start_state', 'gold_state', 'predicted_state', 'diff_state'];
-    $scope.showPrediction = function(idx:number){
-      $scope.isgen = true;
-      $scope.curitr = idx;
-      var rawP = $scope.predictions[idx];
+    var pidx:string[] = ['start_state', 'gold_state', 'predicted_state', 'diff_state'];
+
+    var procDiff = function(idx:number, retDiff:iPredPUGS[] ,cb:()=>void):void{
+      if(_.isUndefined($scope.predictions[idx])) return cb();
+      var rawP:iPredPUGSRaw = $scope.predictions[idx];
       var pred:iPredPUGS = {
         predicted_state: null,
-        utterance: rawP.utterance,
+        utterance: (rawP.utterance)?rawP.utterance:null,
         gold_state: null,
         start_state: null,
         diff_state: null
@@ -306,8 +299,50 @@ angular.module('app.generate').controller('genPredCtrl',
       _.each(pidx, function(aid) {
         if(aid !== 'diff_state')
           pred[aid] = {block_state: mungeBlockState(rawP[aid].block_state)};
-      })
+      });
       pred.diff_state = {block_state: diffPrediction(idx)};
+      retDiff.push(pred);
+      procDiff(idx+1, retDiff, cb);
+    };
+
+    var renderGallery = function(idx:number, cb:()=>void):void{
+      if(_.isUndefined($scope.diffPredictions[idx])){
+        $scope.$apply(function(){$scope.isgen = false;});
+        return cb();
+      }
+      $scope.isgen = true;
+      var k:string = 'diff_state';
+      var dp = $scope.diffPredictions[idx];
+      var block_state:iBlockStates = dp[k];
+
+      showFrame(block_state, function(){
+        //wait for steady state
+        checkFnSS = setInterval(function(){
+          if(myengine.isSteadyState){
+            clearInterval(checkFnSS);
+            var sc = BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
+              width: myengine.canvas.width, height: myengine.canvas.height
+            }, function(b64i: string){
+              var b64img:string = LZString.compressToUTF16(b64i);
+              var attid = createLayout('diff',idx);
+              var utt:string = idx+' ';
+              if(dp.utterance.length && _.isArray(dp.utterance[0]))
+                utt += dp.utterance[0].join(' ').toUpperCase();
+              showImage(b64img, utt['trunc'](40, true), attid, 0.7);
+              renderGallery(idx+1, cb);
+            });
+          }
+        }, 100);
+      })
+    };
+
+    $scope.showPrediction = function(i:number){
+      var idx:number = Number(i); //ensure text string turns into number
+      $scope.clearPrediction();
+      $scope.isgen = true;
+      $scope.curitr = idx;
+      $scope.textitr = idx;
+      var pred:iPredPUGS = $scope.diffPredictions[i];
       $scope.utterance = '';
       if( _.isArray(pred.utterance) && _.isArray(pred.utterance[0])){
         _.each(pred.utterance, function (s:string[]) {
@@ -315,15 +350,21 @@ angular.module('app.generate').controller('genPredCtrl',
         });
         $scope.utterance = $scope.utterance.toUpperCase();
       }
-      else $scope.$apply(function(){toaster.pop('error', 'Missing Utterance string[][]');});
+      else toaster.pop('error', 'Missing Utterance string[][]');
       renderPrediction(pred);
     };
 
-    var renderPrediction = function(pred:iPredPUGS){
-      if(_.isUndefined(pred)) return;
+    $scope.clearPrediction = function(){
+      $scope.curitr = undefined;
+      $scope.textitr = undefined;
+      $scope.utterance = undefined;
       _.each(pidx, function(aid){
         $('#'+aid).empty();
       });
+    }
+
+    var renderPrediction = function(pred:iPredPUGS){
+      if(_.isUndefined(pred)) return;
       function itrFrame(idx: number, idxlist:string[], pred:iPredPUGS, cb:()=>void){
         if(_.isUndefined(idxlist[idx])) return cb();
         var k = idxlist[idx];
@@ -362,7 +403,6 @@ angular.module('app.generate').controller('genPredCtrl',
     $scope.opt = myengine.opt;
     $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
     $scope.isgen = false;
-    console.warn(myengine.opt);
     myengine.createWorld();
     dataReady.update('world created');
   }]);

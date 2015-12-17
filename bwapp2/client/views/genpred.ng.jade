@@ -13,7 +13,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       button.btn.btn-primary(ng-click='clearMeta()') Reset
   .content.col-sm-4(ng-show='!(curState.block_meta || curState.block_meta.blocks)')
     form.form-inline.ng-pristine.ng-valid(role="form",novalidate, name='importstatesform', ng-submit='loadStates()')
-      b Load Prediction
+      h3 Load Prediction
       .form-group
         input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().statesFileChanged(event)")
         button.btn.btn-default(type="submit", ng-show='statesfilename') Go
@@ -31,27 +31,42 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 | {{s.name}}
               td(title="'Created'", sortable="'created'", ng-click='showState(s._id)')
                 | {{s.created | date:"MM/dd/yyyy"}}
-.row-fluid.col-sm-12
-  hr
-  .well.row
-    h3 Prediction
-      span(ng-show='predictions.length && !isgen')
+.row(ng-show='diffPredictions.length && curitr !== undefined')
+  .col-sm-12.mb
+  accordion.col-sm-12
+    accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
+      accordion-heading
+        h4.panel-title Prediction
+          .pull-right(ng-show='!isgen', style='font-size:1.25em') {{curitr}}/{{diffPredictions.length-1}}
+      span(ng-show='!isgen')
+        form.pull-left(ng-submit='showPrediction(textitr)')
+          input.form-control(style='width:48px', type='text', ng-model='textitr')
+        | &nbsp;&nbsp;
         button.btn.btn-primary(ng-show='curitr > 0', ng-click='showPrediction(curitr-1)')
           i.fa.fa-chevron-left
         | &nbsp;&nbsp;
         button.btn.btn-primary(ng-show='curitr+1 < predictions.length', ng-click='showPrediction(curitr+1)')
           i.fa.fa-chevron-right
-        .pull-right(style='font-size:1.25em') {{curitr+1}}/{{predictions.length}}
+        | &nbsp;&nbsp;
+        button.btn.btn-primary(ng-click='clearPrediction()')
+          i.fa.fa-times-circle  Clear
+      br
+      h4 {{utterance}}
+      .col-md-6.mb-lg
+        #start_state
+      .col-md-6.mb-lg
+        #gold_state
+      .col-md-6.mb-lg
+        #predicted_state
+      .col-md-6.mb-lg
+        #diff_state
+
+.row-fluid.col-sm-12(ng-show='diffPredictions.length')
+  hr
+  .well.row
+    h3 Gallery
+      .pull-right(ng-show='!isgen', style='font-size:1.25em') {{diffPredictions.length-1}}
     br
-    h4 {{utterance}}
-    .col-md-6.mb-lg
-      #start_state
-    .col-md-6.mb-lg
-      #gold_state
-    .col-md-6.mb-lg
-      #predicted_state
-    .col-md-6.mb-lg
-      #diff_state
     #galleryarea
 
 .row-fluid.col-sm-12

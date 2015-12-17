@@ -6,6 +6,13 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .row-fluid
   h2 Action and Description Jobs
   .row
+    .well.col-sm-2(ng-show='!goodHITsData')
+      b HITs Updated
+      br
+      b HITs view need refresh
+      button.btn.btn-warning(ng-click='refreshHITs()')
+        i.fa.fa-refresh
+        |  Refresh HITs
     .well.col-sm-3
       label Block Id: 
       input(ng-model='btid')
@@ -17,10 +24,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       label Job Id: 
       input(ng-model='jid')
       button.btn(ng-show='jid.length', ng-click='getURLHITs(jid)') Go
-    .well.col-sm-2
-      button.btn(ng-click='refreshHITs()')
-        i.fa.fa-refresh
-        |  Refresh HITs
   .row
     accordion.col-sm-6
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
@@ -244,7 +247,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 
 .row
   accordion.col-sm-12
-    accordion-group.panel-primary.shadowbox(ng-if='doneASNs', ng-init="isOpen = true", is-open="isOpen")
+    accordion-group.panel-primary.shadowbox(ng-if='allHITs.doneASNs && allHITs.doneASNs.length', ng-init="isOpen = true", is-open="isOpen")
       accordion-heading
         h4.panel-title
           i.fa.fa-flag-checkered
@@ -257,7 +260,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Task Id
             th Turker
         tbody
-          tr(ng-repeat='task in doneASNs')
+          tr(ng-repeat='task in allHITs.doneASNs')
             td {{task.time | date:"MM/dd/yyyy HH:mm"}}
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live

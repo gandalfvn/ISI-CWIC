@@ -11,29 +11,14 @@
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
-angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, ngTableParams, apputils) {
+angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'AppUtils', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, apputils) {
         "use strict";
         var mult = 100; //position multiplier for int random
         var checkFnSS; //store steady state check
         $scope.curState = new apputils.cCurrentState();
-        var genstates = $scope.$meteorCollection(GenStates);
-        $scope.$meteorSubscribe("genstates").then(function (sid) { dataReady.update('genstates'); }, function (err) { console.log("error", arguments, err); });
-        var screencaps = $scope.$meteorCollection(ScreenCaps);
-        $scope.$meteorSubscribe("screencaps").then(function (sid) { dataReady.update('screencaps'); }, function (err) { console.log("error", arguments, err); });
-        var dataReady = new apputils.cDataReady(2, function () {
-            updateTableStateParams();
+        var dataReady = new apputils.cDataReady(0, function () {
             $rootScope.dataloaded = true;
         });
-        var updateTableStateParams = function () {
-            var data = GenStates.find({}, { sort: { "_id": 1 } }).fetch();
-            $scope.tableStateParams = new ngTableParams({
-                count: 5,
-                sorting: { created: 'desc' }
-            }, { counts: [5, 10, 20],
-                paginationMaxBlocks: 8,
-                paginationMinBlocks: 2,
-                data: data });
-        };
         $scope.resetWorld = function () {
             //resetworld 
             myengine.resetWorld();
@@ -64,7 +49,23 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                     cb();
             }, 100);
         };
-        var showImage = function (b64i, text, attachID) {
+        var createLayout = function (id, i, attachID) {
+            var lenID = $('div').length;
+            var eleDivID = 'rowdiv' + lenID; // Unique ID
+            var retId = id + lenID;
+            var htmlout = 
+            //'<button onclick="angular.element(this).scope().showPrediction('+i+')" class="btn btn-xs btn-info"> View </button>'+
+            '<div id="' + retId + '" onclick="angular.element(this).scope().showPrediction(' + i + ')"></div>';
+            var attachTo = '#galleryarea';
+            if (attachID)
+                attachTo = '#' + attachID;
+            $('<div>').attr({
+                id: eleDivID
+            }).addClass('col-sm-4')
+                .html(htmlout).css({ "border-bottom": '1px solid #e4eaec' }).appendTo(attachTo);
+            return retId;
+        };
+        var showImage = function (b64i, text, attachID, scale) {
             var b64img = LZString.decompressFromUTF16(b64i);
             var eleDivID = 'div' + $('div').length; // Unique ID
             var eleImgID = 'img' + $('img').length; // Unique ID
@@ -72,7 +73,9 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             var htmlout = '';
             if (text)
                 htmlout += '<b>' + text + '</b><br>';
-            htmlout += '<img id="' + eleImgID + '" style="width:' + myengine.canvas.width + 'px;height:' + myengine.canvas.height + 'px"></img>';
+            var width = myengine.canvas.width * ((scale) ? scale : 1);
+            var height = myengine.canvas.height * ((scale) ? scale : 1);
+            htmlout += '<img id="' + eleImgID + '" style="width:' + width + 'px;height:' + height + 'px"></img>';
             // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
             var attachTo = '#galleryarea';
             if (attachID)
@@ -150,10 +153,8 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                 reader.onload = function () {
                     var filedata = JSON.parse(reader.result);
                     var diffbm = JSON.parse(reader.result).block_meta; //store a copy of the blockmeta for use in diff view
-                    console.warn(filedata);
                     if (filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length
                         && filedata.predictions && filedata.predictions.length) {
-                        console.warn('valid file');
                         $scope.curState.clear();
                         $scope.curState.block_meta = _.extend({}, filedata.block_meta);
                         //create a copy of cubes it for gold or predicted view
@@ -173,8 +174,12 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                         $scope.predictions = filedata.predictions;
                         setDecorVal(filedata.block_meta.decoration);
                         myengine.createObjects($scope.curState.block_meta.blocks);
-                        console.warn($scope.curState.block_meta);
-                        $scope.showPrediction(0);
+                        //$scope.showPrediction(0);
+                        $scope.diffPredictions = [];
+                        procDiff(0, $scope.diffPredictions, function () {
+                            if ($scope.diffPredictions.length)
+                                renderGallery(0, function () { });
+                        });
                     }
                     else
                         $scope.$apply(function () { toaster.pop('warn', 'Invalid JSON STATE file'); });
@@ -192,7 +197,6 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             _.each(predbs, function (p) {
                 predlist[p.id] = p.position;
             });
-            console.warn(predlist);
             //now iterate gold blocks list and start removing prediction blocks when they cover each other
             //whats left in predlist and not found from gold is the non overlap 
             function remOverlap(idx, gbs, predl, uniqs, cb) {
@@ -240,13 +244,13 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             return isz;
         };
         var pidx = ['start_state', 'gold_state', 'predicted_state', 'diff_state'];
-        $scope.showPrediction = function (idx) {
-            $scope.isgen = true;
-            $scope.curitr = idx;
+        var procDiff = function (idx, retDiff, cb) {
+            if (_.isUndefined($scope.predictions[idx]))
+                return cb();
             var rawP = $scope.predictions[idx];
             var pred = {
                 predicted_state: null,
-                utterance: rawP.utterance,
+                utterance: (rawP.utterance) ? rawP.utterance : null,
                 gold_state: null,
                 start_state: null,
                 diff_state: null
@@ -256,6 +260,45 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                     pred[aid] = { block_state: mungeBlockState(rawP[aid].block_state) };
             });
             pred.diff_state = { block_state: diffPrediction(idx) };
+            retDiff.push(pred);
+            procDiff(idx + 1, retDiff, cb);
+        };
+        var renderGallery = function (idx, cb) {
+            if (_.isUndefined($scope.diffPredictions[idx])) {
+                $scope.$apply(function () { $scope.isgen = false; });
+                return cb();
+            }
+            $scope.isgen = true;
+            var k = 'diff_state';
+            var dp = $scope.diffPredictions[idx];
+            var block_state = dp[k];
+            showFrame(block_state, function () {
+                //wait for steady state
+                checkFnSS = setInterval(function () {
+                    if (myengine.isSteadyState) {
+                        clearInterval(checkFnSS);
+                        var sc = BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
+                            width: myengine.canvas.width, height: myengine.canvas.height
+                        }, function (b64i) {
+                            var b64img = LZString.compressToUTF16(b64i);
+                            var attid = createLayout('diff', idx);
+                            var utt = idx + ' ';
+                            if (dp.utterance.length && _.isArray(dp.utterance[0]))
+                                utt += dp.utterance[0].join(' ').toUpperCase();
+                            showImage(b64img, utt['trunc'](40, true), attid, 0.7);
+                            renderGallery(idx + 1, cb);
+                        });
+                    }
+                }, 100);
+            });
+        };
+        $scope.showPrediction = function (i) {
+            var idx = Number(i); //ensure text string turns into number
+            $scope.clearPrediction();
+            $scope.isgen = true;
+            $scope.curitr = idx;
+            $scope.textitr = idx;
+            var pred = $scope.diffPredictions[i];
             $scope.utterance = '';
             if (_.isArray(pred.utterance) && _.isArray(pred.utterance[0])) {
                 _.each(pred.utterance, function (s) {
@@ -264,15 +307,20 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                 $scope.utterance = $scope.utterance.toUpperCase();
             }
             else
-                $scope.$apply(function () { toaster.pop('error', 'Missing Utterance string[][]'); });
+                toaster.pop('error', 'Missing Utterance string[][]');
             renderPrediction(pred);
+        };
+        $scope.clearPrediction = function () {
+            $scope.curitr = undefined;
+            $scope.textitr = undefined;
+            $scope.utterance = undefined;
+            _.each(pidx, function (aid) {
+                $('#' + aid).empty();
+            });
         };
         var renderPrediction = function (pred) {
             if (_.isUndefined(pred))
                 return;
-            _.each(pidx, function (aid) {
-                $('#' + aid).empty();
-            });
             function itrFrame(idx, idxlist, pred, cb) {
                 if (_.isUndefined(idxlist[idx]))
                     return cb();
@@ -308,7 +356,6 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
         $scope.opt = myengine.opt;
         $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
         $scope.isgen = false;
-        console.warn(myengine.opt);
         myengine.createWorld();
         dataReady.update('world created');
     }]);
