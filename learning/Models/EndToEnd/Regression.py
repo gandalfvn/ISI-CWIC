@@ -1,9 +1,13 @@
-import numpy as np
-import tensorflow as tf
 import math
 import sys
-from ReadData import Data
-from Layer import Layers
+
+import numpy as np
+import tensorflow as tf
+from learning.Utils.ReadData import Data
+
+
+from learning.Utils.Layer import Layers
+
 np.set_printoptions(threshold=np.nan)
 
 D = Data(maxlines=1000, separate=False, onehot=False, sequence=False)

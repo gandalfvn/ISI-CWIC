@@ -1,11 +1,10 @@
-import math
-import sys
 import numpy as np
 import tensorflow as tf
-from ReadData import Data
-from Layer import Layers
+from learning.Utils.ReadData import Data
 
-D = Data(10000, sequence=False)
+from learning.Utils.Layer import Layers
+
+D = Data(12006, sequence=False)
 L = Layers()
 
 input_dim = len(D.Train["text"][0])
@@ -18,9 +17,9 @@ print "Converted Data"
 ###           (x,y,z) coordinates for every block in the environment (floats)
 ###  Output:  3 floats    (x,y,z)
 ###           1 int       Predicted Block ID
-###  Model:   Words -> uniform tanh -> 100
-###           [ Word_rep World ] -> uniform tanh -> 100
-###           Joint_Rep -> Softmax -> ID
+###  Model:   Words -> uniform tanh -> Word_Rep (100)
+###           Word_Rep -> Softmax -> ID
+###           [ Word_rep World ] -> uniform tanh -> Joint_Rep (100)
 ###           Joint_Rep -> Linear  -> (x,y,z)
 ###  Loss:    3 * Mean Squared Error
 ###           1 * Mean Cross Entropy
@@ -32,7 +31,7 @@ y_A = L.placeholder(output_dim, 'Action')
 y_C = L.placeholder(21, 'Class')  # 20 blocks
 
 ## Learn a word representation ##
-# Words -> Hidden -> Hidden -> out
+# Words -> Hidden -> out
 W_t1 = L.uniform_W(input_dim=input_dim, name='W_t1')
 b_t1 = L.uniform_b(name='b_t1')
 
@@ -50,25 +49,25 @@ W_p2 = L.uniform_W(output_dim=output_dim, name='W_p2')
 b_p2 = L.uniform_b(dim=output_dim, name='b_p2')
 
 ## Model structure  ##
-# Words -> Hidden -> Hidden -> Word_Rep
-x_t1 = tf.tanh(tf.matmul(x_t, W_t1) + b_t1)
+# Words -> Hidden -> Word_Rep
+x_t0 = tf.tanh(tf.matmul(x_t, W_t1) + b_t1)
+x_t1 = tf.nn.dropout(x_t0, 0.8, seed=12122015)
 
-# [ Word_Rep World ] -> Hidden -> Hidden -> Combined Rep
+# [ Word_Rep World ] -> Hidden -> Combined Rep
 x_a1 = tf.tanh(tf.matmul(tf.concat(1, [x_t1, x_w]), W_a1) + b_a1)
+#x_a1 = tf.nn.dropout(x_a0, 0.8, seed=12122015)
 
-# Combined Rep -> Prediction1 -> Softmax
-y_sf = tf.nn.softmax(tf.matmul(x_a1, W_p1) + b_p1)
+# Word Rep -> Prediction1 -> Softmax
+# Use word rep to perform grounding
+y_sf = tf.nn.softmax(tf.matmul(x_t1, W_p1) + b_p1)
 
 # Combined Rep -> Prediction2 -> Regression
 y_re = tf.matmul(x_a1, W_p2) + b_p2
 
 # mean Cross Entropy for Softmax + MSE
-loss_sf = -1 * tf.reduce_mean(tf.mul(y_C, tf.log(y_sf)))
-loss_mse = 3 * tf.reduce_mean(tf.square(tf.sub(y_A, y_re)))
-loss = loss_sf + loss_mse
+loss_sf = -1 * tf.reduce_sum(tf.mul(y_C, tf.log(y_sf)))
+loss_mse = tf.reduce_sum(tf.square(tf.sub(y_A, y_re)))
 
-def compute_loss():
-  return sess.run(loss, feed_dict={x_t: D.Train["text"], x_w: D.Train["world"], y_A: D.Train["actions"], y_C: D.Train["classes"]})
 def compute_loss_sf():
   return sess.run(loss_sf, feed_dict={x_t: D.Train["text"], x_w: D.Train["world"], y_A: D.Train["actions"], y_C: D.Train["classes"]})
 def compute_loss_mse():
@@ -83,43 +82,51 @@ summary_writer = tf.train.SummaryWriter('/tmp/summary', sess.graph_def)
 
 global_step = tf.Variable(0, trainable=False)
 
-starter_learning_rate = 0.1
+starter_learning_rate = 0.01
 lr = tf.train.exponential_decay(starter_learning_rate, global_step, 100000, 1e-6, staircase=False)
-train_step = tf.train.MomentumOptimizer(lr, 0.01).minimize(loss, global_step=global_step)
+train_step_sf = tf.train.GradientDescentOptimizer(lr).minimize(loss_sf, global_step=global_step)
+lr2 = tf.train.exponential_decay(0.001, global_step, 100000, 1e-6, staircase=False)
+train_step_mse = tf.train.GradientDescentOptimizer(lr2).minimize(loss_mse, global_step=global_step)
 
 sess.run(tf.initialize_all_variables())
 
 ## Create Minibatches ##
 batches = D.minibatch([D.Train["text"], D.Train["world"], D.Train["actions"], D.Train["classes"]])
 
-oldLoss = compute_loss()
 oldLoss_sf = compute_loss_sf()
 oldLoss_mse = compute_loss_mse()
-print "iter %-10s  %-10s  %-10s   -->   %-11s" % ("Loss", "Mean CE", "MSE", "% Change")
-for i in range(10):
+print "iter %-10s  -->   %-11s" % ("CE", "% Change")
+for i in range(100):
   for (a, b, c, d) in D.scrambled(batches):
-    sess.run(train_step, feed_dict={x_t: a, x_w: b, y_A: c, y_C : d})
+    sess.run(train_step_sf, feed_dict={x_t: a, x_w: b, y_A: c, y_C : d})
 
-  newLoss = compute_loss()
+  newLoss_sf = compute_loss_sf()
+  rat = (oldLoss_sf - newLoss_sf) / oldLoss_sf
+  print "%3d %10.7f   -->   %11.10f" % (i, newLoss_sf, rat)
+  if abs(rat) < 0.001:
+    break
+  oldLoss_sf = newLoss_sf
+
+
+print "iter %-10s  %-10s  -->   %-11s" % ("CE","MSE", "% Change")
+for i in range(100):
+  for (a, b, c, d) in D.scrambled(batches):
+    sess.run(train_step_mse, feed_dict={x_t: a, x_w: b, y_A: c, y_C : d})
+
   newLoss_sf = compute_loss_sf()
   newLoss_mse = compute_loss_mse()
-  print "%3d %10.7f  %10.7f  %10.7f   -->   %11.10f  %11.10f  %11.10f" % \
-        (i, newLoss, newLoss_sf, newLoss_mse, (oldLoss - newLoss) / oldLoss,
-         (oldLoss_sf - newLoss_sf) / oldLoss_sf, (oldLoss_mse - newLoss_mse) / oldLoss_mse)
-  oldLoss = newLoss
+  rat = (oldLoss_mse - newLoss_mse) / oldLoss_mse
+  print "%3d %10.7f   %10.7f -->   %11.10f %11.10f" % (i, newLoss_sf, newLoss_mse, (oldLoss_sf - newLoss_sf) / oldLoss_sf, rat)
+  if abs(rat) < 0.001:
+    break
   oldLoss_sf = newLoss_sf
   oldLoss_mse = newLoss_mse
-  if math.isnan(newLoss) or math.isinf(newLoss):
-    print "Check yo gradients: ", newLoss
-    sys.exit()
+
 
 ############################# Predict From Model ##############################
 print "Testing"
 predicted_sf = sess.run(y_sf, feed_dict={x_t: D.Test["text"], x_w: D.Test["world"]})
 predicted_re = sess.run(y_re, feed_dict={x_t: D.Test["text"], x_w: D.Test["world"]})
-
-print "Test loss ", sess.run(loss, feed_dict={x_t: D.Test["text"],
-                                              x_w: D.Test["world"], y_A: D.Test["actions"], y_C: D.Test["classes"]})
 
 predicted_id = []
 for i in range(len(predicted_re)):

@@ -1,9 +1,11 @@
 import math
 import sys
+
 import numpy as np
 import tensorflow as tf
-from ReadData import Data
-from Layer import Layers
+from learning.Utils.ReadData import Data
+
+from learning.Utils.Layer import Layers
 
 D = Data(10000, sequence=False)
 L = Layers()

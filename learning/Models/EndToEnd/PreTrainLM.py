@@ -1,11 +1,10 @@
-import math
-import sys
 import numpy as np
 import tensorflow as tf
-from ReadData import Data
-from Layer import Layers
+from learning.Utils.ReadData import Data
 
-D = Data(10000, sequence=False)
+from learning.Utils.Layer import Layers
+
+D = Data(12006, sequence=False)
 L = Layers()
 
 input_dim = len(D.Train["text"][0])
@@ -19,8 +18,8 @@ print "Converted Data"
 ###  Output:  3 floats    (x,y,z)
 ###           1 int       Predicted Block ID
 ###  Model:   Words -> uniform tanh -> Word_Rep (100)
-###           [ Word_rep World ] -> uniform tanh -> uniform tanh -> 100
-###           Joint_Rep -> Softmax -> ID
+###           Word_Rep -> Softmax -> ID
+###           [ Word_rep World ] -> uniform tanh -> Joint_Rep (100)
 ###           Joint_Rep -> Linear  -> (x,y,z)
 ###  Loss:    3 * Mean Squared Error
 ###           1 * Mean Cross Entropy
@@ -50,7 +49,7 @@ W_p2 = L.uniform_W(output_dim=output_dim, name='W_p2')
 b_p2 = L.uniform_b(dim=output_dim, name='b_p2')
 
 ## Model structure  ##
-# Words -> Hidden -> Hidden -> Word_Rep
+# Words -> Hidden -> Word_Rep
 x_t0 = tf.tanh(tf.matmul(x_t, W_t1) + b_t1)
 x_t1 = tf.nn.dropout(x_t0, 0.8, seed=12122015)
 
@@ -58,7 +57,7 @@ x_t1 = tf.nn.dropout(x_t0, 0.8, seed=12122015)
 x_a1 = tf.tanh(tf.matmul(tf.concat(1, [x_t1, x_w]), W_a1) + b_a1)
 #x_a1 = tf.nn.dropout(x_a0, 0.8, seed=12122015)
 
-# Combined Rep -> Prediction1 -> Softmax
+# Word Rep -> Prediction1 -> Softmax
 # Use word rep to perform grounding
 y_sf = tf.nn.softmax(tf.matmul(x_t1, W_p1) + b_p1)
 

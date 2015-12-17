@@ -8,7 +8,6 @@ from nltk.tokenize import TreebankWordTokenizer
 
 class Data:
 
-
   @staticmethod
   def onehot(num, dim):
     """
@@ -81,17 +80,18 @@ class Data:
     return nvec
 
   def __init__(self, maxlines=1000000, sequence=False, separate=True, onehot=True):
-    trainingfile_input  = "Data/logos/Train.input.json.gz"
-    trainingfile_output = "Data/logos/Train.output.json.gz"
-    testingfile_input   = "Data/logos/Dev.input.orig.json.gz"
-    testingfile_output  = "Data/logos/Dev.output.orig.json.gz"
+    trainingfile_input  = "../Data/logos/Train.input.json.gz"
+    trainingfile_output = "../Data/logos/Train.output.json.gz"
+    testingfile_input   = "../Data/logos/Dev.input.orig.json.gz"
+    testingfile_output  = "../Data/logos/Dev.output.orig.json.gz"
 
     self.TrainingInput = []
     self.TrainingOutput = []
 
     ## Build Vocabulary ##
-    vocab = {"UNK": 0}
-    count = 1
+    self.vocab = {"UNK": 0, "<s>": 1, "</s>": 2}
+    self.ivocab = {0: "UNK", 1: "<s>", 2: "</s>"}
+    count = 3
     longest_sentence = 0
     self.world_dim = 0
     linecount = 0
@@ -101,8 +101,9 @@ class Data:
         self.TrainingInput.append(j)
         spl = TreebankWordTokenizer().tokenize(j["text"])
         for word in spl:
-          if word not in vocab:
-            vocab[word] = count
+          if word not in self.vocab:
+            self.vocab[word] = count
+            self.ivocab[count] = word
             count += 1
         if len(spl) > longest_sentence:
           longest_sentence = len(spl)
@@ -110,9 +111,13 @@ class Data:
           self.world_dim = len(j["world"])
         linecount += 1
 
-    vocabsize = len(vocab)
-    unk = [0] * len(vocab)
+    vocabsize = len(self.vocab)
+    unk = [0] * len(self.vocab)
     unk[0] = 1
+    self.start = [0] * len(self.vocab)
+    self.start[1] = 1
+    self.end = [0] * len(self.vocab)
+    self.end[2] = 1
 
     print "Created Vocabulary: ", vocabsize
     ## Read Training Data ##
@@ -137,7 +142,7 @@ class Data:
       representation = []
       for i in range(longest_sentence):
         if i < len(words):
-          representation.append(self.onehot(vocab[words[i]], vocabsize))
+          representation.append(self.onehot(self.vocab[words[i]], vocabsize))
         else:
           representation.append(unk)
       #world = self.norm(world, mean_world, std_dev)
@@ -172,8 +177,8 @@ class Data:
       words = TreebankWordTokenizer().tokenize(j["text"])
       representation = []
       for i in range(longest_sentence):
-        if i < len(words) and words[i] in vocab:
-          representation.append(self.onehot(vocab[words[i]], len(vocab)))
+        if i < len(words) and words[i] in self.vocab:
+          representation.append(self.onehot(self.vocab[words[i]], len(self.vocab)))
         else:
           representation.append(unk)
       utterances_test.append(representation)
@@ -280,7 +285,7 @@ class Data:
     :param filename:      Output filename
     :return:
     """
-    f = open("out/" + filename + ".json", 'w')
+    f = open("../out/" + filename + ".json", 'w')
     l = []
     full = {"block_meta": {"blocks": []}}
     # Give each white square a block (and brand)
@@ -316,7 +321,7 @@ class Data:
     f.close()
 
     # Simple human readable format
-    out = open("out/human." + filename + ".txt", 'w')
+    out = open("../out/human." + filename + ".txt", 'w')
     for i in range(len(predictions)):
       out.write("%s\n" % str(predictions[i]))
     out.close()
