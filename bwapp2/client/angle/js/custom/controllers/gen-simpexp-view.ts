@@ -589,16 +589,18 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
     };
   };
   
-  $scope.dlScene = function () {
+  $scope.dlScene = function (notes:string) {
     var tempframe = {
       /*_id: $scope.curState._id,
       public: $scope.curState.public, 
       created: $scope.curState.created,
       creator: $scope.curState.creator,*/
+      start_id: $scope.curState._id,
       name: $scope.curState.name,
       block_meta: null, 
       block_state: null, 
-      utterance: $scope.curState.utterance
+      utterance: $scope.curState.utterance,
+      notes: notes
     };
 
     var block_state:iBlockState[] = $scope.curState.block_state;
@@ -657,41 +659,6 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
     var content:string = JSON.stringify(tempframe, null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
     apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
-  };
-
-  $scope.getMove = function (idx:number) {
-    var tempframe:{block_meta: iBlockMeta, block_state:miGen3DEngine.iBlockStateSerial[]} = {
-      block_meta: $scope.curState.block_meta,
-      block_state: []
-    };
-    var block_state:iBlockState[] = $scope.curState.block_states[idx].block_state;
-    for (var i = 0; i < block_state.length; i++) {
-      var s:iBlockState = block_state[i];
-      var pos = '', rot = '';
-      _.each(s.position, function (v) {
-        if (pos.length) pos += ',';
-        pos += v;
-      });
-      _.each(s.rotation, function (v) {
-        if (rot.length) rot += ',';
-        rot += v;
-      });
-      tempframe.block_state.push({id: s.id, position: pos, rotation: rot})
-    }
-    var content:string = JSON.stringify(tempframe, null, 2);
-    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    apputils.saveAs(uriContent, 'bw_state_' + $scope.curState._id + '_' + idx + '.json');
-  };
-
-  $scope.delMove = function (idx:number) {
-    var count:number = $scope.curState.block_states.length - idx;
-    $scope.curState.block_states.splice(idx, count);
-    genexps.save($scope.curState).then(function (val) {
-      $scope.clearMeta();
-      $scope.showState(val[0]._id);
-    }, function (err) {
-      console.warn(err.reason);
-    });
   };
 
   // Start by calling the createScene function that you just finished creating

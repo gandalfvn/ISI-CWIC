@@ -62,7 +62,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
       canvas(id="canvas_2D")
     div.col-sm-12(ng-if='!isgen && isExp && curState.block_meta.blocks')
-      button.btn.btn-sm.btn-info.mb-sm(ng-click='dlScene()') Done
+      label Notes:
+      textarea.form-control.mb(type='text', ng-model='notes', style='padding-left: 26px;')
+      button.btn.btn-sm.btn-info.mb-sm(ng-click='dlScene(notes)') Done
   #panelInst.panel.panel-default.notouch.col-sm-4.shadowbox(ng-show='isExp && curState.block_meta.blocks', style='background-color: rgba(255,255,255,0.5)')
     .panel-heading(ng-class="{'panel-heading-collapsed':panelInst}", style='background-color: rgba(255,255,255,0.0)')
       strong Navigation
