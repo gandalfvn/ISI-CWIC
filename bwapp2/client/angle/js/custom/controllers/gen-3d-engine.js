@@ -13,6 +13,7 @@ var miGen3DEngine;
 (function (miGen3DEngine) {
     var c3DEngine = (function () {
         function c3DEngine(fieldsize) {
+            this.hasControls = false;
             this.hasPhysics = true;
             this.rest = 0.2;
             this.fric = 0.1;
@@ -178,7 +179,8 @@ var miGen3DEngine;
              camera.keysLeft = [65]; //  a
              camera.keysRight = [68]; // d*/
             scene.activeCamera = this.camera;
-            scene.activeCamera.attachControl(this.canvas);
+            if (this.hasControls)
+                scene.activeCamera.attachControl(this.canvas);
             // This creates a light, aiming 0,1,0 - to the sky.
             var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
             // Dim the light a small amount
@@ -539,7 +541,6 @@ var miGen3DEngine;
             if (evt.button !== 0)
                 return;
             var self = this;
-            console.warn(self);
             // check if we are under a mesh
             var pickInfo = self.scene.pick(self.scene.pointerX, self.scene.pointerY, function (mesh) {
                 return (mesh !== self.ground) && (mesh !== self.skybox) && (mesh !== self.volumeMesh)
@@ -555,7 +556,7 @@ var miGen3DEngine;
                     self.clickMesh(self.lastMesh, pickInfo.pickedMesh);
                     self.lastMesh = pickInfo.pickedMesh;
                 }
-                console.warn('picked ', self.currentMesh.name, self.currentMesh);
+                //console.warn('picked ', self.currentMesh.name, self.currentMesh);
                 //self.startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
                 if (pickInfo.pickedMesh.position) {
                     setTimeout(function () {
@@ -636,7 +637,6 @@ var miGen3DEngine;
                         self.OGDelta = self.getGroundPosition(evt);
                         if (self.OGDelta)
                             self.OGDelta.subtractInPlace(self.startingPoint);
-                        console.warn(self.OGDelta);
                     }
                 }, 50);
             }
@@ -699,7 +699,8 @@ var miGen3DEngine;
             var self = this;
             if (self.startingPoint) {
                 self.pointerActive = false;
-                self.camera.attachControl(self.canvas, true);
+                if (self.hasControls)
+                    self.camera.attachControl(self.canvas, true);
                 self.startingPoint = null;
                 self.OGDelta = null;
                 self.sceney = null;

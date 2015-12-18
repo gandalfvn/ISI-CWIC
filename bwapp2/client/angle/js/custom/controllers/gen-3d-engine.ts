@@ -32,6 +32,7 @@ module miGen3DEngine {
   }
   
   export class c3DEngine {
+    hasControls:boolean = false;
     hasPhysics:boolean = true;
     rest:number = 0.2;
     fric:number = 0.1;
@@ -213,7 +214,7 @@ module miGen3DEngine {
        camera.keysRight = [68]; // d*/
 
       scene.activeCamera = this.camera;
-      scene.activeCamera.attachControl(this.canvas);
+      if(this.hasControls) scene.activeCamera.attachControl(this.canvas);
 
       // This creates a light, aiming 0,1,0 - to the sky.
       var light:BABYLON.HemisphericLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
@@ -582,7 +583,6 @@ module miGen3DEngine {
     private onPointerDown(evt){
       if (evt.button !== 0) return;
       var self:any = this;
-      console.warn(self);
       // check if we are under a mesh
       var pickInfo:BABYLON.PickingInfo = self.scene.pick(self.scene.pointerX, self.scene.pointerY, function (mesh) {
         return (mesh !== self.ground) && (mesh !== self.skybox) && (mesh !== self.volumeMesh)
@@ -598,7 +598,7 @@ module miGen3DEngine {
           self.clickMesh(self.lastMesh, <BABYLON.Mesh>pickInfo.pickedMesh);
           self.lastMesh = <BABYLON.Mesh>pickInfo.pickedMesh;
         }
-        console.warn('picked ', self.currentMesh.name, self.currentMesh);
+        //console.warn('picked ', self.currentMesh.name, self.currentMesh);
         //self.startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
         if (pickInfo.pickedMesh.position) { // we need to disconnect camera from canvas
           setTimeout(function () {
@@ -672,7 +672,6 @@ module miGen3DEngine {
             self.startingPoint = self.intersectMesh.position.clone();//getGroundPosition(evt);
             self.OGDelta = self.getGroundPosition(evt);
             if(self.OGDelta) self.OGDelta.subtractInPlace(self.startingPoint);
-            console.warn(self.OGDelta);
           }
         }, 50)
       }
@@ -729,7 +728,8 @@ module miGen3DEngine {
       var self:any = this;
       if (self.startingPoint) {
         self.pointerActive = false;
-        self.camera.attachControl(self.canvas, true);
+        if(self.hasControls)
+          self.camera.attachControl(self.canvas, true);
         self.startingPoint = null;
         self.OGDelta = null;
         self.sceney = null;
