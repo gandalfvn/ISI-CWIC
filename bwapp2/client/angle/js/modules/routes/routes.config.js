@@ -165,22 +165,6 @@
         ),
         controller: 'replayCtrl'
       })
-      .state('app.describe', {
-        url: '/describe?annotid',
-        title: 'Describe View',
-        templateUrl: helper.basepath('describe.html'),
-        resolve: angular.extend(
-          {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
-                return !$rootScope.isRole(user, 'agent');
-              });
-            }]
-          },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'ngDialog', 'datatables')
-        ),
-        controller: 'describeCtrl'
-      })
       .state('app.tasks', {
         url: '/tasks',
         title: 'Tasks View',
