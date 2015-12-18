@@ -8,6 +8,11 @@ interface iDataReady {
   update:(data:string)=>void
 }
 
+interface iRetValue{
+  ret: boolean,
+  err: any
+}
+
 String.prototype['trunc'] =
   function( n, useWordBoundary ){
     var isTooLong = this.length > n,
@@ -115,7 +120,7 @@ angular.module('angle').service('AppUtils', [function() {
     },
     cCurrentState: class cCurrentStateDef {
       _id:string;
-      private static l:string[] = ['block_meta', 'block_states', '_id', 'public', 'created', 'creator', 'name'];
+      private static l:string[] = ['block_meta', 'block_states', 'block_state', 'utterance', '_id', 'public', 'created', 'creator', 'name'];
 
       constructor(c?:cCurrentStateDef) {
         if (c) this.copy(c);
@@ -123,16 +128,22 @@ angular.module('angle').service('AppUtils', [function() {
 
       clear() {
         for (var i:number = 0; i < cCurrentStateDef.l.length; i++) {
-          this[cCurrentStateDef.l[i]] = null;
+          if(this[cCurrentStateDef.l[i]]) this[cCurrentStateDef.l[i]] = null;
         }
         if (!_.isUndefined(this._id)) delete this['_id'];
       };
 
       copy(s:cCurrentStateDef) {
         for (var i:number = 0; i < cCurrentStateDef.l.length; i++) {
-          this[cCurrentStateDef.l[i]] = s[cCurrentStateDef.l[i]];
+          if(s[cCurrentStateDef.l[i]]) this[cCurrentStateDef.l[i]] = s[cCurrentStateDef.l[i]];
         }
       };
+    },
+    //check if the associative array contains ONLY the valid keys
+    isValidKeys: function(assocarray:any, validKeys:string[]):iRetValue{
+      var fcheck = _.difference(_.keys(assocarray), validKeys);
+      if(fcheck.length) return {ret: false, err: fcheck};
+      return {ret: true, err: fcheck};
     }
 };
 }]);

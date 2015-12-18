@@ -328,7 +328,7 @@ angular.module('app.generate').controller('genPredCtrl',
               var utt:string = idx+' ';
               if(dp.utterance.length && _.isArray(dp.utterance[0]))
                 utt += dp.utterance[0].join(' ').toUpperCase();
-              showImage(b64img, utt['trunc'](40, true), attid, 0.7);
+              showImage(b64img, utt['trunc'](38, true), attid, 0.7);
               renderGallery(idx+1, cb);
             });
           }

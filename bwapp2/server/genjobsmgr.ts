@@ -4,7 +4,7 @@
  =========================================================*/
 /// <reference path="../model/genjobsmgrdb.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
-/// <reference path="./typings/underscore/underscore.d.ts" />
+/// <reference path="./typings/lodash/lodash.d.ts" />
 
 GenJobsMgr.allow({
   insert: function(userId: string, job): string{

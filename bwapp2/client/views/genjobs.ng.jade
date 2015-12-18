@@ -40,14 +40,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               th Created
           tbody
             tr(ng-repeat='s in stateslist')
-              td(title="''")
+              td(title="Remove")
                 button.btn.btn-xs.btn-danger(ng-click='remState(s._id)')
                   .fa.fa-remove
-              td(title="'ID'", filter="{ _id: 'text'}", sortable="'_id'", ng-click='chooseState(s._id)')
+              td(title="ID", ng-click='chooseState(s._id)')
                 | {{s._id}}
-              td(title="'Name'", filter="{ name: 'text'}", sortable="'name'", ng-click='chooseState(s._id)')
+              td(title="Name", ng-click='chooseState(s._id)')
                 | {{s.name}}
-              td(title="'Created'", sortable="'created'", ng-click='chooseState(s._id)')
+              td(title="Created", ng-click='chooseState(s._id)')
                 | {{s.created | date:"MM/dd/yyyy HH:mm"}}
     accordion.col-sm-6(ng-show='curState._id')
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")

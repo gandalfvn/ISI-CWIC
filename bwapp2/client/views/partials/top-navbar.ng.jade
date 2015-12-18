@@ -60,6 +60,10 @@ nav.navbar.topnavbar(role="navigation")
             a(href="/genjobs")
               .fa.fa-inbox
               | &nbsp;Jobs
+          li
+            a(href="/gensimpexp")
+              .fa.fa-flask
+              | &nbsp;Experiment
         li.dropdown(ng-show='currentUser.profile.roles.indexOf("admin") >= 0')
           a.dropdown-toggle(data-toggle="dropdown", href="#")
             //-i.glyphicon.glyphicon-search

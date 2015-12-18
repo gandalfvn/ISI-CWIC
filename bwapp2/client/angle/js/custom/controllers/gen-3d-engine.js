@@ -3,6 +3,12 @@
  */
 /// <reference path="../../../../../model/genstatesdb.ts" />
 /// <reference path="../../../../../public/vendor/babylonjs/babylon.2.2.d.ts" />
+/// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var miGen3DEngine;
 (function (miGen3DEngine) {
     var c3DEngine = (function () {
@@ -15,7 +21,8 @@ var miGen3DEngine;
                 showImages: true,
                 showLogos: true
             };
-            // Get the canvas element from our HTML above
+            this.ground = null;
+            this.skybox = null;
             this.canvas = document.getElementById("renderCanvasBab");
             this.numTextures = new Array(21);
             this.cubeslist = [];
@@ -193,14 +200,14 @@ var miGen3DEngine;
              origin.material = matPlan;*/
             /** SKYBOX **/
             BABYLON.Engine.ShadersRepository = "shaders/";
-            var skybox = BABYLON.Mesh.CreateSphere("skyBox", 10, 2500, scene);
+            this.skybox = BABYLON.Mesh.CreateSphere("skyBox", 10, 2500, scene);
             var shader = new BABYLON.ShaderMaterial("gradient", scene, "gradient", {});
             shader.setFloat("offset", 0);
             shader.setFloat("exponent", 0.6);
             shader.setColor3("topColor", BABYLON.Color3.FromInts(0, 119, 255));
             shader.setColor3("bottomColor", BABYLON.Color3.FromInts(240, 240, 255));
             shader.backFaceCulling = false;
-            skybox.material = shader;
+            this.skybox.material = shader;
             /** GROUND **/
             // Material
             var mat = new BABYLON.StandardMaterial("ground", scene);
@@ -211,18 +218,18 @@ var miGen3DEngine;
              mat.specularColor = BABYLON.Color3.Black();*/
             //var gridshader = new BABYLON.ShaderMaterial("grid", scene, "grid", {}); //shader grid
             // Object
-            var ground = BABYLON.Mesh.CreateBox("ground", 200, scene);
-            ground.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-            ground.position.y = -0.1;
-            ground.scaling.y = 0.001;
-            ground.onCollide = function (a) {
+            this.ground = BABYLON.Mesh.CreateBox("ground", 200, scene);
+            this.ground.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
+            this.ground.position.y = -0.1;
+            this.ground.scaling.y = 0.001;
+            this.ground.onCollide = function (a) {
                 console.warn('oncollide ground', a);
             };
-            ground.material = mat; //gridshader;
+            this.ground.material = mat; //gridshader;
             if (this.hasPhysics)
-                ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move: false });
-            ground.checkCollisions = true;
-            ground.receiveShadows = true;
+                this.ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move: false });
+            this.ground.checkCollisions = true;
+            this.ground.receiveShadows = true;
             //** table
             // Material
             var tablemat = new BABYLON.StandardMaterial("table", scene);
@@ -399,6 +406,386 @@ var miGen3DEngine;
         return c3DEngine;
     })();
     miGen3DEngine.c3DEngine = c3DEngine;
+    var cUI3DEngine = (function (_super) {
+        __extends(cUI3DEngine, _super);
+        function cUI3DEngine(fieldsize) {
+            _super.call(this, fieldsize);
+            this.hasPhysics = true;
+            this.pointerActive = false;
+            this.volumeMesh = null;
+            this.intersectMesh = null;
+            this.tableIMesh = null;
+            this.currentMesh = null;
+            this.lastMesh = null;
+            this.showObjAxis = false;
+            this.groupMesh = [];
+            this.outMesh = [];
+            this.startingPoint = null;
+            this.OGDelta = null;
+            this.lockxz = false;
+            this.sceney = null;
+            this.scenerot = null;
+            this.rotxy = false;
+        }
+        ;
+        cUI3DEngine.prototype.getGroundPosition = function (evt) {
+            var self = this;
+            // Use a predicate to get position on the ground
+            var pickinfo = self.scene.pick(self.scene.pointerX, self.scene.pointerY, function (mesh) {
+                return mesh == self.ground;
+            });
+            if (pickinfo.hit) {
+                if (self.startingPoint) {
+                    var current = pickinfo.pickedPoint.clone();
+                    if (self.OGDelta)
+                        current.subtractInPlace(self.OGDelta);
+                    current.y = self.startingPoint.y;
+                    //move by step n
+                    current.x = Number((Math.round(current.x * 10) / 10).toFixed(2));
+                    current.z = Number((Math.round(current.z * 10) / 10).toFixed(2));
+                    return current;
+                }
+                else
+                    return pickinfo.pickedPoint;
+            }
+            return null;
+        };
+        ;
+        cUI3DEngine.prototype.XformChildToParentRelPos = function (meshchild, meshparent) {
+            var invWorldMatrix = meshparent.getWorldMatrix().clone().invert();
+            return BABYLON.Vector3.TransformCoordinates(meshchild.position.clone(), invWorldMatrix);
+        };
+        cUI3DEngine.prototype.createVolumeShadow = function (mesh, scene, opt) {
+            if (!opt.size || !opt.name || _.isUndefined(opt.isVisible)) {
+                console.warn('missing option info');
+                return;
+            }
+            var volumeMesh;
+            var objname = opt.name;
+            var boxsize = opt.size;
+            var volmat = new BABYLON.StandardMaterial(objname, scene);
+            volmat.alpha = 0.3;
+            volmat.diffuseColor = opt.difcolor.clone();
+            volmat.emissiveColor = opt.emcolor.clone();
+            volmat.backFaceCulling = true;
+            volumeMesh = BABYLON.Mesh.CreateBox(objname, boxsize, scene);
+            var myQuat = BABYLON.Quaternion.Identity();
+            if (mesh.rotationQuaternion)
+                myQuat = mesh.rotationQuaternion.clone();
+            else
+                console.warn('mesh quaternion is identity ', mesh.name);
+            var euler = myQuat.toEulerAngles(); //get rotation
+            volumeMesh.rotationQuaternion = BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, -1, 0), euler.y); //create rotation based on Y so OUR volume is always Y UP!!!!
+            volumeMesh.material = volmat;
+            volumeMesh.isPickable = false;
+            volumeMesh['backFaceCulling'] = true;
+            volumeMesh.showBoundingBox = false;
+            volumeMesh.checkCollisions = false;
+            volumeMesh['applyGravity'] = false;
+            volumeMesh.receiveShadows = false;
+            volumeMesh.position = mesh.position.clone();
+            //pretransform the vertices so we can get the actual bounds box
+            volumeMesh.bakeTransformIntoVertices(volumeMesh.getWorldMatrix());
+            var transform = BABYLON.Matrix.Scaling(1, opt.scale, 1);
+            volumeMesh.bakeTransformIntoVertices(transform);
+            if (opt.isCollider) {
+                var vectorsWorld = volumeMesh.getBoundingInfo().boundingBox.vectorsWorld;
+                var miny, maxy;
+                vectorsWorld.forEach(function (v) {
+                    if (v.y < miny || !miny)
+                        miny = v.y;
+                    if (v.y > maxy || !maxy)
+                        maxy = v.y;
+                });
+                volumeMesh['height'] = maxy - miny;
+                volumeMesh['boxsize'] = opt.size;
+                volumeMesh['offset'] = volumeMesh['height'] / 2 - volumeMesh['boxsize'] / 2;
+                //base vector from 0,0,0 to offset in local space
+                //to translate position so bottom is on the ground
+                //must determine which axis is up and whether that axis is upside down
+                var offset = volumeMesh['offset'] + 0.1;
+                var bvinlocalspace = new BABYLON.Vector3(0, offset, 0);
+                volumeMesh.position.addInPlace(bvinlocalspace);
+                volumeMesh.ellipsoid = new BABYLON.Vector3(volumeMesh['boxsize'], volumeMesh['height'] / 4, volumeMesh['boxsize']);
+                volumeMesh['backFaceCulling'] = false;
+                volumeMesh.checkCollisions = false;
+                volumeMesh.showBoundingBox = false;
+                volumeMesh.isVisible = opt.isVisible;
+                volumeMesh.material.alpha = 0.3;
+                //volumeMesh.material.diffuseColor = new BABYLON.Color3.Green();
+                //volumeMesh.refreshBoundingInfo();
+                volumeMesh.onCollide = function (a) {
+                    console.warn('vol oncollide', this.name, a.name);
+                };
+            }
+            return volumeMesh;
+        };
+        ;
+        cUI3DEngine.prototype.clickMesh = function (lastMesh, currentMesh) {
+            // If we click again the already selected mesh then there is no reason to remove axis and add them again
+            if (lastMesh == currentMesh)
+                return;
+            // Show axis for the current mesh
+            for (var i = 0; i < currentMesh.getChildren().length; i++)
+                currentMesh.getChildren()[i]['isVisible'] = true;
+            // Remove axis for the previous mesh
+            if (lastMesh != null) {
+                if (lastMesh.getChildren().length > 0)
+                    for (var i = 0; i < lastMesh.getChildren().length; i++)
+                        lastMesh.getChildren()[i]['isVisible'] = false;
+            }
+        };
+        cUI3DEngine.prototype.onPointerDown = function (evt) {
+            if (evt.button !== 0)
+                return;
+            var self = this;
+            console.warn(self);
+            // check if we are under a mesh
+            var pickInfo = self.scene.pick(self.scene.pointerX, self.scene.pointerY, function (mesh) {
+                return (mesh !== self.ground) && (mesh !== self.skybox) && (mesh !== self.volumeMesh)
+                    && (mesh !== self.intersectMesh) && (mesh !== self.grid) && (mesh !== self.table)
+                    && (mesh !== self.tableIMesh);
+            });
+            if (pickInfo.hit && !pickInfo.pickedMesh['isMoving']) {
+                self.pointerActive = true;
+                //we clean up things first;
+                //onPointerUp();
+                self.currentMesh = pickInfo.pickedMesh;
+                if (self.showObjAxis) {
+                    self.clickMesh(self.lastMesh, pickInfo.pickedMesh);
+                    self.lastMesh = pickInfo.pickedMesh;
+                }
+                console.warn('picked ', self.currentMesh.name, self.currentMesh);
+                //self.startingPoint = pickInfo.pickedMesh.position.clone();//getGroundPosition(evt);
+                if (pickInfo.pickedMesh.position) {
+                    setTimeout(function () {
+                        self.camera.detachControl(self.canvas);
+                    }, 0);
+                }
+                if (self.volumeMesh)
+                    self.volumeMesh.dispose();
+                self.volumeMesh = self.createVolumeShadow(self.currentMesh, self.scene, {
+                    isCollider: false,
+                    isVisible: true,
+                    scale: 70,
+                    size: self.currentMesh['boxsize'],
+                    name: 'vol' + self.currentMesh['boxsize'],
+                    emcolor: BABYLON.Color3.Black(),
+                    difcolor: BABYLON.Color3.Gray()
+                });
+                if (self.intersectMesh)
+                    self.intersectMesh.dispose();
+                self.intersectMesh = self.createVolumeShadow(self.currentMesh, self.scene, {
+                    isCollider: true,
+                    isVisible: true,
+                    scale: 30,
+                    size: self.currentMesh['boxsize'] * 0.98,
+                    name: 'col' + self.currentMesh['boxsize'],
+                    emcolor: BABYLON.Color3.Red(),
+                    difcolor: BABYLON.Color3.Red()
+                });
+                self.intersectMesh.checkCollisions = true;
+                setTimeout(function () {
+                    if (self.intersectMesh) {
+                        self.groupMesh.length = 0;
+                        self.outMesh.length = 0;
+                        var InvQ = BABYLON.Quaternion.Inverse(self.intersectMesh.rotationQuaternion);
+                        var isZeroPosition = false; //check if we have a screwed up invworldmatrix - if we do then one of the mesh will move to 0,0,0 instead of the bottom of the volume mesh.
+                        self.cubeslist.forEach(function (c) {
+                            if (self.intersectMesh.intersectsMesh(c, true)) {
+                                /*console.warn('c', c);
+                                 console.warn('self.intersectMesh', self.intersectMesh);
+                                 console.warn('cpa', c.position, self.intersectMesh.position);*/
+                                c.parent = self.intersectMesh;
+                                c.position = self.XformChildToParentRelPos(c, self.intersectMesh);
+                                //console.warn('cpb', c.position);
+                                if (self.isZeroVec(c.position))
+                                    isZeroPosition = true;
+                                //c.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
+                                //translate cube to intersetmesh local space 0,0,0
+                                //this formula gets fractional rotation from mesh rotation based on
+                                //the bottom cube
+                                if (c.rotationQuaternion)
+                                    c.rotationQuaternion = InvQ.multiply(c.rotationQuaternion);
+                                else
+                                    console.warn('object contains no rotationQuaternion');
+                                //c.rotationQuaternion = self.intersectMesh.rotationQuaternion.multiply(BABYLON.Quaternion.Inverse(c.rotationQuaternion));
+                                c.checkCollisions = false;
+                                c.showBoundingBox = false;
+                                //console.warn('me elp', c.ellipsoid);
+                                if (self.hasPhysics)
+                                    self.oimo.unregisterMesh(c); //stop physics
+                                self.groupMesh.push(c);
+                            }
+                            else {
+                                self.outMesh.push(c);
+                                c.parent = null;
+                                c.checkCollisions = true;
+                                c.showBoundingBox = false;
+                                c.material.emissiveColor = BABYLON.Color3.Black();
+                            }
+                        });
+                        if (isZeroPosition) {
+                            console.warn('FIXED BAD MESH OFFSET');
+                            var offset = new BABYLON.Vector3(0, -self.intersectMesh['offset'], 0);
+                            self.groupMesh.forEach(function (c) {
+                                c.position.addInPlace(offset);
+                            });
+                        }
+                        self.startingPoint = self.intersectMesh.position.clone(); //getGroundPosition(evt);
+                        self.OGDelta = self.getGroundPosition(evt);
+                        if (self.OGDelta)
+                            self.OGDelta.subtractInPlace(self.startingPoint);
+                        console.warn(self.OGDelta);
+                    }
+                }, 50);
+            }
+        };
+        ;
+        cUI3DEngine.prototype.onPointerMove = function (evt) {
+            var self = this;
+            if (!self.startingPoint)
+                return;
+            var current;
+            var delta;
+            if (self.lockxz) {
+                current = self.startingPoint.clone();
+                delta = (self.sceney - self.scene.pointerY) * 0.2;
+                current.y += delta;
+                self.sceney = self.scene.pointerY;
+            }
+            else if (!self.rotxy) {
+                current = self.getGroundPosition(evt);
+                if (!self.OGDelta && current) {
+                    //if ogdelta does not exist during on pointer down that means we have to keep checking until mouse hits the ground and get the ground to obj origin delta
+                    self.OGDelta = current.clone();
+                    if (self.OGDelta)
+                        self.OGDelta.subtractInPlace(self.startingPoint);
+                }
+            }
+            else {
+                current = null; //skip translating mesh below
+                var euler = self.intersectMesh.rotationQuaternion.toEulerAngles();
+                delta = (self.scenerot.x - self.scene.pointerX);
+                var rotRad = 0.087266; //5 deg. in radian
+                var rotval;
+                if (delta < 0)
+                    rotval = euler.y - rotRad;
+                else
+                    rotval = euler.y + rotRad;
+                if (rotval > Math.PI)
+                    rotval = 0;
+                if (rotval < 0)
+                    rotval = Math.PI;
+                rotval = (Math.round(rotval / rotRad)) * rotRad; //round to nearest 5 deg
+                //snap rotval to 5 degree increments
+                self.intersectMesh.rotationQuaternion = BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(0, 1, 0), rotval); //Y is UP in intersect mesh
+                self.volumeMesh.rotationQuaternion = self.intersectMesh.rotationQuaternion.clone();
+                self.scenerot.x = self.scene.pointerX;
+            }
+            if (!current)
+                return;
+            var diff;
+            diff = current.subtract(self.startingPoint);
+            self.intersectMesh.moveWithCollisions(diff);
+            self.volumeMesh.position = self.intersectMesh.position.clone();
+            setTimeout(function () {
+                self.volumeMesh.position = self.intersectMesh.position.clone();
+            }, 50);
+            self.startingPoint = current;
+        };
+        ;
+        cUI3DEngine.prototype.onPointerUp = function () {
+            var self = this;
+            if (self.startingPoint) {
+                self.pointerActive = false;
+                self.camera.attachControl(self.canvas, true);
+                self.startingPoint = null;
+                self.OGDelta = null;
+                self.sceney = null;
+                //must remove collision check prior to dispose or you get invisible mesh collisions!!!
+                self.intersectMesh.checkCollisions = false;
+                if (self.volumeMesh)
+                    self.volumeMesh.dispose();
+                self.volumeMesh = null;
+                if (self.groupMesh.length)
+                    self.groupMesh.forEach(function (c) {
+                        c.parent = null;
+                        c['tchecked'] = false;
+                        //after removing from parent
+                        //transform local position to world position
+                        c.position = BABYLON.Vector3.TransformCoordinates(c.position, self.intersectMesh.getWorldMatrix());
+                        //c.position.addInPlace(self.intersectMesh.position.clone());
+                        c.rotationQuaternion = self.intersectMesh.rotationQuaternion.multiply(c.rotationQuaternion);
+                        c.checkCollisions = true;
+                        c.showBoundingBox = false;
+                        c.material.emissiveColor = BABYLON.Color3.Black();
+                        //must add physics no matter if its off the ground fo collisions to tork
+                        if (self.hasPhysics)
+                            c.setPhysicsState({
+                                impostor: BABYLON.PhysicsEngine.BoxImpostor,
+                                move: true,
+                                mass: c['boxsize'],
+                                friction: self.fric,
+                                restitution: self.rest
+                            });
+                    });
+                self.groupMesh.length = 0;
+                if (self.intersectMesh)
+                    self.intersectMesh.dispose();
+                self.intersectMesh = null;
+                self.currentMesh = null;
+            }
+        };
+        ;
+        cUI3DEngine.prototype.createWorld = function () {
+            var self = this;
+            _super.prototype.createWorld.call(this);
+            //require hand.js from ms
+            self.canvas.addEventListener("pointerdown", self.onPointerDown.bind(self), false);
+            self.canvas.addEventListener("pointerup", self.onPointerUp.bind(self), false);
+            self.canvas.addEventListener("pointermove", self.onPointerMove.bind(self), false);
+            self.scene.onDispose = function () {
+                self.canvas.removeEventListener("pointerdown", self.onPointerDown);
+                self.canvas.removeEventListener("pointerup", self.onPointerUp);
+                self.canvas.removeEventListener("pointermove", self.onPointerMove);
+            };
+            window.addEventListener("keydown", function (evt) {
+                switch (evt.keyCode) {
+                    case 18:
+                        if (self.currentMesh) {
+                            self.rotxy = true;
+                            self.scenerot = { x: self.scene.pointerX, y: self.scene.pointerY };
+                        }
+                        break;
+                    case 16:
+                        if (self.currentMesh) {
+                            self.lockxz = true;
+                            self.sceney = self.scene.pointerY;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+            window.addEventListener("keyup", function (evt) {
+                switch (evt.keyCode) {
+                    case 18:
+                        self.rotxy = false;
+                        self.scenerot = null;
+                        break;
+                    case 16:
+                        self.lockxz = false;
+                        self.sceney = null;
+                        break;
+                    default:
+                        break;
+                }
+            });
+        };
+        return cUI3DEngine;
+    })(c3DEngine);
+    miGen3DEngine.cUI3DEngine = cUI3DEngine;
 })(miGen3DEngine || (miGen3DEngine = {}));
 mGen3DEngine = miGen3DEngine;
 //# sourceMappingURL=gen-3d-engine.js.map
