@@ -24,6 +24,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       label Job Id: 
       input(ng-model='jid')
       button.btn(ng-show='jid.length', ng-click='getURLHITs(jid)') Go
+    .well.col-sm-3
+      label HIT: 
+      button.btn(ng-click='getReviewHITs("Reviewable")') Reviewable
+      button.btn(ng-click='getReviewHITs("Reviewing")') Reviewing
   .row
     accordion.col-sm-6
       accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")

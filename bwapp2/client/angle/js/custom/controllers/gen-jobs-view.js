@@ -378,6 +378,16 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 $scope.$apply(function () { toaster.pop('info', JSON.stringify(ret.result, null, 2)); });
             });
         };
+        $scope.getReviewHITs = function (s) {
+            var params = { Status: s, PageSize: 20, PageNumber: 1 };
+            Meteor.call('mturkReviewHITs', params, function (err, ret) {
+                if (err)
+                    return $scope.$apply(function () { toaster.pop('error', JSON.stringify(err, null, 2)); });
+                if (ret.error)
+                    return $scope.$apply(function () { toaster.pop('error', JSON.stringify(ret.error, null, 2)); });
+                $scope.$apply(function () { toaster.pop('info', 'HITs', JSON.stringify(ret.result, null, 2)); });
+            });
+        };
         $scope.getURLHITs = function (jid) {
             var myjob = GenJobsMgr.findOne({ _id: jid });
             if (myjob) {
