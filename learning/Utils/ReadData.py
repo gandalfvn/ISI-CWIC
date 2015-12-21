@@ -278,7 +278,7 @@ class Data:
       j["block_state"].append({"id": (coord + 1), "position": "%f,%f,%f" % (x, y, z)})
     return j
 
-  def write_predictions(self, predictions, filename="predictions"):
+  def write_predictions(self, predictions, filename="predictions", Test=True):
     """
     Produce a series of JSONs with  (input, gold, predicted) and utterance
     :param predictions:   System's predictions
@@ -294,11 +294,16 @@ class Data:
     full["block_meta"]["decoration"] = "logo"
 
     for i in range(len(predictions)):
-      words = TreebankWordTokenizer().tokenize(self.TestingInput[i]["text"])
-      j = {"utterance": [words]}
-      plocations = copy.deepcopy(self.TestingInput[i]["world"])
-      glocations = copy.deepcopy(self.TestingInput[i]["world"])
-      j["start_state"] = self.convert_to_world(glocations)
+      if Test:
+        words = TreebankWordTokenizer().tokenize(self.TestingInput[i]["text"])
+        plocations = copy.deepcopy(self.TestingInput[i]["world"])
+        glocations = copy.deepcopy(self.TestingInput[i]["world"])
+      else:
+        words = TreebankWordTokenizer().tokenize(self.TrainingInput[i]["text"])
+        plocations = copy.deepcopy(self.TrainingInput[i]["world"])
+        glocations = copy.deepcopy(self.TrainingInput[i]["world"])
+
+      j = {"utterance": [words], "start_state": self.convert_to_world(glocations)}
 
       # Update location of predicted block
       prediction = predictions[i]
@@ -308,8 +313,13 @@ class Data:
       j["predicted_state"] = self.convert_to_world(plocations)
 
       # Update location of gold block
-      action = self.TestingOutput[i]["loc"]
-      blockID = self.TestingOutput[i]["id"]
+      if Test:
+        action = self.TestingOutput[i]["loc"]
+        blockID = self.TestingOutput[i]["id"]
+      else:
+        action = self.TrainingOutput[i]["loc"]
+        blockID = self.TrainingOutput[i]["id"]
+
       glocations[(blockID - 1) * 3] = float(action[0])
       glocations[(blockID - 1) * 3 + 1] = float(action[1])
       glocations[(blockID - 1) * 3 + 2] = float(action[2])
