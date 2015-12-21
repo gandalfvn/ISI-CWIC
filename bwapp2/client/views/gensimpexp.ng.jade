@@ -5,8 +5,11 @@
 
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .row-fluid.col-sm-12
+  .row
+    h3(ng-show='isExp') Experiment Mode
+    h3(ng-show='!isExp') Creation Mode
   div(ng-show='curState.block_meta.blocks')
-    h4 Experiment State: {{curState._id}} &nbsp;&nbsp; {{curState.name | uppercase}}
+    h4 State: {{curState._id}} &nbsp;&nbsp; {{curState.name | uppercase}}
     h4
       button.btn.btn-primary(ng-click='clearMeta()') Back
       | &nbsp;&nbsp;#Blocks: {{curState.block_meta.blocks.length}}
@@ -45,9 +48,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstatesform', ng-submit='loadStates()')
               b Import
               .form-group
-                input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().statesFileChanged(event)")
+                input.form-control#sfn(type='file', name='lsf', accept=".json", multiple, onchange="angular.element(this).scope().statesFileChanged(event)")
                 button.btn.btn-default(type="submit", ng-show='statesfilename') Go
-
 .row-fluid.col-sm-12
   .row-fluid.col-sm-6(ng-show='isgen || curState.block_meta.blocks')
     h3 Scene

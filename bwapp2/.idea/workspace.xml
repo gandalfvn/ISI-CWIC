@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" line="596" mnemonic="8" />
+    <bookmark url="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" line="517" mnemonic="8" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp/server/config.js" afterPath="$PROJECT_DIR$/../bwapp/server/config.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genjobs.ng.jade" afterPath="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js" afterPath="$PROJECT_DIR$/server/mturkhelper.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js.map" afterPath="$PROJECT_DIR$/server/mturkhelper.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.ts" afterPath="$PROJECT_DIR$/server/mturkhelper.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/gensimpexp.ng.jade" afterPath="$PROJECT_DIR$/client/views/gensimpexp.ng.jade" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,11 +31,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="gen-simpexp-view.ts" pinned="false" current-in-tab="false">
+      <file leaf-file-name="gen-simpexp-view.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="376" column="24" selection-start-line="376" selection-start-column="24" selection-end-line="376" selection-end-column="24" />
+            <state vertical-scroll-proportion="0.63129973">
+              <caret line="350" column="33" selection-start-line="350" selection-start-column="33" selection-end-line="350" selection-end-column="33" />
               <folding>
                 <element signature="e#0#41#0" expanded="false" />
               </folding>
@@ -50,7 +47,7 @@
         <entry file="file://$PROJECT_DIR$/client/views/gensimpexp.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="55" column="81" selection-start-line="55" selection-start-column="81" selection-end-line="55" selection-end-column="81" />
+              <caret line="33" column="28" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -66,11 +63,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.49039692">
-              <caret line="456" column="4" selection-start-line="456" selection-start-column="4" selection-end-line="456" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="466" column="72" selection-start-line="466" selection-start-column="72" selection-end-line="466" selection-end-column="72" />
               <folding />
             </state>
           </provider>
@@ -79,7 +76,7 @@
       <file leaf-file-name="genjobs.ng.jade" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-16.518518">
+            <state vertical-scroll-proportion="0.0">
               <caret line="30" column="6" selection-start-line="30" selection-start-column="6" selection-end-line="30" selection-end-column="6" />
               <folding />
             </state>
@@ -147,13 +144,13 @@
         <option value="$PROJECT_DIR$/client/views/partials/top-navbar.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-ui3d-engine.ts" />
-        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
-        <option value="$PROJECT_DIR$/client/views/gensimpexp.ng.jade" />
         <option value="$PROJECT_DIR$/server/mturkhelper.ts" />
         <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" />
+        <option value="$PROJECT_DIR$/client/views/gensimpexp.ng.jade" />
+        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" />
       </list>
     </option>
   </component>
@@ -796,9 +793,8 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22310232" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32016808" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="TypeScript Compiler" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32016808" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32605043" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958034" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38991597" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -810,6 +806,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32605043" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -977,7 +974,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-1.7464789">
           <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -993,7 +989,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.787452">
           <caret line="41" column="11" selection-start-line="41" selection-start-column="11" selection-end-line="41" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1001,7 +996,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1009,7 +1003,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.0755441">
           <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1017,7 +1010,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="30" column="16" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1025,7 +1017,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="7" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1051,7 +1042,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1059,7 +1049,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.36821705">
           <caret line="19" column="5" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1067,7 +1056,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="30" column="115" selection-start-line="30" selection-start-column="57" selection-end-line="30" selection-end-column="115" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1075,7 +1063,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="51" column="93" selection-start-line="51" selection-start-column="84" selection-end-line="51" selection-end-column="93" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1083,7 +1070,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1091,7 +1077,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1099,7 +1084,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.30857876">
           <caret line="36" column="31" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1115,7 +1099,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="12" column="33" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1130,25 +1113,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="3.7596898">
           <caret line="194" column="39" selection-start-line="194" selection-start-column="39" selection-end-line="194" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="376" column="24" selection-start-line="376" selection-start-column="24" selection-end-line="376" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#41#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/gensimpexp.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="55" column="81" selection-start-line="55" selection-start-column="81" selection-end-line="55" selection-end-column="81" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1156,7 +1120,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.021489972">
           <caret line="176" column="61" selection-start-line="176" selection-start-column="61" selection-end-line="176" selection-end-column="61" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1164,7 +1127,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6346705">
           <caret line="67" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1172,7 +1134,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.021489972">
           <caret line="92" column="34" selection-start-line="92" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1188,7 +1149,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.14899713">
           <caret line="2655" column="21" selection-start-line="2655" selection-start-column="8" selection-end-line="2655" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1210,7 +1170,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.518518">
+        <state vertical-scroll-proportion="0.0">
           <caret line="30" column="6" selection-start-line="30" selection-start-column="6" selection-end-line="30" selection-end-column="6" />
           <folding />
         </state>
@@ -1218,9 +1178,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49039692">
-          <caret line="456" column="4" selection-start-line="456" selection-start-column="4" selection-end-line="456" selection-end-column="4" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="466" column="72" selection-start-line="466" selection-start-column="72" selection-end-line="466" selection-end-column="72" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/gensimpexp.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="33" column="28" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.63129973">
+          <caret line="350" column="33" selection-start-line="350" selection-start-column="33" selection-end-line="350" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

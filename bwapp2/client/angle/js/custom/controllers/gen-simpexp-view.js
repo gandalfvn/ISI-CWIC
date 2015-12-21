@@ -140,106 +140,6 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             console.error('no existing cubes found');
             return null;
         };
-        /**
-         * Generate stack of the anchor cube on top of the base cube
-         * @param size
-         * @param used
-         * @param idxdata
-         * @returns {*}
-         */
-        var genCubeStack = function (size, used, idxdata) {
-            if (used.length) {
-                var myArr = used; //its an array
-                var aidx = apputils.rndInt(0, myArr.length - 1); //cube to move
-                var anchorIdx = myArr[aidx];
-                var halfsize = idxdata[anchorIdx].prop.size / 2;
-                var aPos = idxdata[anchorIdx].position;
-                //console.warn('genCubeStack', anchorIdx, aPos);
-                return { anchorCid: anchorIdx, position: new BABYLON.Vector3(aPos.x, halfsize, aPos.z) };
-            }
-            console.error('no existing cubes found');
-            return null;
-        };
-        //todo: this is not used
-        var genCubeState0 = function (used, idxdata) {
-            var cid = null;
-            while (cid === null || _.indexOf(used, cid) > -1) {
-                cid = Number(myengine.cubesid[apputils.rndInt(0, myengine.cubesid.length - 1)]);
-            }
-            var max = APP_CONST.fieldsize / 2 + 0.001; //give it a little wiggle room
-            var min = -max;
-            var data = {
-                prop: {
-                    size: myengine.cubesdata[cid].meta.shape.shape_params.side_length,
-                    cid: cid
-                },
-                position: null
-            };
-            var isRegen = true;
-            while (isRegen) {
-                if (used.length) {
-                    var ltype = apputils.rndInt(0, 9);
-                    if (ltype < 5) {
-                        //console.warn('state0 near');
-                        var cubeDat = genCubeNear(data.prop.size, used, idxdata);
-                        if (cubeDat)
-                            data.position = cubeDat.position;
-                    }
-                    else {
-                        //console.warn('state0 far');
-                        var cubeDat = genCubeFar(data.prop.size, used, idxdata);
-                        if (cubeDat)
-                            data.position = cubeDat.position;
-                    }
-                    if (cubeDat && cubeDat.position)
-                        data.position = cubeDat.position;
-                    else
-                        $scope.$apply(function () {
-                            toaster.pop('error', 'missing position');
-                        });
-                }
-                else {
-                    var minloc = (-(APP_CONST.fieldsize / 2) + (data.prop.size / 2)) * mult;
-                    var maxloc = ((APP_CONST.fieldsize / 2) - (data.prop.size / 2)) * mult;
-                    data.position = new BABYLON.Vector3(apputils.rndInt(minloc, maxloc) / mult, (data.prop.size / 2), apputils.rndInt(minloc, maxloc) / mult);
-                }
-                if ((data.position.x - data.prop.size / 2) >= min && (data.position.x + data.prop.size / 2) <= max &&
-                    (data.position.z - data.prop.size / 2) >= min && (data.position.z + data.prop.size / 2) <= max) {
-                    var cubespos = [];
-                    _.each(idxdata, function (i) {
-                        cubespos.push(i);
-                    });
-                    var anchorStack = getStackCubes(data, cubespos, null, false);
-                    console.warn('output', cid, anchorStack.length);
-                    if (anchorStack.length < 2)
-                        isRegen = false;
-                }
-            }
-            updateYCube(data, used, idxdata);
-            used.push(cid);
-            idxdata[cid] = data;
-            console.warn('genCubeState0', cid, data);
-            return data;
-        };
-        /*$scope.showInitFrame = function(state:miGen3DEngine.iCubeState[], cb:()=>void){
-         $scope.resetWorld();
-         console.warn('showInitFrame', state);
-         setTimeout(function(){
-         state.forEach(function(s){
-         var c = get3DCubeById(s.prop.cid);
-         c.position = new BABYLON.Vector3(s.position.x, s.position.y, s.position.z);
-         c.isVisible = true;
-         if(hasPhysics) c.setPhysicsState({
-         impostor: BABYLON.PhysicsEngine.BoxImpostor,
-         move: true,
-         mass: 5, //c.boxsize,
-         friction: fric,
-         restitution: rest
-         });
-         })
-         if(cb) cb();
-         }, 100);
-         };*/
         var showFrame = function (state, cb) {
             $scope.resetWorld();
             setTimeout(function () {
@@ -293,18 +193,6 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         };
         var checkFnSS; //store steady state check
         /**
-         * check for a scene steady state before saving data.
-         * providing a cb will short circuit checks for startgen or startmove functions
-         * @param params
-         */
-        var waitForSSAndSave = function (params, cb) {
-            checkFnSS = setInterval(function () {
-                if (myengine.isSteadyState) {
-                    clearInterval(checkFnSS);
-                }
-            }, 200);
-        };
-        /**
          * show the state to be used as state 0
          * @param sid
          */
@@ -326,23 +214,6 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                 showFrame({ block_state: myframe.block_state });
                 $rootScope.dataloaded = true;
             });
-        };
-        var createButtons = function (id, i) {
-            var lenID = $('div').length;
-            var eleDivID = 'rowdiv' + lenID; // Unique ID
-            var retId = id + lenID;
-            var htmlout = '<button onclick="angular.element(this).scope().cloneMove(' + i + ')" class="btn btn-xs btn-info"> Clone Move </button>' +
-                '    ' +
-                '<button onclick="angular.element(this).scope().getMove(' + i + ')" class="btn btn-xs btn-info"> Get JSON </button>' +
-                '    ' +
-                '<button onclick="angular.element(this).scope().delMove(' + i + ')" class="btn btn-xs btn-info"> Delete Move(s) </button>' +
-                '<div id="' + retId + '"></div>';
-            var attachTo = '#galleryarea';
-            $('<div>').attr({
-                id: eleDivID
-            }).addClass('col-sm-4')
-                .html(htmlout).css({ "border-bottom": '1px solid #e4eaec' }).appendTo(attachTo);
-            return retId;
         };
         $scope.remState = function (sid) {
             if (sid) {
@@ -371,18 +242,22 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             $scope.curState.clear();
             $scope.resetWorld();
         };
-        $scope.saveImport = function (savename) {
+        $scope.saveImport = function (savename, isMulti, cb) {
             $rootScope.dataloaded = false;
             $scope.impFilename = null;
             $scope.enableImpSave = false;
             $scope.curState.name = savename;
-            console.warn('saveImport');
             setTimeout(function () {
                 genexps.save($scope.curState).then(function (val) {
-                    $scope.curState._id = val[0]._id;
-                    updateAvailExp();
-                    $rootScope.dataloaded = true;
-                    $state.transitionTo('app.gensimpexp', { sid: val[0]._id }, { notify: false });
+                    if (!isMulti) {
+                        $scope.curState._id = val[0]._id;
+                        $rootScope.dataloaded = true;
+                        updateAvailExp();
+                        $state.go('app.gensimpexp', { sid: val[0]._id }, { reload: true, notify: true });
+                    }
+                    if (cb)
+                        cb();
+                    //$state.transitionTo('app.gensimpexp', {sid: val[0]._id}, {notify: false});
                 }, function (err) {
                     console.warn(err);
                 });
@@ -422,58 +297,106 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         };
         $scope.loadStates = function () {
             if ($scope.statesfilename && $scope.statesfilename.length) {
-                $scope.isExp = false;
-                //read file
-                var reader = new FileReader();
-                reader.onload = function () {
-                    var filedata = JSON.parse(reader.result);
-                    var validKeys = ['block_meta', 'block_state', 'name', 'utterance'];
-                    var resValidKeys = apputils.isValidKeys(filedata, validKeys);
-                    if (resValidKeys.ret && filedata.block_state.length
-                        && filedata.block_meta.blocks && filedata.block_meta.blocks.length) {
-                        if (filedata.block_meta.blocks.length != filedata.block_state.length)
-                            return $scope.$apply(function () {
-                                toaster.pop('error', 'Block META and STATE mismatch!');
-                            });
-                        $scope.curState.clear();
-                        $scope.curState.block_meta = filedata.block_meta;
-                        $scope.curState.public = true;
-                        $scope.curState.created = (new Date).getTime();
-                        $scope.curState.creator = $rootScope.currentUser._id;
-                        $scope.curState.utterance = filedata.utterance;
-                        $scope.utterance = filedata.utterance.join(' ').toUpperCase()['trunc'](48, true);
-                        setDecorVal(filedata.block_meta.decoration);
-                        myengine.createObjects($scope.curState.block_meta.blocks);
-                        //mung block_states
-                        $scope.curState.block_state = mungeBlockState(filedata.block_state);
-                        $scope.$apply(function () {
-                            $scope.impFilename = null;
-                            $scope.enableImpSave = false;
-                            $scope.isgen = true;
-                        });
-                        showFrame({ block_state: $scope.curState.block_state }, function () {
-                            //wait for steady state
-                            checkFnSS = setInterval(function () {
-                                if (myengine.isSteadyState) {
-                                    clearInterval(checkFnSS);
-                                    $scope.$apply(function () {
-                                        if (filedata.name)
-                                            $scope.impFilename = filedata.name;
-                                        else
-                                            $scope.impFilename = $scope.statesfilename[0].name.toLowerCase().replace(/\.json/g, '');
-                                        $scope.enableImpSave = true;
-                                        $scope.isgen = false;
+                if ($scope.statesfilename.length > 1) {
+                    var reader = new FileReader();
+                    function procFiles(idx, files, cb) {
+                        if (_.isUndefined(files[idx]))
+                            return cb();
+                        reader.onload = function () {
+                            var filedata = JSON.parse(reader.result);
+                            var validKeys = ['block_meta', 'block_state', 'name', 'utterance'];
+                            var resValidKeys = apputils.isValidKeys(filedata, validKeys);
+                            if (resValidKeys.ret && filedata.block_state.length
+                                && filedata.block_meta.blocks && filedata.block_meta.blocks.length) {
+                                if (filedata.block_meta.blocks.length != filedata.block_state.length)
+                                    return $scope.$apply(function () {
+                                        toaster.pop('error', 'Block META and STATE mismatch! ' + files[idx]);
+                                        procFiles(idx + 1, files, cb);
                                     });
-                                }
-                            }, 100);
-                        });
+                                $scope.curState.clear();
+                                $scope.curState.block_meta = filedata.block_meta;
+                                $scope.curState.public = true;
+                                $scope.curState.created = (new Date).getTime();
+                                $scope.curState.creator = $rootScope.currentUser._id;
+                                $scope.curState.utterance = filedata.utterance;
+                                $scope.utterance = filedata.utterance.join(' ').toUpperCase()['trunc'](48, true);
+                                setDecorVal(filedata.block_meta.decoration);
+                                $scope.curState.block_state = mungeBlockState(filedata.block_state);
+                                var savename = files[idx]['name'].toLowerCase().replace(/\.json/g, '');
+                                $scope.saveImport(savename, true, function () {
+                                    toaster.pop('info', 'Saved ' + savename);
+                                    procFiles(idx + 1, files, cb);
+                                });
+                            }
+                            else
+                                $scope.$apply(function () {
+                                    toaster.pop('warn', 'Invalid JSON ' + files[idx], JSON.stringify(resValidKeys.err));
+                                    procFiles(idx + 1, files, cb);
+                                });
+                        };
+                        reader.readAsText(files[idx]);
                     }
-                    else
-                        $scope.$apply(function () {
-                            toaster.pop('warn', 'Invalid JSON STATE file', JSON.stringify(resValidKeys.err));
-                        });
-                };
-                reader.readAsText($scope.statesfilename[0]);
+                    procFiles(0, $scope.statesfilename, function () {
+                        $rootScope.dataloaded = true;
+                        $scope.curState.clear();
+                        updateAvailExp();
+                        $state.go('app.gensimpexp', {}, { reload: true, notify: true });
+                    });
+                }
+                else {
+                    $scope.isExp = false;
+                    //read file
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var filedata = JSON.parse(reader.result);
+                        var validKeys = ['block_meta', 'block_state', 'name', 'utterance'];
+                        var resValidKeys = apputils.isValidKeys(filedata, validKeys);
+                        if (resValidKeys.ret && filedata.block_state.length
+                            && filedata.block_meta.blocks && filedata.block_meta.blocks.length) {
+                            if (filedata.block_meta.blocks.length != filedata.block_state.length)
+                                return $scope.$apply(function () {
+                                    toaster.pop('error', 'Block META and STATE mismatch!');
+                                });
+                            $scope.curState.clear();
+                            $scope.curState.block_meta = filedata.block_meta;
+                            $scope.curState.public = true;
+                            $scope.curState.created = (new Date).getTime();
+                            $scope.curState.creator = $rootScope.currentUser._id;
+                            $scope.curState.utterance = filedata.utterance;
+                            $scope.utterance = filedata.utterance.join(' ').toUpperCase()['trunc'](48, true);
+                            setDecorVal(filedata.block_meta.decoration);
+                            myengine.createObjects($scope.curState.block_meta.blocks);
+                            //mung block_states
+                            $scope.curState.block_state = mungeBlockState(filedata.block_state);
+                            $scope.$apply(function () {
+                                $scope.impFilename = null;
+                                $scope.enableImpSave = false;
+                                $scope.isgen = true;
+                            });
+                            showFrame({ block_state: $scope.curState.block_state }, function () {
+                                //wait for steady state
+                                checkFnSS = setInterval(function () {
+                                    if (myengine.isSteadyState) {
+                                        clearInterval(checkFnSS);
+                                        $scope.$apply(function () {
+                                            if (filedata.name)
+                                                $scope.impFilename = filedata.name;
+                                            else
+                                                $scope.impFilename = $scope.statesfilename[0].name.toLowerCase().replace(/\.json/g, '');
+                                            $scope.enableImpSave = true;
+                                            $scope.isgen = false;
+                                        });
+                                    }
+                                }, 100);
+                            });
+                        }
+                        else
+                            $scope.$apply(function () {
+                                toaster.pop('warn', 'Invalid JSON STATE file', JSON.stringify(resValidKeys.err));
+                            });
+                    };
+                    reader.readAsText($scope.statesfilename[0]);
+                }
             }
         };
         $scope.statesFileChanged = function (event) {
@@ -634,7 +557,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         $scope.opt = myengine.opt;
         $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
         console.warn(myengine.opt);
-        $scope.isExp = true; //all work is consider experiment view unless we load a state
+        $scope.isExp = true; //all work is consider experiment view unless we import a state
         myengine.createWorld();
         dataReady.update('world created');
     }]);
