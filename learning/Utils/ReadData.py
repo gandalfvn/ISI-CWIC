@@ -79,7 +79,7 @@ class Data:
       nvec.append((vec[i] - mu[i]) / sig[i])
     return nvec
 
-  def __init__(self, maxlines=1000000, sequence=False, separate=True, onehot=True):
+  def __init__(self, logger=None, maxlines=1000000, sequence=False, separate=True, onehot=True):
     trainingfile_input  = "../Data/logos/Train.input.json.gz"
     trainingfile_output = "../Data/logos/Train.output.json.gz"
     testingfile_input   = "../Data/logos/Dev.input.orig.json.gz"
@@ -119,7 +119,10 @@ class Data:
     self.end = [0] * len(self.vocab)
     self.end[2] = 1
 
-    print "Created Vocabulary: ", vocabsize
+    if logger is None:
+      print "Created Vocabulary: ", vocabsize
+    else:
+      logger.write("Created Vocabulary: %d" % vocabsize)
     ## Read Training Data ##
 
     ## Compute mean/std per dimension ##
@@ -162,7 +165,10 @@ class Data:
       else:
         break
 
-    print "Read Train: ", len(locations)
+    if logger is None:
+      print "Read Train: ", len(locations)
+    else:
+      logger.write("Read Train: %d" % len(locations))
 
     ## Read Test Data ## 
     self.TestingInput  = []      # For printing JSONs
@@ -192,7 +198,10 @@ class Data:
       actions_test.append(j["loc"])
       classes_test.append(self.onehot(j["id"], 21))
 
-    print "Read Test: ", len(locations_test)
+    if logger is None:
+      print "Read Test: ", len(locations_test)
+    else:
+      logger.write("Read Test: %d" % len(locations_test))
 
     ## Data Representation  x  Sentence in Corpus
     # utterances:  words, 1hot
@@ -243,7 +252,10 @@ class Data:
       else:
         print "Fuck you"
 
-    print "Converted Data"
+    if logger is None:
+      print "Converted Data"
+    else:
+      logger.write("Converted Data")
 
   # We assume all blocks are the same size and shape
   shape = {"type": "cube","size": 0.5,"shape_params": {
@@ -278,14 +290,14 @@ class Data:
       j["block_state"].append({"id": (coord + 1), "position": "%f,%f,%f" % (x, y, z)})
     return j
 
-  def write_predictions(self, predictions, filename="predictions", Test=True):
+  def write_predictions(self, predictions, dir="out", filename="predictions", Test=True):
     """
     Produce a series of JSONs with  (input, gold, predicted) and utterance
     :param predictions:   System's predictions
     :param filename:      Output filename
     :return:
     """
-    f = open("../out/" + filename + ".json", 'w')
+    f = open("../" + dir + "/" + filename + ".json", 'w')
     l = []
     full = {"block_meta": {"blocks": []}}
     # Give each white square a block (and brand)
@@ -331,7 +343,7 @@ class Data:
     f.close()
 
     # Simple human readable format
-    out = open("../out/human." + filename + ".txt", 'w')
+    out = open("../" + dir + "/human." + filename + ".txt", 'w')
     for i in range(len(predictions)):
       out.write("%s\n" % str(predictions[i]))
     out.close()
