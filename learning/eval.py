@@ -1,4 +1,4 @@
-import gzip,json,sys
+import gzip,json,sys,math
 from nltk.tokenize import TreebankWordTokenizer
 
 
@@ -20,7 +20,7 @@ stop = set(["a", "about", "above", "after", "again", "against", "all", "am", "an
 
 
 def diff(x, y):
-  return (abs(x[0] - y[0]) + abs(x[1] - y[1]) + abs(x[2] - y[2])) / 0.1524
+  return math.sqrt((x[0] - y[0])**2 + (x[1] - y[1])**2 + (x[2] - y[2])**2) / 0.1524
 
 T = []
 O = []
@@ -58,11 +58,10 @@ print "Grounding: %-5.2f" % (100.0 * grounding / len(G))
 err = 0.0
 errs = []
 for i in range(len(G)):
-  err += diff(G[i][1], S[i][1])
   errs.append(diff(G[i][1], S[i][1]))
 
-print "Error: %-9.2f  %-9.2f" % (err*0.1524, err/len(G))
 errs.sort()
+print "Error: %-9.2f  %-9.2f" % (sum(errs)*0.1524, sum(errs)/len(G))
 print "Median: %9.2f" % (errs[len(errs)/2])
 print "Min/Max: %9.2f  %9.2f" % (errs[0], errs[len(errs)-1])
 

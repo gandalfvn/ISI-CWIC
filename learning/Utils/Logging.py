@@ -3,8 +3,9 @@ import os
 
 class Logger:
 
-  def __init__(self, dir="out"):
+  def __init__(self, dir="../out"):
     self.log = open(dir + "/output.log", 'w')
+    self.write("Logging to " + dir)
 
   def write(self, msg):
     print msg

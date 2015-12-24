@@ -80,8 +80,8 @@ class Data:
     return nvec
 
   def __init__(self, logger=None, maxlines=1000000, sequence=False, separate=True, onehot=True):
-    trainingfile_input  = "../Data/logos/Train.input.json.gz"
-    trainingfile_output = "../Data/logos/Train.output.json.gz"
+    trainingfile_input  = "../Data/logos/Train.input.orig.json.gz"
+    trainingfile_output = "../Data/logos/Train.output.orig.json.gz"
     testingfile_input   = "../Data/logos/Dev.input.orig.json.gz"
     testingfile_output  = "../Data/logos/Dev.output.orig.json.gz"
 
@@ -297,7 +297,7 @@ class Data:
     :param filename:      Output filename
     :return:
     """
-    f = open("../" + dir + "/" + filename + ".json", 'w')
+    f = open(dir + "/" + filename + ".json", 'w')
     l = []
     full = {"block_meta": {"blocks": []}}
     # Give each white square a block (and brand)
@@ -343,7 +343,7 @@ class Data:
     f.close()
 
     # Simple human readable format
-    out = open("../" + dir + "/human." + filename + ".txt", 'w')
+    out = open(dir + "/human." + filename + ".txt", 'w')
     for i in range(len(predictions)):
       out.write("%s\n" % str(predictions[i]))
     out.close()

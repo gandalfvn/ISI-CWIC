@@ -14,8 +14,74 @@ from learning.Utils.Layer import Layers
 
 dir = Logger.getNewDir("../out/ModelA-String-Hidden-Dropout")
 log = Logger(dir)
-D = Data(6003, log, sequence=False)
+D = Data(log, 6003, sequence=False)
 L = Layers()
+
+def createData(train=True):
+  if train:
+    Text = D.Train["text"]
+    Class = D.Train["classes"]
+    World = D.Train["world"]
+    Actions = D.Train["actions"]
+  else:
+    Text = D.Test["text"]
+    Class = D.Test["classes"]
+    World = D.Test["world"]
+    Actions = D.Test["actions"]
+  Target = []
+  RP = []
+  random.seed(12192015)
+  bc = 0
+  ba = 0
+  zer = 0
+  for i in range(len(Class)):
+    blocks = set()
+    sent = D.TrainingInput[i]["text"]
+    goal_location = Actions[i]
+    words = TreebankWordTokenizer().tokenize(sent)
+    for brand in D.brands:
+      brandparts = brand.split()
+      for part in brandparts:
+        for word in words:
+          if editdistance.eval(part, word) < 2:
+            blocks.add(D.brands.index(brand))
+
+    act = D.TrainingOutput[i]["id"] - 1
+    if act in blocks:
+      blocks.remove(act)
+    ## Possible reference blocks
+    if len(blocks) > 0:
+      ba += len(blocks)
+      bc += 1
+      targetblock = blocks.pop()
+    else:
+      zer += 1
+      targetblock = act
+    Target.append(D.onehot(targetblock, 21))
+    loc = World[i][3 * targetblock], World[i][3 * targetblock + 1], World[i][3 * targetblock + 2]
+
+    # Discretize
+    if loc[0] < goal_location[0] and loc[2] < goal_location[2]:     # SW
+      RP.append(D.onehot(0, 8))
+    elif loc[0] < goal_location[0] and loc[2] == goal_location[2]:  # W
+      RP.append(D.onehot(1, 8))
+    elif loc[0] < goal_location[0] and loc[2] > goal_location[2]:   # NW
+      RP.append(D.onehot(2, 8))
+    elif loc[0] == goal_location[0] and loc[2] > goal_location[2]:  # N
+      RP.append(D.onehot(3, 8))
+    elif loc[0] > goal_location[0] and loc[2] > goal_location[2]:   # NE
+      RP.append(D.onehot(4, 8))
+    elif loc[0] > goal_location[0] and loc[2] == goal_location[2]:  # E
+      RP.append(D.onehot(5, 8))
+    elif loc[0] > goal_location[0] and loc[2] < goal_location[2]:   # SE
+      RP.append(D.onehot(6, 8))
+    elif loc[0] == goal_location[0] and loc[2] < goal_location[2]:  # S
+      RP.append(D.onehot(7, 8))
+
+  log.write(("Train " if train else "Test ") + "possible:%d  found:%d  zero:%d" % (ba, bc, zer))
+  log.write(("Train " if train else "Test ") + "Target: " + str(Target))
+  log.write(("Train " if train else "Test ") + "RP: " + str(RP))
+  return Text, Class, World, Actions, Target, RP
 
 
 def ave(l):
@@ -67,77 +133,20 @@ loss_sfs = -1 * tf.reduce_sum(tf.mul(y_C, tf.log(y_s)))  # One prediction
 loss_sfr = -1 * tf.reduce_sum(tf.mul(y_A, tf.log(y_rp)))  # One prediction
 
 ## Create Data ##
-Text = D.Train["text"]
-Class = D.Train["classes"]
-World = D.Train["world"]
-Actions = D.Train["actions"]
-Target = []
-RP = []
-random.seed(12192015)
-bc = 0
-ba = 0
-zer = 0
-for i in range(len(Class)):
-  blocks = set()
-  sent = D.TrainingInput[i]["text"]
-  goal_location = Actions[i]
-  words = TreebankWordTokenizer().tokenize(sent)
-  for brand in D.brands:
-    brandparts = brand.split()
-    for part in brandparts:
-      for word in words:
-        if editdistance.eval(part, word) < 2:
-          blocks.add(D.brands.index(brand))
-
-  act = D.TrainingOutput[i]["id"] - 1
-  if act in blocks:
-    blocks.remove(act)
-  ## Possible reference blocks
-  if len(blocks) > 0:
-    ba += len(blocks)
-    bc += 1
-    targetblock = blocks.pop()
-  else:
-    zer += 1
-    targetblock = act
-  Target.append(D.onehot(targetblock, 21))
-  loc = World[i][3 * targetblock], World[i][3 * targetblock + 1], World[i][3 * targetblock + 2]
-
-  # Discretize
-  if loc[0] < goal_location[0] and loc[2] < goal_location[2]:  # SW
-    RP.append(D.onehot(0, 8))
-  elif loc[0] < goal_location[0] and loc[2] == goal_location[2]:  # W
-    RP.append(D.onehot(1, 8))
-  elif loc[0] < goal_location[0] and loc[2] > goal_location[2]:  # NW
-    RP.append(D.onehot(2, 8))
-  elif loc[0] == goal_location[0] and loc[2] > goal_location[2]:  # N
-    RP.append(D.onehot(3, 8))
-  elif loc[0] > goal_location[0] and loc[2] > goal_location[2]:  # NE
-    RP.append(D.onehot(4, 8))
-  elif loc[0] > goal_location[0] and loc[2] == goal_location[2]:  # E
-    RP.append(D.onehot(5, 8))
-  elif loc[0] > goal_location[0] and loc[2] < goal_location[2]:  # SE
-    RP.append(D.onehot(6, 8))
-  elif loc[0] == goal_location[0] and loc[2] < goal_location[2]:  # S
-    RP.append(D.onehot(7, 8))
-
-log.write("possible:%d  found:%d  zero:%d" % (ba, bc, zer))
-
-log.write("Target: " + str(Target))
-log.write("RP:" + str(RP))
-
+Text, Class, World, Actions, Target, RP = createData(True)
+Text_test, Class_test, World_test, Actions_test, Target_test, RP_test = createData(False)
 
 def compute_loss_sfs():
-  return sess.run(loss_sfs, feed_dict={x_t: Text, y_A: RP, y_C: Class, y_tC: Target})
-
+  return (sess.run(loss_sfs, feed_dict={x_t: Text, y_A: RP, y_C: Class, y_tC: Target}),
+         sess.run(loss_sfs, feed_dict={x_t: Text_test, y_A: RP_test, y_C: Class_test, y_tC: Target_test}))
 
 def compute_loss_sft():
-  return sess.run(loss_sft, feed_dict={x_t: Text, y_A: RP, y_C: Class, y_tC: Target})
-
+  return (sess.run(loss_sft, feed_dict={x_t: Text, y_A: RP, y_C: Class, y_tC: Target}),
+         sess.run(loss_sft, feed_dict={x_t: Text_test, y_A: RP_test, y_C: Class_test, y_tC: Target_test}))
 
 def compute_loss_sfr():
-  return sess.run(loss_sfr, feed_dict={x_t: Text, y_A: RP, y_C: Class, y_tC: Target})
-
+  return (sess.run(loss_sfr, feed_dict={x_t: Text, y_A: RP, y_C: Class, y_tC: Target}),
+          sess.run(loss_sfr, feed_dict={x_t: Text_test, y_A: RP_test, y_C: Class_test, y_tC: Target_test}))
 
 ############################# Train Model #####################################
 
@@ -165,46 +174,52 @@ if len(sys.argv) > 1:
 else:
   log.write("Softmax Source")
   batches = D.minibatch([Text, Class, Target, RP])
-  oldLoss = compute_loss_sfs()
+  oldLoss = [compute_loss_sfs()[0]]
   for i in range(100):
     for a, b, c, d in D.scrambled(batches):
       sess.run(train_step_sfs, feed_dict={x_t: a, y_C: b, y_tC: c, y_A: d})
-    newLoss = compute_loss_sfs()
-    rat = (oldLoss - newLoss) / oldLoss
-    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
-    if abs(rat) < 0.001:
+    Loss = compute_loss_sfs()
+    newLoss = Loss[0]
+    rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
+    log.write("%3d %10.7f  %10.7f -->   %11.10f" % (i, newLoss, Loss[1], rat))
+    if abs(rat) < 0.01:
       break
-    oldLoss = ((i+1)*oldLoss + newLoss)/(i+1)
+    oldLoss.append(newLoss)
+    if len(oldLoss) > 3: oldLoss.pop(0)
     if math.isnan(newLoss) or math.isinf(newLoss):
       log.write("Check yo gradients: %f" % newLoss)
       sys.exit()
 
   log.write("Softmax Target")
-  oldLoss = compute_loss_sft()
+  oldLoss = [compute_loss_sft()[0]]
   for i in range(100):
     for a, b, c, d in D.scrambled(batches):
       sess.run(train_step_sft, feed_dict={x_t: a, y_C: b, y_tC: c, y_A: d})
-    newLoss = compute_loss_sft()
-    rat = (oldLoss - newLoss) / oldLoss
-    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
-    if abs(rat) < 0.001:
+    Loss = compute_loss_sft()
+    newLoss = Loss[0]
+    rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
+    log.write("%3d %10.7f  %10.7f -->   %11.10f" % (i, newLoss, Loss[1], rat))
+    if abs(rat) < 0.01:
       break
-    oldLoss = ((i+1)*oldLoss + newLoss)/(i+1)
+    oldLoss.append(newLoss)
+    if len(oldLoss) > 3: oldLoss.pop(0)
     if math.isnan(newLoss) or math.isinf(newLoss):
       log.write("Check yo gradients: %f " % newLoss)
       sys.exit()
 
   log.write("Softmax Position")
-  oldLoss = compute_loss_sfr()
+  oldLoss = [compute_loss_sfr()[0]]
   for i in range(100):
     for a, b, c, d in D.scrambled(batches):
       sess.run(train_step_sfr, feed_dict={x_t: a, y_C: b, y_tC: c, y_A: d})
-    newLoss = compute_loss_sfr()
-    rat = (oldLoss - newLoss) / oldLoss
-    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
-    if abs(rat) < 0.001:
+    Loss = compute_loss_sfr()
+    newLoss = Loss[0]
+    rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
+    log.write("%3d %10.7f %10.7f -->   %11.10f" % (i, newLoss, Loss[1], rat))
+    if abs(rat) < 0.01:
       break
-    oldLoss = ((i+1)*oldLoss + newLoss)/(i+1)
+    oldLoss.append(newLoss)
+    if len(oldLoss) > 3: oldLoss.pop(0)
     if math.isnan(newLoss) or math.isinf(newLoss):
       log.write("Check yo gradients: %f " % newLoss)
       sys.exit()
@@ -213,38 +228,6 @@ if len(sys.argv) == 0:
 
 ############################# Predict From Model ##############################
 log.write("Testing")
-
-blocks = set()
-targets = []
-ba = 0
-bc = 0
-zer = 0
-for i in range(len(D.Test["text"])):
-  sent = D.TrainingInput[i]["text"]
-  goal_location = Actions[i]
-  words = TreebankWordTokenizer().tokenize(sent)
-  for brand in D.brands:
-    brandparts = brand.split()
-    for part in brandparts:
-      for word in words:
-        if editdistance.eval(part, word) < 2:
-          blocks.add(D.brands.index(brand))
-
-  act = D.TestingOutput[i]["id"] - 1
-  if act in blocks:
-    blocks.remove(act)
-  ## Possible reference blocks
-  if len(blocks) > 0:
-    ba += len(blocks)
-    bc += 1
-    targetblock = list(blocks)
-  else:
-    zer += 1
-    targetblock = [act]
-  targets.append(targetblock)
-
-log.write("possible:%d  found:%d  zero:%d" % (ba, bc, zer))
-log.write("targets:" + str(targets))
 
 predicted_s = sess.run(y_s, feed_dict={x_t: D.Test["text"]})
 predicted_t = sess.run(y_t, feed_dict={x_t: D.Test["text"]})
@@ -267,23 +250,24 @@ for i in range(len(predicted_rp)):
   w = D.Test["world"]
   t = (w[i][3 * predicted_tid[i]], w[i][3 * predicted_tid[i] + 1], w[i][3 * predicted_tid[i] + 2])
   if predicted_rp[i] == 0:
-    predicted_locs.append([t[0] - d, t[1], t[2] - d])  # SW
+    predicted_locs.append([t[0] + d, t[1], t[2] + d])  # SW
   elif predicted_rp[i] == 1:
-    predicted_locs.append([t[0] - d, t[1], t[2]])  # W
+    predicted_locs.append([t[0] + d, t[1], t[2]])  # W
   elif predicted_rp[i] == 2:
-    predicted_locs.append([t[0] - d, t[1], t[2] + d])  # NW
+    predicted_locs.append([t[0] + d, t[1], t[2] - d])  # NW
   elif predicted_rp[i] == 3:
-    predicted_locs.append([t[0], t[1], t[2] + d])  # N
+    predicted_locs.append([t[0], t[1], t[2] - d])  # N
   elif predicted_rp[i] == 4:
-    predicted_locs.append([t[0] + d, t[1], t[2] + d])  # NE
+    predicted_locs.append([t[0] - d, t[1], t[2] - d])  # NE
   elif predicted_rp[i] == 5:
-    predicted_locs.append([t[0] + d, t[1], t[2]])  # E
+    predicted_locs.append([t[0] - d, t[1], t[2]])  # E
   elif predicted_rp[i] == 6:
-    predicted_locs.append([t[0] + d, t[1], t[2] - d])  # SE
+    predicted_locs.append([t[0] - d, t[1], t[2] + d])  # SE
   elif predicted_rp[i] == 7:
-    predicted_locs.append([t[0], t[1], t[2] - d])  # S
+    predicted_locs.append([t[0], t[1], t[2] + d])  # S
 
-log.write("predicted_tid: " + str(predicted_tid))
+log.write("Test predicted_tid: " + str(predicted_tid))
+log.write("Test predicted_rp: " + str(predicted_rp))
 
 D.write_predictions(np.concatenate((predicted_id, predicted_locs), axis=1), dir=dir)
 
@@ -307,23 +291,23 @@ for i in range(len(predicted_rp)):
   w = D.Train["world"]
   t = (w[i][3 * predicted_tid[i]], w[i][3 * predicted_tid[i] + 1], w[i][3 * predicted_tid[i] + 2])
   if predicted_rp[i] == 0:
-    predicted_locs.append([t[0] - d, t[1], t[2] - d])  # SW
+    predicted_locs.append([t[0] + d, t[1], t[2] + d])  # SW
   elif predicted_rp[i] == 1:
-    predicted_locs.append([t[0] - d, t[1], t[2]])  # W
+    predicted_locs.append([t[0] + d, t[1], t[2]])  # W
   elif predicted_rp[i] == 2:
-    predicted_locs.append([t[0] - d, t[1], t[2] + d])  # NW
+    predicted_locs.append([t[0] + d, t[1], t[2] - d])  # NW
   elif predicted_rp[i] == 3:
-    predicted_locs.append([t[0], t[1], t[2] + d])  # N
+    predicted_locs.append([t[0], t[1], t[2] - d])  # N
   elif predicted_rp[i] == 4:
-    predicted_locs.append([t[0] + d, t[1], t[2] + d])  # NE
+    predicted_locs.append([t[0] - d, t[1], t[2] - d])  # NE
   elif predicted_rp[i] == 5:
-    predicted_locs.append([t[0] + d, t[1], t[2]])  # E
+    predicted_locs.append([t[0] - d, t[1], t[2]])  # E
   elif predicted_rp[i] == 6:
-    predicted_locs.append([t[0] + d, t[1], t[2] - d])  # SE
+    predicted_locs.append([t[0] - d, t[1], t[2] + d])  # SE
   elif predicted_rp[i] == 7:
-    predicted_locs.append([t[0], t[1], t[2] - d])  # S
+    predicted_locs.append([t[0], t[1], t[2] + d])  # S
 
 # log.write(predicted_id
-log.write("predicted_tid: " + str(predicted_tid))
-log.write("predicted_rp: " + str(predicted_rp))
+log.write("Train predicted_tid: " + str(predicted_tid))
+log.write("Train predicted_rp: " + str(predicted_rp))
 D.write_predictions(np.concatenate((predicted_id, predicted_locs), axis=1), dir=dir, filename="Train", Test=False)
