@@ -101,6 +101,23 @@ Meteor.methods({
             });
         });
         return turk;
+    },
+    mturkReviewHITs: function (p) {
+        var mturk = Meteor['npmRequire']('mturk-api');
+        var turk = Async.runSync(function (done) {
+            var mturkconf = _.extend({}, serverconfig.mturk);
+            mturkconf.sandbox = false; //always operate in live env.
+            mturk.connect(mturkconf).then(function (api) {
+                api.req('GetReviewableHITs', p)
+                    .then(function (resp) {
+                    done(null, resp);
+                }, function (err) {
+                    console.warn('GetReviewableHITs err', err);
+                    done(err);
+                });
+            });
+        });
+        return turk;
     }
 });
 //# sourceMappingURL=mturkhelper.js.map

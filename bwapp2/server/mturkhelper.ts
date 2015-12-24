@@ -40,6 +40,12 @@ interface iBlockTurker{
   Reason: string
 }
 
+interface iReviewableHITs{
+  Status: string,
+  PageSize: number,
+  PageNumber: number
+}
+
 Meteor.methods({
   mturkCreateHIT: function(p:iTurkCreateParam){
     console.warn(p);
@@ -144,5 +150,26 @@ Meteor.methods({
     });
 
     return turk;
+  },
+
+  mturkReviewHITs: function(p:iReviewableHITs){
+    var mturk = Meteor['npmRequire']('mturk-api');
+
+    var turk = Async.runSync(function(done){
+      var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);
+      mturkconf.sandbox = false; //always operate in live env.
+      mturk.connect(mturkconf).then(function(api){
+        api.req('GetReviewableHITs', p)
+          .then(function(resp){
+            done(null, resp);
+          }, function(err){
+            console.warn('GetReviewableHITs err', err);
+            done(err);
+          });
+      })
+    });
+
+    return turk;
   }
+
 });

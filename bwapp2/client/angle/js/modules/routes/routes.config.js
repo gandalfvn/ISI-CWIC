@@ -61,6 +61,23 @@
         ),
         controller: 'genWorldCtrl'
       })
+      .state('app.gensimpexp', {
+        url: '/gensimpexp?sid',
+        title: 'Simple Experiment',
+        templateUrl: helper.basepath('gensimpexp.html'),
+        resolve: /*angular.extend(
+          {
+            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
+              return $meteor.requireValidUser(function (user) {
+                return !$rootScope.isRole(user, 'agent');
+              });
+            }]
+          }, */ //simple functions appear first so data is loaded
+          helper.resolveFor('babylonjs', 'datatables')
+        //)
+        ,
+        controller: 'genSimpExpCtrl'
+      })
       .state('app.genpred', {
         url: '/genpred?sid',
         title: 'Generate Prediction',
@@ -147,22 +164,6 @@
           helper.resolveFor('babylonjs', 'ngDialog', 'datatables')
         ),
         controller: 'replayCtrl'
-      })
-      .state('app.describe', {
-        url: '/describe?annotid',
-        title: 'Describe View',
-        templateUrl: helper.basepath('describe.html'),
-        resolve: angular.extend(
-          {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
-                return !$rootScope.isRole(user, 'agent');
-              });
-            }]
-          },  //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'ngDialog', 'datatables')
-        ),
-        controller: 'describeCtrl'
       })
       .state('app.tasks', {
         url: '/tasks',

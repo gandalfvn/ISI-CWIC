@@ -111,7 +111,8 @@ angular.module('angle').service('AppUtils', [function () {
                 }
                 cCurrentStateDef.prototype.clear = function () {
                     for (var i = 0; i < cCurrentStateDef.l.length; i++) {
-                        this[cCurrentStateDef.l[i]] = null;
+                        if (this[cCurrentStateDef.l[i]])
+                            this[cCurrentStateDef.l[i]] = null;
                     }
                     if (!_.isUndefined(this._id))
                         delete this['_id'];
@@ -119,13 +120,21 @@ angular.module('angle').service('AppUtils', [function () {
                 ;
                 cCurrentStateDef.prototype.copy = function (s) {
                     for (var i = 0; i < cCurrentStateDef.l.length; i++) {
-                        this[cCurrentStateDef.l[i]] = s[cCurrentStateDef.l[i]];
+                        if (s[cCurrentStateDef.l[i]])
+                            this[cCurrentStateDef.l[i]] = s[cCurrentStateDef.l[i]];
                     }
                 };
                 ;
-                cCurrentStateDef.l = ['block_meta', 'block_states', '_id', 'public', 'created', 'creator', 'name'];
+                cCurrentStateDef.l = ['block_meta', 'block_states', 'block_state', 'utterance', '_id', 'public', 'created', 'creator', 'name'];
                 return cCurrentStateDef;
-            })()
+            })(),
+            //check if the associative array contains ONLY the valid keys
+            isValidKeys: function (assocarray, validKeys) {
+                var fcheck = _.difference(_.keys(assocarray), validKeys);
+                if (fcheck.length)
+                    return { ret: false, err: fcheck };
+                return { ret: true, err: fcheck };
+            }
         };
     }]);
 //# sourceMappingURL=apputils.js.map
