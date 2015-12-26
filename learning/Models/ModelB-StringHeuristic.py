@@ -20,6 +20,60 @@ L = Layers()
 def distance((x, y, z), (a, b, c)):
   return math.sqrt((x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2)
 
+def ave(l):
+  return sum(l) / len(l);
+
+def createData(train=True):
+  if train:
+    Text = D.Train["text"]
+    Class = D.Train["classes"]
+    World = D.Train["world"]
+    Actions = D.Train["actions"]
+  else:
+    Text = D.Test["text"]
+    Class = D.Test["classes"]
+    World = D.Test["world"]
+    Actions = D.Test["actions"]
+  Target = []
+  random.seed(12192015)
+  bc = 0
+  ba = 0
+  zer = 0
+  for i in range(len(Class)):
+    blocks = set()
+    if train:
+      sent = D.TrainingInput[i]["text"]
+    else:
+      sent = D.TestingInput[i]["text"]
+    goal_location = Actions[i]
+    words = TreebankWordTokenizer().tokenize(sent)
+    for brand in D.brands:
+      brandparts = brand.split()
+      for part in brandparts:
+        for word in words:
+          if editdistance.eval(part, word) < 2:
+            blocks.add(D.brands.index(brand))
+
+    if train:
+      act = D.TrainingOutput[i]["id"] - 1
+    else:
+      act = D.TestingOutput[i]["id"] - 1
+    if act in blocks:
+      blocks.remove(act)
+    ## Possible reference blocks
+    if len(blocks) > 0:
+      ba += len(blocks)
+      bc += 1
+      targetblock = blocks.pop()
+    else:
+      zer += 1
+      targetblock = act
+    Target.append(D.onehot(targetblock, 20))
+
+  log.write(("Train " if train else "Test ") + "possible:%d  found:%d  zero:%d" % (ba, bc, zer))
+  log.write(("Train " if train else "Test ") + "Target: " + str(Target))
+  return Text, Class, World, Actions, Target
+
 
 ############################# Create a Session ################################
 ###  Input:   1 Hot representation of the sentence (up to length 60)
@@ -55,52 +109,21 @@ loss_sfs = -1 * tf.reduce_sum(tf.mul(y_C, tf.log(y_s)))  # One prediction
 loss_sfr = tf.reduce_sum(tf.square(tf.sub(y_A, y_rp)))
 
 ## Create Data ##
-Text = D.Train["text"]
-Class = D.Train["classes"]
-World = D.Train["world"]
-Actions = D.Train["actions"]
-Target = []
-random.seed(12192015)
-bc = 0
-ba = 0
-zer = 0
-for i in range(len(Class)):
-  blocks = set()
-  sent = D.TrainingInput[i]["text"]
-  goal_location = Actions[i]
-  words = TreebankWordTokenizer().tokenize(sent)
-  for brand in D.brands:
-    brandparts = brand.split()
-    for part in brandparts:
-      for word in words:
-        if editdistance.eval(part, word) < 2:
-          blocks.add(D.brands.index(brand))
-
-  act = D.TrainingOutput[i]["id"] - 1
-  if act in blocks:
-    blocks.remove(act)
-  ## Possible reference blocks
-  if len(blocks) > 0:
-    ba += len(blocks)
-    bc += 1
-    targetblock = blocks.pop()
-  else:
-    zer += 1
-    targetblock = random.randint(0,19)
-  Target.append(D.onehot(targetblock, 20))
-
-log.write("possible:%d  found:%d  zero:%d" % (ba, bc, zer))
+Text, Class, World, Actions, Target = createData(True)
+Text_test, Class_test, World_test, Actions_test, Target_test = createData(False)
 
 def compute_loss_sfs():
-  return sess.run(loss_sfs, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target})
-
+  return (sess.run(loss_sfs, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target}),
+          sess.run(loss_sfs, feed_dict={x_t: Text_test, x_w: World_test, y_A: Actions_test, y_C: Class_test, y_tC: Target_test}))
 
 def compute_loss_sft():
-  return sess.run(loss_sft, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target})
+  return (sess.run(loss_sft, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target}),
+          sess.run(loss_sft, feed_dict={x_t: Text_test, x_w: World_test, y_A: Actions_test, y_C: Class_test, y_tC: Target_test}))
 
 
 def compute_loss_sfr():
-  return sess.run(loss_sfr, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target})
+  return (sess.run(loss_sfr, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target}),
+          sess.run(loss_sfr, feed_dict={x_t: Text_test, x_w: World_test, y_A: Actions_test, y_C: Class_test, y_tC: Target_test}))
 
 
 ############################# Train Model #####################################
@@ -129,46 +152,52 @@ if len(sys.argv) > 1:
 else:
   log.write("Softmax Source")
   batches = D.minibatch([Text, World, Class, Target, Actions])
-  oldLoss = compute_loss_sfs()
+  oldLoss = [compute_loss_sfs()[0]]
   for i in range(100):
     for a, b, c, d, e in D.scrambled(batches):
       sess.run(train_step_sfs, feed_dict={x_t: a, x_w: b, y_C: c, y_tC: d, y_A: e})
-    newLoss = compute_loss_sfs()
-    rat = (oldLoss - newLoss) / oldLoss
-    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
-    if abs(rat) < 0.001:
+    Loss = compute_loss_sfs()
+    newLoss = Loss[0]
+    rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
+    log.write("%3d %10.7f  %10.7f  -->   %11.10f" % (i, newLoss, Loss[1], rat))
+    if abs(rat) < 0.01:
       break
-    oldLoss = newLoss
+    oldLoss.append(newLoss)
+    if len(oldLoss) > 3: oldLoss.pop(0)
     if math.isnan(newLoss) or math.isinf(newLoss):
       log.write("Check yo gradients: %f" % newLoss)
       sys.exit()
 
   log.write("Softmax Target")
-  oldLoss = compute_loss_sft()
+  oldLoss = [compute_loss_sft()[0]]
   for i in range(100):
     for a, b, c, d, e in D.scrambled(batches):
       sess.run(train_step_sft, feed_dict={x_t: a, x_w: b, y_C: c, y_tC: d, y_A: e})
-    newLoss = compute_loss_sft()
-    rat = (oldLoss - newLoss) / oldLoss
-    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
+    Loss = compute_loss_sft()
+    newLoss = Loss[0]
+    rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
+    log.write("%3d %10.7f  %10.7f  -->   %11.10f" % (i, newLoss, Loss[1], rat))
     if abs(rat) < 0.001:
       break
-    oldLoss = newLoss
+    oldLoss.append(newLoss)
+    if len(oldLoss) > 3: oldLoss.pop(0)
     if math.isnan(newLoss) or math.isinf(newLoss):
       log.write("Check yo gradients: %f" % newLoss)
       sys.exit()
 
   log.write("Regression Position")
-  oldLoss = compute_loss_sfr()
+  oldLoss = [compute_loss_sfr()[0]]
   for i in range(100):
     for a, b, c, d, e in D.scrambled(batches):
       sess.run(train_step_sfr, feed_dict={x_t: a, x_w: b, y_C: c, y_tC: d, y_A: e})
-    newLoss = compute_loss_sfr()
-    rat = (oldLoss - newLoss) / oldLoss
-    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
-    if abs(rat) < 0.001:
+    Loss = compute_loss_sfr()
+    newLoss = Loss[0]
+    rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
+    log.write("%3d %10.7f  %10.7f  -->   %11.10f" % (i, newLoss, Loss[1], rat))
+    if abs(rat) < 0.01:
       break
-    oldLoss = newLoss
+    oldLoss.append(newLoss)
+    if len(oldLoss) > 3: oldLoss.pop(0)
     if math.isnan(newLoss) or math.isinf(newLoss):
       log.write("Check yo gradients: %f " % newLoss)
       sys.exit()
