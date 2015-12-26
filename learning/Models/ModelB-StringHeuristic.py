@@ -33,14 +33,14 @@ world_dim = len(D.Train["world"][0])
 x_t = L.placeholder(text_dim, 'text')
 x_w = L.placeholder(world_dim, 'world')
 y_A = L.placeholder(3, 'y_Action')
-y_C = L.placeholder(21, 'y_Class')
-y_tC = L.placeholder(21, 'y_targetClass')
+y_C = L.placeholder(20, 'y_Class')
+y_tC = L.placeholder(20, 'y_targetClass')
 
-W_s = L.uniform_W(input_dim=text_dim, output_dim=21, name='W_w')
-b_s = L.uniform_b(dim=21, name='b_t')
-W_t = L.uniform_W(input_dim=text_dim, output_dim=21, name='W_w')
-b_t = L.uniform_b(dim=21, name='b_t')
-W_rp = L.uniform_W(input_dim=(text_dim + world_dim + 42), output_dim=3, name='W_w')
+W_s = L.uniform_W(input_dim=text_dim, output_dim=20, name='W_w')
+b_s = L.uniform_b(dim=20, name='b_t')
+W_t = L.uniform_W(input_dim=text_dim, output_dim=20, name='W_w')
+b_t = L.uniform_b(dim=20, name='b_t')
+W_rp = L.uniform_W(input_dim=(text_dim + world_dim + 40), output_dim=3, name='W_w')
 b_rp = L.uniform_b(dim=3, name='b_t')
 
 d_s = tf.matmul(x_t, W_s) + b_s
@@ -87,7 +87,7 @@ for i in range(len(Class)):
   else:
     zer += 1
     targetblock = random.randint(0,19)
-  Target.append(D.onehot(targetblock, 21))
+  Target.append(D.onehot(targetblock, 20))
 
 log.write("possible:%d  found:%d  zero:%d" % (ba, bc, zer))
 
