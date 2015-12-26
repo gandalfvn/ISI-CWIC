@@ -1,16 +1,15 @@
 import math
-import editdistance
 import random
 import sys
-from nltk.tokenize import TreebankWordTokenizer
 
+import editdistance
 import numpy as np
 import tensorflow as tf
-
-from learning.Utils.Logging import Logger
-from learning.Utils.ReadData import Data
+from nltk.tokenize import TreebankWordTokenizer
 
 from learning.Utils.Layer import Layers
+from learning.Utils.Logging import Logger
+from learning.Utils.ReadData import Data
 
 dir = Logger.getNewDir("../out/ModelA-String-Hidden-Dropout")
 log = Logger(dir)
@@ -36,7 +35,10 @@ def createData(train=True):
   zer = 0
   for i in range(len(Class)):
     blocks = set()
-    sent = D.TrainingInput[i]["text"]
+    if train:
+      sent = D.TrainingInput[i]["text"]
+    else:
+      sent = D.TestingInput[i]["text"]
     goal_location = Actions[i]
     words = TreebankWordTokenizer().tokenize(sent)
     for brand in D.brands:
@@ -46,7 +48,10 @@ def createData(train=True):
           if editdistance.eval(part, word) < 2:
             blocks.add(D.brands.index(brand))
 
-    act = D.TrainingOutput[i]["id"] - 1
+    if train:
+      act = D.TrainingOutput[i]["id"] - 1
+    else:
+      act = D.TestingOutput[i]["id"] - 1
     if act in blocks:
       blocks.remove(act)
     ## Possible reference blocks
@@ -57,7 +62,7 @@ def createData(train=True):
     else:
       zer += 1
       targetblock = act
-    Target.append(D.onehot(targetblock, 21))
+    Target.append(D.onehot(targetblock, 20))
     loc = World[i][3 * targetblock], World[i][3 * targetblock + 1], World[i][3 * targetblock + 2]
 
     # Discretize
@@ -77,6 +82,9 @@ def createData(train=True):
       RP.append(D.onehot(6, 8))
     elif loc[0] == goal_location[0] and loc[2] < goal_location[2]:  # S
       RP.append(D.onehot(7, 8))
+    else:
+      print "Error, Invalid"
+      sys.exit()
 
   log.write(("Train " if train else "Test ") + "possible:%d  found:%d  zero:%d" % (ba, bc, zer))
   log.write(("Train " if train else "Test ") + "Target: " + str(Target))
@@ -86,7 +94,6 @@ def createData(train=True):
 
 def ave(l):
   return sum(l) / len(l);
-
 
 def distance((x, y, z), (a, b, c)):
   return math.sqrt((x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2)
@@ -102,8 +109,8 @@ sess = tf.Session()
 text_dim = len(D.Train["text"][0])
 x_t = L.placeholder(text_dim, 'text')
 y_A = L.placeholder(8, 'y_Action')
-y_C = L.placeholder(21, 'y_Class')
-y_tC = L.placeholder(21, 'y_targetClass')
+y_C = L.placeholder(20, 'y_Class')
+y_tC = L.placeholder(20, 'y_targetClass')
 
 W_hs = L.uniform_W(output_dim=100, input_dim=text_dim, name='W_w')
 b_hs = L.uniform_b(dim=100, name='b_t')
@@ -112,10 +119,10 @@ b_ht = L.uniform_b(dim=100, name='b_t')
 W_hr = L.uniform_W(output_dim=100, input_dim=text_dim, name='W_w')
 b_hr = L.uniform_b(dim=100, name='b_t')
 
-W_s = L.uniform_W(input_dim=100, output_dim=21, name='W_w')
-b_s = L.uniform_b(dim=21, name='b_t')
-W_t = L.uniform_W(input_dim=100, output_dim=21, name='W_w')
-b_t = L.uniform_b(dim=21, name='b_t')
+W_s = L.uniform_W(input_dim=100, output_dim=20, name='W_w')
+b_s = L.uniform_b(dim=20, name='b_t')
+W_t = L.uniform_W(input_dim=100, output_dim=20, name='W_w')
+b_t = L.uniform_b(dim=20, name='b_t')
 W_rp = L.uniform_W(input_dim=100, output_dim=8, name='W_w')
 b_rp = L.uniform_b(dim=8, name='b_t')
 
@@ -265,6 +272,9 @@ for i in range(len(predicted_rp)):
     predicted_locs.append([t[0] - d, t[1], t[2] + d])  # SE
   elif predicted_rp[i] == 7:
     predicted_locs.append([t[0], t[1], t[2] + d])  # S
+  else:
+    log.write("ERROR")
+    sys.exit()
 
 log.write("Test predicted_tid: " + str(predicted_tid))
 log.write("Test predicted_rp: " + str(predicted_rp))
@@ -306,6 +316,10 @@ for i in range(len(predicted_rp)):
     predicted_locs.append([t[0] - d, t[1], t[2] + d])  # SE
   elif predicted_rp[i] == 7:
     predicted_locs.append([t[0], t[1], t[2] + d])  # S
+  else:
+    log.write("ERROR")
+    sys.exit()
+
 
 # log.write(predicted_id
 log.write("Train predicted_tid: " + str(predicted_tid))

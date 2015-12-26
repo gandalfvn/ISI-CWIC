@@ -1,16 +1,12 @@
 import math
-import editdistance
 import random
 import sys
-from nltk.tokenize import TreebankWordTokenizer
 
 import numpy as np
-import tensorflow as tf
-
-from learning.Utils.Logging import Logger
-from learning.Utils.ReadData import Data
 
 from learning.Utils.Layer import Layers
+from learning.Utils.Logging import Logger
+from learning.Utils.ReadData import Data
 
 dir = Logger.getNewDir("../out/CheatHeuristic-Random")
 log = Logger(dir)
@@ -36,34 +32,14 @@ def createData(train=True):
   ba = 0
   zer = 0
   for i in range(len(Class)):
-    blocks = set()
-    sent = D.TrainingInput[i]["text"]
     goal_location = Actions[i]
-    words = TreebankWordTokenizer().tokenize(sent)
-    for brand in D.brands:
-      brandparts = brand.split()
-      for part in brandparts:
-        for word in words:
-          if editdistance.eval(part, word) < 2:
-            blocks.add(D.brands.index(brand))
-
-    act = D.TrainingOutput[i]["id"] - 1
-    if act in blocks:
-      blocks.remove(act)
-    ## Possible reference blocks
-    if len(blocks) > 0:
-      d = 100000
-      for block in blocks:
-        loc = World[i][3 * block], World[i][3 * block + 1], World[i][3 * block + 2]
-        dist = distance(loc, goal_location)
-        if dist < d:
-          d = dist
-          targetblock = block
-      ba += len(blocks)
-      bc += 1
-    else:
-      zer += 1
-      targetblock = act
+    d = 100000
+    for block in range(len(World[i])/3):
+      loc = World[i][3 * block], World[i][3 * block + 1], World[i][3 * block + 2]
+      dist = distance(loc, goal_location)
+      if dist < d:
+        d = dist
+        targetblock = block
     Target.append(targetblock)
     loc = World[i][3 * targetblock], World[i][3 * targetblock + 1], World[i][3 * targetblock + 2]
 
@@ -84,6 +60,9 @@ def createData(train=True):
       RP.append(6)
     elif loc[0] == goal_location[0] and loc[2] < goal_location[2]:  # S
       RP.append(7)
+    else:
+      log.write("ERR")
+      sys.exit()
 
     d = 0.1666  # 524
     if RP[i] == 0:
@@ -102,6 +81,9 @@ def createData(train=True):
       moved = [loc[0] - d, loc[1], loc[2] + d]  # SE
     elif RP[i] == 7:
       moved = [loc[0], loc[1], loc[2] + d]  # S
+    else:
+      log.write("ERR")
+      sys.exit()
 
     err.append(distance(moved, goal_location))
 
@@ -159,6 +141,9 @@ for i in range(len(predicted_rp)):
     predicted_locs.append([t[0] - d, t[1], t[2] + d])  # SE
   elif predicted_rp[i] == 7:
     predicted_locs.append([t[0], t[1], t[2] + d])  # S
+  else:
+    log.write("ERR")
+    sys.exit()
 
 log.write("Test predicted_tid: " + str(predicted_tid))
 log.write("Test predicted_rp: " + str(predicted_rp))
@@ -189,6 +174,9 @@ for i in range(len(predicted_rp)):
     predicted_locs.append([t[0] - d, t[1], t[2] + d])  # SE
   elif predicted_rp[i] == 7:
     predicted_locs.append([t[0], t[1], t[2] + d])  # S
+  else:
+    log.write("ERR")
+    sys.exit()
 
 # log.write(predicted_id
 log.write("Train predicted_tid: " + str(predicted_tid))

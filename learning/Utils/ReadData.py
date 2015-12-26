@@ -1,10 +1,14 @@
 import copy
-import math
-import numpy as np
-import json
 import gzip
+import json
+import math
 import random
+
+import numpy as np
+import pkg_resources
 from nltk.tokenize import TreebankWordTokenizer
+
+resource_package = "learning"
 
 class Data:
 
@@ -80,10 +84,10 @@ class Data:
     return nvec
 
   def __init__(self, logger=None, maxlines=1000000, sequence=False, separate=True, onehot=True):
-    trainingfile_input  = "../Data/logos/Train.input.orig.json.gz"
-    trainingfile_output = "../Data/logos/Train.output.orig.json.gz"
-    testingfile_input   = "../Data/logos/Dev.input.orig.json.gz"
-    testingfile_output  = "../Data/logos/Dev.output.orig.json.gz"
+    trainingfile_input  = pkg_resources.resource_filename(resource_package, "Data/logos/Train.input.orig.json.gz")
+    trainingfile_output = pkg_resources.resource_filename(resource_package, "Data/logos/Train.output.orig.json.gz")
+    testingfile_input   = pkg_resources.resource_filename(resource_package, "Data/logos/Dev.input.orig.json.gz")
+    testingfile_output  = pkg_resources.resource_filename(resource_package, "Data/logos/Dev.output.orig.json.gz")
 
     self.TrainingInput = []
     self.TrainingOutput = []
@@ -160,7 +164,7 @@ class Data:
         j = json.loads(line)
         self.TrainingOutput.append(j)
         actions.append(j["loc"])
-        classes.append(self.onehot(j["id"], 21))
+        classes.append(self.onehot(j["id"] - 1, 20))
         count += 1
       else:
         break
@@ -196,7 +200,7 @@ class Data:
       j = json.loads(line)
       self.TestingOutput.append(j)
       actions_test.append(j["loc"])
-      classes_test.append(self.onehot(j["id"], 21))
+      classes_test.append(self.onehot(j["id"] - 1, 20))
 
     if logger is None:
       print "Read Test: ", len(locations_test)
@@ -327,10 +331,10 @@ class Data:
       # Update location of gold block
       if Test:
         action = self.TestingOutput[i]["loc"]
-        blockID = self.TestingOutput[i]["id"]
+        blockID = self.TestingOutput[i]["id"] - 1
       else:
         action = self.TrainingOutput[i]["loc"]
-        blockID = self.TrainingOutput[i]["id"]
+        blockID = self.TrainingOutput[i]["id"] - 1
 
       glocations[(blockID - 1) * 3] = float(action[0])
       glocations[(blockID - 1) * 3 + 1] = float(action[1])
