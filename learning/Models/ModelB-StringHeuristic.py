@@ -1,16 +1,19 @@
 import math
-import editdistance
 import random
 import sys
-from nltk.tokenize import TreebankWordTokenizer
 
+import editdistance
 import numpy as np
 import tensorflow as tf
-from learning.Utils.ReadData import Data
+from nltk.tokenize import TreebankWordTokenizer
 
 from learning.Utils.Layer import Layers
+from learning.Utils.Logging import Logger
+from learning.Utils.ReadData import Data
 
-D = Data(6003, sequence=False)
+dir = Logger.getNewDir("../out/ModelB-String")
+log = Logger(dir)
+D = Data(log, 6003, sequence=False)
 L = Layers()
 
 
@@ -86,7 +89,7 @@ for i in range(len(Class)):
     targetblock = random.randint(0,19)
   Target.append(D.onehot(targetblock, 21))
 
-print ba, bc, zer
+log.write("possible:%d  found:%d  zero:%d" % (ba, bc, zer))
 
 def compute_loss_sfs():
   return sess.run(loss_sfs, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target})
@@ -102,7 +105,7 @@ def compute_loss_sfr():
 
 ############################# Train Model #####################################
 
-print "Training"
+log.write("Training")
 
 saver = tf.train.Saver()
 merged_summary_op = tf.merge_all_summaries()
@@ -124,7 +127,7 @@ if len(sys.argv) > 1:
   ckpt = tf.train.get_checkpoint_state(sys.argv[1])
   saver.restore(sess, ckpt.model_checkpoint_path)
 else:
-  print "Softmax Source"
+  log.write("Softmax Source")
   batches = D.minibatch([Text, World, Class, Target, Actions])
   oldLoss = compute_loss_sfs()
   for i in range(100):
@@ -132,49 +135,49 @@ else:
       sess.run(train_step_sfs, feed_dict={x_t: a, x_w: b, y_C: c, y_tC: d, y_A: e})
     newLoss = compute_loss_sfs()
     rat = (oldLoss - newLoss) / oldLoss
-    print "%3d %10.7f  -->   %11.10f" % (i, newLoss, rat)
+    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
     if abs(rat) < 0.001:
       break
     oldLoss = newLoss
     if math.isnan(newLoss) or math.isinf(newLoss):
-      print "Check yo gradients: ", newLoss
+      log.write("Check yo gradients: %f" % newLoss)
       sys.exit()
 
-  print "Softmax Target"
+  log.write("Softmax Target")
   oldLoss = compute_loss_sft()
   for i in range(100):
     for a, b, c, d, e in D.scrambled(batches):
       sess.run(train_step_sft, feed_dict={x_t: a, x_w: b, y_C: c, y_tC: d, y_A: e})
     newLoss = compute_loss_sft()
     rat = (oldLoss - newLoss) / oldLoss
-    print "%3d %10.7f  -->   %11.10f" % (i, newLoss, rat)
+    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
     if abs(rat) < 0.001:
       break
     oldLoss = newLoss
     if math.isnan(newLoss) or math.isinf(newLoss):
-      print "Check yo gradients: ", newLoss
+      log.write("Check yo gradients: %f" % newLoss)
       sys.exit()
 
-  print "Regression Position"
+  log.write("Regression Position")
   oldLoss = compute_loss_sfr()
   for i in range(100):
     for a, b, c, d, e in D.scrambled(batches):
       sess.run(train_step_sfr, feed_dict={x_t: a, x_w: b, y_C: c, y_tC: d, y_A: e})
     newLoss = compute_loss_sfr()
     rat = (oldLoss - newLoss) / oldLoss
-    print "%3d %10.7f  -->   %11.10f" % (i, newLoss, rat)
+    log.write("%3d %10.7f  -->   %11.10f" % (i, newLoss, rat))
     if abs(rat) < 0.001:
       break
     oldLoss = newLoss
     if math.isnan(newLoss) or math.isinf(newLoss):
-      print "Check yo gradients: ", newLoss
+      log.write("Check yo gradients: %f " % newLoss)
       sys.exit()
 
 if len(sys.argv) == 0:
   saver.save(sess, '../outB/model.ckpt')
 
 ############################# Predict From Model ##############################
-print "Testing"
+log.write("Testing")
 predicted_s = sess.run(y_s, feed_dict={x_t: D.Test["text"]})
 predicted_t = sess.run(y_t, feed_dict={x_t: D.Test["text"]})
 predicted_r = sess.run(y_rp, feed_dict={x_t: D.Test["text"], x_w : D.Test["world"]})
@@ -186,7 +189,7 @@ predicted_tid = []
 for i in range(len(predicted_t)):
   predicted_tid.append(sess.run(tf.argmax(predicted_t[i], 0)))
 
-print predicted_id
-print predicted_tid
+log.write(predicted_id)
+log.write(predicted_tid)
 
 D.write_predictions(np.concatenate((predicted_id, predicted_r), axis=1))
