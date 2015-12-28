@@ -77,6 +77,7 @@ def createData(train=True):
 
   log.write(("Train " if train else "Test ") + "possible:%d  found:%d  zero:%d" % (ba, bc, zer))
   log.write(("Train " if train else "Test ") + "Target: " + str(Target))
+  log.write(("Train " if train else "Test ") + "Target2: " + str(Target2))
   return Text, Class, World, Actions, Target, Target2
 
 
@@ -256,8 +257,8 @@ else:
       log.write("Check yo gradients: %f " % newLoss)
       sys.exit()
 
-if len(sys.argv) == 0:
-  saver.save(sess, '../outB/model.ckpt')
+if len(sys.argv) == 1:
+  saver.save(sess, dir + '/model.ckpt')
 
 ############################# Predict From Model ##############################
 log.write("Testing")
@@ -273,11 +274,11 @@ predicted_tid = []
 for i in range(len(predicted_t)):
   predicted_tid.append(sess.run(tf.argmax(predicted_t[i], 0)))
 predicted_tid2 = []
-for i in range(len(predicted_t)):
-  predicted_tid2.append(sess.run(tf.argmax(predicted_t[i], 0)))
+for i in range(len(predicted_t2)):
+  predicted_tid2.append(sess.run(tf.argmax(predicted_t2[i], 0)))
 
-log.write(str(predicted_id))
-log.write(str(predicted_tid))
-log.write(str(predicted_tid2))
+log.write("Test predicted_id: " + str(predicted_id))
+log.write("Test predicted_tid: " + str(predicted_tid))
+log.write("Test predicted_tid2: " + str(predicted_tid2))
 
 D.write_predictions(np.concatenate((predicted_id, predicted_r), axis=1), dir=dir)
