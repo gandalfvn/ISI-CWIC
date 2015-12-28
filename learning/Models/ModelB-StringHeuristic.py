@@ -202,8 +202,8 @@ else:
       log.write("Check yo gradients: %f " % newLoss)
       sys.exit()
 
-if len(sys.argv) == 0:
-  saver.save(sess, '../outB/model.ckpt')
+if len(sys.argv) == 1:
+  saver.save(sess, dir + '/model.ckpt')
 
 ############################# Predict From Model ##############################
 log.write("Testing")
@@ -218,7 +218,23 @@ predicted_tid = []
 for i in range(len(predicted_t)):
   predicted_tid.append(sess.run(tf.argmax(predicted_t[i], 0)))
 
-log.write(predicted_id)
-log.write(predicted_tid)
+log.write(str(predicted_id))
+log.write(str(predicted_tid))
 
-D.write_predictions(np.concatenate((predicted_id, predicted_r), axis=1))
+D.write_predictions(np.concatenate((predicted_id, predicted_r), axis=1), dir=dir)
+
+predicted_s = sess.run(y_s, feed_dict={x_t: D.Train["text"]})
+predicted_t = sess.run(y_t, feed_dict={x_t: D.Train["text"]})
+predicted_r = sess.run(y_rp, feed_dict={x_t: D.Train["text"], x_w : D.Train["world"]})
+
+predicted_id = []
+for i in range(len(predicted_s)):
+  predicted_id.append([sess.run(tf.argmax(predicted_s[i], 0))])
+predicted_tid = []
+for i in range(len(predicted_t)):
+  predicted_tid.append(sess.run(tf.argmax(predicted_t[i], 0)))
+
+# log.write(predicted_id
+log.write("Train predicted_id: " + str(predicted_id))
+log.write("Train predicted_tid: " + str(predicted_tid))
+D.write_predictions(np.concatenate((predicted_id, predicted_r), axis=1), dir=dir, filename="Train", Test=False)

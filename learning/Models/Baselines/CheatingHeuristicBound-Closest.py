@@ -8,7 +8,7 @@ from learning.Utils.Layer import Layers
 from learning.Utils.Logging import Logger
 from learning.Utils.ReadData import Data
 
-dir = Logger.getNewDir("../out/CheatHeuristic-Random")
+dir = Logger.getNewDir("../out/CheatHeuristic-closest")
 log = Logger(dir)
 D = Data(log, 6003, sequence=False)
 L = Layers()

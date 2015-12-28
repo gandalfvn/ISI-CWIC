@@ -166,8 +166,8 @@ else:
     if math.isnan(newLoss) or math.isinf(newLoss):
       print "Check yo gradients: ", newLoss
       sys.exit()
-if len(sys.argv) == 0:
-  saver.save(sess, '../out/model.ckpt')
+if len(sys.argv) == 1:
+  saver.save(sess, dir + '/model.ckpt')
 
 ############################# Predict From Model ##############################
 print "Testing"

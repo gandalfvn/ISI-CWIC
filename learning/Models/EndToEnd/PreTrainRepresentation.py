@@ -111,7 +111,7 @@ for i in range(100):
   newLoss_sf = Loss[0]
   rat = (ave(oldLoss_sf) - newLoss_sf) / ave(oldLoss_sf)
   print "%3d %10.7f %10.7f  -->   %11.10f" % (i, newLoss_sf, Loss[1], rat)
-  if abs(rat) < 0.001:
+  if abs(rat) < 0.01:
     break
   oldLoss_sf.append(newLoss_sf)
   if len(oldLoss_sf) > 3: oldLoss_sf.pop(0)
@@ -127,8 +127,8 @@ for i in range(100):
   Loss_mse = compute_loss_mse()
   newLoss_mse = Loss_mse[0]
   rat = (ave(oldLoss_mse) - newLoss_mse) / ave(oldLoss_mse)
-  print "%3d %10.7f   %10.7f  %10.7f %10.7f -->   %11.10f %11.10f" % (i, newLoss_sf, newLoss_mse, Loss_sf[1], Loss_mse[1], (oldLoss_sf - newLoss_sf) / oldLoss_sf, rat)
-  if abs(rat) < 0.001:
+  print "%3d %10.7f   %10.7f  %10.7f %10.7f -->   %11.10f " % (i, newLoss_sf, newLoss_mse, Loss_sf[1], Loss_mse[1], rat)
+  if abs(rat) < 0.01:
     break
   oldLoss_mse.append(newLoss_mse)
   if len(oldLoss_mse) > 3: oldLoss_mse.pop(0)
@@ -144,4 +144,4 @@ predicted_re = sess.run(y_re, feed_dict={x_t: D.Test["text"], x_w: D.Test["world
 predicted_id = []
 for i in range(len(predicted_re)):
   predicted_id.append([sess.run(tf.argmax(predicted_sf[i], 0))])
-D.write_predictions(np.concatenate((predicted_id, predicted_re), axis=1))
+D.write_predictions(np.concatenate((predicted_id, predicted_re), axis=1), dir=dir)

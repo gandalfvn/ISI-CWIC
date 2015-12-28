@@ -222,7 +222,7 @@ else:
     if math.isnan(newLoss) or math.isinf(newLoss):
       log.write("Check yo gradients: %f " % newLoss)
       sys.exit()
-if len(sys.argv) == 0:
+if len(sys.argv) == 1:
   saver.save(sess, dir + '/model.ckpt')
 
 

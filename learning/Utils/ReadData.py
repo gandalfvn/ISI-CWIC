@@ -84,8 +84,8 @@ class Data:
     return nvec
 
   def __init__(self, logger=None, maxlines=1000000, sequence=False, separate=True, onehot=True):
-    trainingfile_input  = pkg_resources.resource_filename(resource_package, "Data/logos/Train.input.orig.json.gz")
-    trainingfile_output = pkg_resources.resource_filename(resource_package, "Data/logos/Train.output.orig.json.gz")
+    trainingfile_input  = pkg_resources.resource_filename(resource_package, "Data/logos/Train.input.json.gz")
+    trainingfile_output = pkg_resources.resource_filename(resource_package, "Data/logos/Train.output.json.gz")
     testingfile_input   = pkg_resources.resource_filename(resource_package, "Data/logos/Dev.input.orig.json.gz")
     testingfile_output  = pkg_resources.resource_filename(resource_package, "Data/logos/Dev.output.orig.json.gz")
 
@@ -323,9 +323,9 @@ class Data:
 
       # Update location of predicted block
       prediction = predictions[i]
-      plocations[(int(prediction[0]) - 1) * 3] = prediction[1]
-      plocations[(int(prediction[0]) - 1) * 3 + 1] = prediction[2]
-      plocations[(int(prediction[0]) - 1) * 3 + 2] = prediction[3]
+      plocations[(int(prediction[0])) * 3] = prediction[1]
+      plocations[(int(prediction[0])) * 3 + 1] = prediction[2]
+      plocations[(int(prediction[0])) * 3 + 2] = prediction[3]
       j["predicted_state"] = self.convert_to_world(plocations)
 
       # Update location of gold block
@@ -336,10 +336,11 @@ class Data:
         action = self.TrainingOutput[i]["loc"]
         blockID = self.TrainingOutput[i]["id"] - 1
 
-      glocations[(blockID - 1) * 3] = float(action[0])
-      glocations[(blockID - 1) * 3 + 1] = float(action[1])
-      glocations[(blockID - 1) * 3 + 2] = float(action[2])
+      glocations[blockID * 3] = float(action[0])
+      glocations[blockID * 3 + 1] = float(action[1])
+      glocations[blockID * 3 + 2] = float(action[2])
       j["gold_state"] = self.convert_to_world(glocations)
+      prediction[0] += 1
 
       l.append(j)
     full["predictions"] = l
