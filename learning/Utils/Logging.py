@@ -1,5 +1,6 @@
-import time
 import os
+import time
+
 
 class Logger:
 
@@ -9,6 +10,9 @@ class Logger:
 
   def write(self, msg):
     print msg
+    self.log.write(msg + "\n")
+
+  def writelog(self, msg):
     self.log.write(msg + "\n")
 
   def close(self):

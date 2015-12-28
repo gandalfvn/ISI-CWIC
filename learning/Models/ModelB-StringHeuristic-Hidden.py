@@ -13,7 +13,7 @@ from learning.Utils.ReadData import Data
 
 dir = Logger.getNewDir("../out/ModelB-String-2-Hidden")
 log = Logger(dir)
-D = Data(log, 6003, sequence=False)
+D = Data(log, 63, sequence=False)
 L = Layers()
 
 
@@ -100,15 +100,11 @@ W_s = L.uniform_W(input_dim=text_dim, output_dim=20, name='W_w')
 b_s = L.uniform_b(dim=20, name='b_t')
 W_ht = L.uniform_W(input_dim=text_dim, output_dim=100, name='W_t')
 b_ht = L.uniform_b(dim=100, name='b_t')
-W_ht2 = L.uniform_W(input_dim=text_dim, output_dim=100, name='W_tw')
-b_ht2 = L.uniform_b(dim=100, name='b_t2')
-W_hrp = L.uniform_W(input_dim=(text_dim + world_dim + 60), output_dim=100, name='W_w')
+W_hrp = L.uniform_W(input_dim=(text_dim + world_dim + 40), output_dim=100, name='W_w')
 b_hrp = L.uniform_b(dim=100, name='b_t')
 
 W_t = L.uniform_W(input_dim=100, output_dim=20, name='W_t')
 b_t = L.uniform_b(dim=20, name='b_t')
-W_t2 = L.uniform_W(input_dim=100, output_dim=20, name='W_tw')
-b_t2 = L.uniform_b(dim=20, name='b_t2')
 W_rp = L.uniform_W(input_dim=100, output_dim=3, name='W_w')
 b_rp = L.uniform_b(dim=3, name='b_t')
 
@@ -117,21 +113,15 @@ e_s = tf.matmul(x_t, W_s) + b_s                 ## Source
 h_t = tf.tanh(tf.matmul(x_t, W_ht) + b_ht)      ## Target 1
 d_t = tf.nn.dropout(h_t, 0.8, seed=12122015)
 e_t = tf.matmul(h_t, W_t) + b_t
-h_t2 = tf.tanh(tf.matmul(x_t, W_ht2) + b_ht2)   ## Target 2
-d_t2 = tf.nn.dropout(h_t, 0.8, seed=12122015)
-e_t2 = tf.matmul(h_t2, W_t2) + b_t2
 
 y_s = tf.nn.softmax(e_s)
 y_t = tf.nn.softmax(e_t)
-y_t2 = tf.nn.softmax(e_t2)
 
-
-h_t2 = tf.tanh(tf.matmul(tf.concat(1, [x_t, x_w, e_s, e_t, e_t2]), W_hrp) + b_hrp)   ## Target 2
+h_t2 = tf.tanh(tf.matmul(tf.concat(1, [x_t, x_w, e_s, e_t]), W_hrp) + b_hrp)   ## Target 2
 d_t2 = tf.nn.dropout(h_t, 0.8, seed=12122015)
 y_rp = tf.matmul(d_t2, W_rp) + b_rp
 
 loss_sft = -1 * tf.reduce_sum(tf.mul(y_tC, tf.log(y_t)))  # One prediction
-loss_sft2 = -1 * tf.reduce_sum(tf.mul(y_tC2, tf.log(y_t2)))  # One prediction
 loss_sfs = -1 * tf.reduce_sum(tf.mul(y_C, tf.log(y_s)))  # One prediction
 # MSE = 1/N Sum (y - y')^2
 loss_sfr = tf.reduce_sum(tf.square(tf.sub(y_A, y_rp)))
@@ -149,12 +139,6 @@ def compute_loss_sfs():
 def compute_loss_sft():
   return (sess.run(loss_sft, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target, y_tC2: Target2}),
           sess.run(loss_sft, feed_dict={x_t: Text_test, x_w: World_test, y_A: Actions_test, y_C: Class_test, y_tC: Target_test, y_tC2: Target2_test}))
-
-
-def compute_loss_sft2():
-  return (sess.run(loss_sft2, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target, y_tC2: Target2}),
-          sess.run(loss_sft2, feed_dict={x_t: Text_test, x_w: World_test, y_A: Actions_test, y_C: Class_test, y_tC: Target_test, y_tC2: Target2_test}))
-
 
 def compute_loss_sfr():
   return (sess.run(loss_sfr, feed_dict={x_t: Text, x_w: World, y_A: Actions, y_C: Class, y_tC: Target, y_tC2: Target2}),
@@ -176,8 +160,6 @@ lrs = tf.train.exponential_decay(starter_learning_rate, global_step, 100000, 1e-
 train_step_sfs = tf.train.GradientDescentOptimizer(lrs).minimize(loss_sfs)
 lrt = tf.train.exponential_decay(starter_learning_rate, global_step, 100000, 1e-6, staircase=False)
 train_step_sft = tf.train.GradientDescentOptimizer(lrt).minimize(loss_sft)
-lrt2 = tf.train.exponential_decay(starter_learning_rate, global_step, 100000, 1e-6, staircase=False)
-train_step_sft2 = tf.train.GradientDescentOptimizer(lrt2).minimize(loss_sft2)
 lrr = tf.train.exponential_decay(0.0001, global_step, 100000, 1e-6, staircase=False)
 train_step_sfr = tf.train.GradientDescentOptimizer(lrr).minimize(loss_sfr)
 
@@ -222,23 +204,6 @@ else:
       log.write("Check yo gradients: %f" % newLoss)
       sys.exit()
 
-  log.write("Softmax Target2")
-  oldLoss = [compute_loss_sft2()[0]]
-  for i in range(100):
-    for a, b, c, d, e, f in D.scrambled(batches):
-      sess.run(train_step_sft2, feed_dict={x_t: a, x_w: b, y_C: c, y_tC: d, y_tC2: e, y_A: f})
-    Loss = compute_loss_sft2()
-    newLoss = Loss[0]
-    rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
-    log.write("%3d %10.7f  %10.7f  -->   %11.10f" % (i, newLoss, Loss[1], rat))
-    if abs(rat) < 0.001:
-      break
-    oldLoss.append(newLoss)
-    if len(oldLoss) > 3: oldLoss.pop(0)
-    if math.isnan(newLoss) or math.isinf(newLoss):
-      log.write("Check yo gradients: %f" % newLoss)
-      sys.exit()
-
   log.write("Regression Position")
   oldLoss = [compute_loss_sfr()[0]]
   for i in range(100):
@@ -263,7 +228,6 @@ if len(sys.argv) == 1:
 log.write("Testing")
 predicted_s = sess.run(y_s, feed_dict={x_t: D.Test["text"]})
 predicted_t = sess.run(y_t, feed_dict={x_t: D.Test["text"]})
-predicted_t2 = sess.run(y_t2, feed_dict={x_t: D.Test["text"]})
 predicted_r = sess.run(y_rp, feed_dict={x_t: D.Test["text"], x_w : D.Test["world"]})
 
 predicted_id = []
@@ -272,12 +236,8 @@ for i in range(len(predicted_s)):
 predicted_tid = []
 for i in range(len(predicted_t)):
   predicted_tid.append(sess.run(tf.argmax(predicted_t[i], 0)))
-predicted_tid2 = []
-for i in range(len(predicted_t2)):
-  predicted_tid2.append(sess.run(tf.argmax(predicted_t2[i], 0)))
 
 log.writelog("Test predicted_id: " + str(predicted_id))
 log.writelog("Test predicted_tid: " + str(predicted_tid))
-log.writelog("Test predicted_tid2: " + str(predicted_tid2))
 
 D.write_predictions(np.concatenate((predicted_id, predicted_r), axis=1), dir=dir)
