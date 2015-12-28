@@ -1,6 +1,9 @@
-import gzip,json,sys,math
-from nltk.tokenize import TreebankWordTokenizer
+import gzip
+import json
+import math
+import sys
 
+from nltk.tokenize import TreebankWordTokenizer
 
 stop = set(["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't",
             "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't",
@@ -50,7 +53,7 @@ print len(G), len(S)
 
 grounding = 0
 for i in range(len(G)):
-  if G[i][0] == S[i][0]:
+  if G[i][0] == (S[i][0] + 1):
     grounding += 1
 
 print "Grounding: %-5.2f" % (100.0 * grounding / len(G))
