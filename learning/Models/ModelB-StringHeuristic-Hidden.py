@@ -11,9 +11,9 @@ from learning.Utils.Layer import Layers
 from learning.Utils.Logging import Logger
 from learning.Utils.ReadData import Data
 
-dir = Logger.getNewDir("../out/ModelB-String-2-Hidden")
+dir = Logger.getNewDir("../out/ModelB-String-Hidden")
 log = Logger(dir)
-D = Data(log, 63, sequence=False)
+D = Data(log, 6003, sequence=False)
 L = Layers()
 
 

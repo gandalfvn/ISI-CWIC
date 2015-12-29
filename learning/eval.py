@@ -53,7 +53,7 @@ print len(G), len(S)
 
 grounding = 0
 for i in range(len(G)):
-  if G[i][0] == (S[i][0] + 1):
+  if G[i][0] == S[i][0]:
     grounding += 1
 
 print "Grounding: %-5.2f" % (100.0 * grounding / len(G))

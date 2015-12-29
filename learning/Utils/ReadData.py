@@ -26,7 +26,9 @@ class Data:
   @staticmethod
   def extend(world, dim):
     while len(world) < dim:
-      world.append(-1)
+      world.append(0)
+      world.append(0.1)
+      world.append(0)
     return world
 
   @staticmethod

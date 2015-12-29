@@ -11,7 +11,7 @@ from learning.Utils.Layer import Layers
 from learning.Utils.Logging import Logger
 from learning.Utils.ReadData import Data
 
-dir = Logger.getNewDir("../out/ModelA-String-Hidden-Dropout")
+dir = Logger.getNewDir("../out/ModelA-String-Hidden-Dropout-Center")
 log = Logger(dir)
 D = Data(log, 6003, sequence=False)
 L = Layers()
@@ -189,7 +189,7 @@ else:
     newLoss = Loss[0]
     rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
     log.write("%3d %10.7f  %10.7f -->   %11.10f" % (i, newLoss, Loss[1], rat))
-    if abs(rat) < 0.01:
+    if abs(rat) < 0.01 and i > 25:
       break
     oldLoss.append(newLoss)
     if len(oldLoss) > 3: oldLoss.pop(0)
@@ -206,7 +206,7 @@ else:
     newLoss = Loss[0]
     rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
     log.write("%3d %10.7f  %10.7f -->   %11.10f" % (i, newLoss, Loss[1], rat))
-    if abs(rat) < 0.01:
+    if abs(rat) < 0.01 and i > 25:
       break
     oldLoss.append(newLoss)
     if len(oldLoss) > 3: oldLoss.pop(0)
@@ -223,7 +223,7 @@ else:
     newLoss = Loss[0]
     rat = (ave(oldLoss) - newLoss) / ave(oldLoss)
     log.write("%3d %10.7f %10.7f -->   %11.10f" % (i, newLoss, Loss[1], rat))
-    if abs(rat) < 0.01:
+    if abs(rat) < 0.01 and i > 25:
       break
     oldLoss.append(newLoss)
     if len(oldLoss) > 3: oldLoss.pop(0)
@@ -325,3 +325,4 @@ for i in range(len(predicted_rp)):
 log.write("Train predicted_tid: " + str(predicted_tid))
 log.write("Train predicted_rp: " + str(predicted_rp))
 D.write_predictions(np.concatenate((predicted_id, predicted_locs), axis=1), dir=dir, filename="Train", Test=False)
+log.close()
