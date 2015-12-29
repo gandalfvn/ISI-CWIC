@@ -120,7 +120,7 @@ angular.module('app.generate').controller('genPredCtrl',
     $scope.clearMeta = function(){
       $('#galleryarea').empty();
       $scope.curState.clear();
-      $state.transitionTo('app.genworld', {}, {notify: false});
+      $state.transitionTo('app.genpred', {}, {reload:true, notify: true});
     };
 
     var setDecorVal = function(decor){
