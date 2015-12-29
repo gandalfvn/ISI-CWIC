@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../bwapp/server/config.js" afterPath="$PROJECT_DIR$/../bwapp/server/config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.ts" />
     </list>
     <ignored path="bwapp2.iws" />
@@ -45,7 +43,7 @@
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.7477361">
-              <caret line="216" column="43" selection-start-line="216" selection-start-column="43" selection-end-line="216" selection-end-column="43" />
+              <caret line="216" column="45" selection-start-line="216" selection-start-column="45" selection-end-line="216" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -1236,7 +1234,7 @@
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7477361">
-          <caret line="216" column="43" selection-start-line="216" selection-start-column="43" selection-end-line="216" selection-end-column="43" />
+          <caret line="216" column="45" selection-start-line="216" selection-start-column="45" selection-end-line="216" selection-end-column="45" />
           <folding />
         </state>
       </provider>

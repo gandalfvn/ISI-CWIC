@@ -179,8 +179,9 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                         $scope.diffPredictions = [];
                         procDiff(0, $scope.diffPredictions, function () {
                             if ($scope.diffPredictions.length)
-                                renderGallery(0, function () { });
-                            $rootScope.dataloaded = true;
+                                renderGallery(0, function () {
+                                    $rootScope.dataloaded = true;
+                                });
                         });
                     }
                     else

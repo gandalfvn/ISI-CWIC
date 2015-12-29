@@ -213,8 +213,9 @@ angular.module('app.generate').controller('genPredCtrl',
             //$scope.showPrediction(0);
             $scope.diffPredictions = <iPredPUGS[]>[];
             procDiff(0, $scope.diffPredictions, function(){
-              if($scope.diffPredictions.length) renderGallery(0, function(){});
-              $rootScope.dataloaded = true;
+              if($scope.diffPredictions.length) renderGallery(0, function(){
+                $rootScope.dataloaded = true;
+              });
             });
           }
           else $scope.$apply(function(){toaster.pop('warn', 'Invalid JSON STATE file')});
