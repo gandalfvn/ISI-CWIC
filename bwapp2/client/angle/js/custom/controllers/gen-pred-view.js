@@ -180,7 +180,9 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                         procDiff(0, $scope.diffPredictions, function () {
                             if ($scope.diffPredictions.length)
                                 renderGallery(0, function () {
-                                    $rootScope.dataloaded = true;
+                                    $scope.$apply(function () {
+                                        $rootScope.dataloaded = true;
+                                    });
                                 });
                         });
                     }
