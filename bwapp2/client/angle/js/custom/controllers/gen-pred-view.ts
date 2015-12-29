@@ -120,7 +120,7 @@ angular.module('app.generate').controller('genPredCtrl',
     $scope.clearMeta = function(){
       $('#galleryarea').empty();
       $scope.curState.clear();
-      $state.transitionTo('app.genworld', {}, {notify: false});
+      $state.transitionTo('app.genpred', {}, {reload:true, notify: true});
     };
 
     var setDecorVal = function(decor){
@@ -190,6 +190,7 @@ angular.module('app.generate').controller('genPredCtrl',
           var diffbm:iBlockMeta = JSON.parse(reader.result).block_meta; //store a copy of the blockmeta for use in diff view
           if(filedata.block_meta && filedata.block_meta.blocks && filedata.block_meta.blocks.length
             && filedata.predictions && filedata.predictions.length){
+            $rootScope.dataloaded = false;
             $scope.curState.clear();
             $scope.curState.block_meta = _.extend({}, filedata.block_meta);
             //create a copy of cubes it for gold or predicted view
@@ -212,7 +213,11 @@ angular.module('app.generate').controller('genPredCtrl',
             //$scope.showPrediction(0);
             $scope.diffPredictions = <iPredPUGS[]>[];
             procDiff(0, $scope.diffPredictions, function(){
-              if($scope.diffPredictions.length) renderGallery(0, function(){});
+              if($scope.diffPredictions.length) renderGallery(0, function(){
+                $scope.$apply(function(){
+                  $rootScope.dataloaded = true;
+                })
+              });
             });
           }
           else $scope.$apply(function(){toaster.pop('warn', 'Invalid JSON STATE file')});
