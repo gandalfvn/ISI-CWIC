@@ -442,9 +442,9 @@ var miGen3DEngine;
                     if (self.OGDelta)
                         current.subtractInPlace(self.OGDelta);
                     current.y = self.startingPoint.y;
-                    //move by step n
-                    current.x = Number((Math.round(current.x * 10) / 10).toFixed(2));
-                    current.z = Number((Math.round(current.z * 10) / 10).toFixed(2));
+                    //move by step n - removed
+                    //current.x = Number(( Math.round(current.x * 10) / 10).toFixed(2));
+                    //current.z = Number(( Math.round(current.z * 10) / 10).toFixed(2));
                     return current;
                 }
                 else
