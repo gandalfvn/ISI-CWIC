@@ -308,8 +308,8 @@ module miGen3DEngine {
 
       var animate = function () {
         var self = this;
-        this.isSteadyState = true;
-        this.cubeslist.forEach(function (c) {
+        self.isSteadyState = true;
+        self.cubeslist.forEach(function (c) {
           //count the number of 0 move ticks
           if (c.oldpos) {
             var delta:BABYLON.Vector3 = c.oldpos.subtract(c.position);
@@ -322,12 +322,12 @@ module miGen3DEngine {
                 c.zeromoveTicks = 0;
                 c.tchecked = false;
               }
-              else if (c.isMoving) this.isSteadyState = false;
+              else if (c.isMoving) self.isSteadyState = false;
             }
             else {
               c.material.emissiveColor = new BABYLON.Color3(0.176, 0.85, 0.76);
               c.isMoving = true;
-              this.isSteadyState = false;
+              self.isSteadyState = false;
             }
           }
           c.oldpos = c.position.clone();
