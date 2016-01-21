@@ -71,7 +71,7 @@ module miGen3DEngine {
 
     constructor(fieldsize:number) {
       this.colorids['red'] = BABYLON.Color3.FromInts(255, 0, 0);
-      this.colorids['blue'] = BABYLON.Color3.FromInts(0, 0, 255);
+      this.colorids['blue'] = BABYLON.Color3.FromInts(67, 91, 202);
       this.colorids['magenta'] = BABYLON.Color3.FromInts(200, 0, 200);
       this.colorids['yellow'] = BABYLON.Color3.FromInts(255, 255, 0);
       this.colorids['cyan'] = BABYLON.Color3.FromInts(34, 181, 191);
@@ -101,7 +101,7 @@ module miGen3DEngine {
       var boxsize:number = block.shape.shape_params.side_length;
       var objdesc:string = block.name + '_' + block.shape.type + '_' + boxsize;
       var objname:string = objdesc + '_' + block.id;
-      var boxcolor:BABYLON.Color3 = this.colorids['orange'];
+      var boxcolor:BABYLON.Color3 = this.colorids['purple'];
       var boxmat:BABYLON.StandardMaterial = new BABYLON.StandardMaterial(objname, data.scene);
       //boxmat.diffuseTexture.hasAlpha = true;
       //boxmat.specularColor = BABYLON.Color3.Black();
@@ -124,9 +124,17 @@ module miGen3DEngine {
         }
       }
       else {
-        var cv:BABYLON.Color3 = this.colorids['yellow'];
-        for (var i = 0; i < 6; i++) {
-          faceCol[i] = new BABYLON.Color4(cv.r, cv.g, cv.b, 1);
+        if(block && block.shape && block.shape.shape_params){
+          for (var i = 0; i < 6; i++) {
+            var cv:BABYLON.Color3 = this.colorids[block.shape.shape_params['face_' + (i + 1)].color];
+            faceCol[i] = new BABYLON.Color4(cv.r, cv.g, cv.b, 1);
+          }
+        }
+        else{
+          var cv:BABYLON.Color3 = this.colorids['orange'];
+          for (var i = 0; i < 6; i++) {
+            faceCol[i] = new BABYLON.Color4(cv.r, cv.g, cv.b, 1);
+          }
         }
       }
       //boxmat.diffuseColor = boxcolor;
