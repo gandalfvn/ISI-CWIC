@@ -14,13 +14,19 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       accordion-heading
         h4.panel-title Directions
       h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Each description must be complete on its own.
-      .well.col-sm-8.col-sm-offset-2
+      .well.col-sm-8.col-sm-offset-2(ng-if="curState.block_meta.decoration!='blank'")
         h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
         img.center-block(src='img/example.png')
-        //-h4(style='color:green') VALID Example:
         label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take block 14 and place it next to block 17. The down right corner of block 14 should touch the upper left corner of block 17.
         label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Slide block 14 straight down until its right corner touches the top left corner of block 17.
         label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Take the block that is on top of block 5. Move it close to block 17. Place it at the same level with block 17 and on the same vertical line as block 5.
+      .well.col-sm-8.col-sm-offset-2(ng-if="curState.block_meta.decoration=='blank'")
+        h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
+        img.center-block(src='img/example_bl.png')
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') Move the lone block in the top right of the board to the left of the tower at the back of the table.
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') The large cluster has two blocks in a row and a hole in the row behind it. There is a block to the right of the large cluster.  Use it to complete the back row.
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') The base of the large cluster is three quarters of a square.  Use the block directly to its right to complete the square.
+
       .col-sm-12
         h4(ng-if='!opt.isValidBrowser', style='color:red')
           i.fa.fa-exclamation-triangle
