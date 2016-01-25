@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/meteor_packages_auto_import_browser.xml" afterPath="$PROJECT_DIR$/.idea/libraries/meteor_packages_auto_import_browser.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.meteor/packages" afterPath="$PROJECT_DIR$/.meteor/packages" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.meteor/versions" afterPath="$PROJECT_DIR$/.meteor/versions" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/main.ng.jade" afterPath="$PROJECT_DIR$/client/views/main.ng.jade" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/lib/js/core.module.js" afterPath="$PROJECT_DIR$/client/lib/js/core.module.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genjobs.ng.jade" afterPath="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -36,99 +38,39 @@
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="105" column="41" selection-start-line="105" selection-start-column="41" selection-end-line="105" selection-end-column="41" />
+              <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="games.ng.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/views/games.ng.jade">
+      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="27" column="87" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="87" />
+            <state vertical-scroll-proportion="0.6351931">
+              <caret line="1138" column="89" selection-start-line="1138" selection-start-column="89" selection-end-line="1138" selection-end-column="89" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
+      <file leaf-file-name="angular-meteor-data.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.meteor/local/build/programs/web.browser/packages/angular-meteor-data.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="86" column="25" selection-start-line="86" selection-start-column="15" selection-end-line="86" selection-end-column="25" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gen-task-view.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="89" column="48" selection-start-line="89" selection-start-column="48" selection-end-line="89" selection-end-column="48" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.ng.jade" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/views/main.ng.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.32988358">
-              <caret line="16" column="67" selection-start-line="16" selection-start-column="67" selection-end-line="16" selection-end-column="67" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gen-simpexp-view.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-18.074074">
-              <caret line="355" column="13" selection-start-line="355" selection-start-column="13" selection-end-line="355" selection-end-column="13" />
+            <state vertical-scroll-proportion="-12.740741">
+              <caret line="661" column="7" selection-start-line="661" selection-start-column="6" selection-end-line="661" selection-end-column="22" />
               <folding>
-                <element signature="e#0#41#0" expanded="false" />
+                <element signature="n#!!doc" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
+      <file leaf-file-name="genstates.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/genstates.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="routes.config.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="113" column="23" selection-start-line="113" selection-start-column="15" selection-end-line="113" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="core.run.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/modules/core/core.run.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="57" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="genjobs.ng.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -151,10 +93,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/client/lib/js/togglestate.module.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/core/core.run.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/main.js" />
-        <option value="$USER_HOME$/Downloads/bwdata/bw_scene_2iyTqdXdAfRXt8NQ5.json" />
         <option value="$PROJECT_DIR$/client/views/app.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/core/core.config.js" />
         <option value="$PROJECT_DIR$/client/views/genhits.ng.jade" />
@@ -187,21 +125,25 @@
         <option value="$PROJECT_DIR$/client/angle/js/custom/services/apputils.ts" />
         <option value="$PROJECT_DIR$/client/views/partials/top-navbar.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-ui3d-engine.ts" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
         <option value="$PROJECT_DIR$/server/mturkhelper.ts" />
-        <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" />
         <option value="$PROJECT_DIR$/client/views/gensimpexp.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.ts" />
         <option value="$PROJECT_DIR$/server/conf.ts" />
         <option value="$PROJECT_DIR$/server/config.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
         <option value="$PROJECT_DIR$/../../GroundedLanguage/BlockWorld/DataCreation/UnlabeledData/Random/Dev/final_0.json" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
         <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" />
         <option value="$PROJECT_DIR$/client/views/main.ng.jade" />
+        <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
+        <option value="$PROJECT_DIR$/client/lib/js/core.module.js" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
+        <option value="$PROJECT_DIR$/server/screencaps.js" />
+        <option value="$PROJECT_DIR$/.meteor/local/build/programs/web.browser/packages/angular-meteor-data.js" />
+        <option value="$PROJECT_DIR$/server/genstates.js" />
+        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
       </list>
     </option>
   </component>
@@ -261,6 +203,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -430,6 +374,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="partials" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -713,10 +679,152 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".meteor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".meteor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="local" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".meteor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="local" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".meteor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="local" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="programs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web.browser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".meteor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="local" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="programs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web.browser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="packages" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".meteor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="local" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="programs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -882,13 +990,13 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22310232" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32689077" sideWeight="0.5075908" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38907564" sideWeight="0.51287127" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3302521" sideWeight="0.4871287" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3302521" sideWeight="0.47920793" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958034" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38907564" sideWeight="0.4950495" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38907564" sideWeight="0.4871287" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32689077" sideWeight="0.49240923" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32689077" sideWeight="0.48184818" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -915,20 +1023,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/packages.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.044576522">
-          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/bower.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.37890044">
-          <caret line="17" column="18" selection-start-line="17" selection-start-column="18" selection-end-line="17" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/restapi.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.26865673">
@@ -1112,13 +1206,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/genstates.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5212766">
-          <caret line="53" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Downloads/final_0.json">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33665836">
@@ -1147,19 +1234,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="880" column="43" selection-start-line="880" selection-start-column="30" selection-end-line="880" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/gensimpexp.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="68" column="70" selection-start-line="68" selection-start-column="70" selection-end-line="68" selection-end-column="70" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1171,34 +1249,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/lib/js/core.module.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.40889525">
-          <caret line="19" column="5" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../GroundedLanguage/BlockWorld/DataCreation/UnlabeledData/Random/Dev/final_0.json">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="338" column="29" selection-start-line="338" selection-start-column="29" selection-end-line="338" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="105" column="41" selection-start-line="105" selection-start-column="41" selection-end-line="105" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1206,23 +1260,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.684485">
           <caret line="35" column="18" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/core/core.run.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="57" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/games.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="87" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="87" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1231,49 +1268,32 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
+    <entry file="file://$PROJECT_DIR$/client/vendor/angular-ui-router/release/angular-ui-router.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="86" column="25" selection-start-line="86" selection-start-column="15" selection-end-line="86" selection-end-column="25" />
-          <folding />
+        <state vertical-scroll-proportion="0.2722372">
+          <caret line="4201" column="26" selection-start-line="4201" selection-start-column="26" selection-end-line="4201" selection-end-column="26" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js">
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/core/core.run.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="113" column="23" selection-start-line="113" selection-start-column="15" selection-end-line="113" selection-end-column="23" />
+        <state vertical-scroll-proportion="0.34023285">
+          <caret line="60" column="50" selection-start-line="60" selection-start-column="50" selection-end-line="60" selection-end-column="50" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="89" column="48" selection-start-line="89" selection-start-column="48" selection-end-line="89" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/vendor/angular-ui-router/release/angular-ui-router.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2722372">
-          <caret line="4201" column="26" selection-start-line="4201" selection-start-column="26" selection-end-line="4201" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.3984476">
+          <caret line="45" column="75" selection-start-line="45" selection-start-column="75" selection-end-line="45" selection-end-column="75" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-18.074074">
+        <state vertical-scroll-proportion="0.019404916">
           <caret line="355" column="13" selection-start-line="355" selection-start-column="13" selection-end-line="355" selection-end-column="13" />
           <folding>
             <element signature="e#0#41#0" expanded="false" />
@@ -1283,8 +1303,98 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/views/main.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.32988358">
-          <caret line="16" column="67" selection-start-line="16" selection-start-column="67" selection-end-line="16" selection-end-column="67" />
+        <state vertical-scroll-proportion="0.5627426">
+          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.019404916">
+          <caret line="89" column="48" selection-start-line="89" selection-start-column="48" selection-end-line="89" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/games.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.54333764">
+          <caret line="27" column="87" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="87" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2393273">
+          <caret line="68" column="29" selection-start-line="68" selection-start-column="29" selection-end-line="68" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49356222">
+          <caret line="23" column="20" selection-start-line="23" selection-start-column="20" selection-end-line="23" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/lib/js/core.module.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17167382">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.4549356">
+          <caret line="92" column="32" selection-start-line="92" selection-start-column="32" selection-end-line="92" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/screencaps.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38626608">
+          <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.meteor/local/build/programs/web.browser/packages/angular-meteor-data.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-12.740741">
+          <caret line="661" column="7" selection-start-line="661" selection-start-column="6" selection-end-line="661" selection-end-column="22" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/genstates.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6351931">
+          <caret line="1138" column="89" selection-start-line="1138" selection-start-column="89" selection-end-line="1138" selection-end-column="89" />
           <folding />
         </state>
       </provider>

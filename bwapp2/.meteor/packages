@@ -31,3 +31,4 @@ twbs:bootstrap
 npm-container
 alethes:lodash
 nunohvidal:lz-string
+angular-meteor-auth

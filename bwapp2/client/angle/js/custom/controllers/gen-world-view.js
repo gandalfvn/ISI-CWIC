@@ -10,14 +10,33 @@
 /// <reference path="../../../../../server/typings/lz-string/lz-string.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
-angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, ngTableParams, apputils) {
+angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', '$reactive', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, ngTableParams, apputils, $reactive) {
         "use strict";
+        $reactive(this).attach($scope);
         var mult = 100; //position multiplier for int random
+        //subscription error for onStop;
+        var subErr = function (err) { return (err) ? console.warn("err:", arguments, err) : console.warn('subscription stopped', arguments); };
         $scope.curState = new apputils.cCurrentState();
-        var genstates = $scope.$meteorCollection(GenStates);
-        $scope.$meteorSubscribe("genstates").then(function (sid) { dataReady.update('genstates'); }, function (err) { console.log("error", arguments, err); });
-        var screencaps = $scope.$meteorCollection(ScreenCaps);
-        $scope.$meteorSubscribe("screencaps").then(function (sid) { dataReady.update('screencaps'); }, function (err) { console.log("error", arguments, err); });
+        /*$scope.helpers({
+          genstates(){
+            return GenStates;
+          },
+          screencaps(){
+            return ScreenCaps;
+          }
+        });*/
+        $scope.subscribe("genstates", function () { }, {
+            onReady: function (sid) {
+                dataReady.update('genstates');
+            },
+            onStop: subErr
+        });
+        $scope.subscribe("screencaps", function () { }, {
+            onReady: function (sid) {
+                dataReady.update('screencaps');
+            },
+            onStop: subErr
+        });
         var dataReady = new apputils.cDataReady(2, function () {
             updateTableStateParams();
             if ($stateParams.sid) {
@@ -31,10 +50,12 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             $scope.tableStateParams = new ngTableParams({
                 count: 5,
                 sorting: { created: 'desc' }
-            }, { counts: [5, 10, 20],
+            }, {
+                counts: [5, 10, 20],
                 paginationMaxBlocks: 8,
                 paginationMinBlocks: 2,
-                data: data });
+                data: data
+            });
         };
         $scope.resetWorld = function () {
             //resetworld 
@@ -48,7 +69,9 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
          */
         var updateYCube = function (mycube, used, idxdata) {
             var myArr = [];
-            used.forEach(function (c) { myArr.push(c); });
+            used.forEach(function (c) {
+                myArr.push(c);
+            });
             for (var i = 0; i < myArr.length; i++) {
                 var c = idxdata[myArr[i]];
                 if (myengine.intersectsMeshXYZ(mycube, c, true)) {
@@ -244,7 +267,11 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                     var size = cubemeta[p.id].shape.shape_params.side_length;
                     if (maxsize < size)
                         maxsize = size;
-                    var val = { prop: { cid: p.id, size: size }, position: p.position, rotation: p.rotation };
+                    var val = {
+                        prop: { cid: p.id, size: size },
+                        position: p.position,
+                        rotation: p.rotation
+                    };
                     used.push(val);
                     cubeInWorld[p.id] = val;
                     cidlist.push(p.id);
@@ -305,7 +332,11 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 /*acube.position.x = 0;
                  acube.position.z = 0;*/
                 updateYCube(acube, cidlist, cubeInWorld);
-                var delta = { x: acube.position.x - basePos.x, y: acube.position.y - basePos.y, z: acube.position.z - basePos.z };
+                var delta = {
+                    x: acube.position.x - basePos.x,
+                    y: acube.position.y - basePos.y,
+                    z: acube.position.z - basePos.z
+                };
                 cubeStack.forEach(function (c) {
                     c.position.x += delta.x;
                     c.position.y += delta.y;
@@ -332,27 +363,29 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 });
             }
             else
-                $scope.$apply(function () { toaster.pop('error', 'Missing State ID'); });
+                $scope.$apply(function () {
+                    toaster.pop('error', 'Missing State ID');
+                });
         };
         /*$scope.showInitFrame = function(state:miGen3DEngine.iCubeState[], cb:()=>void){
-          $scope.resetWorld();
-          console.warn('showInitFrame', state);
-          setTimeout(function(){
-            state.forEach(function(s){
-              var c = get3DCubeById(s.prop.cid);
-              c.position = new BABYLON.Vector3(s.position.x, s.position.y, s.position.z);
-              c.isVisible = true;
-              if(hasPhysics) c.setPhysicsState({
-                impostor: BABYLON.PhysicsEngine.BoxImpostor,
-                move: true,
-                mass: 5, //c.boxsize,
-                friction: fric,
-                restitution: rest
-              });
-            })
-            if(cb) cb();
-          }, 100);
-        };*/
+         $scope.resetWorld();
+         console.warn('showInitFrame', state);
+         setTimeout(function(){
+         state.forEach(function(s){
+         var c = get3DCubeById(s.prop.cid);
+         c.position = new BABYLON.Vector3(s.position.x, s.position.y, s.position.z);
+         c.isVisible = true;
+         if(hasPhysics) c.setPhysicsState({
+         impostor: BABYLON.PhysicsEngine.BoxImpostor,
+         move: true,
+         mass: 5, //c.boxsize,
+         friction: fric,
+         restitution: rest
+         });
+         })
+         if(cb) cb();
+         }, 100);
+         };*/
         var showFrame = function (state, cb) {
             $scope.resetWorld();
             setTimeout(function () {
@@ -374,24 +407,27 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                     });
                 }
                 else
-                    $scope.$apply(function () { toaster.pop('error', 'Missing BLOCK_STATE'); });
+                    $scope.$apply(function () {
+                        toaster.pop('error', 'Missing BLOCK_STATE');
+                    });
                 if (cb)
                     cb();
             }, 100);
         };
         /*var findBy = function(type:string, key:string, collection:any){
-          return _.find(collection, function(a){return key === a[type]});
-        };*/
+         return _.find(collection, function(a){return key === a[type]});
+         };*/
         var insertGen = function (used, cb) {
             /*var str = '';
-            used.forEach(function(cid){
-              var c = get3DCubeById(cid);
-              str += cid + ':' + c.position.x + ':' + c.position.y + ':' + c.position.z+'\n';
-            });
-            var sig = md5.createHash(str);
-            var mygstate = findBy('sig', sig, genstates);
-            if(!mygstate){*/
+             used.forEach(function(cid){
+             var c = get3DCubeById(cid);
+             str += cid + ':' + c.position.x + ':' + c.position.y + ':' + c.position.z+'\n';
+             });
+             var sig = md5.createHash(str);
+             var mygstate = findBy('sig', sig, genstates);
+             if(!mygstate){*/
             if (true) {
+                console.warn($scope.curState);
                 //check if we loaded states or just a frame save for an existing system
                 if (!$scope.curState._id && $scope.curState.block_states && $scope.curState.block_states.length
                     && $scope.curState.block_states[0].screencap) {
@@ -402,27 +438,29 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                     var saveScreen = function (idx, list, cb) {
                         if (_.isUndefined(list[idx]))
                             return cb();
-                        screencaps.save({
+                        ScreenCaps.insert({
                             data: list[idx].screencap,
                             created: (new Date).getTime(),
                             public: true
-                        }).then(function (val) {
+                        }, function (err, id) {
+                            if (err)
+                                return console.warn('screencap Err', err);
                             delete list[idx].screencap;
-                            list[idx].screencapid = val[0]._id;
+                            list[idx].screencapid = id;
                             saveScreen(idx + 1, list, cb);
-                        }, function (err) {
-                            console.warn('saveScreen', err.reason);
-                            cb(err);
                         });
                     };
                     saveScreen(0, $scope.curState.block_states, function (err) {
                         if (err)
-                            return $scope.$apply(function () { toaster.pop('error', err.reason); });
-                        genstates.save($scope.curState).then(function (val) {
-                            $scope.curState._id = val[0]._id;
-                            cb(null, $scope.curState._id);
-                        }, function (err) {
-                            cb(err.reason);
+                            return $scope.$apply(function () {
+                                toaster.pop('error', err.reason);
+                            });
+                        //remove $$hashkey from scope data - http://stackoverflow.com/questions/32173465/error-key-hashkey-must-not-start-with-angularjs
+                        GenStates.insert(angular.copy($scope.curState), function (err, id) {
+                            if (err)
+                                return console.warn('genstates Err', err);
+                            $scope.curState._id = id;
+                            cb(err, $scope.curState._id);
                         });
                     });
                 }
@@ -437,7 +475,11 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         if (c) {
                             if ((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
                                 (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max) {
-                                var dat = { id: cid, position: c.position.clone(), rotation: c.rotationQuaternion.clone() };
+                                var dat = {
+                                    id: cid,
+                                    position: c.position.clone(),
+                                    rotation: c.rotationQuaternion.clone()
+                                };
                                 frame.push(dat);
                                 meta.blocks.push(myengine.cubesdata[cid].meta);
                             }
@@ -450,31 +492,33 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         cb('Cube(s) Out of Bounds!');
                         return false;
                     }
-                    BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, { width: myengine.canvas.width, height: myengine.canvas.height }, function (b64i) {
+                    BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
+                        width: myengine.canvas.width,
+                        height: myengine.canvas.height
+                    }, function (b64i) {
                         var b64img = LZString.compressToUTF16(b64i);
-                        screencaps.save({
+                        ScreenCaps.insert({
                             data: b64img,
                             created: (new Date).getTime(),
                             public: true
-                        }).then(function (val) {
+                        }, function (err, id) {
+                            if (err)
+                                return console.warn('screencap err:', err);
                             if (!$scope.curState.block_states)
                                 $scope.curState.block_states = [];
                             $scope.curState.block_states.push({
                                 block_state: frame,
-                                screencapid: val[0]._id,
+                                screencapid: id,
                                 created: (new Date).getTime()
                             });
-                            genstates.save($scope.curState).then(function (val) {
-                                console.warn(val[0]);
-                                $scope.curState._id = val[0]._id;
+                            GenStates.insert(angular.copy($scope.curState), function (err, id) {
+                                if (err)
+                                    return console.warn('genstates err:', err);
+                                $scope.curState._id = id;
                                 var attachid = createButtons('stateimg', $scope.curState.block_states.length - 1);
                                 showImage(b64img, 'Move #: ' + ($scope.curState.block_states.length - 1), attachid);
-                                cb(null, $scope.curState._id);
-                            }, function (err) {
-                                cb(err.reason);
+                                cb(err, $scope.curState._id);
                             });
-                        }, function (err) {
-                            cb(err.reason);
                         });
                     });
                 }
@@ -571,13 +615,13 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 }, 100);
             });
             /*
-                  $scope.showInitFrame(state, function(){
-                    var params = {cubesused: cubesused, creator: 'system'};
-                    //we need to set a timeout before checking steading states or we get bad block layouts
-                    setTimeout(function(){waitForSSAndSave(params, function(err, sid){
-                      console.warn()
-                    });}, 400);
-                  });*/
+             $scope.showInitFrame(state, function(){
+             var params = {cubesused: cubesused, creator: 'system'};
+             //we need to set a timeout before checking steading states or we get bad block layouts
+             setTimeout(function(){waitForSSAndSave(params, function(err, sid){
+             console.warn()
+             });}, 400);
+             });*/
         };
         /**
          * show the state to be used as state 0
@@ -588,31 +632,38 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             $rootScope.dataloaded = false;
             $scope.enableImpSave = false;
             //we must get the state for this sid
-            $scope.$meteorSubscribe("genstates", sid).then(function (sub) {
-                var myframe = GenStates.findOne({ _id: sid });
-                if (!myframe)
-                    return toaster.pop('warn', 'Invalid State ID');
-                //update the meta
-                $scope.curitr = myframe.block_states.length - 1;
-                $scope.curcnt = 0;
-                $scope.curState.clear();
-                $scope.curState.copy(myframe);
-                myengine.createObjects($scope.curState.block_meta.blocks);
-                showFrame(myframe.block_states[$scope.curitr]);
-                function itrScreencap(idx, list, cb) {
-                    if (_.isUndefined(list[idx])) {
-                        $rootScope.dataloaded = true;
-                        return cb();
+            $scope.subscribe("genstates", function () { return [sid]; }, {
+                onReady: function (sub) {
+                    var myframe = GenStates.findOne({ _id: sid });
+                    if (!myframe)
+                        return toaster.pop('warn', 'Invalid State ID');
+                    //update the meta
+                    $scope.curitr = myframe.block_states.length - 1;
+                    $scope.curcnt = 0;
+                    $scope.curState.clear();
+                    $scope.curState.copy(myframe);
+                    myengine.createObjects($scope.curState.block_meta.blocks);
+                    showFrame(myframe.block_states[$scope.curitr]);
+                    function itrScreencap(idx, list, cb) {
+                        if (_.isUndefined(list[idx])) {
+                            $scope.$apply(function () { $rootScope.dataloaded = true; });
+                            return cb();
+                        }
+                        var scid = list[idx].screencapid;
+                        $scope.subscribe("screencaps", function () { return [scid]; }, {
+                            onReady: function (sub) {
+                                var screen = ScreenCaps.findOne({ _id: scid });
+                                var attachid = createButtons('stateimg', idx);
+                                showImage(screen.data, 'Move #:' + idx, attachid);
+                                itrScreencap(idx + 1, list, cb);
+                            },
+                            onStop: subErr
+                        });
                     }
-                    var scid = list[idx].screencapid;
-                    $scope.$meteorSubscribe("screencaps", scid).then(function (sub) {
-                        var screen = ScreenCaps.findOne({ _id: scid });
-                        var attachid = createButtons('stateimg', idx);
-                        showImage(screen.data, 'Move #:' + idx, attachid);
-                        itrScreencap(idx + 1, list, cb);
+                    itrScreencap(0, myframe.block_states, function () {
                     });
-                }
-                itrScreencap(0, myframe.block_states, function () { });
+                },
+                onStop: subErr
             });
         };
         var createButtons = function (id, i) {
@@ -634,14 +685,17 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         };
         $scope.remState = function (sid) {
             if (sid) {
-                $scope.$meteorSubscribe("genstates", sid).then(function (sub) {
-                    var myframe = GenStates.findOne({ _id: sid });
-                    myframe.block_states.forEach(function (s) {
-                        screencaps.remove(s.screencapid);
-                    });
-                    genstates.remove(sid);
-                    updateTableStateParams();
-                    toaster.pop('warning', 'Removed ' + sid);
+                $scope.subscribe("genstates", function () { return [sid]; }, {
+                    onReady: function (sub) {
+                        var myframe = GenStates.findOne({ _id: sid });
+                        myframe.block_states.forEach(function (s) {
+                            ScreenCaps.remove(s.screencapid);
+                        });
+                        GenStates.remove(sid);
+                        updateTableStateParams();
+                        toaster.pop('warning', 'Removed ' + sid);
+                    },
+                    onStop: subErr
                 });
             }
         };
@@ -658,16 +712,16 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             return retStack;
         };
         /*$scope.myreplay = null;
-        $scope.frameid = -1;
-        var showReplay = function(idx){
-          var frameScene = $scope.myreplay.data.act[idx];
-          frameScene.forEach(function(frame){
-            var cube = cubesnamed[frame.name];
-            cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
-            cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotation.x, frame.rotation.y, frame.rotation.z, frame.rotation.w);
-            cube.isVisible = true;
-          })
-        };*/
+         $scope.frameid = -1;
+         var showReplay = function(idx){
+         var frameScene = $scope.myreplay.data.act[idx];
+         frameScene.forEach(function(frame){
+         var cube = cubesnamed[frame.name];
+         cube.position = new BABYLON.Vector3(frame.position.x, frame.position.y, frame.position.z);
+         cube.rotationQuaternion = new BABYLON.Quaternion(frame.rotation.x, frame.rotation.y, frame.rotation.z, frame.rotation.w);
+         cube.isVisible = true;
+         })
+         };*/
         $scope.enableImpSave = false;
         $scope.cancelImport = function () {
             //must use function to apply to scope
@@ -733,13 +787,17 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         });
                     }
                     else
-                        $scope.$apply(function () { toaster.pop('warn', 'Invalid JSON META file'); });
+                        $scope.$apply(function () {
+                            toaster.pop('warn', 'Invalid JSON META file');
+                        });
                 };
                 reader.readAsText($scope.metafilename[0]);
             }
         };
         $scope.metaFileChanged = function (event) {
-            $scope.$apply(function () { $scope.metafilename = event.target.files; });
+            $scope.$apply(function () {
+                $scope.metafilename = event.target.files;
+            });
             console.warn($scope.metafilename);
         };
         /**
@@ -785,13 +843,17 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         });
                     }
                     else
-                        $scope.$apply(function () { toaster.pop('warn', 'Invalid JSON STATE file'); });
+                        $scope.$apply(function () {
+                            toaster.pop('warn', 'Invalid JSON STATE file');
+                        });
                 };
                 reader.readAsText($scope.statefilename[0]);
             }
         };
         $scope.stateFileChanged = function (event) {
-            $scope.$apply(function () { $scope.statefilename = event.target.files; });
+            $scope.$apply(function () {
+                $scope.statefilename = event.target.files;
+            });
             console.warn($scope.statefilename);
         };
         var setDecorVal = function (decor) {
@@ -864,8 +926,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                                         }, function (b64i) {
                                             var b64img = LZString.compressToUTF16(b64i);
                                             /*console.warn('len', b64i.length, b64img.length);
-                                            console.warn('b64i', b64i);
-                                            console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
+                                             console.warn('b64i', b64i);
+                                             console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
                                             block_states[idx].screencap = b64img;
                                             block_states[idx].created = (new Date).getTime();
                                             var attachid = createButtons('stateimg', idx);
@@ -881,13 +943,17 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         });
                     }
                     else
-                        $scope.$apply(function () { toaster.pop('warn', 'Invalid JSON STATE file'); });
+                        $scope.$apply(function () {
+                            toaster.pop('warn', 'Invalid JSON STATE file');
+                        });
                 };
                 reader.readAsText($scope.statesfilename[0]);
             }
         };
         $scope.statesFileChanged = function (event) {
-            $scope.$apply(function () { $scope.statesfilename = event.target.files; });
+            $scope.$apply(function () {
+                $scope.statesfilename = event.target.files;
+            });
             console.warn($scope.statesfilename);
         };
         var mungeBlockStates = function (bss) {
@@ -907,23 +973,29 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             bs.forEach(function (b) {
                 var li = b.position.split(',');
                 var lv = [];
-                li.forEach(function (v, i) { lv.push(Number(v)); });
+                li.forEach(function (v, i) {
+                    lv.push(Number(v));
+                });
                 if (b.rotation) {
                     var ri = b.rotation.split(',');
                     var rv = [];
                     ri.forEach(function (v, i) {
                         rv.push(Number(v));
                     });
-                    newBS.push({ id: b.id, position: {
+                    newBS.push({
+                        id: b.id, position: {
                             x: lv[0], y: lv[1], z: lv[2]
                         }, rotation: {
                             x: rv[0], y: rv[1], z: rv[2], w: rv[3]
-                        } });
+                        }
+                    });
                 }
                 else
-                    newBS.push({ id: b.id, position: {
+                    newBS.push({
+                        id: b.id, position: {
                             x: lv[0], y: lv[1], z: lv[2]
-                        } });
+                        }
+                    });
             });
             return newBS;
         };
@@ -977,9 +1049,11 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             });
         };
         $scope.dlScene = function () {
-            var tempframe = { _id: $scope.curState._id,
+            var tempframe = {
+                _id: $scope.curState._id,
                 public: $scope.curState.public, name: $scope.curState.name, created: $scope.curState.created,
-                creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: [] };
+                creator: $scope.curState.creator, block_meta: $scope.curState.block_meta, block_states: []
+            };
             for (var idx = 0; idx < $scope.curState.block_states.length; idx++) {
                 var block_state = $scope.curState.block_states[idx].block_state;
                 var newblock_state = [];
@@ -1005,7 +1079,10 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
         };
         $scope.getMove = function (idx) {
-            var tempframe = { block_meta: $scope.curState.block_meta, block_state: [] };
+            var tempframe = {
+                block_meta: $scope.curState.block_meta,
+                block_state: []
+            };
             var block_state = $scope.curState.block_states[idx].block_state;
             for (var i = 0; i < block_state.length; i++) {
                 var s = block_state[i];
@@ -1027,14 +1104,22 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             apputils.saveAs(uriContent, 'bw_state_' + $scope.curState._id + '_' + idx + '.json');
         };
         $scope.delMove = function (idx) {
+            console.warn('delmove');
             var count = $scope.curState.block_states.length - idx;
             $scope.curState.block_states.splice(idx, count);
-            genstates.save($scope.curState).then(function (val) {
-                $scope.clearMeta();
-                $scope.showState(val[0]._id);
-            }, function (err) {
-                console.warn(err.reason);
-            });
+            if ($scope.curState._id) {
+                var doc = angular.copy($scope.curState);
+                var id = $scope.curState._id;
+                delete doc._id;
+                GenStates.update({ _id: id }, { $set: doc }, function (err, num) {
+                    if (err)
+                        return console.warn('delmove err:', err);
+                    $scope.clearMeta();
+                    $scope.showState(id);
+                });
+            }
+            else
+                $scope.$apply(function () { toaster.pop('info', 'Please SAVE layout before deleting moves'); });
         };
         // Start by calling the createScene function that you just finished creating
         var myengine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);

@@ -33,8 +33,8 @@
       .state('app.root', {
         url: '/',
         title: "CwC ISI",
-        onEnter: ['$rootScope', '$state', '$meteor', function ($rootScope, $state, $meteor) {
-          $meteor.requireUser().then(function (usr) {
+        onEnter: ['$rootScope', '$state', '$auth', function ($rootScope, $state, $auth) {
+          $auth.requireUser().then(function (usr) {
             if (usr) {
               if ($rootScope.isRole(usr, 'agent')) $state.go('app.games');
               else $state.go('app.worldview');
@@ -51,8 +51,8 @@
         templateUrl: helper.basepath('genworld.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -67,8 +67,8 @@
         templateUrl: helper.basepath('gensimpexp.html'),
         resolve: /*angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -84,8 +84,8 @@
         templateUrl: helper.basepath('genpred.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -100,8 +100,8 @@
         templateUrl: helper.basepath('genjobs.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -123,8 +123,8 @@
         templateUrl: helper.basepath('worldview.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -139,8 +139,8 @@
         templateUrl: helper.basepath('worldview.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -155,8 +155,8 @@
         templateUrl: helper.basepath('replay.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -171,8 +171,8 @@
         templateUrl: helper.basepath('tasks.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'agent');
               });
             }]
@@ -187,8 +187,8 @@
         templateUrl: helper.basepath('games.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return $rootScope.isRole(user, 'agent');
               });
             }]
@@ -203,8 +203,8 @@
         templateUrl: helper.basepath('gameview.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return $rootScope.isRole(user, 'agent');
               });
             }]
@@ -219,8 +219,8 @@
         templateUrl: helper.basepath('goalview.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$meteor", '$rootScope', function ($meteor, $rootScope) {
-              return $meteor.requireValidUser(function (user) {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
                 return $rootScope.isRole(user, 'agent');
               });
             }]
@@ -243,9 +243,9 @@
         title: "CwC ISI",
         templateUrl: helper.basepath('main.html'),
         resolve: helper.resolveFor('modernizr', 'icons'),
-        onEnter: ["$rootScope", "$state", "$meteor", function ($rootScope, $state, $meteor) {
+        onEnter: ["$rootScope", "$state", "$auth", function ($rootScope, $state, $auth) {
           $rootScope.app.layout.isBoxed = false;
-          $meteor.requireUser().then(function (usr) {
+          $auth.requireUser().then(function (usr) {
             if (usr) $state.go('app.worldview');
           });
           Accounts.onLogin(function (user) {
