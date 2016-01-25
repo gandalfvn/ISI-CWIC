@@ -21,15 +21,6 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
 
   $scope.curState = new apputils.cCurrentState();
 
-  /*$scope.helpers({
-    genstates(){
-      return GenStates;
-    },
-    screencaps(){
-      return ScreenCaps;
-    }
-  });*/
-
   $scope.subscribe("genstates", function(){}, {
     onReady: function (sid) {
       dataReady.update('genstates');

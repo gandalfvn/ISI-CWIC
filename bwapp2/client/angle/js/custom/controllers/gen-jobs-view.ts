@@ -33,10 +33,13 @@ interface iSortASNs {
   time: number, name: string, tid: string, hid: string, islive: boolean
 }
 
-angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', 'DTOptionsBuilder', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils, DTOptionsBuilder){
+angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout',  'ngDialog', 'toaster', 'AppUtils', 'DTOptionsBuilder', '$reactive', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, ngDialog, toaster, apputils, DTOptionsBuilder, $reactive){
   "use strict";
+  $reactive(this).attach($scope);
 
   var canvas = {width: 480, height: 360};
+  //subscription error for onStop;
+  var subErr:(err:Error)=>void = function(err:Error){return (err)? console.warn("err:", arguments, err) : console.warn('subscription stopped',arguments);};
 
   $scope.dtOptionsBootstrap = DTOptionsBuilder.newOptions()
     .withBootstrap()
@@ -64,24 +67,21 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     "lengthMenu": [[10], [10]],
     "order": [[0, "desc"]],
   });
+  
+  $scope.subscribe("genstates", function(){}, {
+    onReady: function (sid) {dataReady.update('genstates');},
+    onStop: subErr
+  });
 
-  var genstates = $scope.$meteorCollection(GenStates);
-  $scope.$meteorSubscribe("genstates").then(
-    function(sid){dataReady.update('genstates');},
-    function(err){ console.log("error", arguments, err); }
-  );
+  $scope.subscribe("screencaps", function(){}, {
+    onReady: function (sid) {dataReady.update('screencaps');},
+    onStop: subErr
+  });
 
-  var screencaps = $scope.$meteorCollection(ScreenCaps);
-  $scope.$meteorSubscribe("screencaps").then(
-    function(sid){dataReady.update('screencaps');},
-    function(err){ console.log("error", arguments, err); }
-  );
-
-  var genjobsmgr = $scope.$meteorCollection(GenJobsMgr);
-  $scope.$meteorSubscribe("genjobsmgr").then(
-    function(sid){dataReady.update('genjobsmgr');},
-    function(err){ console.log("error", arguments, err); }
-  );
+  $scope.subscribe("genjobsmgr", function(){}, {
+    onReady: function (sid) {dataReady.update('genjobsmgr');},
+    onStop: subErr
+  });
   
   var dataReady:iDataReady = new apputils.cDataReady(2, function():void{
     $rootScope.dataloaded = true;
@@ -215,7 +215,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
 
   $scope.remState = function(sid:string){
     if(sid){
-      genstates.remove(sid);
+      GenStates.remove(sid);
       updateTableStateParams();
       toaster.pop('warning', 'Removed ' + sid);
     }
@@ -224,27 +224,29 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   $scope.chooseState = function(sid:string){
     $scope.enableImpSave = false;
     //we must get the state for this sid
-    $scope.$meteorSubscribe("genstates", sid).then(
-      function(sub){
-        var myframe:iGenStates = GenStates.findOne({_id: sid});
-        if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
-        $scope.curState.clear();
-        $scope.curState.copy(myframe);
-        $scope.showMove(0);
-      }
-    )
+    $scope.subscribe("genstates",()=>{return [sid]}, {
+      onReady: function(sub){
+         var myframe:iGenStates = GenStates.findOne({_id: sid});
+         if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
+         $scope.curState.clear();
+         $scope.curState.copy(myframe);
+         $scope.showMove(0);
+      },
+      onStop: subErr
+    })
   };
 
   $scope.showMove = function(i:number){
     $('#imgpreview').empty();
     var scid:string = $scope.curState.block_states[i].screencapid;
-    $scope.$meteorSubscribe('screencaps', scid).then(
-      function(sub){
+    $scope.subscribe('screencaps', ()=>{return [scid]}, {
+      onReady: function (sub) {
         var retid:string = navImgButtons('imgpreview', i);
         var screen:iScreenCaps = ScreenCaps.findOne({_id: scid});
-        showImage(screen.data, 'Move #: '+i, retid);
-      }
-    );
+        showImage(screen.data, 'Move #: ' + i, retid);
+      },
+      onStop: subErr
+    });
   };
 
   var navImgButtons = function(id:string, i:number):string{
@@ -310,13 +312,13 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
         var bundcnt:number = Math.ceil(availlist.length/jobdata.bundle);
         var doneBundles = _.after(bundcnt, function(){
           jobdata.list = bundleidlist;
-          genjobsmgr.save(jobdata).then(function(val){
+          GenJobsMgr.insert(jobdata, function(err:Error, id:string) {
+            if (!err) {
               updateJobMgr();
-              toaster.pop('info', 'Jobs Created', val[0]._id);
+              toaster.pop('info', 'Jobs Created', id);
             }
-            , function(err){
-              toaster.pop('error', 'Job Create Error', err.reason);
-            })
+            else toaster.pop('error', 'Job Create Error', err.message);
+          })
         });
 
         function saveBundle(){
@@ -330,15 +332,14 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             created: (new Date).getTime(),
             idxlist: abundle
           };
-          genjobsmgr.save(mybundledata).then(function(val){
-              bundleidlist.push(val[0]._id);
+          GenJobsMgr.insert(mybundledata, function(err:Error, id:string) {
+            if (!err) {
+              bundleidlist.push(id);
               doneBundles();
-              toaster.pop('info', 'Bundle Created', val[0]._id);
+              toaster.pop('info', 'Bundle Created', id);
             }
-            , function(err){
-              toaster.pop('error', 'Bundle Data', err.reason);
-            }
-          );
+            else toaster.pop('error', 'Bundle Data', err.message);
+          });
           abundle = [];
         }
         var abundle:number[][] = [];
@@ -406,6 +407,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     if(deltask && deltask.hitlist) {
       GenJobsMgr.remove(hid);
       GenJobsMgr.update({_id: tid}, {$pull: {hitlist: hid}});
+      var idx = _.findIndex($scope.allHITs.active, (a:iSortHITs)=>{return (tid === a.tid)});
+      if(idx > -1) $scope.allHITs.active.splice(idx, 1);
       $scope.goodHITsData = false;
     }
   };

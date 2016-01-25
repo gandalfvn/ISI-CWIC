@@ -17,14 +17,6 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         //subscription error for onStop;
         var subErr = function (err) { return (err) ? console.warn("err:", arguments, err) : console.warn('subscription stopped', arguments); };
         $scope.curState = new apputils.cCurrentState();
-        /*$scope.helpers({
-          genstates(){
-            return GenStates;
-          },
-          screencaps(){
-            return ScreenCaps;
-          }
-        });*/
         $scope.subscribe("genstates", function () { }, {
             onReady: function (sid) {
                 dataReady.update('genstates');
