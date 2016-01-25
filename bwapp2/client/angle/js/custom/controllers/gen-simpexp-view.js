@@ -299,7 +299,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             if ($scope.statesfilename && $scope.statesfilename.length) {
                 if ($scope.statesfilename.length > 1) {
                     var reader = new FileReader();
-                    function procFiles(idx, files, cb) {
+                    var procFiles = function (idx, files, cb) {
                         if (_.isUndefined(files[idx]))
                             return cb();
                         reader.onload = function () {
@@ -335,7 +335,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                                 });
                         };
                         reader.readAsText(files[idx]);
-                    }
+                    };
                     procFiles(0, $scope.statesfilename, function () {
                         $rootScope.dataloaded = true;
                         $scope.curState.clear();

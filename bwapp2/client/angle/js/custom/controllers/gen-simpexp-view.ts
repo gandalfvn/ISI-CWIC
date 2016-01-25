@@ -325,8 +325,8 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
     if ($scope.statesfilename && $scope.statesfilename.length) {
       if ($scope.statesfilename.length > 1) {//multi file
         var reader = new FileReader();
-        
-        function procFiles(idx:number, files:Blob[], cb:()=>void) {
+
+        var procFiles = function(idx:number, files:Blob[], cb:()=>void) {
           if(_.isUndefined(files[idx])) return cb();
           reader.onload = function () {
             var filedata:miGen3DEngine.iBlockImport = JSON.parse(reader.result);
@@ -360,7 +360,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             });
           };
           reader.readAsText(files[idx]);
-        }
+        };
         
         procFiles(0, $scope.statesfilename, function(){
           $rootScope.dataloaded = true;
