@@ -9,10 +9,13 @@
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
 
-angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils) {
+angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', '$reactive', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils, $reactive) {
   "use strict";
+  $reactive(this).attach($scope);
 
   var mult:number = 100; //position multiplier for int random
+  //subscription error for onStop;
+  var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
   $scope.dtOptionsBootstrap = DTOptionsBuilder.newOptions()
     .withBootstrap()
@@ -33,15 +36,10 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
 
   $scope.curState = new apputils.cCurrentState();
 
-  var genexps = $scope.$meteorCollection(GenExps);
-  $scope.$meteorSubscribe("genexps").then(
-    function (sid) {
-      dataReady.update('genexps');
-    },
-    function (err) {
-      console.log("error", arguments, err);
-    }
-  );
+  $scope.subscribe("genexps", ()=>{}, {
+    onReady: function (sid) {dataReady.update('genexps')},
+    onStop: subErr
+  });
   
   var dataReady:iDataReady = new apputils.cDataReady(1, function ():void {
     updateAvailExp();
@@ -217,8 +215,8 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
     $scope.enableImpSave = false;
     $scope.isExp = true;
     //we must get the state for this sid
-    $scope.$meteorSubscribe("genexps", sid).then(
-      function (sub) {
+    $scope.subscribe("genexps", ()=>{return [sid]}, {
+      onReady: function (sub) {
         var myframe:iGenExps = GenExps.findOne({_id: sid});
         if (!myframe) return toaster.pop('warn', 'Invalid State ID');
         //update the meta
@@ -228,13 +226,14 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         myengine.createObjects($scope.curState.block_meta.blocks);
         showFrame({block_state: myframe.block_state});
         $rootScope.dataloaded = true;
-      }
-    )
+      },
+      onStop: subErr
+    })
   };
   
   $scope.remState = function (sid:string) {
     if (sid){
-      genexps.remove(sid);
+      GenExps.remove(sid);
       updateAvailExp();
       toaster.pop('warning', 'Removed ' + sid);
     }
@@ -271,17 +270,16 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
     $scope.enableImpSave = false;
     $scope.curState.name = savename;
     setTimeout(function () {
-      genexps.save($scope.curState).then(function (val) {
+      GenExps.insert($scope.curState, function(err: Error, id:string) {
+        if(err) toaster.pop('error', 'Save Import error: ', err.message);
         if(!isMulti){
-          $scope.curState._id = val[0]._id;
+          $scope.curState._id = id;
           $rootScope.dataloaded = true;
           updateAvailExp();
-          $state.go('app.gensimpexp', {sid: val[0]._id}, {reload:true, notify: true});
+          $state.go('app.gensimpexp', {sid: id}, {reload:true, notify: true});
         }
         if(cb) cb();
         //$state.transitionTo('app.gensimpexp', {sid: val[0]._id}, {notify: false});
-      }, function (err) {
-        console.warn(err);
       });
     }, 400);
   };

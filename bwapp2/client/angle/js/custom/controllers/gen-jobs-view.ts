@@ -39,7 +39,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
 
   var canvas = {width: 480, height: 360};
   //subscription error for onStop;
-  var subErr:(err:Error)=>void = function(err:Error){return (err)? console.warn("err:", arguments, err) : console.warn('subscription stopped',arguments);};
+  var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
   $scope.dtOptionsBootstrap = DTOptionsBuilder.newOptions()
     .withBootstrap()

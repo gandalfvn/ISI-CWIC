@@ -17,7 +17,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
 
   var mult:number = 100; //position multiplier for int random
   //subscription error for onStop;
-  var subErr:(err:Error)=>void = function(err:Error){return (err)? console.warn("err:", arguments, err) : console.warn('subscription stopped',arguments);};
+  var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
   $scope.curState = new apputils.cCurrentState();
 

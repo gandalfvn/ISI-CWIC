@@ -19,29 +19,33 @@ interface iSceneInfo {
   creator: string, block_meta: iBlockMeta, block_states: iBlockStates[]
 }
 
-angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$meteor', 'ngDialog', 'toaster', 'AppUtils', 'deviceDetector', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $meteor, ngDialog, toaster, apputils, devDetect){
+angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$reactive', 'ngDialog', 'toaster', 'AppUtils', 'deviceDetector', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $reactive, ngDialog, toaster, apputils, devDetect){
   "use strict";
+  $reactive(this).attach($scope);
+  //subscription error for onStop;
+  var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
   $scope.date = (new Date()).getTime();
   $scope.opt = {bAgreed: true, repvalidlist: [mGenJobsMgr.eRepValid[0], mGenJobsMgr.eRepValid[1], mGenJobsMgr.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome')};
   
-  var genstates = $scope.$meteorCollection(GenStates);
-  $scope.$meteorSubscribe("genstates").then(
-    function(sid){dataReady.update('genstates');},
-    function(err){ console.log("error", arguments, err); }
-  );
-
-  var screencaps = $scope.$meteorCollection(ScreenCaps);
-  $scope.$meteorSubscribe("screencaps").then(
-    function(sid){dataReady.update('screencaps');},
-    function(err){ console.log("error", arguments, err); }
-  );
-
-  var genjobsmgr = $scope.$meteorCollection(GenJobsMgr);
-  $scope.$meteorSubscribe("genjobsmgr").then(
-    function(sid){dataReady.update('genjobsmgr');},
-    function(err){ console.log("error", arguments, err); }
-  );
+  $scope.subscribe("genstates", ()=>{}, {
+    onReady: function (sid) {
+      dataReady.update('genstates');
+    },
+    onStop: subErr
+  });
+  $scope.subscribe("screencaps", ()=>{}, {
+    onReady: function (sid) {
+      dataReady.update('screencaps');
+    },
+    onStop: subErr
+  });
+  $scope.subscribe("genjobsmgr", ()=>{}, {
+    onReady: function (sid) {
+      dataReady.update('genjobsmgr');
+    },
+    onStop: subErr
+  });
 
   $scope.isOpenDir = true;
   $scope.taskdata;
@@ -82,13 +86,13 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
         }
       } 
       var sid:string = $scope.taskdata.stateid;
-      $scope.$meteorSubscribe("genstates", sid).then(
-        function(sub) {
+      $scope.subscribe("genstates", ()=>{return [sid]}, {
+        onReady: function (sub) {
           $scope.curState = <iGenStates>GenStates.findOne(sid);
           //console.warn('curState',$scope.curState);
           if ($stateParams.report) { //report view
             $scope.report = $stateParams.report;
-            if($scope.submitter.valid)
+            if ($scope.submitter.valid)
               $scope.opt.repvalid = $scope.submitter.valid;
             else $scope.opt.repvalid = 'tbd';
             if ($scope.hitdata.notes[$scope.workerId]) {
@@ -102,10 +106,10 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
               toaster.pop('error', 'Missing annotations');
             }
           }
-          else{//single item view
+          else {//single item view
             $scope.maxtask = $scope.taskdata.idxlist.length * $scope.taskdata.antcnt;
             $scope.taskidx = 0;
-            if($scope.submitter){
+            if ($scope.submitter) {
               $scope.curantpass = $scope.taskdata.antcnt;
             }
             else {
@@ -121,13 +125,13 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
               }
               $scope.curantpass = Math.floor($scope.taskidx / $scope.taskdata.idxlist.length);
             }
-            if($scope.taskidx || $scope.submitter) $scope.opt.bAgreed = true;
+            if ($scope.taskidx || $scope.submitter) $scope.opt.bAgreed = true;
             console.warn('$scope.taskdata', $scope.taskdata);
             console.warn('$scope.hitdata', $scope.hitdata);
             renderTask($scope.taskidx);
             $scope.logolist = [];
             console.warn($scope.curState.block_meta);
-            _.each($scope.curState.block_meta.blocks, function(b:iBlockMetaEle){
+            _.each($scope.curState.block_meta.blocks, function (b:iBlockMetaEle) {
               $scope.logolist.push({name: b.name, imgref: "img/textures/logos/" + b.name.replace(/ /g, '') + '.png'});
             });
             console.warn($scope.logolist);
@@ -136,13 +140,8 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
            console.warn(err,resp);
            })*/
         },
-        function(err) {
-          console.warn('err', err);
-          $scope.$apply(function () {
-            toaster.pop('error', sid + ' Not Found', err.reason)
-          });
-        }
-      );
+        onStop: subErr
+      });
     }
   });
 
@@ -157,15 +156,16 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       $('#statea'+idx).empty();
       $('#stateb'+idx).empty();
       var scids = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
-      $scope.$meteorSubscribe('screencaps', scids).then(
-        function(sub){
+      $scope.subscribe('screencaps', ()=>{return [scids]}, {
+        onReady: function(sub){
           var screena:iScreenCaps = ScreenCaps.findOne(scids[0]);
           var screenb:iScreenCaps = ScreenCaps.findOne(scids[1]);
           showImage(screena.data, 'Before', null, 'statea'+idx);
           showImage(screenb.data, 'After', null, 'stateb'+idx);
           renderReport(idx+1);
-        }
-      );
+        },
+        onStop: subErr
+      });
     }
   };
   
@@ -195,15 +195,16 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
       $('#statea').empty();
       $('#stateb').empty();
       var scids:string[] = [$scope.curState.block_states[aidx].screencapid, $scope.curState.block_states[bidx].screencapid];
-      $scope.$meteorSubscribe('screencaps', scids).then(
-        function(sub){
+      $scope.subscribe('screencaps', ()=>{return [scids]}, {
+        onReady: function(sub){
           var screena:iScreenCaps = ScreenCaps.findOne(scids[0]);
           var screenb:iScreenCaps = ScreenCaps.findOne(scids[1]);
           showImage(screena.data, 'Before', null, 'statea');
           showImage(screenb.data, 'After', null, 'stateb');
           $rootScope.dataloaded = true;
-        }
-      );
+        },
+        onStop: subErr
+      });
     }
   };
   

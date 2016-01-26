@@ -15,7 +15,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         $reactive(this).attach($scope);
         var mult = 100; //position multiplier for int random
         //subscription error for onStop;
-        var subErr = function (err) { return (err) ? console.warn("err:", arguments, err) : console.warn('subscription stopped', arguments); };
+        var subErr = function (err) { if (err)
+            console.warn("err:", arguments, err); return; };
         $scope.curState = new apputils.cCurrentState();
         $scope.subscribe("genstates", function () { }, {
             onReady: function (sid) {
