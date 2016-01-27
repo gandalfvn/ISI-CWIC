@@ -6,7 +6,8 @@
 isRole = function (usr, role) {
     if (usr) {
         if (role == 'guest') {
-            return usr.profile.guest;
+            if (usr && usr.profile && usr.profile.guest)
+                return usr.profile.guest;
         }
         else if (usr && usr.profile && usr.profile.roles)
             return (usr.profile.roles.indexOf(role) > -1);

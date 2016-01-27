@@ -83,7 +83,7 @@
         templateUrl: helper.basepath('genworld.html'),
         resolve: angular.extend(
           {
-            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+            "currentUser": ["$auth", "$rootScope", function ($auth, $rootScope) {
               return $auth.requireValidUser(function (user) {
                 return !$rootScope.isRole(user, 'guest');
               });
