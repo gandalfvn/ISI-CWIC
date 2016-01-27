@@ -5,16 +5,19 @@
 
 GenStates.allow({
   insert: function(userId, data){
+    if(isRole(Meteor.user(), 'guest')) return false;
     var fcheck = _.without(_.keys(data), '_id', 'public', 'block_meta', 'block_states', 'created', 'name', 'creator');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },
   update: function(userId, data, fields, modifier){
+    if(isRole(Meteor.user(), 'guest')) return false;
     var fcheck = _.without(_.keys(data), '_id', 'public', 'block_meta', 'block_states', 'created', 'name', 'creator');
     if(fcheck.length) throw new Match.Error("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },
   remove: function(userId, data){
+    if(isRole(Meteor.user(), 'guest')) return false;
     return userId;
   }
   ,fetch: ['_id']

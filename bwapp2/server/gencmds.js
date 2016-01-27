@@ -10,7 +10,7 @@ var validKeys = ['_id', 'public', 'block_meta', 'block_state', 'created', 'name'
 GenCmds.allow({
     insert: function (userId, data) {
         if (isRole(Meteor.user(), 'guest'))
-            throw new Match['Error']("Guests may not modify data");
+            return false;
         var fcheck = _.difference(_.keys(data), validKeys);
         if (fcheck.length)
             throw new Match['Error']("illegal fields:" + JSON.stringify(fcheck));
@@ -18,7 +18,7 @@ GenCmds.allow({
     },
     update: function (userId, data, fields, modifier) {
         if (isRole(Meteor.user(), 'guest'))
-            throw new Match['Error']("Guests may not modify data");
+            return false;
         var fcheck = _.difference(_.keys(data), validKeys);
         if (fcheck.length)
             throw new Match['Error']("illegal fields:" + JSON.stringify(fcheck));
@@ -26,7 +26,7 @@ GenCmds.allow({
     },
     remove: function (userId, data) {
         if (isRole(Meteor.user(), 'guest'))
-            throw new Match['Error']("Guests may not modify data");
+            return false;
         return userId;
     },
     fetch: ['_id']

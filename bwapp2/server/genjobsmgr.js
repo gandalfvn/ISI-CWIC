@@ -2,18 +2,19 @@
  * Module: genjobsmgr.js
  * Created by wjwong on 10/3/15.
  =========================================================*/
-/// <reference path="../model/genjobsmgrdb.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 /// <reference path="./typings/lodash/lodash.d.ts" />
+/// <reference path="../model/genjobsmgrdb.ts" />
+/// <reference path="./util.ts" />
 GenJobsMgr.allow({
     insert: function (userId, job) {
         //console.warn('insert');
+        if (isRole(Meteor.user(), 'guest'))
+            return false;
         return userId; // && job.owner === userId;
     },
     update: function (userId, job, fields, modifier) {
-        if (userId)
-            return userId;
-        else {
+        if (isRole(Meteor.user(), 'guest')) {
             var idx = '$set';
             var delkeys = [];
             //only allow pass through of updates to notes and submitted
@@ -43,10 +44,12 @@ GenJobsMgr.allow({
                 console.warn(delkeys[i]);
                 delete modifier[idx][delkeys[i]];
             }
-            return 'anonymous';
         }
+        return userId;
     },
     remove: function (userId, job) {
+        if (isRole(Meteor.user(), 'guest'))
+            return false;
         return userId; // && job.owner === userId;
     }
 });

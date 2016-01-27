@@ -12,7 +12,7 @@
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
 
-//?taskid=2kw6CqcqjRzsHBWD2&assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&hitId=123RVWYBAZW00EXAMPLE&turkSubmitTo=https://www.mturk.com/&workerId=AZ3456EXAMPLE
+//http://localhost:3000/annotate?taskId=hDhCMtviYMx9CZmpn&assignmentId=test&workerId=wjwong&hitId=3PA41K45VNQJK7JZ308ZJRKNJEM7PV&turkSubmitTo=https://www.mturk.com/
 
 interface iSceneInfo {
   _id: string, public: string, name: string, created: string,
