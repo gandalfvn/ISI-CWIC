@@ -73,10 +73,6 @@
       });
 
     //setup account callbacks
-    Accounts.onLogin(function (user) {
-      $state.reload();
-    });
-
     accountsUIBootstrap3.logoutCallback = function (err) {
       console.warn('logout');
       if (err) console.log("Error:" + err);
