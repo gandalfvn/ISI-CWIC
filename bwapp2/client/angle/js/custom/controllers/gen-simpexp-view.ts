@@ -13,6 +13,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
   "use strict";
   $reactive(this).attach($scope);
 
+  $scope.isGuest = $rootScope.isRole(Meteor.user(), 'guest');
   var mult:number = 100; //position multiplier for int random
   //subscription error for onStop;
   var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
@@ -29,10 +30,14 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
 
   $scope.dtOptionsAvail = _.extend({}, $scope.dtOptionsBootstrap, {
     "lengthMenu": [[5], [5]],
-    "order": [[3, "desc"]],
     "language": {"paginate": {"next": '▶', "previous": '◀'}},
     "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
   });
+
+  if($scope.isGuest)
+    $scope.dtOptionsAvail.order = [[2, "desc"]];
+  else
+    $scope.dtOptionsAvail.order = [[3, "desc"]];
 
   $scope.curState = new apputils.cCurrentState();
 
@@ -104,8 +109,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         val = apputils.rndInt(min * mult, max * mult) / mult + aPos.x;
         if (it > 50) {
           console.warn('it > 50 posx:', val);
-        }
-        ;
+        };
       }
       var xval:number = val;
       val = APP_CONST.fieldsize;

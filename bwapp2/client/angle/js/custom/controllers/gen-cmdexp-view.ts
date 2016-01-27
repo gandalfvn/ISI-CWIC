@@ -14,8 +14,7 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
   "use strict";
   $reactive(this).attach($scope);
 
-  console.warn(Meteor.user());
-  var mult:number = 100; //position multiplier for int random
+  $scope.isGuest = $rootScope.isRole(Meteor.user(), 'guest');
   //subscription error for onStop;
   var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
@@ -31,10 +30,14 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
 
   $scope.dtOptionsAvail = _.extend({}, $scope.dtOptionsBootstrap, {
     "lengthMenu": [[5], [5]],
-    "order": [[3, "desc"]],
     "language": {"paginate": {"next": '▶', "previous": '◀'}},
     "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
   });
+
+  if($scope.isGuest)
+    $scope.dtOptionsAvail.order = [[2, "desc"]];
+  else
+    $scope.dtOptionsAvail.order = [[3, "desc"]];
 
   $scope.curState = new apputils.cCurrentState();
 

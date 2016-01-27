@@ -11,6 +11,7 @@
 angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', '$reactive', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils, $reactive) {
         "use strict";
         $reactive(this).attach($scope);
+        $scope.isGuest = $rootScope.isRole(Meteor.user(), 'guest');
         var mult = 100; //position multiplier for int random
         //subscription error for onStop;
         var subErr = function (err) { if (err)
@@ -26,10 +27,13 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         });
         $scope.dtOptionsAvail = _.extend({}, $scope.dtOptionsBootstrap, {
             "lengthMenu": [[5], [5]],
-            "order": [[3, "desc"]],
             "language": { "paginate": { "next": '▶', "previous": '◀' } },
             "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
         });
+        if ($scope.isGuest)
+            $scope.dtOptionsAvail.order = [[2, "desc"]];
+        else
+            $scope.dtOptionsAvail.order = [[3, "desc"]];
         $scope.curState = new apputils.cCurrentState();
         $scope.subscribe("genexps", function () { }, {
             onReady: function (sid) { dataReady.update('genexps'); },

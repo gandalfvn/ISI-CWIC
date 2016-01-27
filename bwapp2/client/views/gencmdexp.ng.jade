@@ -20,21 +20,21 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 
   div(ng-show='!curState.block_meta.blocks')
     .row
-      accordion.col-sm-12
+      accordion(ng-class='(isGuest)?"col-sm-8":"col-sm-12"')
         accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
           accordion-heading
-            h4.panel-title Available Experiments
-          .content.col-sm-8.well(style='background-color: #ebebeb')
+            h4.panel-title Available Scenes
+          .content(ng-class='(isGuest)?"col-sm-12":"col-sm-8 well"')
             table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsAvail")
               thead
                 tr
-                  th
+                  th(ng-if='!isGuest')
                   th ID
                   th Name
                   th Created
               tbody
                 tr(ng-repeat='s in availExp')
-                  td(title="remove")
+                  td(ng-if='!isGuest' title="remove")
                     button.btn.btn-xs.btn-danger(ng-click='remState(s._id)')
                       .fa.fa-remove
                   td(title="ID", ng-click='showState(s._id)')
@@ -42,9 +42,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                   td(title="Name", ng-click='showState(s._id)')
                     | {{s.name}}
                   td(title="Created", ng-click='showState(s._id)')
-                    | {{s.created | date:"MM/dd/yyyy HH:mm"}}
+                    | {{s.created | date:"yyyy/MM/dd HH:mm"}}
 
-          .content.col-sm-4
+          .content.col-sm-4(ng-if='!isGuest')
             form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstatesform', ng-submit='loadStates()')
               b Import
               .form-group

@@ -12,8 +12,7 @@
 angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', '$reactive', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils, $reactive) {
         "use strict";
         $reactive(this).attach($scope);
-        console.warn(Meteor.user());
-        var mult = 100; //position multiplier for int random
+        $scope.isGuest = $rootScope.isRole(Meteor.user(), 'guest');
         //subscription error for onStop;
         var subErr = function (err) { if (err)
             console.warn("err:", arguments, err); return; };
@@ -28,10 +27,13 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
         });
         $scope.dtOptionsAvail = _.extend({}, $scope.dtOptionsBootstrap, {
             "lengthMenu": [[5], [5]],
-            "order": [[3, "desc"]],
             "language": { "paginate": { "next": '▶', "previous": '◀' } },
             "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
         });
+        if ($scope.isGuest)
+            $scope.dtOptionsAvail.order = [[2, "desc"]];
+        else
+            $scope.dtOptionsAvail.order = [[3, "desc"]];
         $scope.curState = new apputils.cCurrentState();
         $scope.subscribe("gencmds", function () { }, {
             onReady: function (sid) { dataReady.update('gencmds'); },
