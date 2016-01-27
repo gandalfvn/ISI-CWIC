@@ -68,26 +68,26 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     "order": [[0, "desc"]],
   });
   
-  $scope.subscribe("genstates", function(){}, {
+  $scope.subscribe("genstates", ()=>{}, {
     onReady: function (sid) {dataReady.update('genstates');},
     onStop: subErr
   });
 
-  $scope.subscribe("screencaps", function(){}, {
+  $scope.subscribe("screencaps", ()=>{}, {
     onReady: function (sid) {dataReady.update('screencaps');},
     onStop: subErr
   });
 
-  $scope.subscribe("genjobsmgr", function(){}, {
+  $scope.subscribe("genjobsmgr", ()=>{}, {
     onReady: function (sid) {dataReady.update('genjobsmgr');},
     onStop: subErr
   });
-  
+
   var dataReady:iDataReady = new apputils.cDataReady(2, function():void{
-    $rootScope.dataloaded = true;
     updateTableStateParams();
     updateJobMgr();
     $scope.refreshHITs();
+    $scope.$apply(()=>{$rootScope.dataloaded = true;});
   });
 
   /*var updateHITs = function(){

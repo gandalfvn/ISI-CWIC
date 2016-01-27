@@ -40,7 +40,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     if ($stateParams.sid) {
       $scope.showState($stateParams.sid);
     }
-    else $rootScope.dataloaded = true;
+    else $scope.$apply(()=>{$rootScope.dataloaded = true;})
   });
 
   var updateTableStateParams = function () {

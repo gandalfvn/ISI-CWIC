@@ -36,7 +36,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 $scope.showState($stateParams.sid);
             }
             else
-                $rootScope.dataloaded = true;
+                $scope.$apply(function () { $rootScope.dataloaded = true; });
         });
         var updateTableStateParams = function () {
             var data = GenStates.find({}, { sort: { "_id": 1 } }).fetch();

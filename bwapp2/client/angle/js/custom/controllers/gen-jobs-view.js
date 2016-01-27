@@ -55,10 +55,10 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             onStop: subErr
         });
         var dataReady = new apputils.cDataReady(2, function () {
-            $rootScope.dataloaded = true;
             updateTableStateParams();
             updateJobMgr();
             $scope.refreshHITs();
+            $scope.$apply(function () { $rootScope.dataloaded = true; });
         });
         /*var updateHITs = function(){
           //$scope.doneASNs = getDoneASNs();
