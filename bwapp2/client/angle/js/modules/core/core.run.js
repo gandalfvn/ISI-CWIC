@@ -33,7 +33,13 @@
     // Hooks Example
     // ----------------------------------- 
     $rootScope.isRole = function(usr, role){
-      return (usr.profile.roles.indexOf(role) > -1)
+      if(usr){
+        if(role == 'guest'){ //there is always a default guest account via artwells:accounts-guest
+          return usr.profile.guest;
+        } else if(usr && usr.profile && usr.profile.roles)
+          return (usr.profile.roles.indexOf(role) > -1);
+      }
+      return false;
     };
 
     // Hook not found

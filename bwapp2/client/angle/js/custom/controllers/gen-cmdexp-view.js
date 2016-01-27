@@ -1,16 +1,18 @@
-/**
- * Created by wjwong on 12/16/15.
- */
+/**========================================================
+ * Module: gen-cmdexp-view
+ * Created by wjwong on 1/26/16.
+ =========================================================*/
 /// <reference path="gen-3d-engine.ts" />
-/// <reference path="../../../../../model/genexpsdb.ts" />
+/// <reference path="../../../../../model/gencmdsdb.ts" />
 /// <reference path="../../../../../server/typings/lodash/lodash.d.ts" />
 /// <reference path="../../../../../server/typings/meteor/meteor.d.ts" />
 /// <reference path="../../../../../server/typings/lz-string/lz-string.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
-angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', '$reactive', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils, $reactive) {
+angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', '$reactive', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils, $reactive) {
         "use strict";
         $reactive(this).attach($scope);
+        console.warn(Meteor.user());
         var mult = 100; //position multiplier for int random
         //subscription error for onStop;
         var subErr = function (err) { if (err)
@@ -31,8 +33,8 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             "dom": '<"pull-left"f><"pull-right"i>rt<"pull-left"p>'
         });
         $scope.curState = new apputils.cCurrentState();
-        $scope.subscribe("genexps", function () { }, {
-            onReady: function (sid) { dataReady.update('genexps'); },
+        $scope.subscribe("gencmds", function () { }, {
+            onReady: function (sid) { dataReady.update('gencmds'); },
             onStop: subErr
         });
         var dataReady = new apputils.cDataReady(1, function () {
@@ -44,103 +46,11 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                 $rootScope.dataloaded = true;
         });
         var updateAvailExp = function () {
-            $scope.availExp = GenExps.find({}, { sort: { "_id": 1 } }).fetch();
+            $scope.availExp = GenCmds.find({}, { sort: { "_id": 1 } }).fetch();
         };
         $scope.resetWorld = function () {
             //resetworld 
             myengine.resetWorld();
-        };
-        /**
-         * Check for cube overlap and increase height based on in order cube creation so updates to mycube y is correct
-         * @param mycube - current cube
-         * @param used - list of cubes already created in fifo order
-         * @param idxdata - index associative array to get prev cube positions
-         */
-        var updateYCube = function (mycube, used, idxdata) {
-            var myArr = [];
-            used.forEach(function (c) {
-                myArr.push(c);
-            });
-            for (var i = 0; i < myArr.length; i++) {
-                var c = idxdata[myArr[i]];
-                if (myengine.intersectsMeshXYZ(mycube, c, true)) {
-                    //console.warn('intersect', mycube.prop.cid, mycube.position, c.prop.cid, c.position);
-                    //half of the size of the cube is from base cube other half from current cube
-                    mycube.position.y = c.position.y + c.prop.size / 2 + mycube.prop.size / 2;
-                }
-            }
-        };
-        /**
-         * generate cube close to anchor cube if there is none then we just generate cube via field.
-         * returns null or vector3 position.
-         * @param size
-         * @param used
-         * @param idxdata
-         * @returns {*}
-         */
-        var genCubeNear = function (size, used, idxdata) {
-            if (used.length) {
-                var myArr = used; //its an array
-                var halfsize = size / 2;
-                var halfrad = APP_CONST.fieldsize / 4; //near radius
-                var anchorIdx = myArr[apputils.rndInt(0, myArr.length - 1)];
-                var aPos = idxdata[anchorIdx].position;
-                var fieldmin = -(APP_CONST.fieldsize / 2) + (size / 2);
-                var fieldmax = (APP_CONST.fieldsize / 2) - (size / 2);
-                var min = -halfrad + halfsize;
-                var max = halfrad - halfsize;
-                var val = APP_CONST.fieldsize;
-                var it = 0;
-                while (val > fieldmax || val < fieldmin) {
-                    val = apputils.rndInt(min * mult, max * mult) / mult + aPos.x;
-                    if (it > 50) {
-                        console.warn('it > 50 posx:', val);
-                    }
-                    ;
-                }
-                var xval = val;
-                val = APP_CONST.fieldsize;
-                it = 0;
-                while (val > fieldmax || val < fieldmin) {
-                    val = apputils.rndInt(min * mult, max * mult) / mult + aPos.z;
-                    if (it > 50) {
-                        console.warn('it > 50 posz:', val);
-                    }
-                    ;
-                }
-                var zval = val;
-                return { anchorCid: anchorIdx, position: new BABYLON.Vector3(xval, halfsize, zval) };
-            }
-            console.error('no existing cubes found');
-            return null;
-        };
-        var genCubeFar = function (size, used, idxdata) {
-            if (used.length) {
-                var myArr = used; //its an array
-                var halfsize = size / 2;
-                var halfrad = APP_CONST.fieldsize / 4; //avoid radius
-                var anchorIdx = myArr[apputils.rndInt(0, myArr.length - 1)];
-                var aPos = idxdata[anchorIdx].position;
-                var fieldmin = -(APP_CONST.fieldsize / 2) + (size / 2);
-                var fieldmax = (APP_CONST.fieldsize / 2) - (size / 2);
-                var min = -halfrad + halfsize;
-                var max = halfrad - halfsize;
-                var val = { x: APP_CONST.fieldsize, z: APP_CONST.fieldsize };
-                var it = 0;
-                while (val.x > fieldmax || val.x < fieldmin ||
-                    val.z > fieldmax || val.z < fieldmin ||
-                    (val.x > aPos.x + min && val.x < aPos.x + max
-                        && val.z > aPos.z + min && val.z < aPos.z + max)) {
-                    val.x = apputils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
-                    val.z = apputils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
-                    it++;
-                    if (it > 50)
-                        console.warn('it > 50 pos:', val);
-                }
-                return { anchorCid: anchorIdx, position: new BABYLON.Vector3(val.x, halfsize, val.z) };
-            }
-            console.error('no existing cubes found');
-            return null;
         };
         var showFrame = function (state, cb) {
             $scope.resetWorld();
@@ -199,20 +109,19 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
          * @param sid
          */
         $scope.showState = function (sid) {
-            $state.transitionTo('app.gensimpexp', { sid: sid }, { notify: false });
+            $state.transitionTo('app.gencmdexp', { sid: sid }, { notify: false });
             $rootScope.dataloaded = false;
             $scope.enableImpSave = false;
             $scope.isExp = true;
             //we must get the state for this sid
-            $scope.subscribe("genexps", function () { return [sid]; }, {
+            $scope.subscribe("gencmds", function () { return [sid]; }, {
                 onReady: function (sub) {
-                    var myframe = GenExps.findOne({ _id: sid });
+                    var myframe = GenCmds.findOne({ _id: sid });
                     if (!myframe)
                         return toaster.pop('warn', 'Invalid State ID');
                     //update the meta
                     $scope.curState.clear();
                     $scope.curState.copy(myframe);
-                    $scope.utterance = $scope.curState.utterance.join(' ').toUpperCase();
                     myengine.createObjects($scope.curState.block_meta.blocks);
                     showFrame({ block_state: myframe.block_state });
                     $rootScope.dataloaded = true;
@@ -222,7 +131,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         };
         $scope.remState = function (sid) {
             if (sid) {
-                GenExps.remove(sid);
+                GenCmds.remove(sid);
                 updateAvailExp();
                 toaster.pop('warning', 'Removed ' + sid);
             }
@@ -253,26 +162,29 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             $scope.enableImpSave = false;
             $scope.curState.name = savename;
             setTimeout(function () {
-                var doc = angular.copy($scope.curState);
-                GenExps.insert(doc, function (err, id) {
-                    if (err)
-                        toaster.pop('error', 'Save Import error: ', err.message);
+                GenCmds.insert(angular.copy($scope.curState), function (err, id) {
+                    if (err) {
+                        $rootScope.dataloaded = true;
+                        $scope.clearMeta();
+                        $scope.$apply(function () { toaster.pop('error', 'Save Import error: ', err.message); });
+                        return;
+                    }
                     if (!isMulti) {
                         $scope.curState._id = id;
                         $rootScope.dataloaded = true;
                         updateAvailExp();
-                        $state.go('app.gensimpexp', { sid: id }, { reload: true, notify: true });
+                        $state.go('app.gencmdexp', { sid: id }, { reload: true, notify: true });
                     }
                     if (cb)
                         cb();
-                    //$state.transitionTo('app.gensimpexp', {sid: val[0]._id}, {notify: false});
+                    //$state.transitionTo('app.gencmdexp', {sid: val[0]._id}, {notify: false});
                 });
             }, 400);
         };
         $scope.clearMeta = function () {
             $('#galleryarea').empty();
             $scope.curState.clear();
-            $state.transitionTo('app.gensimpexp', {}, { notify: false });
+            $state.transitionTo('app.gencmdexp', {}, { notify: false });
         };
         $scope.stateFileChanged = function (event) {
             $scope.$apply(function () {
@@ -310,7 +222,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                             return cb();
                         reader.onload = function () {
                             var filedata = JSON.parse(reader.result);
-                            var validKeys = ['block_meta', 'block_state', 'name', 'utterance'];
+                            var validKeys = ['block_meta', 'block_state', 'name'];
                             var resValidKeys = apputils.isValidKeys(filedata, validKeys);
                             if (resValidKeys.ret && filedata.block_state.length
                                 && filedata.block_meta.blocks && filedata.block_meta.blocks.length) {
@@ -324,8 +236,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                                 $scope.curState.public = true;
                                 $scope.curState.created = (new Date).getTime();
                                 $scope.curState.creator = $rootScope.currentUser._id;
-                                $scope.curState.utterance = filedata.utterance;
-                                $scope.utterance = filedata.utterance.join(' ').toUpperCase()['trunc'](48, true);
+                                $scope.curState.type = 'sc'; //scene type
                                 setDecorVal(filedata.block_meta.decoration);
                                 $scope.curState.block_state = mungeBlockState(filedata.block_state);
                                 var savename = files[idx]['name'].toLowerCase().replace(/\.json/g, '');
@@ -346,7 +257,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                         $rootScope.dataloaded = true;
                         $scope.curState.clear();
                         updateAvailExp();
-                        $state.go('app.gensimpexp', {}, { reload: true, notify: true });
+                        $state.go('app.gencmdexp', {}, { reload: true, notify: true });
                     });
                 }
                 else {
@@ -355,7 +266,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                     var reader = new FileReader();
                     reader.onload = function () {
                         var filedata = JSON.parse(reader.result);
-                        var validKeys = ['block_meta', 'block_state', 'name', 'utterance'];
+                        var validKeys = ['block_meta', 'block_state', 'name'];
                         var resValidKeys = apputils.isValidKeys(filedata, validKeys);
                         if (resValidKeys.ret && filedata.block_state.length
                             && filedata.block_meta.blocks && filedata.block_meta.blocks.length) {
@@ -368,8 +279,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                             $scope.curState.public = true;
                             $scope.curState.created = (new Date).getTime();
                             $scope.curState.creator = $rootScope.currentUser._id;
-                            $scope.curState.utterance = filedata.utterance;
-                            $scope.utterance = filedata.utterance.join(' ').toUpperCase()['trunc'](48, true);
+                            $scope.curState.type = 'sc'; //scene type
                             setDecorVal(filedata.block_meta.decoration);
                             myengine.createObjects($scope.curState.block_meta.blocks);
                             //mung block_states
@@ -456,112 +366,11 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             });
             return newBS;
         };
-        $scope.startMove = function (itr) {
-            console.warn(itr);
-            itr = Number(itr);
-            $scope.isgen = true;
-            var params = { itr: itr, startMove: $scope.startMove, cubesused: null };
-            $scope.genStateN(params);
-        };
-        var nextItr = function (params) {
-            return function (err, savedsid) {
-                if (err)
-                    toaster.pop('warn', err);
-                if (savedsid) {
-                    if (params.itr > 1) {
-                        //if(params.startGen) params.startGen(params.itr - 1);
-                        if (params.startMove)
-                            params.startMove(params.itr - 1);
-                    }
-                    else {
-                        $scope.curitr = 0;
-                        $scope.curcnt = 0;
-                        $scope.isgen = false;
-                    }
-                }
-                else {
-                    //don't iterate since we had error with previous insert
-                    //which means we need to make a new init state
-                    //if(params.startGen) params.startGen(params.itr);
-                    if (params.startMove)
-                        params.startMove(params.itr);
-                }
-            };
-        };
-        $scope.dlScene = function (notes) {
-            var tempframe = {
-                /*_id: $scope.curState._id,
-                public: $scope.curState.public,
-                created: $scope.curState.created,
-                creator: $scope.curState.creator,*/
-                start_id: $scope.curState._id,
-                name: $scope.curState.name,
-                block_meta: null,
-                block_state: null,
-                utterance: $scope.curState.utterance,
-                notes: notes
-            };
-            var block_state = $scope.curState.block_state;
-            var newblock_state = [];
-            var cubesused = [];
-            $scope.curState.block_meta.blocks.forEach(function (b) {
-                cubesused.push(b.id);
-            });
-            cubesused = _.uniq(cubesused);
-            var isValid = true;
-            var max = APP_CONST.fieldsize / 2 + 0.1; //give it a little wiggle room
-            var min = -max;
-            var frame = [];
-            var meta = { blocks: [] };
-            cubesused.forEach(function (cid) {
-                var c = myengine.get3DCubeById(cid);
-                if (c) {
-                    if ((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
-                        (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max) {
-                        var dat = {
-                            id: cid,
-                            position: c.position.clone(),
-                            rotation: c.rotationQuaternion.clone()
-                        };
-                        frame.push(dat);
-                        meta.blocks.push(myengine.cubesdata[cid].meta);
-                    }
-                    else {
-                        isValid = false;
-                        console.warn('Out', c.position.x - c.boxsize / 2, c.position.x + c.boxsize / 2, c.position.z - c.boxsize / 2, c.position.z + c.boxsize / 2, cid, c);
-                    }
-                }
-            });
-            if (!isValid) {
-                toaster.pop('error', 'Cube(s) Out of Bounds!');
-                return false;
-            }
-            for (var i = 0; i < frame.length; i++) {
-                var s = frame[i];
-                var pos = '', rot = '';
-                _.each(s.position, function (v) {
-                    if (pos.length)
-                        pos += ',';
-                    pos += v;
-                });
-                _.each(s.rotation, function (v) {
-                    if (rot.length)
-                        rot += ',';
-                    rot += v;
-                });
-                if (rot.length)
-                    newblock_state.push({ id: s.id, position: pos, rotation: rot });
-                else
-                    newblock_state.push({ id: s.id, position: pos });
-            }
-            tempframe.block_state = newblock_state;
-            tempframe.block_meta = meta;
-            var content = JSON.stringify(tempframe, null, 2);
-            var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
-            apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
+        $scope.submit = function (cmd) {
+            console.warn(cmd);
         };
         // Start by calling the createScene function that you just finished creating
-        var myengine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
+        var myengine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
         $scope.opt = myengine.opt;
         $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
         console.warn(myengine.opt);
@@ -569,4 +378,4 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         myengine.createWorld();
         dataReady.update('world created');
     }]);
-//# sourceMappingURL=gen-simpexp-view.js.map
+//# sourceMappingURL=gen-cmdexp-view.js.map

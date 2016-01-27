@@ -32,3 +32,4 @@ npm-container
 alethes:lodash
 nunohvidal:lz-string
 angular-meteor-auth
+artwells:accounts-guest
