@@ -76,6 +76,6 @@ interface iFaceEle{
   orientation: number
 }
 
-declare var GenStates:any;
-GenStates = new Mongo.Collection('genstates');
+declare var GenStates:Mongo.Collection<iGenStates>;
+GenStates = new Mongo.Collection<iGenStates>('genstates');
 
