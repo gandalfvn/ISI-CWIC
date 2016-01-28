@@ -25,7 +25,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           accordion-heading
             h4.panel-title Available Scenes
           .content(ng-class='(isGuest)?"col-sm-12":"col-sm-8 well"')
-            table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsAvail")
+            table.table.table-condensed(ng-show='dataloaded', datatable="ng", dt-options="dtOptionsAvail")
               thead
                 tr
                   th(ng-if='!isGuest')

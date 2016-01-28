@@ -97,24 +97,28 @@
         url: '/gensimpexp?sid',
         title: 'Simple Experiment',
         templateUrl: helper.basepath('gensimpexp.html'),
-        resolve: /*angular.extend(
+        resolve: angular.extend(
           {
-            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
-              return $auth.requireValidUser(function (user) {
-                return !$rootScope.isRole(user, 'agent');
-              });
+            "currentUser": ["$auth", function ($auth) {
+              return $auth.requireUser();
             }]
-          }, */ //simple functions appear first so data is loaded
+          }, //simple functions appear first so data is loaded
           helper.resolveFor('babylonjs', 'datatables')
-        //)
-        ,
-        controller: 'genSimpExpCtrl'
+        )
+        ,controller: 'genSimpExpCtrl'
       })
       .state('app.gencmdexp', {
         url: '/gencmdexp?sid',
         title: 'Simple Experiment',
         templateUrl: helper.basepath('gencmdexp.html'),
-        resolve: helper.resolveFor('babylonjs', 'datatables')
+        resolve: angular.extend(
+          {
+            "currentUser": ["$auth", function ($auth) {
+              return $auth.requireUser();
+            }]
+          }, //simple functions appear first so data is loaded
+          helper.resolveFor('babylonjs', 'datatables')
+        )
         ,controller: 'genCmdExpCtrl'
       })
       .state('app.genpred', {

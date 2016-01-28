@@ -35,10 +35,12 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
         else
             $scope.dtOptionsAvail.order = [[3, "desc"]];
         $scope.curState = new apputils.cCurrentState();
-        $scope.subscribe("gencmds", function () { }, {
-            onReady: function (sid) { dataReady.update('gencmds'); },
-            onStop: subErr
-        });
+        setTimeout(function () {
+            $scope.subscribe("gencmds", function () { }, {
+                onReady: function (sid) { dataReady.update('gencmds'); },
+                onStop: subErr
+            });
+        }, 10);
         var dataReady = new apputils.cDataReady(1, function () {
             updateAvailExp();
             if ($stateParams.sid) {
@@ -126,7 +128,7 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
                     $scope.curState.copy(myframe);
                     myengine.createObjects($scope.curState.block_meta.blocks);
                     showFrame({ block_state: myframe.block_state });
-                    $rootScope.dataloaded = true;
+                    $scope.$apply(function () { $rootScope.dataloaded = true; });
                 },
                 onStop: subErr
             });

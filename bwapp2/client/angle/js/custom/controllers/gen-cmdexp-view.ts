@@ -41,10 +41,12 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
 
   $scope.curState = new apputils.cCurrentState();
 
-  $scope.subscribe("gencmds", ()=>{}, {
-    onReady: function (sid) {dataReady.update('gencmds')},
-    onStop: subErr
-  });
+  setTimeout(()=>{
+    $scope.subscribe("gencmds", ()=>{}, {
+      onReady: function (sid) {dataReady.update('gencmds')},
+      onStop: subErr
+    });
+  }, 10);
 
   var dataReady:iDataReady = new apputils.cDataReady(1, function ():void {
     updateAvailExp();
@@ -135,7 +137,7 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
         $scope.curState.copy(myframe);
         myengine.createObjects($scope.curState.block_meta.blocks);
         showFrame({block_state: myframe.block_state});
-        $rootScope.dataloaded = true;
+        $scope.$apply(()=>{$rootScope.dataloaded = true});
       },
       onStop: subErr
     })
