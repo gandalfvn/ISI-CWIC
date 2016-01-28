@@ -105,6 +105,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             button.btn.btn-primary(type='submit') Create
   hr
 .row
+  .col-sm-12
+    | Get More Data:
+    | &nbsp; {{opt.pageCur}} &nbsp;
+    button.btn.btn-sm.btn-info(ng-click='incBlock(1)' title='Load another {{opt.pageSize}} items')
+      i.fa.fa-plus
   accordion.col-sm-12
     accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
       accordion-heading

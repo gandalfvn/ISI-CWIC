@@ -71,6 +71,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         div(style='color:red;font-size:1.1em')
           .fa.fa-exclamation-triangle
           | Each description MUST describe the action completely.  
+          i(style='color:green') Only one block moves per action
           //-span(ng-show='notes.length > 1')
             | Ensure each alternative description is 
             b DIFFERENT.
@@ -90,7 +91,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             .col-sm-12(ng-if='$index > 0 && notes[$index-1].length > 13')
               | Create a 
               b(style='color:red') COMPLETELY NEW ALTERNATIVE
-              |  description of the action
+              |  description of the action. 
+              i(style='color:green') Only one block moves per action
             .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13)')
               b.pull-left(ng-show='!note.length || note.length < 14', style='font-size: 16px; color: red; width:2%; float: left')
                 .fa.fa-asterisk

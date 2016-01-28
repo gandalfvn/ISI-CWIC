@@ -27,7 +27,6 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       onStop: subErr
     });
 
-
     $scope.subscribe("screencaps", ()=>{}, {
       onReady: function (sid) {dataReady.update('screencaps');},
       onStop: subErr

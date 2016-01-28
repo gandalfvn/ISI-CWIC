@@ -37,6 +37,12 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   "use strict";
   $reactive(this).attach($scope);
 
+  $scope.opt= {}; //angular has issues with updating primitives
+  $scope.opt.isLive = false;
+  $scope.opt.useQual = true;
+  $scope.opt.pageCur = 0;
+  $scope.opt.pageSize = 50;
+
   var canvas = {width: 480, height: 360};
   //subscription error for onStop;
   var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
@@ -79,7 +85,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
       onStop: subErr
     });
 
-    $scope.subscribe("genjobsmgr", ()=>{}, {
+    $scope.subscribe("genjobsmgr", ()=>{return [{type: "list", pageCur: $scope.opt.pageCur, pageSize: $scope.opt.pageSize}]}, {
       onReady: function (sid) {dataReady.update('genjobsmgr');},
       onStop: subErr
     });
@@ -96,6 +102,19 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     //$scope.doneASNs = getDoneASNs();
     $scope.allHITs = getAllHITs();
   };*/
+  
+  $scope.incBlock = function(dir:number){
+    if($scope.opt.pageCur+dir > -1 ){
+      $scope.subscribe("genjobsmgr", ()=>{return [{type: "list", pageCur: $scope.opt.pageCur+dir, pageSize: $scope.opt.pageSize}]}, {
+        onReady: function (sid) {
+          $scope.opt.pageCur+= dir;
+          updateJobMgr();
+          $scope.refreshHITs();
+        },
+        onStop: subErr
+      });
+    }
+  };
   
   $scope.refreshHITs = function(){
     $scope.goodHITsData = true;
@@ -498,8 +517,4 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   };
 
   $scope.stateGo = apputils.stateGo($state);
-
-  $scope.opt= {}; //angular has issues with updating primitives
-  $scope.opt.isLive = false;
-  $scope.opt.useQual = true;
 }]);

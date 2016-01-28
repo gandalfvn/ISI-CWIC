@@ -15,6 +15,11 @@
 angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'AppUtils', 'DTOptionsBuilder', '$reactive', function ($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, ngDialog, toaster, apputils, DTOptionsBuilder, $reactive) {
         "use strict";
         $reactive(this).attach($scope);
+        $scope.opt = {}; //angular has issues with updating primitives
+        $scope.opt.isLive = false;
+        $scope.opt.useQual = true;
+        $scope.opt.pageCur = 0;
+        $scope.opt.pageSize = 50;
         var canvas = { width: 480, height: 360 };
         //subscription error for onStop;
         var subErr = function (err) { if (err)
@@ -51,7 +56,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 onReady: function (sid) { dataReady.update('screencaps'); },
                 onStop: subErr
             });
-            $scope.subscribe("genjobsmgr", function () { }, {
+            $scope.subscribe("genjobsmgr", function () { return [{ type: "list", pageCur: $scope.opt.pageCur, pageSize: $scope.opt.pageSize }]; }, {
                 onReady: function (sid) { dataReady.update('genjobsmgr'); },
                 onStop: subErr
             });
@@ -66,6 +71,18 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
           //$scope.doneASNs = getDoneASNs();
           $scope.allHITs = getAllHITs();
         };*/
+        $scope.incBlock = function (dir) {
+            if ($scope.opt.pageCur + dir > -1) {
+                $scope.subscribe("genjobsmgr", function () { return [{ type: "list", pageCur: $scope.opt.pageCur + dir, pageSize: $scope.opt.pageSize }]; }, {
+                    onReady: function (sid) {
+                        $scope.opt.pageCur += dir;
+                        updateJobMgr();
+                        $scope.refreshHITs();
+                    },
+                    onStop: subErr
+                });
+            }
+        };
         $scope.refreshHITs = function () {
             $scope.goodHITsData = true;
             $scope.allHITs = getAllHITs();
@@ -442,8 +459,5 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 toaster.pop('warning', 'Job ID not found: ' + jid);
         };
         $scope.stateGo = apputils.stateGo($state);
-        $scope.opt = {}; //angular has issues with updating primitives
-        $scope.opt.isLive = false;
-        $scope.opt.useQual = true;
     }]);
 //# sourceMappingURL=gen-jobs-view.js.map
