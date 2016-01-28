@@ -12,30 +12,22 @@
 /// <reference path="../services/apputils.ts" />
 angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'ngDialog', 'toaster', 'APP_CONST', 'ngTableParams', 'AppUtils', '$reactive', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, ngTableParams, apputils, $reactive) {
         "use strict";
-        //$reactive(this).attach($scope);
+        $reactive(this).attach($scope);
         var mult = 100; //position multiplier for int random
         //subscription error for onStop;
         var subErr = function (err) { if (err)
             console.warn("err:", arguments, err); return; };
         $scope.curState = new apputils.cCurrentState();
-        Meteor.subscribe("genstates", {
-            onReady: function (sid) {
-                dataReady.update('genstates');
-            },
-            onError: function (err) {
-                console.warn('err ', err);
-            },
-            onStop: subErr
-        });
-        Meteor.subscribe("screencaps", {
-            onReady: function (sid) {
-                dataReady.update('screencaps');
-            },
-            onError: function (err) {
-                console.warn('err ', err);
-            },
-            onStop: subErr
-        });
+        setTimeout(function () {
+            $scope.subscribe("genstates", function () { }, {
+                onReady: function (sid) { dataReady.update('genstates'); },
+                onStop: subErr
+            });
+            $scope.subscribe("screencaps", function () { }, {
+                onReady: function (sid) { dataReady.update('screencaps'); },
+                onStop: subErr
+            });
+        }, 10);
         var dataReady = new apputils.cDataReady(2, function () {
             updateTableStateParams();
             if ($stateParams.sid) {

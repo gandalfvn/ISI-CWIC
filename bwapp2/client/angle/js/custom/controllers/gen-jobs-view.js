@@ -42,18 +42,20 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             "lengthMenu": [[10], [10]],
             "order": [[0, "desc"]]
         });
-        $scope.subscribe("genstates", function () { }, {
-            onReady: function (sid) { dataReady.update('genstates'); },
-            onStop: subErr
-        });
-        $scope.subscribe("screencaps", function () { }, {
-            onReady: function (sid) { dataReady.update('screencaps'); },
-            onStop: subErr
-        });
-        $scope.subscribe("genjobsmgr", function () { }, {
-            onReady: function (sid) { dataReady.update('genjobsmgr'); },
-            onStop: subErr
-        });
+        setTimeout(function () {
+            $scope.subscribe("genstates", function () { }, {
+                onReady: function (sid) { dataReady.update('genstates'); },
+                onStop: subErr
+            });
+            $scope.subscribe("screencaps", function () { }, {
+                onReady: function (sid) { dataReady.update('screencaps'); },
+                onStop: subErr
+            });
+            $scope.subscribe("genjobsmgr", function () { }, {
+                onReady: function (sid) { dataReady.update('genjobsmgr'); },
+                onStop: subErr
+            });
+        }, 10);
         var dataReady = new apputils.cDataReady(2, function () {
             updateTableStateParams();
             updateJobMgr();
