@@ -74,6 +74,13 @@ Meteor.publish('genjobsmgr', function(params?: {type: string}){
           , {fields: {tid: 1, jid: 1, 'submitted.name': 1, 'submitted.valid': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1}, sort: {'created': -1}, skip: params['pageSize'] * params['pageCur'], limit: params['pageSize']}
         );*/
         break;
+      case 'item':
+        if(Array.isArray(params['keys']))
+          return GenJobsMgr.find(
+            {_id: {$in: params['keys']}}
+          );
+        else this.error(555, 'missing keys array');
+        break;
     }
   }
   else return GenJobsMgr.find({

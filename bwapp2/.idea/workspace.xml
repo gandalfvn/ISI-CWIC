@@ -9,10 +9,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genjobs.ng.jade" afterPath="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/gentask.ng.jade" afterPath="$PROJECT_DIR$/client/views/gentask.ng.jade" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/genjobsmgr.js" afterPath="$PROJECT_DIR$/server/genjobsmgr.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/genjobsmgr.js.map" afterPath="$PROJECT_DIR$/server/genjobsmgr.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/genjobsmgr.ts" afterPath="$PROJECT_DIR$/server/genjobsmgr.ts" />
@@ -36,11 +32,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="false">
+      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-21.666666">
-              <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.4635193">
+              <caret line="502" column="47" selection-start-line="502" selection-start-column="47" selection-end-line="502" selection-end-column="47" />
               <folding />
             </state>
           </provider>
@@ -49,8 +45,8 @@
       <file leaf-file-name="genjobs.ng.jade" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="105" column="4" selection-start-line="105" selection-start-column="4" selection-end-line="105" selection-end-column="4" />
+            <state vertical-scroll-proportion="-9.407408">
+              <caret line="25" column="59" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -60,37 +56,7 @@
         <entry file="file://$PROJECT_DIR$/server/genjobsmgr.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="77" column="3" selection-start-line="77" selection-start-column="3" selection-end-line="77" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gen-task-view.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.21459228">
-              <caret line="73" column="64" selection-start-line="73" selection-start-column="64" selection-end-line="73" selection-end-column="64" />
+              <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -160,10 +126,10 @@
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
-        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" />
-        <option value="$PROJECT_DIR$/server/genjobsmgr.ts" />
         <option value="$PROJECT_DIR$/client/views/genjobs.ng.jade" />
         <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
+        <option value="$PROJECT_DIR$/server/genjobsmgr.ts" />
+        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" />
       </list>
     </option>
   </component>
@@ -828,7 +794,7 @@
     <frame x="1152" y="23" width="1536" height="1280" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22310232" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22310232" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38907564" sideWeight="0.5683168" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -1220,34 +1186,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-21.666666">
-          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/genjobsmgr.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="77" column="3" selection-start-line="77" selection-start-column="3" selection-end-line="77" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/genjobs.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="105" column="4" selection-start-line="105" selection-start-column="4" selection-end-line="105" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+        <state vertical-scroll-proportion="-9.407408">
+          <caret line="25" column="59" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="59" />
           <folding />
         </state>
       </provider>
@@ -1262,8 +1204,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.21459228">
-          <caret line="73" column="64" selection-start-line="73" selection-start-column="64" selection-end-line="73" selection-end-column="64" />
+        <state vertical-scroll-proportion="0.42918456">
+          <caret line="83" column="76" selection-start-line="83" selection-start-column="76" selection-end-line="83" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3004292">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/genjobsmgr.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4635193">
+          <caret line="502" column="47" selection-start-line="502" selection-start-column="47" selection-end-line="502" selection-end-column="47" />
           <folding />
         </state>
       </provider>

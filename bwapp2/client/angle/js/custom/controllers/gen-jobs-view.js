@@ -431,32 +431,46 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             });
         };
         $scope.getURLHITs = function (jid) {
-            var myjob = GenJobsMgr.findOne({ _id: jid });
-            if (myjob) {
-                var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
-                var hitlist = [];
-                _.each(myjob.list, function (tid) {
-                    var mytask = GenJobsMgr.findOne({ _id: tid });
-                    _.each(mytask.hitlist, function (h) {
-                        var hid = h.replace(/H_/, '');
-                        hitlist.push({ jid: jid, tid: tid, hid: hid, sid: mytask.stateid, url: turkreqlink + hid });
-                    });
-                });
-                var dialog = ngDialog.open({
-                    template: 'didTurkURLs',
-                    data: hitlist,
-                    className: 'ngdialog-theme-default width60perc',
-                    controller: ['$scope', function ($scope) {
-                        }]
-                });
-                dialog.closePromise.then(function (data) {
-                    console.log('ngDialog closed', data);
-                    if (data.value) {
+            $scope.subscribe('genjobsmgr', function () { return [{ type: 'item', keys: [jid] }]; }, {
+                onReady: function (sub) {
+                    var myjob = GenJobsMgr.findOne({ _id: jid });
+                    if (myjob) {
+                        var tids = [];
+                        _.each(myjob.list, function (tid) {
+                            tids.push(tid);
+                        });
+                        $scope.subscribe('genjobsmgr', function () { return [{ type: 'item', keys: tids }]; }, {
+                            onReady: function (sub) {
+                                var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
+                                var hitlist = [];
+                                _.each(myjob.list, function (tid) {
+                                    var mytask = GenJobsMgr.findOne({ _id: tid });
+                                    _.each(mytask.hitlist, function (h) {
+                                        var hid = h.replace(/H_/, '');
+                                        hitlist.push({ jid: jid, tid: tid, hid: hid, sid: mytask.stateid, url: turkreqlink + hid });
+                                    });
+                                });
+                                var dialog = ngDialog.open({
+                                    template: 'didTurkURLs',
+                                    data: hitlist,
+                                    className: 'ngdialog-theme-default width60perc',
+                                    controller: ['$scope', function ($scope) {
+                                        }]
+                                });
+                                dialog.closePromise.then(function (data) {
+                                    console.log('ngDialog closed', data);
+                                    if (data.value) {
+                                    }
+                                });
+                            },
+                            onStop: subErr
+                        });
                     }
-                });
-            }
-            else
-                toaster.pop('warning', 'Job ID not found: ' + jid);
+                    else
+                        toaster.pop('warning', 'Job ID not found: ' + jid);
+                },
+                onStop: subErr
+            });
         };
         $scope.stateGo = apputils.stateGo($state);
     }]);
