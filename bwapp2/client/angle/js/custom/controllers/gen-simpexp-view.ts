@@ -13,6 +13,9 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
   "use strict";
   $reactive(this).attach($scope);
 
+  //if user is not logged and during this view and we log in then fire a reload
+  Accounts.onLogin(function (user) {$state.reload();});
+
   $scope.isGuest = $rootScope.isRole(Meteor.user(), 'guest');
   var mult:number = 100; //position multiplier for int random
   //subscription error for onStop;
@@ -593,7 +596,6 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
 
   $scope.opt = myengine.opt;
   $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
-  console.warn(myengine.opt);
   $scope.isExp = true; //all work is consider experiment view unless we import a state
   myengine.createWorld();
   dataReady.update('world created');

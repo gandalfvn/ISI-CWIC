@@ -44,7 +44,6 @@
             if(!$rootScope.isRole(usr, 'guest')){
               if (usr) $state.go('app.genworld');
             }
-
           });
           Accounts.onLogin(function (user) {
             $state.go('app.root')

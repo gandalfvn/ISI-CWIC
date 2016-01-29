@@ -76,6 +76,7 @@
     accountsUIBootstrap3.logoutCallback = function (err) {
       console.warn('logout');
       if (err) console.log("Error:" + err);
+      Meteor.loginVisitor(); //force guest login upon logout
       $state.reload();
     };
     Accounts.config({forbidClientAccountCreation: true});

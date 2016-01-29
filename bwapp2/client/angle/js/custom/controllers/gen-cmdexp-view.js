@@ -12,6 +12,8 @@
 angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', '$reactive', function ($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils, $reactive) {
         "use strict";
         $reactive(this).attach($scope);
+        //if user is not logged and during this view and we log in then fire a reload
+        Accounts.onLogin(function (user) { $state.reload(); });
         $scope.isGuest = $rootScope.isRole(Meteor.user(), 'guest');
         //subscription error for onStop;
         var subErr = function (err) { if (err)
@@ -377,7 +379,6 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
         var myengine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
         $scope.opt = myengine.opt;
         $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
-        console.warn(myengine.opt);
         $scope.isExp = true; //all work is consider experiment view unless we import a state
         myengine.createWorld();
         dataReady.update('world created');

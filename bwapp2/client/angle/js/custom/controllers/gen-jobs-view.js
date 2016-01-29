@@ -19,7 +19,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
         $scope.opt.isLive = false;
         $scope.opt.useQual = true;
         $scope.opt.pageCur = 0;
-        $scope.opt.pageSize = 50;
+        $scope.opt.pageSize = 100;
         var canvas = { width: 480, height: 360 };
         //subscription error for onStop;
         var subErr = function (err) { if (err)
@@ -123,8 +123,15 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 }
                 if (asnleft > 0)
                     activeHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
-                else
-                    doneHITs.push({ time: j.created, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                else {
+                    var submitTime = 0;
+                    _.each(j.submitted, function (s) {
+                        var t = Number(s.time);
+                        if (t > submitTime)
+                            submitTime = t;
+                    });
+                    doneHITs.push({ time: submitTime, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                }
             });
             if (activeHITs.length || doneHITs.length || sortedjobs.length) {
                 if (activeHITs.length)
