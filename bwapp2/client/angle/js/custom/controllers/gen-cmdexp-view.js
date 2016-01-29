@@ -373,7 +373,62 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
             return newBS;
         };
         $scope.submit = function (cmd) {
-            console.warn(cmd);
+            var tempframe = {
+                /*_id: $scope.curState._id,
+                 public: $scope.curState.public,
+                 created: $scope.curState.created,
+                 creator: $scope.curState.creator,*/
+                world: null,
+                text: cmd,
+                version: '1'
+            };
+            var newblock_state = [];
+            var block_state = $scope.curState.block_state;
+            var cubesused = [];
+            $scope.curState.block_meta.blocks.forEach(function (b) {
+                cubesused.push(b.id);
+            });
+            cubesused = _.uniq(cubesused);
+            var isValid = true;
+            var max = APP_CONST.fieldsize / 2 + 0.1; //give it a little wiggle room
+            var min = -max;
+            var frame = [];
+            var meta = { blocks: [] };
+            cubesused.forEach(function (cid) {
+                var c = myengine.get3DCubeById(cid);
+                if (c) {
+                    if ((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
+                        (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max) {
+                        var dat = {
+                            id: cid,
+                            position: c.position.clone(),
+                            rotation: c.rotationQuaternion.clone()
+                        };
+                        frame.push(dat);
+                        meta.blocks.push(myengine.cubesdata[cid].meta);
+                    }
+                    else {
+                        isValid = false;
+                        console.warn('Out', c.position.x - c.boxsize / 2, c.position.x + c.boxsize / 2, c.position.z - c.boxsize / 2, c.position.z + c.boxsize / 2, cid, c);
+                    }
+                }
+            });
+            if (!isValid) {
+                toaster.pop('error', 'Cube(s) Out of Bounds!');
+                return false;
+            }
+            for (var i = 0; i < frame.length; i++) {
+                var s = frame[i];
+                var pos = [];
+                _.each(s.position, function (v) {
+                    pos.push(v);
+                });
+                newblock_state.push({ id: s.id, loc: pos });
+            }
+            tempframe.world = newblock_state;
+            var content = JSON.stringify(tempframe, null, 2);
+            var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
+            apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
         };
         // Start by calling the createScene function that you just finished creating
         var myengine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);

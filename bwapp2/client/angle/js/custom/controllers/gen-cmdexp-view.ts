@@ -395,10 +395,69 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
     return newBS;
   };
   
-  $scope.submit = (cmd:string)=>{
-    console.warn(cmd);
+  $scope.submit = function (cmd:string) {
+    var tempframe = {
+      /*_id: $scope.curState._id,
+       public: $scope.curState.public, 
+       created: $scope.curState.created,
+       creator: $scope.curState.creator,*/
+      world: null,
+      text: cmd,
+      version: '1'
+    };
+
+    interface iCmdStateSerial{id: number, loc: number[]}
+    var newblock_state:iCmdStateSerial[] = [];
+    var block_state:iBlockState[] = $scope.curState.block_state;
+    var cubesused:number[] = [];
+    $scope.curState.block_meta.blocks.forEach(function(b){
+      cubesused.push(b.id);
+    });
+    cubesused = _.uniq(cubesused);
+    var isValid:boolean = true;
+    var max:number = APP_CONST.fieldsize / 2 + 0.1; //give it a little wiggle room
+    var min:number = -max;
+    var frame:iBlockState[] = [];
+    var meta:iBlockMeta = {blocks: []};
+    cubesused.forEach(function(cid:number) {
+      var c = myengine.get3DCubeById(cid);
+      if (c) {
+        if ((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
+          (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max) {
+          var dat:iBlockState = {
+            id: cid,
+            position: <any>c.position.clone(),
+            rotation: <any>c.rotationQuaternion.clone()
+          };
+          frame.push(dat);
+          meta.blocks.push(myengine.cubesdata[cid].meta);
+        }
+        else {
+          isValid = false;
+          console.warn('Out',c.position.x- c.boxsize/2, c.position.x+ c.boxsize/2,c.position.z- c.boxsize/2, c.position.z+ c.boxsize/2, cid, c);
+        }
+      }
+    });
+    if(!isValid){
+      toaster.pop('error','Cube(s) Out of Bounds!');
+      return false;
+    }
+
+    for (var i = 0; i < frame.length; i++) {
+      var s = frame[i];
+      var pos:number[] = [];
+      _.each(s.position, function (v) {
+        pos.push(v);
+      });
+      newblock_state.push({id: s.id, loc: pos});
+    }
+
+    tempframe.world = newblock_state;
+    var content:string = JSON.stringify(tempframe, null, 2);
+    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
+    apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
   };
-  
+
   // Start by calling the createScene function that you just finished creating
   var myengine:miGen3DEngine.c3DEngine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
 
