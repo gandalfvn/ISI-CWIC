@@ -90,7 +90,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             toaster.pop('info', 'Refreshing HITs');
         };
         var getDoneASNs = function () {
-            var jobs = GenJobsMgr.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1 } }, { sort: { 'submitted.time': -1 } }).fetch();
+            var jobs = GenJobsMgr.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1 }, sort: { 'submitted.time': -1 } }).fetch();
             var sortedjobs = [];
             _.each(jobs, function (j) {
                 j.submitted.forEach(function (h) {
@@ -437,24 +437,29 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 $scope.$apply(function () { toaster.pop('info', 'HITs', JSON.stringify(ret.result, null, 2)); });
             });
         };
-        $scope.getURLHITs = function (jid) {
-            $scope.subscribe('genjobsmgr', function () { return [{ type: 'item', keys: [jid] }]; }, {
+        $scope.getURLHITs = function (jidstr) {
+            var jids = jidstr.trim().split(/[ ,]/);
+            $scope.subscribe('genjobsmgr', function () { return [{ type: 'item', keys: jids }]; }, {
                 onReady: function (sub) {
-                    var myjob = GenJobsMgr.findOne({ _id: jid });
-                    if (myjob) {
+                    var myjobs = GenJobsMgr.find({ _id: { $in: jids } }).fetch();
+                    if (myjobs.length) {
+                        var jtids = [];
                         var tids = [];
-                        _.each(myjob.list, function (tid) {
-                            tids.push(tid);
+                        _.each(myjobs, function (job) {
+                            _.each(job.list, function (tid) {
+                                jtids.push({ tid: tid, jid: job._id });
+                                tids.push(tid);
+                            });
                         });
                         $scope.subscribe('genjobsmgr', function () { return [{ type: 'item', keys: tids }]; }, {
                             onReady: function (sub) {
                                 var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
                                 var hitlist = [];
-                                _.each(myjob.list, function (tid) {
-                                    var mytask = GenJobsMgr.findOne({ _id: tid });
+                                _.each(jtids, function (jtid) {
+                                    var mytask = GenJobsMgr.findOne({ _id: jtid.tid });
                                     _.each(mytask.hitlist, function (h) {
                                         var hid = h.replace(/H_/, '');
-                                        hitlist.push({ jid: jid, tid: tid, hid: hid, sid: mytask.stateid, url: turkreqlink + hid });
+                                        hitlist.push({ jid: jtid.jid, tid: jtid.tid, hid: hid, sid: mytask.stateid, url: turkreqlink + hid });
                                     });
                                 });
                                 var dialog = ngDialog.open({
@@ -474,7 +479,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                         });
                     }
                     else
-                        toaster.pop('warning', 'Job ID not found: ' + jid);
+                        toaster.pop('warning', 'Job ID not found: ' + JSON.stringify(jids));
                 },
                 onStop: subErr
             });

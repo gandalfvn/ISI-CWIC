@@ -20,9 +20,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       label Reason:
       input(ng-model='btreason')
       button.btn(ng-show='btid.length && btreason.length', ng-click='blockTurker(btid, btreason)') Go
-    .well.col-sm-3
-      label Job Id: 
-      input(ng-model='jid')
+    .well.col-sm-6
+      label Job Id(s): 
+      input(ng-model='jid', style='width:80%')
       button.btn(ng-show='jid.length', ng-click='getURLHITs(jid)') Go
     .well.col-sm-3
       label HIT: 
@@ -284,9 +284,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 script#didTurkURLs(type="text/ng-template")
   form.form-inline.ng-pristine.ng-valid(role="form",novalidate, name='turkurls', ng-submit='closeThisDialog()')
     //pre {{ngDialogData}}
-    h4 Job: {{ngDialogData[0].jid}}
+    h4 Tasks for Jobs:
     .form-group(ng-repeat='n in ngDialogData')
-      a(href='{{n.url}}', target='_blank')  T:{{n.tid}} H:{{n.hid}}
+      a(href='{{n.url}}', target='_blank')  J:{{n.jid}} T:{{n.tid}} H:{{n.hid}}
       br
     //-.form-group
       input.form-control(type="text", placeholder="Recording Name", required, ng-minlength="4" ng-model='savename', name="name")

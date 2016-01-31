@@ -8,17 +8,19 @@ module miGenJobsMgr {
   export enum eRepValid {no, yes, tbd}
 
   export interface iGenJobsMgr {
-    _id: string,
+    _id?: string,
     stateid: string,
     islist: boolean,
     tasktype: string,
+    bundle: number,
     asncnt: number,
     antcnt: number,
     creator: string,
     created: number,
     idxlist?: number[][],
     list?: string[],
-    hitlist?: string[]
+    hitlist?: string[],
+    public: boolean
   }
 
   export interface iGenJobsHIT {
@@ -30,9 +32,9 @@ module miGenJobsMgr {
     islive: boolean,
     created: number,
     hitcontent: iHitContent,
-    notes: {[x: string]: string[][]},
-    timed: {[x: string]: number[]},
-    submitted: Array<iSubmitEle>
+    notes?: {[x: string]: string[][]},
+    timed?: {[x: string]: number[]},
+    submitted?: Array<iSubmitEle>
   }
 
   export interface iHitContent {

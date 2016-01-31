@@ -8,12 +8,12 @@
 /// <reference path="./util.ts" />
 
 GenJobsMgr.allow({
-  insert: function(userId, job){
+  insert: function(userId, job):boolean{
     //console.warn('insert');
     if(isRole(Meteor.user(), 'guest')) return false;
-    return userId; // && job.owner === userId;
+    return (userId)?true:false; // && job.owner === userId;
   },
-  update: function(userId, job, fields, modifier){
+  update: function(userId, job, fields, modifier):boolean{
     if(isRole(Meteor.user(), 'guest')){
       var idx = '$set';
       var delkeys:string[] = [];
@@ -34,7 +34,7 @@ GenJobsMgr.allow({
             if(!k.match(/submitted/g)) delkeys.push(k);
           });
         }
-        else return null;
+        else return false;
       }
       
       if(delkeys.length) console.warn('GenJobsMgr '+idx+' del: ');
@@ -43,24 +43,23 @@ GenJobsMgr.allow({
         delete modifier[idx][delkeys[i]];
       }
     }
-    return userId;
+    return (userId)?true:false;
   },
-  remove: function(userId, job){
+  remove: function(userId, job):boolean{
     if(isRole(Meteor.user(), 'guest')) return false;
-    return userId; // && job.owner === userId;
+    return (userId)?true:false; // && job.owner === userId;
   }
   //,fetch: ['owner']
 });
 
-Meteor.publish('genjobsmgr', function(params?: {type: string}){
+Meteor.publish('genjobsmgr', function(params?: {type: string}):Mongo.Cursor<miGenJobsMgr.iGenJobsMgr>{
   if(params){
     //todo: not used so far
     switch(params.type){
       case 'submitted':
         return GenJobsMgr.find(
           {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
-          , {fields: {tid: 1, submitted: 1}}
-          , {sort: {'submitted.time': -1}}
+          , {fields: {tid: 1, submitted: 1}, sort: {'submitted.time': -1}}
         );
         break;
       case 'list':
@@ -75,10 +74,11 @@ Meteor.publish('genjobsmgr', function(params?: {type: string}){
         );*/
         break;
       case 'item':
-        if(Array.isArray(params['keys']))
+        if(Array.isArray(params['keys'])) {
           return GenJobsMgr.find(
             {_id: {$in: params['keys']}}
           );
+        }
         else this.error(555, 'missing keys array');
         break;
     }

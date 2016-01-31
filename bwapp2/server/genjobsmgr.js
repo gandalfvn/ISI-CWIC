@@ -11,7 +11,7 @@ GenJobsMgr.allow({
         //console.warn('insert');
         if (isRole(Meteor.user(), 'guest'))
             return false;
-        return userId; // && job.owner === userId;
+        return (userId) ? true : false; // && job.owner === userId;
     },
     update: function (userId, job, fields, modifier) {
         if (isRole(Meteor.user(), 'guest')) {
@@ -36,7 +36,7 @@ GenJobsMgr.allow({
                     });
                 }
                 else
-                    return null;
+                    return false;
             }
             if (delkeys.length)
                 console.warn('GenJobsMgr ' + idx + ' del: ');
@@ -45,12 +45,12 @@ GenJobsMgr.allow({
                 delete modifier[idx][delkeys[i]];
             }
         }
-        return userId;
+        return (userId) ? true : false;
     },
     remove: function (userId, job) {
         if (isRole(Meteor.user(), 'guest'))
             return false;
-        return userId; // && job.owner === userId;
+        return (userId) ? true : false; // && job.owner === userId;
     }
 });
 Meteor.publish('genjobsmgr', function (params) {
@@ -58,7 +58,7 @@ Meteor.publish('genjobsmgr', function (params) {
         //todo: not used so far
         switch (params.type) {
             case 'submitted':
-                return GenJobsMgr.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, submitted: 1 } }, { sort: { 'submitted.time': -1 } });
+                return GenJobsMgr.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, submitted: 1 }, sort: { 'submitted.time': -1 } });
                 break;
             case 'list':
                 return GenJobsMgr.find({}, { sort: { 'created': -1 }, skip: params['pageSize'] * params['pageCur'], limit: params['pageSize'] });
@@ -69,8 +69,9 @@ Meteor.publish('genjobsmgr', function (params) {
                         );*/
                 break;
             case 'item':
-                if (Array.isArray(params['keys']))
+                if (Array.isArray(params['keys'])) {
                     return GenJobsMgr.find({ _id: { $in: params['keys'] } });
+                }
                 else
                     this.error(555, 'missing keys array');
                 break;

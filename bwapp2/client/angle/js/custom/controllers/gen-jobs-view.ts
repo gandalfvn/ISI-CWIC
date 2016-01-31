@@ -126,8 +126,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
   var getDoneASNs = function(): iSortHITs[]{
     var jobs:miGenJobsMgr.iGenJobsHIT[] = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
-      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1}}
-      , {sort: {'submitted.time': -1}}
+      , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1}, sort: {'submitted.time': -1}}
     ).fetch();
     var sortedjobs = [];
     _.each(jobs, function(j){
@@ -318,7 +317,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     var statelist:string[] = apputils.mdbArray(GenStates, {}, {
       sort: {"_id": 1}}, "_id");
     if(statelist.length){
-      var jobdata = {
+      var jobdata:miGenJobsMgr.iGenJobsMgr = {
         stateid: $scope.curState._id,
         tasktype: tasktype,
         bundle: bundle,
@@ -447,7 +446,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
       if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
       //create the HITId system
       var res = ret.result;
-      var hitdata = {
+      var hitdata:miGenJobsMgr.iGenJobsHIT = {
         '_id': 'H_'+res.hit[0].HITId,
         HITId: res.hit[0].HITId,
         HITTypeId: res.hit[0].HITTypeId,
@@ -493,24 +492,29 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     hid:string,
     url:string
   }
-  $scope.getURLHITs = function(jid){
-    $scope.subscribe('genjobsmgr', ()=>{return[{type:'item', keys: [jid]}]}, {
+  $scope.getURLHITs = function(jidstr){
+    var jids:string[] = jidstr.trim().split(/[ ,]/);
+    $scope.subscribe('genjobsmgr', ()=>{return[{type:'item', keys: jids}]}, {
       onReady: (sub)=>{
-        var myjob:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: jid});
-        if(myjob){
+        var myjobs:miGenJobsMgr.iGenJobsMgr[] = GenJobsMgr.find({_id: {$in: jids}}).fetch();
+        if(myjobs.length){
+          var jtids:{tid:string, jid:string}[] = [];
           var tids:string[] = [];
-          _.each(myjob.list, function(tid) {
-            tids.push(tid);
+          _.each(myjobs, function(job:miGenJobsMgr.iGenJobsMgr){
+            _.each(job.list, function(tid) {
+              jtids.push({tid: tid, jid:job._id});
+              tids.push(tid);
+            });
           });
           $scope.subscribe('genjobsmgr', ()=>{return[{type:'item', keys: tids}]}, {
             onReady: (sub)=>{
               var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
               var hitlist:iJTHInfo[] = [];
-              _.each(myjob.list, function(tid){
-                var mytask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: tid});
+              _.each(jtids, function(jtid){
+                var mytask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: jtid.tid});
                 _.each(mytask.hitlist, function(h){
                   var hid = h.replace(/H_/,'');
-                  hitlist.push({jid: jid, tid: tid, hid: hid, sid: mytask.stateid, url: turkreqlink+hid});
+                  hitlist.push({jid: jtid.jid, tid: jtid.tid, hid: hid, sid: mytask.stateid, url: turkreqlink+hid});
                 });
               });
               var dialog = ngDialog.open({
@@ -529,7 +533,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             ,onStop: subErr
           });
         }
-        else toaster.pop('warning','Job ID not found: '+jid);
+        else toaster.pop('warning','Job ID not found: '+JSON.stringify(jids));
       }
       ,onStop: subErr
     });

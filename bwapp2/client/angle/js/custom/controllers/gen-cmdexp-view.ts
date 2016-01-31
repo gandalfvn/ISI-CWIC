@@ -9,6 +9,7 @@
 /// <reference path="../../../../../server/typings/lz-string/lz-string.d.ts" />
 /// <reference path="../../../../../server/typings/angularjs/angular.d.ts" />
 /// <reference path="../services/apputils.ts" />
+/// <reference path="../../../../../server/cmdmoveshelper.ts" />
 
 angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', 'toaster', 'APP_CONST', 'DTOptionsBuilder', 'AppUtils', '$reactive', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, toaster, APP_CONST, DTOptionsBuilder, apputils, $reactive) {
   "use strict";
@@ -396,18 +397,13 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
   };
   
   $scope.submit = function (cmd:string) {
-    var tempframe = {
-      /*_id: $scope.curState._id,
-       public: $scope.curState.public, 
-       created: $scope.curState.created,
-       creator: $scope.curState.creator,*/
+    var cmdserial:iCmdSerial = {
       world: null,
-      text: cmd,
-      version: '1'
+      input: cmd,
+      version: 1
     };
 
-    interface iCmdStateSerial{id: number, loc: number[]}
-    var newblock_state:iCmdStateSerial[] = [];
+    var newblock_state:iCmdLocEle[] = [];
     var block_state:iBlockState[] = $scope.curState.block_state;
     var cubesused:number[] = [];
     $scope.curState.block_meta.blocks.forEach(function(b){
@@ -452,10 +448,23 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
       newblock_state.push({id: s.id, loc: pos});
     }
 
-    tempframe.world = newblock_state;
-    var content:string = JSON.stringify(tempframe, null, 2);
-    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
+    cmdserial.world = newblock_state;
+    //simulate wait
+    setTimeout(()=>{
+      Meteor.call('cmdMovePost', cmdserial, function(err, ret) {
+        if (err) return $scope.$apply(function () {
+          toaster.pop('error', err)
+        });
+        if (ret.error) return $scope.$apply(function () {
+          toaster.pop('error', ret.error)
+        });
+        if(ret.result){
+          var cmdoutput:iCmdSerial = ret.result;
+          console.warn(cmdoutput)
+        }
+        else console.warn(err, ret);
+      })
+    }, 1000);
   };
 
   // Start by calling the createScene function that you just finished creating
