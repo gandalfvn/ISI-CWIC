@@ -109,6 +109,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
 .row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
   .col-sm-12
     h3(style='color: red') This Job is unavailable.
+  .col-sm-12
+    h4(ng-if='!opt.isValidBrowser', style='color:red')
+      i.fa.fa-exclamation-triangle
+      | If job is unavailable it may be your browser.
+      | &nbsp; GOOGLE CHROME BROWSER Recommended
+
 //-report view
 .container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
   .row-fluid
