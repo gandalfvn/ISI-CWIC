@@ -120,7 +120,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         thead
           tr
             th 
-            th Job Id
+            th Job
             th Created
             th Type
             th State
@@ -190,10 +190,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         thead
           tr
             th Created
-            th HIT Id
+            th HIT
             th Info
-            th Task Id
-            th Job Id
+            th Task
+            th Job
+            th State
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.active')
@@ -210,6 +211,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
             td {{task.jid}}
+            td {{task.sid}}
             td
               span(ng-repeat='n in task.names')
                 button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
@@ -228,9 +230,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         thead
           tr
             th Done
-            th HIT Id
-            th Task Id
-            th Job Id
+            th HIT
+            th Task
+            th Job
+            th State
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.done')
@@ -249,6 +252,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
             td {{task.jid}}
+            td {{task.sid}}
             td
               span(ng-repeat='n in task.names')
                 button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")

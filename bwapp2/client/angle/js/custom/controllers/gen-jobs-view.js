@@ -107,6 +107,9 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             var doneHITs = [];
             var sortedjobs = [];
             _.each(jobs, function (j) {
+                //hack to store state for the job so we can search easier
+                var myjob = GenJobsMgr.findOne({ _id: j.jid });
+                j['sid'] = myjob.stateid;
                 var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
                 var names = null, repvalid = null;
                 if (j.submitted) {
@@ -122,7 +125,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                     });
                 }
                 if (asnleft > 0)
-                    activeHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                    activeHITs.push({ time: j.created, names: names, tid: j.tid, jid: j.jid, sid: j['sid'], hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
                 else {
                     var submitTime = 0;
                     _.each(j.submitted, function (s) {
@@ -130,7 +133,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                         if (t > submitTime)
                             submitTime = t;
                     });
-                    doneHITs.push({ time: submitTime, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
+                    doneHITs.push({ time: submitTime, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, sid: j['sid'], hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward });
                 }
             });
             if (activeHITs.length || doneHITs.length || sortedjobs.length) {
