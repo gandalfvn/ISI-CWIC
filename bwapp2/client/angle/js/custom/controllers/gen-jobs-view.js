@@ -109,7 +109,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
             _.each(jobs, function (j) {
                 //hack to store state for the job so we can search easier
                 var myjob = GenJobsMgr.findOne({ _id: j.jid });
-                j['sid'] = myjob.stateid;
+                if (myjob)
+                    j['sid'] = myjob.stateid;
                 var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
                 var names = null, repvalid = null;
                 if (j.submitted) {
