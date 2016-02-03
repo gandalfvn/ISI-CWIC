@@ -893,6 +893,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
           });
           $scope.curState.clear();
           $scope.curState.block_meta = filedata.block_meta;
+          if(filedata.type) $scope.curState.type = filedata.type;
+
           $scope.curState.public = true;
           $scope.curState.created = (new Date).getTime();
           $scope.curState.creator = $rootScope.currentUser._id;

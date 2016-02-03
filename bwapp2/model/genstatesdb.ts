@@ -22,6 +22,7 @@ interface iGenStates {
   _id: string,
   block_meta: iBlockMeta,
   block_states: iBlockStates[],
+  type?: string,
   public: boolean,
   created: number,
   creator: string,

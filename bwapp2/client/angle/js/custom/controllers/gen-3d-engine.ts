@@ -26,6 +26,7 @@ module miGen3DEngine {
     created: number,
     creator: string,
     block_meta: iBlockMeta,
+    type?: string,
     block_states?: iBlockStatesSerial[],
     block_state?: iBlockStateSerial[],
     utterance?: string[] //for experiments

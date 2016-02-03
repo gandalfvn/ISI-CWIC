@@ -269,7 +269,8 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
           if(n.split(' ').length < 4) validWords = false;
         });
         if(!validWords){*/
-        if(notes[$scope.curantpass].split(' ').length < 4){
+        if((!$scope.curState.type && notes[$scope.curantpass].split(' ').length < 4) ||
+          ($scope.curState.type && notes[$scope.curantpass].split(' ').length < 20)){
           toaster.pop('error', 'Not enough words used in description');
           $rootScope.dataloaded = true;
           return;

@@ -67,6 +67,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           | &nbsp;&nbsp;&nbsp;
           | Name: 
           b {{curState.name}}
+          span(ng-show='curState.type') &nbsp;&nbsp;Type:
+            b {{curState.type}}
           br
           | # Blocks: {{curState.block_meta.blocks.length}}
           | &nbsp;&nbsp;&nbsp;

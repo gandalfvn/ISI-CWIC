@@ -120,7 +120,7 @@ angular.module('angle').service('AppUtils', [function() {
     },
     cCurrentState: class cCurrentStateDef {
       _id:string;
-      private static l:string[] = ['block_meta', 'block_states', 'block_state', 'utterance', '_id', 'public', 'created', 'creator', 'name'];
+      private static l:string[] = ['type', 'block_meta', 'block_states', 'block_state', 'utterance', '_id', 'public', 'created', 'creator', 'name'];
 
       constructor(c?:cCurrentStateDef) {
         if (c) this.copy(c);

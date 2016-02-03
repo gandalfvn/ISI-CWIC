@@ -10,12 +10,12 @@ var validKeys:string[] = ['_id', 'public', 'block_meta', 'block_state', 'created
 
 GenExps.allow({
   insert: function(userId, data){
-    var fcheck = _.difference(_.keys(data), validKeys);
+    var fcheck:string[] = _.difference(_.keys(data), validKeys);
     if(fcheck.length) throw new Match['Error']("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },
   update: function(userId, data, fields, modifier){
-    var fcheck = _.difference(_.keys(data), validKeys);
+    var fcheck:string[] = _.difference(_.keys(data), validKeys);
     if(fcheck.length) throw new Match['Error']("illegal fields:" + JSON.stringify(fcheck));
     return userId;
   },

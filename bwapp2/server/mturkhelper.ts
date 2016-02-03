@@ -52,6 +52,8 @@ Meteor.methods({
     var mturk = Meteor['npmRequire']('mturk-api');
     var antpriceact:number[] = [0.5, 1.0, 1.5];
     var anttimeact:number[] = [5, 5.5, 6];
+    var partfullpriceact:number[] = [1.0, 2.0, 3.0];
+    var partfulltimeact:number[] = [6, 7, 8];
     
     var turk = Async.runSync(function(done){
       var taskdata:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
@@ -71,7 +73,7 @@ Meteor.methods({
             CurrencyCode: 'USD'
           },
           AssignmentDurationInSeconds: len * 3 * 60,
-          LifetimeInSeconds: 8 * 24 * 60 * 60,
+          LifetimeInSeconds: 10 * 24 * 60 * 60,
           Keywords: 'image, identification, recognition, tagging, description',
           MaxAssignments: taskdata.asncnt,
         };
@@ -104,8 +106,13 @@ Meteor.methods({
         if(taskdata.tasktype === 'action'){
           hitcontent.Title = 'Describe this Image Sequence ' + p.jid;
           hitcontent.Description = 'Tagging image transitions with a description.';
-          hitcontent.Reward.Amount = len * antpriceact[taskdata.antcnt-1] * 0.1; //price based on more for 1st answer
-          hitcontent.AssignmentDurationInSeconds = len * anttimeact[taskdata.antcnt-1] * 60;
+          if(taskdata.statetype === 'partial' || taskdata.statetype === 'full'){
+            hitcontent.Reward.Amount = len * partfullpriceact[taskdata.antcnt-1] * 0.1; //price based on more for 1st answer
+            hitcontent.AssignmentDurationInSeconds = len * partfulltimeact[taskdata.antcnt-1] * 60;
+          } else {
+            hitcontent.Reward.Amount = len * antpriceact[taskdata.antcnt - 1] * 0.1; //price based on more for 1st answer
+            hitcontent.AssignmentDurationInSeconds = len * anttimeact[taskdata.antcnt - 1] * 60;
+          }
         }
         
         api.req('CreateHIT', hitcontent)

@@ -125,7 +125,7 @@ angular.module('angle').service('AppUtils', [function () {
                     }
                 };
                 ;
-                cCurrentStateDef.l = ['block_meta', 'block_states', 'block_state', 'utterance', '_id', 'public', 'created', 'creator', 'name'];
+                cCurrentStateDef.l = ['type', 'block_meta', 'block_states', 'block_state', 'utterance', '_id', 'public', 'created', 'creator', 'name'];
                 return cCurrentStateDef;
             })(),
             //check if the associative array contains ONLY the valid keys

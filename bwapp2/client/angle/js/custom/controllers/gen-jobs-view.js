@@ -281,6 +281,8 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                     islist: true,
                     list: null
                 };
+                if ($scope.curState.type)
+                    jobdata.statetype = $scope.curState.type; //check if this state is partial/full or none
                 var availlist = [];
                 var statelen = $scope.curState.block_states.length;
                 //generate action jobs from states
@@ -307,8 +309,11 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                             antcnt: jobdata.antcnt,
                             creator: $rootScope.currentUser._id,
                             created: (new Date).getTime(),
+                            public: jobdata.public,
                             idxlist: abundle
                         };
+                        if (jobdata.statetype)
+                            mybundledata.statetype = $scope.curState.type;
                         GenJobsMgr.insert(mybundledata, function (err, id) {
                             if (!err) {
                                 bundleidlist.push(id);
