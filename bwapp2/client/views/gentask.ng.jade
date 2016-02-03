@@ -109,7 +109,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 textarea.form-control(ng-if='!submitter && $index == curantpass', type='text', ng-model='notes[$index]', style='padding-left: 26px;', clear-icon)
           button.btn.btn-primary(ng-if='taskidx > 0', ng-click='itrAnnot(notes,-1)') Prev
           button.btn.btn-primary(ng-if='workerId && hitId && notes[curantpass].length > 13 && taskidx+1 >= maxtask && !submitter', ng-click='itrAnnot(notes, 1)') Submit
-          button.btn.btn-primary(ng-if='(workerId && hitId && (notes[curantpass].length > 13 && taskidx+1 < maxtask) || (submitter && taskidx+1 < maxtask))', ng-click='itrAnnot(notes, 1)') Next
+          button.btn.btn-primary(ng-if='(workerId && hitId && ((!curState.type && notes[curantpass].length > 13 && taskidx+1 < maxtask) || (curState.type && notes[curantpass].length > 75 && taskidx+1 < maxtask)) || (submitter && taskidx+1 < maxtask))', ng-click='itrAnnot(notes, 1)') Next
   h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
 
 
