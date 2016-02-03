@@ -124,11 +124,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                             console.warn('$scope.hitdata', $scope.hitdata);
                             renderTask($scope.taskidx);
                             $scope.logolist = [];
-                            console.warn($scope.curState.block_meta);
                             _.each($scope.curState.block_meta.blocks, function (b) {
                                 $scope.logolist.push({ name: b.name, imgref: "img/textures/logos/" + b.name.replace(/ /g, '') + '.png' });
                             });
-                            console.warn($scope.logolist);
                         }
                         /*Meteor.call('mturkReviewableHITs', {hid: $scope.hitId},  function(err, resp){
                          console.warn(err,resp);
@@ -267,8 +265,9 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                       if(n.split(' ').length < 4) validWords = false;
                     });
                     if(!validWords){*/
-                    if ((!$scope.curState.type && notes[$scope.curantpass].split(' ').length < 4) ||
-                        ($scope.curState.type && notes[$scope.curantpass].split(' ').length < 20)) {
+                    var myWords = notes[$scope.curantpass].replace(/ +/g, ' ').split(' ');
+                    if ((!$scope.curState.type && myWords.length < 4) ||
+                        ($scope.curState.type && myWords.length < 20)) {
                         toaster.pop('error', 'Not enough words used in description');
                         $rootScope.dataloaded = true;
                         return;
