@@ -51,9 +51,9 @@ Meteor.methods({
     console.warn(p);
     var mturk = Meteor['npmRequire']('mturk-api');
     var antpriceact:number[] = [0.5, 1.0, 1.5];
-    var anttimeact:number[] = [5, 5.5, 6];
+    var anttimeact:number[] = [6, 6.5, 7];
     var partfullpriceact:number[] = [1.0, 2.0, 3.0];
-    var partfulltimeact:number[] = [6, 7, 8];
+    var partfulltimeact:number[] = [12, 13, 14];
     
     var turk = Async.runSync(function(done){
       var taskdata:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
