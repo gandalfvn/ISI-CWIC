@@ -79,6 +79,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           .fa.fa-exclamation-triangle
           | Each description MUST describe the action completely.  
           i(ng-if="!curState.type" style='color:green') Only one block moves per action
+          i(ng-if="curState.type" style='color:green') Accurately describe the actions in the fewest possible separate steps
           //-span(ng-show='notes.length > 1')
             | Ensure each alternative description is 
             b DIFFERENT.
@@ -100,6 +101,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               b(style='color:red') COMPLETELY NEW ALTERNATIVE
               |  description of the action. 
               i(ng-if="!curState.type" style='color:green') Only one block moves per action
+              i(ng-if="curState.type" style='color:green') Accurately describe the actions in the fewest possible separate steps
             .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13 && !curState.type) || ($index > 0 && notes[$index-1].length > 75 && curState.type)')
               b.pull-left(ng-show='!note.length || (!curState.type && note.length < 14) || (curState.type && note.length < 76)', style='font-size: 16px; color: red; width:2%; float: left')
                 .fa.fa-asterisk
