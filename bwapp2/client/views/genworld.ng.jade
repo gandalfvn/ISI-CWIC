@@ -15,6 +15,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   div(ng-show='curState.block_meta.blocks')
     h4 Active State: {{curState._id}} &nbsp;&nbsp; {{curState.name}}
     h4 # Moves: {{curState.block_states.length}} &nbsp; # Blocks: {{curState.block_meta.blocks.length}}
+      span(ng-show='curState.type') &nbsp;&nbsp;Type: {{curState.type}}
     span(ng-repeat='block in curState.block_meta.blocks')
       | &nbsp;&nbsp;
       button.btn.btn-xs.btn-default {{block.id}} &nbsp; {{block.name | uppercase}}
