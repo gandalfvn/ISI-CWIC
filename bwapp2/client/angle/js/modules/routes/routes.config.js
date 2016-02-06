@@ -108,7 +108,7 @@
       })
       .state('app.gencmdexp', {
         url: '/gencmdexp?sid',
-        title: 'Simple Experiment',
+        title: 'Command Experiment',
         templateUrl: helper.basepath('gencmdexp.html'),
         resolve: angular.extend(
           {
@@ -119,6 +119,22 @@
           helper.resolveFor('babylonjs', 'datatables')
         )
         ,controller: 'genCmdExpCtrl'
+      })
+      .state('app.gencmdjobs', {
+        url: '/gencmdjobs?sid',
+        title: 'Command Jobs',
+        templateUrl: helper.basepath('gencmdjobs.html'),
+        resolve: angular.extend(
+          {
+            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
+              return $auth.requireValidUser(function (user) {
+                return !$rootScope.isRole(user, 'guest');
+              });
+            }]
+          }, //simple functions appear first so data is loaded
+          helper.resolveFor('babylonjs', 'ngDialog', 'datatables')
+        )
+        ,controller: 'genCmdJobsCtrl'
       })
       .state('app.genpred', {
         url: '/genpred?sid',
