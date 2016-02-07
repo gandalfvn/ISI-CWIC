@@ -120,8 +120,6 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
                             }
                             if ($scope.taskidx || $scope.submitter)
                                 $scope.opt.bAgreed = true;
-                            console.warn('$scope.taskdata', $scope.taskdata);
-                            console.warn('$scope.hitdata', $scope.hitdata);
                             renderTask($scope.taskidx);
                             $scope.logolist = [];
                             _.each($scope.curState.block_meta.blocks, function (b) {

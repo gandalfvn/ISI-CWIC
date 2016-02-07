@@ -12,8 +12,10 @@ Meteor.methods({
         var mturk = Meteor['npmRequire']('mturk-api');
         var antpriceact = [0.5, 1.0, 1.5];
         var anttimeact = [6, 6.5, 7];
-        var partfullpriceact = [1.0, 2.0, 3.0];
-        var partfulltimeact = [12, 13, 14];
+        var fullpriceact = [5.0, 10.0, 15.0];
+        var fulltimeact = [12, 13, 14];
+        var partpriceact = [1.0, 2.0, 3.0];
+        var parttimeact = [12, 13, 14];
         var turk = Async.runSync(function (done) {
             var taskdata = GenJobsMgr.findOne({ _id: p.tid });
             var len = taskdata.idxlist.length;
@@ -64,8 +66,14 @@ Meteor.methods({
                     hitcontent.Title = 'Describe this Image Sequence ' + p.jid;
                     hitcontent.Description = 'Tagging image transitions with a description.';
                     if (taskdata.statetype === 'partial' || taskdata.statetype === 'full') {
-                        hitcontent.Reward.Amount = len * partfullpriceact[taskdata.antcnt - 1] * 0.1; //price based on more for 1st answer
-                        hitcontent.AssignmentDurationInSeconds = len * partfulltimeact[taskdata.antcnt - 1] * 60;
+                        if (taskdata.statetype === 'partial') {
+                            hitcontent.Reward.Amount = len * partpriceact[taskdata.antcnt - 1] * 0.1; //price based on more for 1st answer
+                            hitcontent.AssignmentDurationInSeconds = len * parttimeact[taskdata.antcnt - 1] * 60;
+                        }
+                        else {
+                            hitcontent.Reward.Amount = len * fullpriceact[taskdata.antcnt - 1] * 0.1; //price based on more for 1st answer
+                            hitcontent.AssignmentDurationInSeconds = len * fulltimeact[taskdata.antcnt - 1] * 60;
+                        }
                     }
                     else {
                         hitcontent.Reward.Amount = len * antpriceact[taskdata.antcnt - 1] * 0.1; //price based on more for 1st answer

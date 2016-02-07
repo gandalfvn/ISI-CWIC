@@ -84,7 +84,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
             $scope.submitter = subfound;
           }
         }
-      } 
+      }
       var sid:string = $scope.taskdata.stateid;
       $scope.subscribe("genstates", ()=>{return [sid]}, {
         onReady: function (sub) {
@@ -126,8 +126,6 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
               $scope.curantpass = Math.floor($scope.taskidx / $scope.taskdata.idxlist.length);
             }
             if ($scope.taskidx || $scope.submitter) $scope.opt.bAgreed = true;
-            console.warn('$scope.taskdata', $scope.taskdata);
-            console.warn('$scope.hitdata', $scope.hitdata);
             renderTask($scope.taskidx);
             $scope.logolist = [];
             _.each($scope.curState.block_meta.blocks, function (b:iBlockMetaEle) {
@@ -278,7 +276,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
         var previdx:number = ($scope.taskidx)%$scope.taskdata.idxlist.length; //get actual index
         $scope.taskidx+=vdir;
         $scope.curantpass = Math.floor($scope.taskidx/$scope.taskdata.idxlist.length);
-        
+
         if(!$scope.hitdata.timed) $scope.hitdata.timed = {};
         if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
         if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
