@@ -2,6 +2,7 @@
  * Module: gen-cmdjobs-view.ts
  * Created by wjwong on 2/5/16.
  =========================================================*/
+/// <reference path="gen-3d-engine.ts" />
 /// <reference path="../../../../../model/gencmdjobsdb.ts" />
 /// <reference path="../../../../../model/gencmdsdb.ts" />
 /// <reference path="../../../../../model/screencapdb.ts" />
@@ -33,7 +34,7 @@ interface iSortASNs {
   time: number, name: string, tid: string, hid: string, islive: boolean
 }
 
-angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout',  'ngDialog', 'toaster', 'AppUtils', 'DTOptionsBuilder', '$reactive', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, ngDialog, toaster, apputils, DTOptionsBuilder, $reactive){
+angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout',  'ngDialog', 'toaster','APP_CONST', 'AppUtils', 'DTOptionsBuilder', '$reactive', function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, ngDialog, toaster, APP_CONST, apputils, DTOptionsBuilder, $reactive){
   "use strict";
   $reactive(this).attach($scope);
 
@@ -76,17 +77,12 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   
   setTimeout(()=>{
     $scope.subscribe("gencmds", ()=>{}, {
-      onReady: function (sid) {dataReady.update('gencmds');},
-      onStop: subErr
-    });
-
-    $scope.subscribe("screencaps", ()=>{}, {
-      onReady: function (sid) {dataReady.update('screencaps');},
+      onReady: function (subid) {dataReady.update('gencmds');},
       onStop: subErr
     });
 
     $scope.subscribe("gencmdjobs", ()=>{return [{type: "list", pageCur: $scope.opt.pageCur, pageSize: $scope.opt.pageSize}]}, {
-      onReady: function (sid) {dataReady.update('gencmdjobs');},
+      onReady: function (subid) {dataReady.update('gencmdjobs');},
       onStop: subErr
     });
   }, 10);
@@ -106,7 +102,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   $scope.incBlock = function(dir:number){
     if($scope.opt.pageCur+dir > -1 ){
       $scope.subscribe("gencmdjobs", ()=>{return [{type: "list", pageCur: $scope.opt.pageCur+dir, pageSize: $scope.opt.pageSize}]}, {
-        onReady: function (sid) {
+        onReady: function (subid) {
           $scope.opt.pageCur+= dir;
           updateJobMgr();
           $scope.refreshHITs();
@@ -124,7 +120,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   };
 
   var getDoneASNs = function(): iSortHITs[]{
-    var jobs:miGenJobsMgr.iGenJobsHIT[] = GenJobsMgr.find(
+    var jobs:miGenCmdJobs.iGenJobsHIT[] = GenJobsMgr.find(
       {$and: [{HITId: {$exists: true}}, {submitted: {$exists: true}}]}
       , {fields: {tid: 1, 'submitted.name': 1, 'submitted.time': 1, 'islive': 1}, sort: {'submitted.time': -1}}
     ).fetch();
@@ -140,7 +136,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   };
 
   var getAllHITs= function(): {active: iSortHITs[], done: iSortHITs[], doneASNs: iSortASNs[]}{
-    var jobs:miGenJobsMgr.iGenJobsHIT[] = GenJobsMgr.find(
+    var jobs:miGenCmdJobs.iGenJobsHIT[] = GenJobsMgr.find(
       {HITId: {$exists: true}}
       , {fields: {tid: 1, jid: 1, 'submitted.name': 1, 'submitted.valid': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1}}
       , {sort: {'created': -1}}
@@ -148,10 +144,10 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
     var activeHITs = [];
     var doneHITs = [];
     var sortedjobs = [];
-    _.each(jobs, function(j:miGenJobsMgr.iGenJobsHIT){
+    _.each(jobs, function(j:miGenCmdJobs.iGenJobsHIT){
       //hack to store state for the job so we can search easier
-      var myjob:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: j.jid});
-      if(myjob) j['sid'] = myjob.stateid;
+      var myjob:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: j.jid});
+      if(myjob) j['cid'] = myjob.cmdid;
 
       var asnleft = (j.hitcontent) ? (j.submitted) ? j.hitcontent.MaxAssignments - j.submitted.length : j.hitcontent.MaxAssignments : -1;
       var names = null, repvalid:iRepValid = null;
@@ -166,14 +162,14 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
         })
       }
       if(asnleft > 0)
-        activeHITs.push({time: j.created, names: names, tid: j.tid, jid: j.jid, sid: j['sid'], hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
+        activeHITs.push({time: j.created, names: names, tid: j.tid, jid: j.jid, cid: j['cid'], hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
       else {
         var submitTime:number = 0;
-        _.each(j.submitted, function(s:miGenJobsMgr.iSubmitEle){
+        _.each(j.submitted, function(s:miGenCmdJobs.iSubmitEle){
           var t:number = Number(s.time);
           if(t > submitTime) submitTime = t;
         });
-        doneHITs.push({time: submitTime, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, sid: j['sid'], hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
+        doneHITs.push({time: submitTime, names: names, repvalid: repvalid, tid: j.tid, jid: j.jid, cid: j['cid'], hid: j._id.split('_')[1], asnleft: asnleft, islive: j.islive, reward: j.hitcontent.Reward});
       }
     });
 
@@ -194,8 +190,8 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   };
 
   $scope.dlLinks = function(task:iSortHITs, onlyValid:boolean){
-    var mytask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: task.tid});
-    var mystate:iGenCmds = GenCmds.findOne({_id: mytask.stateid});
+    var mytask:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: task.tid});
+    var mystate:iGenCmds = GenCmds.findOne({_id: mytask.cmdid});
 
     var content:string[] = [];
     var htmlcontent:{ex: string, res: string[], st: string} = {ex: '', res: [], st: ''};
@@ -220,7 +216,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
     apputils.saveAs(uriContent, fname);
 
 
-    htmlcontent.st = $state.href('app.genworld',{sid: mytask.stateid}, {absolute: true});
+    htmlcontent.st = $state.href('app.genworld',{cid: mytask.cmdid}, {absolute: true});
     var htmldata = "<body>";
     htmldata += "<h2>HIT: "+task.hid+"</h2>";
     htmldata += "<h4>State</h4>";
@@ -243,24 +239,79 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
 
   $scope.curState = new apputils.cCurrentState();
 
-  $scope.remState = function(sid:string){
-    if(sid){
-      GenCmds.remove(sid);
+  $scope.remState = function(cid:string){
+    if(cid){
+      GenCmds.remove(cid);
       updateTableStateParams();
-      toaster.pop('warning', 'Removed ' + sid);
+      toaster.pop('warning', 'Removed ' + cid);
     }
   };
 
-  $scope.chooseState = function(sid:string){
+  $scope.resetWorld = function () {
+    //resetworld 
+    myengine.resetWorld();
+  };
+
+  /**
+   * show the state to be used as state 0
+   * @param cid
+   */
+  $scope.showState = function (cid:string) {
+    $rootScope.dataloaded = false;
     $scope.enableImpSave = false;
-    //we must get the state for this sid
-    $scope.subscribe("gencmds",()=>{return [sid]}, {
+    $scope.isExp = true;
+    //we must get the state for this cid
+    $scope.subscribe("gencmds", ()=>{return [cid]}, {
+      onReady: function (sub) {
+        var myframe:iGenCmds = GenCmds.findOne({_id: cid});
+        if (!myframe) return toaster.pop('warn', 'Invalid State ID');
+        //update the meta
+        $scope.curState.clear();
+        $scope.curState.copy(myframe);
+        myengine.createObjects($scope.curState.block_meta.blocks);
+        showFrame({block_state: myframe.block_state});
+        $scope.$apply(()=>{$rootScope.dataloaded = true});
+      },
+      onStop: subErr
+    })
+  };
+  
+  var showFrame = function (state:iBlockStates, cb?:()=>void) {
+    $scope.resetWorld();
+    setTimeout(function () {
+      if (state.block_state) {
+        state.block_state.forEach(function (frame) {
+          var c = myengine.get3DCubeById(frame.id);
+          c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
+          if (frame.rotation)
+            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
+          c.isVisible = true;
+          if (myengine.hasPhysics) c.setPhysicsState({
+            impostor: BABYLON.PhysicsEngine.BoxImpostor,
+            move: true,
+            mass: 5, //c.boxsize,
+            friction: myengine.fric,
+            restitution: myengine.rest
+          });
+        });
+      }
+      else $scope.$apply(function () {
+        toaster.pop('error', 'Missing BLOCK_STATE')
+      });
+      if (cb) cb();
+    }, 100);
+  };
+
+  /*$scope.chooseState = function(cid:string){
+    $scope.enableImpSave = false;
+    //we must get the state for this cid
+    $scope.subscribe("gencmds",()=>{return [cid]}, {
       onReady: function(sub){
-         var myframe:iGenCmds = GenCmds.findOne({_id: sid});
-         if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
-         $scope.curState.clear();
-         $scope.curState.copy(myframe);
-         $scope.showMove(0);
+        var myframe:iGenCmds = GenCmds.findOne({_id: cid});
+        if(!myframe) return $scope.$apply(function(){toaster.pop('warn', 'Invalid State ID')});
+        $scope.curState.clear();
+        $scope.curState.copy(myframe);
+        $scope.showMove(0);
       },
       onStop: subErr
     })
@@ -277,7 +328,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
       },
       onStop: subErr
     });
-  };
+  };*/
 
   var navImgButtons = function(id:string, i:number):string{
     var lenID:number = $('div').length;
@@ -317,12 +368,12 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
     img.src = b64img;
   };
 
-  $scope.taskGen = function(tasktype:string, movedir:string, bundle:number, asncnt:number, antcnt:number){
+  $scope.taskGen = function(tasktype:string, bundle:number, asncnt:number, antcnt:number){
     var statelist:string[] = apputils.mdbArray(GenCmds, {}, {
       sort: {"_id": 1}}, "_id");
     if(statelist.length){
-      var jobdata:miGenJobsMgr.iGenJobsMgr = {
-        stateid: $scope.curState._id,
+      var jobdata:miGenCmdJobs.iGenCmdJobs = {
+        cmdid: $scope.curState._id,
         tasktype: tasktype,
         bundle: bundle,
         asncnt: asncnt,
@@ -333,7 +384,6 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
         islist: true,
         list: null
       };
-      if($scope.curState.type) jobdata.statetype = $scope.curState.type; //check if this state is partial/full or none
       
       var availlist:number[][] = [];
       var statelen:number = $scope.curState.block_states.length;
@@ -353,8 +403,8 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
         });
 
         function saveBundle(){
-          var mybundledata:miGenJobsMgr.iGenJobsMgr = {
-            stateid: $scope.curState._id,
+          var mybundledata:miGenCmdJobs.iGenCmdJobs = {
+            cmdid: $scope.curState._id,
             islist: false,
             tasktype: jobdata.tasktype,
             asncnt: jobdata.asncnt,
@@ -364,7 +414,6 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
             public: jobdata.public,
             idxlist: abundle
           };
-          if(jobdata.statetype) mybundledata.statetype = $scope.curState.type;
           GenJobsMgr.insert(mybundledata, function(err:Error, id:string) {
             if (!err) {
               bundleidlist.push(id);
@@ -383,21 +432,12 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
         if(abundle.length) saveBundle(); //save the dangling bundles
       });
 
-      //decide on normal or reverse action
-      if(tasktype == 'action' && movedir == 'reverse'){
-        for(var i:number = statelen-1; i > -1; i--){
-          if(i > 0) availlist.push([i, i-1]); //because we use i & i+1 states in actions
-          doneAvailList();
+      for(var i:number = 0; i < statelen; i++){
+        if(tasktype == 'action'){
+          if(i < statelen-1) availlist.push([i, i+1]); //because we use i & i+1 states in actions
         }
-      }
-      else{
-        for(var i:number = 0; i < statelen; i++){
-          if(tasktype == 'action'){
-            if(i < statelen-1) availlist.push([i, i+1]); //because we use i & i+1 states in actions
-          }
-          else availlist.push([i]);
-          doneAvailList();
-        }
+        else availlist.push([i]);
+        doneAvailList();
       }
     }
   };
@@ -407,11 +447,11 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   };
   
   $scope.selectJob = function(jid:string){
-    var job:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: jid});
+    var job:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: jid});
     $scope.jobid = jid;
     $scope.jobinfo = [];
     job.list.forEach(function(tid){
-      var task:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: tid});
+      var task:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: tid});
       $scope.jobinfo.push(task);
     });
   };
@@ -419,9 +459,9 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   $scope.remJob = function(jid:string){
     $scope.jobid = null;
     $scope.jobinfo = null; //null out job in case its the one deleted
-    var deljob:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: jid});
+    var deljob:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: jid});
     deljob.list.forEach(function(j){
-      var deltask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: j});
+      var deltask:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: j});
       if(deltask && deltask.hitlist)
         deltask.hitlist.forEach(function(h){
           GenJobsMgr.remove(h);
@@ -436,7 +476,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   $scope.remHIT = function(tid:string, hid: string){
     $scope.jobid = null;
     $scope.jobinfo = null; //null out job in case its the one deleted
-    var deltask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: tid});
+    var deltask:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: tid});
     if(deltask && deltask.hitlist) {
       GenJobsMgr.remove(hid);
       GenJobsMgr.update({_id: tid}, {$pull: {hitlist: hid}});
@@ -453,7 +493,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
       if(ret.error) return $scope.$apply(function(){toaster.pop('error', ret.error)});
       //create the HITId system
       var res = ret.result;
-      var hitdata:miGenJobsMgr.iGenJobsHIT = {
+      var hitdata:miGenCmdJobs.iGenJobsHIT = {
         '_id': 'H_'+res.hit[0].HITId,
         HITId: res.hit[0].HITId,
         HITTypeId: res.hit[0].HITTypeId,
@@ -493,7 +533,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   };
 
   interface iJTHInfo{
-    sid:string,
+    cid:string,
     jid:string,
     tid:string,
     hid:string,
@@ -503,11 +543,11 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
     var jids:string[] = jidstr.trim().split(/[ ,]/);
     $scope.subscribe('gencmdjobs', ()=>{return[{type:'item', keys: jids}]}, {
       onReady: (sub)=>{
-        var myjobs:miGenJobsMgr.iGenJobsMgr[] = GenJobsMgr.find({_id: {$in: jids}}).fetch();
+        var myjobs:miGenCmdJobs.iGenCmdJobs[] = GenJobsMgr.find({_id: {$in: jids}}).fetch();
         if(myjobs.length){
           var jtids:{tid:string, jid:string}[] = [];
           var tids:string[] = [];
-          _.each(myjobs, function(job:miGenJobsMgr.iGenJobsMgr){
+          _.each(myjobs, function(job:miGenCmdJobs.iGenCmdJobs){
             _.each(job.list, function(tid) {
               jtids.push({tid: tid, jid:job._id});
               tids.push(tid);
@@ -518,10 +558,10 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
               var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
               var hitlist:iJTHInfo[] = [];
               _.each(jtids, function(jtid){
-                var mytask:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: jtid.tid});
+                var mytask:miGenCmdJobs.iGenCmdJobs = GenJobsMgr.findOne({_id: jtid.tid});
                 _.each(mytask.hitlist, function(h){
                   var hid = h.replace(/H_/,'');
-                  hitlist.push({jid: jtid.jid, tid: jtid.tid, hid: hid, sid: mytask.stateid, url: turkreqlink+hid});
+                  hitlist.push({jid: jtid.jid, tid: jtid.tid, hid: hid, cid: mytask.cmdid, url: turkreqlink+hid});
                 });
               });
               var dialog = ngDialog.open({
@@ -545,6 +585,11 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
       ,onStop: subErr
     });
   };
+
+  // Start by calling the createScene function that you just finished creating
+  var myengine:miGen3DEngine.c3DEngine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
+  myengine.createWorld();
+  dataReady.update('world created');
 
   $scope.stateGo = apputils.stateGo($state);
 }]);

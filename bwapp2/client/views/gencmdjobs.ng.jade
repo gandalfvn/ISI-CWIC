@@ -43,64 +43,57 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               td(title="Remove")
                 button.btn.btn-xs.btn-danger(ng-click='remState(s._id)')
                   .fa.fa-remove
-              td(title="ID", ng-click='chooseState(s._id)')
+              td(title="ID", ng-click='showState(s._id)')
                 | {{s._id}}
-              td(title="Name", ng-click='chooseState(s._id)')
+              td(title="Name", ng-click='showState(s._id)')
                 | {{s.name}}
-              td(title="Created", ng-click='chooseState(s._id)')
+              td(title="Created", ng-click='showState(s._id)')
                 | {{s.created | date:"yyyy/MM/dd HH:mm"}}
-    accordion.col-sm-6(ng-show='curState._id')
-      accordion-group.panel-primary.shadowbox(ng-init="isOpen = true", is-open="isOpen")
-        accordion-heading
-          h4.panel-title
-            i.fa.fa-edit
-            | &nbsp; Create Job
-        .row-fluid.col-sm-12(style='padding-left: 0px;margin-left: -30px;')
-          #imgpreview
-        .row-fluid.col-sm-12(style='padding-left: 30px;')
-          | ID: 
-          b {{curState._id}}
-          | &nbsp;&nbsp;&nbsp;
-          | Name: 
-          b {{curState.name}}
-          span(ng-show='curState.type') &nbsp;&nbsp;Type:
-            b {{curState.type}}
+    .col-sm-6.well.shadowbox(ng-show='curState._id', style='padding:0px;')
+      h4.panel-title.mb(style='padding: 10px 15px; border-top-right-radius: 3px; border-top-left-radius: 3px; border-bottom: 0; font-size: 14px; color: #ffffff; background-color: #5d9cec; border-color: #cfdbe2;')
+        i.fa.fa-edit
+        | &nbsp; Create Job
+      .col-sm-12(style='padding-left: 8px;')
+        canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
+      .col-sm-12(style='padding-left: 30px;')
+        | ID: 
+        b {{curState._id}}
+        | &nbsp;&nbsp;&nbsp;
+        | Name: 
+        b {{curState.name}}
+        span(ng-show='curState.type') &nbsp;&nbsp;Type:
+          b {{curState.type}}
+        br
+        | # Blocks: {{curState.block_meta.blocks.length}}
+        | &nbsp;&nbsp;&nbsp;
+        | # Moves: {{curState.block_states.length}}
+        | &nbsp;&nbsp;&nbsp;
+        | Created: {{curState.created | date:"yyyy/MM/dd"}}
+      .col-sm-12
+        form.form-inline.ng-pristine.ng-valid(name='createJobForm', ng-submit='taskGen(tasktype, bundle, asncnt, antcnt)')
+          .form-group(style='margin-right: 10px')
+            label Task Type:
+            select.form-control(ng-model='tasktype', ng-init='tasktype="state"')
+              each v in ['state']
+                option(value='#{v}', ng-selected='tasktype=="#{v}"') #{v}
           br
-          | # Blocks: {{curState.block_meta.blocks.length}}
-          | &nbsp;&nbsp;&nbsp;
-          | # Moves: {{curState.block_states.length}}
-          | &nbsp;&nbsp;&nbsp;
-          | Created: {{curState.created | date:"yyyy/MM/dd"}}
-        .row-fluid.col-sm-12
-          form.form-inline.ng-pristine.ng-valid(name='createJobForm', ng-submit='taskGen(tasktype, movedir, bundle, asncnt, antcnt)')
-            .form-group(style='margin-right: 10px')
-              label Task Type:
-              select.form-control(ng-model='tasktype', ng-init='tasktype="action"')
-                each v in ['state', 'action']
-                  option(value='#{v}', ng-selected='tasktype=="#{v}"') #{v}
-            .form-group(style='margin-right: 10px')
-              label Movement Direction:
-              select.form-control(ng-model='movedir', ng-init='movedir="normal"')
-                each v in ['normal', 'reverse']
-                  option(value='#{v}', ng-selected='movedir=="#{v}"') #{v}
-            br
-            .form-group(style='margin-right: 10px', title='Number of jobs to bundle per task')
-              label Bundle By:
-              select.form-control(ng-model='bundle', ng-init='bundle=(tasktype=="action")?10:5')
-                each v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                  option(value='#{v}', ng-selected='bundle==#{v}') #{v}
-            .form-group(style='margin-right: 10px', title='# of Turks to use per bundle of work')
-              label # Turk Assignments:
-              select.form-control(ng-model='asncnt', ng-init='asncnt=3')
-                each v in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                  option(value='#{v}', ng-selected='asncnt==#{v}') #{v}
-            .form-group(style='margin-right: 10px', title='# of annotations per assignment')
-              label # of Annotations:
-              select.form-control(ng-model='antcnt', ng-init='antcnt=3')
-                each v in [1, 2, 3]
-                  option(value='#{v}', ng-selected='antcnt==#{v}') #{v}
-            br
-            button.btn.btn-primary(type='submit') Create
+          .form-group(style='margin-right: 10px', title='Number of jobs to bundle per task')
+            label Bundle By:
+            select.form-control(ng-model='bundle', ng-init='bundle=(tasktype=="action")?10:5')
+              each v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                option(value='#{v}', ng-selected='bundle==#{v}') #{v}
+          .form-group(style='margin-right: 10px', title='# of Turks to use per bundle of work')
+            label # Turk Assignments:
+            select.form-control(ng-model='asncnt', ng-init='asncnt=3')
+              each v in [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                option(value='#{v}', ng-selected='asncnt==#{v}') #{v}
+          .form-group(style='margin-right: 10px', title='# of annotations per assignment')
+            label # of Annotations:
+            select.form-control(ng-model='antcnt', ng-init='antcnt=3')
+              each v in [1, 2, 3]
+                option(value='#{v}', ng-selected='antcnt==#{v}') #{v}
+          br
+          button.btn.btn-primary.mb(type='submit') Create
   hr
 .row
   .col-sm-12
@@ -134,7 +127,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td(title='{{job._id}}', ng-click='selectJob(job._id)') {{job._id}}
             td {{job.created | date:"yyyy/MM/dd HH:mm" }}
             td(title='{{job.tasktype}}') {{job.tasktype}}
-            td(title='{{job.stateid}}', ng-click='chooseState(job.stateid)') {{job.stateid}}
+            td(title='{{job.stateid}}', ng-click='showState(job.stateid)') {{job.stateid}}
             td(title='{{job.bundle}}') {{job.bundle}}
             td(title='{{job.asncnt}}') {{job.asncnt}}
             td(title='{{job.antcnt}}') {{job.antcnt}}
@@ -192,7 +185,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th Info
             th Task
             th Job
-            th State
+            th Cmd
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.active')
@@ -209,7 +202,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
             td {{task.jid}}
-            td {{task.sid}}
+            td {{task.cid}}
             td
               span(ng-repeat='n in task.names')
                 button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
@@ -231,7 +224,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             th HIT
             th Task
             th Job
-            th State
+            th Cmd
             th Turker
         tbody
           tr(ng-repeat='task in allHITs.done')
@@ -250,7 +243,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
             td {{task.jid}}
-            td {{task.sid}}
+            td {{task.cid}}
             td
               span(ng-repeat='n in task.names')
                 button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")

@@ -11,6 +11,7 @@ module miGenCmdJobs {
     _id?: string,
     cmdid: string,
     islist: boolean,
+    tasktype: string,
     bundle?: number,
     asncnt: number,
     antcnt: number,

@@ -619,7 +619,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
          * @param sid
          */
         $scope.showState = function (sid) {
-            $state.transitionTo('app.genworld', { sid: sid }, { notify: false });
+            if (!$stateParams.sid)
+                $state.transitionTo('app.genworld', { sid: sid }, { notify: false });
             $rootScope.dataloaded = false;
             $scope.enableImpSave = false;
             //we must get the state for this sid

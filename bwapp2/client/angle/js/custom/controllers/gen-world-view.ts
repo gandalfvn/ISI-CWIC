@@ -621,7 +621,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
    * @param sid
    */
   $scope.showState = function (sid:string) {
-    $state.transitionTo('app.genworld', {sid: sid}, {notify: false});
+    if(!$stateParams.sid) //fix double routing when theres an update
+      $state.transitionTo('app.genworld', {sid: sid}, {notify: false});
     $rootScope.dataloaded = false;
     $scope.enableImpSave = false;
     //we must get the state for this sid
