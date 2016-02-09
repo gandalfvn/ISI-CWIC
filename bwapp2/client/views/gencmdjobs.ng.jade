@@ -31,7 +31,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           h4.panel-title
             i.fa.fa-cubes
             | &nbsp; Available Command States
-        table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsAvail")
+        table.table.table-condensed(ng-show='dataloaded', datatable="ng", dt-options="dtOptionsAvail")
           thead
             tr
               th
@@ -70,18 +70,13 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         | &nbsp;&nbsp;&nbsp;
         | Created: {{curState.created | date:"yyyy/MM/dd"}}
       .col-sm-12
-        form.form-inline.ng-pristine.ng-valid(name='createJobForm', ng-submit='taskGen(tasktype, bundle, asncnt, antcnt)')
+        form.form-inline.ng-pristine.ng-valid(name='createJobForm', ng-submit='taskGen(tasktype, asncnt, antcnt)')
           .form-group(style='margin-right: 10px')
             label Task Type:
-            select.form-control(ng-model='tasktype', ng-init='tasktype="state"')
-              each v in ['state']
+            select.form-control(ng-model='tasktype', ng-init='tasktype="cmd"')
+              each v in ['cmd']
                 option(value='#{v}', ng-selected='tasktype=="#{v}"') #{v}
           br
-          .form-group(style='margin-right: 10px', title='Number of jobs to bundle per task')
-            label Bundle By:
-            select.form-control(ng-model='bundle', ng-init='bundle=(tasktype=="action")?10:5')
-              each v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                option(value='#{v}', ng-selected='bundle==#{v}') #{v}
           .form-group(style='margin-right: 10px', title='# of Turks to use per bundle of work')
             label # Turk Assignments:
             select.form-control(ng-model='asncnt', ng-init='asncnt=3')
@@ -90,7 +85,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           .form-group(style='margin-right: 10px', title='# of annotations per assignment')
             label # of Annotations:
             select.form-control(ng-model='antcnt', ng-init='antcnt=3')
-              each v in [1, 2, 3]
+              each v in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20]
                 option(value='#{v}', ng-selected='antcnt==#{v}') #{v}
           br
           button.btn.btn-primary.mb(type='submit') Create
@@ -106,32 +101,51 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       accordion-heading
         h4.panel-title
           i.fa.fa-inbox
-          | &nbsp; Job Groups
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsGrp")
+          | &nbsp; Jobs
+      .row.mb(style='padding-left:10px')
+        button.btn.btn-default.btn-xs(type='button', ng-model='opt.isLive', btn-checkbox)
+          .fa.fa-toggle-off(ng-show='!opt.isLive')
+            | &nbsp;Sandbox
+          .fa.fa-toggle-on(ng-show='opt.isLive')
+            | &nbsp;Production
+        | &nbsp; 
+        button.btn.btn-default.btn-xs(type='button', ng-model='opt.useQual', btn-checkbox)
+          .fa.fa-toggle-off(ng-show='!opt.useQual')
+            | &nbsp;No Qualifications
+          .fa.fa-toggle-on(ng-show='opt.useQual')
+            | &nbsp;Use Qualifications
+      table.table.table-condensed(ng-show='dataloaded', datatable="ng", dt-options="dtOptionsGrp")
         thead
           tr
             th
             th Job
             th Created
-            th Type
-            th State
-            th Bundle
-            th # Turks
-            th # Annot
-            th # Tasks
+            th Cmd
+            th Info
+            th HITs
         tbody
           tr(ng-repeat='job in jobmgrlist', ng-if='job.public')
             td
               button.btn.btn-xs.btn-danger(ng-click='remJob(job._id)')
                 .fa.fa-remove
-            td(title='{{job._id}}', ng-click='selectJob(job._id)') {{job._id}}
+              | &nbsp;&nbsp;
+              button.btn.btn-xs(ng-click='createHIT(job._id)') Create HIT
+            td(ng-click="stateGo('gencmdtask', {taskId: job._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
+              i.fa.fa-eye
+              | &nbsp;{{job._id}}
             td {{job.created | date:"yyyy/MM/dd HH:mm" }}
-            td(title='{{job.tasktype}}') {{job.tasktype}}
-            td(title='{{job.stateid}}', ng-click='showState(job.stateid)') {{job.stateid}}
-            td(title='{{job.bundle}}') {{job.bundle}}
-            td(title='{{job.asncnt}}') {{job.asncnt}}
-            td(title='{{job.antcnt}}') {{job.antcnt}}
-            td(title='{{job.list.length}}') {{job.list.length}}
+            td(title='{{job.cmdid}}', ng-click='showState(job.cmdid)') {{job.cmdid}}
+            td 
+              | Ant:
+              b {{job.antcnt}}
+              | &nbsp;&nbsp;Asn:
+              b {{job.asncnt}}
+            td
+              span(ng-repeat='hit in job.hitlist')
+                button.btn.btn-xs.btn-danger(ng-click='remHIT(job._id, hit)')
+                  .fa.fa-remove
+                | {{hit}} &nbsp;&nbsp;
+
 .row
   accordion.col-sm-12
     accordion-group.panel-primary.shadowbox(ng-if='jobinfo', ng-init="isOpen = true", is-open="isOpen")
@@ -139,18 +153,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-file-text-o
           | &nbsp; Job {{jobid}} Information
-      button.btn.btn-default.btn-xs(type='button', ng-model='opt.isLive', btn-checkbox)
-        .fa.fa-toggle-off(ng-show='!opt.isLive')
-          | &nbsp;Sandbox
-        .fa.fa-toggle-on(ng-show='opt.isLive')
-          | &nbsp;Production
-      | &nbsp; 
-      button.btn.btn-default.btn-xs(type='button', ng-model='opt.useQual', btn-checkbox)
-        .fa.fa-toggle-off(ng-show='!opt.useQual')
-          | &nbsp;No Qualifications
-        .fa.fa-toggle-on(ng-show='opt.useQual')
-          | &nbsp;Use Qualificatins
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+      table.table.table-condensed(ng-show='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th
@@ -161,15 +164,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           tr(ng-repeat='task in jobinfo')
             td
               button.btn.btn-xs(ng-click='createHIT(jobid, task._id)') Create HIT
-            td(ng-click="stateGo('gentask', {taskId: task._id, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
-              i.fa.fa-eye
-              | &nbsp;{{task._id}}
             td Ent: {{task.idxlist.length}} &nbsp;&nbsp; Ant: {{task.antcnt}} &nbsp;&nbsp; Asn: {{task.asncnt}}
-            td
-              span(ng-repeat='hit in task.hitlist')
-                button.btn.btn-xs.btn-danger(ng-click='remHIT(task._id, hit)')
-                  .fa.fa-remove
-                | {{hit}} &nbsp;&nbsp;
 .row
   accordion.col-sm-12
     accordion-group.panel-primary.shadowbox(ng-if='allHITs.active.length', ng-init="isOpen = true", is-open="isOpen")
@@ -177,7 +172,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-flag-checkered
           | &nbsp; Active HITs
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+      table.table.table-condensed(ng-show='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th Created
@@ -198,14 +193,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 b(ng-show='task.islive', style='color:green') Live
                 span(ng-show='!task.islive', style='color:grey') Sandbox
             td Asn: {{task.asnleft}} &nbsp; {{task.reward.Amount | currency: '$'}}
-            td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
+            td(ng-click="stateGo('gencmdtask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
             td {{task.jid}}
             td {{task.cid}}
             td
               span(ng-repeat='n in task.names')
-                button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
+                button.btn.btn-xs.btn-default(ng-click="stateGo('gencmdtask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
                   i.fa.fa-eye
                   | &nbsp;{{n}}
                 | &nbsp;&nbsp;
@@ -217,7 +212,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-flag-checkered
           | &nbsp; Done HITs
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+      table.table.table-condensed(ng-show='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th Done
@@ -239,14 +234,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               a(href='https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId={{task.hid}}', target='_blank') {{task.hid}}  
                 b(ng-show='task.islive', style='color:green') Live
                 span(ng-show='!task.islive', style='color:grey') Sandbox
-            td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
+            td(ng-click="stateGo('gencmdtask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
             td {{task.jid}}
             td {{task.cid}}
             td
               span(ng-repeat='n in task.names')
-                button.btn.btn-xs.btn-default(ng-click="stateGo('gentask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
+                button.btn.btn-xs.btn-default(ng-click="stateGo('gencmdtask',{taskId: task.tid, workerId: n, hitId: task.hid, report: 1}, true)")
                   i.fa.fa-eye
                   | &nbsp;{{n}}
                 | &nbsp;&nbsp;
@@ -258,7 +253,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-flag-checkered
           | &nbsp; Finished Assignment
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+      table.table.table-condensed(ng-show='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th Done
@@ -271,10 +266,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td {{task.hid}}  
               b(ng-show='task.islive', style='color:green') Live
               span(ng-show='!task.islive', style='color:grey') Sandbox
-            td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
+            td(ng-click="stateGo('gencmdtask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}
-            td(ng-click="stateGo('gentask',{taskId: task.tid, workerId: task.name, hitId: task.hid, report: 1}, true)")
+            td(ng-click="stateGo('gencmdtask',{taskId: task.tid, workerId: task.name, hitId: task.hid, report: 1}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.name}} 
 

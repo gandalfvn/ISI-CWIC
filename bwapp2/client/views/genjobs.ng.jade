@@ -35,7 +35,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           h4.panel-title
             i.fa.fa-cubes
             | &nbsp; Available Block States
-        table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsAvail")
+        table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsAvail")
           thead
             tr
               th 
@@ -59,22 +59,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           h4.panel-title
             i.fa.fa-edit
             | &nbsp; Create Job
-        .row-fluid.col-sm-12(style='padding-left: 0px;margin-left: -30px;')
-          #imgpreview
-        .row-fluid.col-sm-12(style='padding-left: 30px;')
-          | ID: 
-          b {{curState._id}}
-          | &nbsp;&nbsp;&nbsp;
-          | Name: 
-          b {{curState.name}}
-          span(ng-show='curState.type') &nbsp;&nbsp;Type:
-            b {{curState.type}}
-          br
-          | # Blocks: {{curState.block_meta.blocks.length}}
-          | &nbsp;&nbsp;&nbsp;
-          | # Moves: {{curState.block_states.length}}
-          | &nbsp;&nbsp;&nbsp;
-          | Created: {{curState.created | date:"yyyy/MM/dd"}}
         .row-fluid.col-sm-12
           form.form-inline.ng-pristine.ng-valid(name='createJobForm', ng-submit='taskGen(tasktype, movedir, bundle, asncnt, antcnt)')
             .form-group(style='margin-right: 10px')
@@ -105,6 +89,23 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                   option(value='#{v}', ng-selected='antcnt==#{v}') #{v}
             br
             button.btn.btn-primary(type='submit') Create
+        .row-fluid.col-sm-12(style='padding-left: 30px;')
+          | ID: 
+          b {{curState._id}}
+          | &nbsp;&nbsp;&nbsp;
+          | Name: 
+          b {{curState.name}}
+          span(ng-show='curState.type') &nbsp;&nbsp;Type:
+            b {{curState.type}}
+          br
+          | # Blocks: {{curState.block_meta.blocks.length}}
+          | &nbsp;&nbsp;&nbsp;
+          | # Moves: {{curState.block_states.length}}
+          | &nbsp;&nbsp;&nbsp;
+          | Created: {{curState.created | date:"yyyy/MM/dd"}}
+        .row-fluid.col-sm-12(style='padding-left: 0px;margin-left: -30px;')
+          #imgpreview
+
   hr
 .row
   .col-sm-12
@@ -118,7 +119,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-inbox
           | &nbsp; Job Groups
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsGrp")
+      table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsGrp")
         thead
           tr
             th 
@@ -160,8 +161,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         .fa.fa-toggle-off(ng-show='!opt.useQual')
           | &nbsp;No Qualifications
         .fa.fa-toggle-on(ng-show='opt.useQual')
-          | &nbsp;Use Qualificatins
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+          | &nbsp;Use Qualifications
+      table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th
@@ -188,7 +189,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-flag-checkered
           | &nbsp; Active HITs
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+      table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th Created
@@ -228,7 +229,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-flag-checkered
           | &nbsp; Done HITs
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+      table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th Done
@@ -269,7 +270,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         h4.panel-title
           i.fa.fa-flag-checkered
           | &nbsp; Finished Assignment
-      table.table.table-condensed#listgames(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
+      table.table.table-condensed(ng-if='dataloaded', datatable="ng", dt-options="dtOptionsTask")
         thead
           tr
             th Done

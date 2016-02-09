@@ -10,15 +10,12 @@ module miGenCmdJobs {
   export interface iGenCmdJobs {
     _id?: string,
     cmdid: string,
-    islist: boolean,
     tasktype: string,
-    bundle?: number,
     asncnt: number,
     antcnt: number,
     creator: string,
     created: number,
     idxlist?: number[][],
-    list?: string[],
     hitlist?: string[],
     public: boolean
   }

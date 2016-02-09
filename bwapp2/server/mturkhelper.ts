@@ -56,6 +56,8 @@ Meteor.methods({
     var fulltimeact:number[] = [15, 16, 17];
     var partpriceact:number[] = [1.0, 2.0, 3.0];
     var parttimeact:number[] = [15, 16, 17];
+    var cmdpriceact:number[] = [40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20]; //0 means infinite
+    var cmdtimeact:number[] = [40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20];
     
     var turk = Async.runSync(function(done){
       var taskdata:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
@@ -120,6 +122,11 @@ Meteor.methods({
             hitcontent.Reward.Amount = len * antpriceact[taskdata.antcnt - 1] * 0.1; //price based on more for 1st answer
             hitcontent.AssignmentDurationInSeconds = len * anttimeact[taskdata.antcnt - 1] * 60;
           }
+        } else if(taskdata.tasktype === 'cmd'){
+          hitcontent.Title = 'Describe Commands for This Image' + p.jid;
+          hitcontent.Description = 'Creating and grading command responses from a robot';
+          hitcontent.Reward.Amount = len * cmdpriceact[taskdata.antcnt] * 0.02; //2 cents a minute?
+          hitcontent.AssignmentDurationInSeconds = len * cmdtimeact[taskdata.antcnt] * 60;
         }
         
         api.req('CreateHIT', hitcontent)

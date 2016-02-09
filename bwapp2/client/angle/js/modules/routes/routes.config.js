@@ -175,6 +175,13 @@
         resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect'),
         controller: 'genTaskCtrl'
       })
+      .state('gencmdtask', {
+        url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
+        title: 'Command & Response Task',
+        templateUrl: helper.basepath('gencmdtask.html'),
+        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect'),
+        controller: 'genCmdTaskCtrl'
+      })
       .state('app.tasks', {
         url: '/tasks',
         title: 'Tasks View',
