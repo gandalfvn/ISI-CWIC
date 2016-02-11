@@ -4,6 +4,7 @@
  =========================================================*/
 /// <reference path="./config.d.ts" />
 /// <reference path="../model/genjobsmgrdb.ts" />
+/// <reference path="../model/gencmdjobsdb.ts" />
 /// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 Meteor.methods({
@@ -19,7 +20,11 @@ Meteor.methods({
         var cmdpriceact = [40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20]; //0 means infinite
         var cmdtimeact = [40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20];
         var turk = Async.runSync(function (done) {
-            var taskdata = GenJobsMgr.findOne({ _id: p.tid });
+            var taskdata = null;
+            if (p.type)
+                taskdata = GenCmdJobs.findOne({ _id: p.jid });
+            else
+                taskdata = GenJobsMgr.findOne({ _id: p.tid });
             var len = taskdata.idxlist.length;
             var mturkconf = _.extend({}, serverconfig.mturk);
             mturkconf.sandbox = !p.islive;

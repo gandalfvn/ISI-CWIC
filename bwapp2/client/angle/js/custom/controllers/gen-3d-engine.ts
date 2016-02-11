@@ -326,7 +326,8 @@ module miGen3DEngine {
               if (!c.zeromoveTicks) c.zeromoveTicks = 0;
               c.zeromoveTicks++;
               if (c.isMoving && c.zeromoveTicks > 25) {//only reset color if it was moving
-                c.material.emissiveColor = BABYLON.Color3.Black();
+                if(!c.showMoved)
+                  c.material.emissiveColor = BABYLON.Color3.Black();
                 c.isMoving = false;
                 c.zeromoveTicks = 0;
                 c.tchecked = false;
@@ -334,7 +335,7 @@ module miGen3DEngine {
               else if (c.isMoving) self.isSteadyState = false;
             }
             else {
-              c.material.emissiveColor = new BABYLON.Color3(0.176, 0.85, 0.76);
+              c.material.emissiveColor = new BABYLON.Color3(0.2, 0.9, 0.8);
               c.isMoving = true;
               self.isSteadyState = false;
             }

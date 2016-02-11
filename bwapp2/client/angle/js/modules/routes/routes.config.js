@@ -176,10 +176,10 @@
         controller: 'genTaskCtrl'
       })
       .state('gencmdtask', {
-        url: '/annotate?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
+        url: '/command?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
         title: 'Command & Response Task',
         templateUrl: helper.basepath('gencmdtask.html'),
-        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect'),
+        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect', 'babylonjs'),
         controller: 'genCmdTaskCtrl'
       })
       .state('app.tasks', {

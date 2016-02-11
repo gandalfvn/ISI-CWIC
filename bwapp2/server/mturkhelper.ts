@@ -4,6 +4,7 @@
  =========================================================*/
 /// <reference path="./config.d.ts" />
 /// <reference path="../model/genjobsmgrdb.ts" />
+/// <reference path="../model/gencmdjobsdb.ts" />
 /// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 
@@ -32,7 +33,7 @@ interface iHITContent{
 }
 
 interface iTurkCreateParam{
-  jid: string, tid: string, islive: boolean, useQual: boolean
+  jid: string, tid?: string, islive: boolean, useQual: boolean, type?:string
 }
 
 interface iBlockTurker{
@@ -60,7 +61,10 @@ Meteor.methods({
     var cmdtimeact:number[] = [40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20];
     
     var turk = Async.runSync(function(done){
-      var taskdata:miGenJobsMgr.iGenJobsMgr = GenJobsMgr.findOne({_id: p.tid});
+      
+      var taskdata:any = null;
+      if(p.type) taskdata = GenCmdJobs.findOne({_id: p.jid}); 
+      else taskdata = GenJobsMgr.findOne({_id: p.tid});
       var len:number = taskdata.idxlist.length;
 
       var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);

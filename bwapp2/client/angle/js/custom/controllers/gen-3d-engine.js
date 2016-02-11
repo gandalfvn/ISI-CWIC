@@ -283,7 +283,8 @@ var miGen3DEngine;
                                 c.zeromoveTicks = 0;
                             c.zeromoveTicks++;
                             if (c.isMoving && c.zeromoveTicks > 25) {
-                                c.material.emissiveColor = BABYLON.Color3.Black();
+                                if (!c.showMoved)
+                                    c.material.emissiveColor = BABYLON.Color3.Black();
                                 c.isMoving = false;
                                 c.zeromoveTicks = 0;
                                 c.tchecked = false;
@@ -292,7 +293,7 @@ var miGen3DEngine;
                                 self.isSteadyState = false;
                         }
                         else {
-                            c.material.emissiveColor = new BABYLON.Color3(0.176, 0.85, 0.76);
+                            c.material.emissiveColor = new BABYLON.Color3(0.2, 0.9, 0.8);
                             c.isMoving = true;
                             self.isSteadyState = false;
                         }

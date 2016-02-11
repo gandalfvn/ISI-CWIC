@@ -3,6 +3,7 @@
  * Created by wjwong on 2/5/16.
  =========================================================*/
 /// <reference path="../server/typings/meteor/meteor.d.ts" />
+/// <reference path="../server/cmdmoveshelper.ts" />
 var miGenCmdJobs;
 (function (miGenCmdJobs) {
     (function (eRepValid) {

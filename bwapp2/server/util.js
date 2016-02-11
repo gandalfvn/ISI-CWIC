@@ -14,4 +14,7 @@ isRole = function (usr, role) {
     }
     return false;
 };
+rndInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 //# sourceMappingURL=util.js.map

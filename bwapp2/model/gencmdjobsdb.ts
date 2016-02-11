@@ -3,6 +3,8 @@
  * Created by wjwong on 2/5/16.
  =========================================================*/
 /// <reference path="../server/typings/meteor/meteor.d.ts" />
+/// <reference path="../server/cmdmoveshelper.ts" />
+
 
 module miGenCmdJobs {
   export enum eRepValid {no, yes, tbd}
@@ -20,16 +22,21 @@ module miGenCmdJobs {
     public: boolean
   }
 
+  export interface iCmdEle{
+    send: iCmdSerial,
+    recv: iCmdSerial,
+    rate: number
+  }
+
   export interface iGenJobsHIT {
     _id: string,
     HITId: string,
     HITTypeId: string,
-    tid: string,
     jid: string,
     islive: boolean,
     created: number,
     hitcontent: iHitContent,
-    notes?: {[x: string]: string[][]},
+    cmdlist?: {[x: string]: iCmdEle[][]},
     timed?: {[x: string]: number[]},
     submitted?: Array<iSubmitEle>
   }

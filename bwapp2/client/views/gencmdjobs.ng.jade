@@ -53,8 +53,25 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       h4.panel-title.mb(style='padding: 10px 15px; border-top-right-radius: 3px; border-top-left-radius: 3px; border-bottom: 0; font-size: 14px; color: #ffffff; background-color: #5d9cec; border-color: #cfdbe2;')
         i.fa.fa-edit
         | &nbsp; Create Job
-      .col-sm-12(style='padding-left: 8px;')
-        canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
+      .col-sm-12
+        form.form-inline.ng-pristine.ng-valid(name='createJobForm', ng-submit='taskGen(tasktype, asncnt, antcnt)')
+          .form-group(style='margin-right: 10px')
+            label Type:
+            select.form-control(ng-model='tasktype', ng-init='tasktype="cmd"')
+              each v in ['cmd']
+                option(value='#{v}', ng-selected='tasktype=="#{v}"') #{v}
+          .form-group(style='margin-right: 10px', title='# of Turks to use per bundle of work')
+            label #Assignments:
+            select.form-control(ng-model='asncnt', ng-init='asncnt=3')
+              each v in [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                option(value='#{v}', ng-selected='asncnt==#{v}') #{v}
+          .form-group(style='margin-right: 10px', title='# of user annotations(commands) per assignment')
+            label #Annotations:
+            select.form-control(ng-model='antcnt', ng-init='antcnt=10')
+              each v in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20]
+                option(value='#{v}', ng-selected='antcnt==#{v}') #{v}
+          br
+          button.btn.btn-primary.mb(type='submit') Create
       .col-sm-12(style='padding-left: 30px;')
         | ID: 
         b {{curState._id}}
@@ -69,26 +86,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         | # Moves: {{curState.block_states.length}}
         | &nbsp;&nbsp;&nbsp;
         | Created: {{curState.created | date:"yyyy/MM/dd"}}
-      .col-sm-12
-        form.form-inline.ng-pristine.ng-valid(name='createJobForm', ng-submit='taskGen(tasktype, asncnt, antcnt)')
-          .form-group(style='margin-right: 10px')
-            label Task Type:
-            select.form-control(ng-model='tasktype', ng-init='tasktype="cmd"')
-              each v in ['cmd']
-                option(value='#{v}', ng-selected='tasktype=="#{v}"') #{v}
-          br
-          .form-group(style='margin-right: 10px', title='# of Turks to use per bundle of work')
-            label # Turk Assignments:
-            select.form-control(ng-model='asncnt', ng-init='asncnt=3')
-              each v in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                option(value='#{v}', ng-selected='asncnt==#{v}') #{v}
-          .form-group(style='margin-right: 10px', title='# of annotations per assignment')
-            label # of Annotations:
-            select.form-control(ng-model='antcnt', ng-init='antcnt=3')
-              each v in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20]
-                option(value='#{v}', ng-selected='antcnt==#{v}') #{v}
-          br
-          button.btn.btn-primary.mb(type='submit') Create
+      .col-sm-12(style='padding-left: 8px;')
+        canvas(id="renderCanvasBab", style='width: 384px; height: 288px;')
   hr
 .row
   .col-sm-12
@@ -141,10 +140,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               | &nbsp;&nbsp;Asn:
               b {{job.asncnt}}
             td
-              span(ng-repeat='hit in job.hitlist')
+              div.mb-sm(ng-repeat='hit in job.hitlist')
                 button.btn.btn-xs.btn-danger(ng-click='remHIT(job._id, hit)')
                   .fa.fa-remove
-                | {{hit}} &nbsp;&nbsp;
+                | &nbsp;&nbsp;{{hit}} 
 
 .row
   accordion.col-sm-12

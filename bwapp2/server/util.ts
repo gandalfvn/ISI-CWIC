@@ -14,3 +14,8 @@ isRole = function(usr, role){
   }
   return false;
 };
+
+declare var rndInt;
+rndInt = function (min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};

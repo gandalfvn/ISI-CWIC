@@ -1,0 +1,120 @@
+//-**=========================================================
+  * Module: gencmdtask.ng
+  * Created by wjwong on 2/10/16.
+  =========================================================*/
+.row-fluid(ng-show='!dataloaded')
+  #loadoverlay.container-fluid
+    #loadoverlay-image.text-center(style="position:fixed;top:50%;left:50%; color:#23b7e5;")
+      i.fa.fa-4x.fa-spin.fa-cube
+      h3(style="color:#23b7e5;") Processing...
+toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
+.container-fluid(ng-show='!report && assignmentId')
+  accordion(ng-if='taskdata.tasktype == "cmd"')
+    accordion-group.panel-primary(is-open="isOpenDir")
+      accordion-heading
+        h4.panel-title Directions
+      h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Each description must be complete on its own.
+      .well.col-sm-8.col-sm-offset-2
+        //-(ng-if="curState.type == 'full'")
+        h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
+        img.center-block(src='img/example_full.png')
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') PLACE HOLDER 1
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') PLACE HOLDER 2
+        label.mb-sm(style='color:green;border: 1px solid #dde6e9; border-radius: 4px; padding: 6px 16px;') PLACE HOLDER 3
+        
+      .col-sm-12
+        h4(ng-if='!opt.isValidBrowser', style='color:red')
+          i.fa.fa-exclamation-triangle
+          | &nbsp; GOOGLE CHROME BROWSER Recommended
+        
+  div(ng-show='(opt.bAgreed || workerId ==="EXAMPLE")')
+    accordion(ng-if="curState.block_meta.decoration=='logo'")
+      accordion-group.panel-info(is-open='true')
+        accordion-heading
+          h4.panel-title Logo Key
+        span(ng-repeat='l in logolist', style='display:inline-block;padding-right:6px')
+          img(src='{{l.imgref}}', height='64', width='64')
+          div
+            label {{l.name | uppercase}}
+
+    .row-fluid.well.col-md-12(ng-show='taskdata.tasktype == "cmd"')
+      .col-sm-12.mb(ng-if='submitter')
+        .label.label-warning Read Only
+        i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
+      .col-md-6
+        .col-md-12
+          canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
+        .col-sm-12
+          hr
+          div(style='color:orange;font-size:1.1em')
+            //-.fa.fa-exclamation-triangle
+            | &nbsp;Issue Command and Evaluate Response  
+        h4.pull-left(ng-if='submitter') {{taskidx+1}}/{{maxtask}}
+        h4.pull-left(ng-if='!submitter') {{taskidx+1}}/{{maxtask}}
+        .col-sm-11
+          form(name='submitForm', action='{{submitTo}}', method='post')
+            input(type="hidden", name="assignmentId", value="{{assignmentId}}")
+            input(type="hidden", name="created", value="{{date}}")
+            //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
+  
+          form.ng-pristine.ng-valid(name='annotForm')
+            b.pull-left(ng-show='!opt.command.length || opt.command.length < 14', style='font-size: 16px; color: red; width:4%; float: left')
+              .fa.fa-asterisk
+            b.pull-left(ng-show='opt.command.length > 13', style='font-size: 16px; color: green; width:4%;').fa.fa-check
+            .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
+              textarea.form-control(ng-if='!submitter', type='text', ng-model='opt.command', style='padding-left: 26px;', clear-icon)
+            | &nbsp;
+            button.btn.btn-primary(ng-click='submit(opt.command)') Go
+      .col-md-6
+        h4 Commands
+        .col-md-11
+          div(ng-repeat='mycmd in cmdlist track by $index', ng-show='$index < taskidx')
+            button.btn.btn-xs.btn-danger.pull-left(ng-show='$index == taskidx-1', style='margin:6px', ng-click='remCmd($index)')
+              i.fa.fa-remove
+            .form-control(style='background-color:#edf1f2') {{mycmd.send.input}}
+        .col-md-1
+
+  h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
+  
+.row-fluid.well.col-sm-12(ng-if='!assignmentId && !report')
+  .col-sm-12
+    h3(style='color: red') This Job is unavailable.
+  .col-sm-12
+    h4(ng-if='!opt.isValidBrowser', style='color:red')
+      i.fa.fa-exclamation-triangle
+      | If job is unavailable it may be your browser.
+      | &nbsp; GOOGLE CHROME BROWSER Recommended
+
+//-report view
+.container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
+  .row-fluid
+    h3 Report for Submitter {{workerId}}
+    label(style='font-size:1.1em') Valid:
+    select(style='font-size:1.5em', ng-model ='opt.repvalid', ng-change='validateReport(opt.repvalid)')
+      option(ng-repeat='n in opt.repvalidlist', value='{{n}}') {{n | uppercase}}
+    | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
+    | &nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlStates()') Get States JSON
+    | &nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
+  .col-sm-12(ng-repeat='(nidx,cmdlist) in hitdata.cmdlist[workerId]')
+    .col-sm-12
+      h3.pull-left {{nidx}}
+      .col-sm-6
+        div(id='statea{{nidx}}')
+      .col-sm-5
+        div(id='stateb{{nidx}}')
+    .col-sm-12
+      form.ng-pristine.ng-valid.novalidate(name='reportForm[{{nidx}}]')
+        div.mb-sm(ng-repeat='note in cmdlist track by $index')
+          .col-sm-12
+            b.pull-left(ng-show="reportForm[nidx]['repnote['+$index+']'].$dirty", style='font-size: 16px; color: red; width:2%; float: left')
+              .fa.fa-asterisk
+            .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
+              textarea.form-control(type='text', name='repnote[{{$index}}]', ng-model='cmdlist[$index]', style='padding-left: 26px;', clear-icon)
+      button.btn.btn-warning(ng-show='reportForm[nidx].$dirty', ng-click='updateReport(nidx, reportForm[nidx])') Update
+
+    .col-sm-12
+      hr
+
