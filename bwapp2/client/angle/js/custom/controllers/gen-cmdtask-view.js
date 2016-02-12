@@ -18,7 +18,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         var subErr = function (err) { if (err)
             console.warn("err:", arguments, err); return; };
         $scope.date = (new Date()).getTime();
-        $scope.opt = { bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '' };
+        $scope.opt = { bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '', inViewMode: false, viewModeCmd: '' };
         $scope.subscribe("gencmds", function () { }, {
             onReady: function (sub) {
                 dataReady.update('gencmds');
@@ -36,6 +36,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         $scope.taskidx = -1;
         $scope.maxtask = -1;
         $scope.cmdlist = null;
+        $scope.cmdele = null;
         var dataReady = new apputils.cDataReady(2, function () {
             var isAdminUser = ($rootScope.currentUser) ? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
             if ($stateParams.report && !isAdminUser) {
@@ -92,18 +93,16 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                             else {
                                 $scope.maxtask = $scope.taskdata.antcnt;
                                 $scope.taskidx = 0;
-                                if (!$scope.submitter) {
-                                    if ($scope.hitdata && $scope.hitdata.cmdlist && $scope.hitdata.cmdlist[$scope.workerId]) {
-                                        //we have hit data lets fast forward to the correct item to work on
-                                        //assume that we fill notes from pass 1 then pass 2 etc. there are no holes in the list
-                                        var mynotes = $scope.hitdata.cmdlist[$scope.workerId];
-                                        _.each(mynotes, function (n) {
-                                            n.forEach(function (i) {
-                                                if (i && i.send && i.send.input.length)
-                                                    $scope.taskidx++;
-                                            });
+                                if ($scope.hitdata && $scope.hitdata.cmdlist && $scope.hitdata.cmdlist[$scope.workerId]) {
+                                    //we have hit data lets fast forward to the correct item to work on
+                                    //assume that we fill notes from pass 1 then pass 2 etc. there are no holes in the list
+                                    var mynotes = $scope.hitdata.cmdlist[$scope.workerId];
+                                    _.each(mynotes, function (n) {
+                                        n.forEach(function (i) {
+                                            if (i && i.send && i.send.input.length)
+                                                $scope.taskidx++;
                                         });
-                                    }
+                                    });
                                 }
                                 if ($scope.taskidx || $scope.submitter)
                                     $scope.opt.bAgreed = true;
@@ -171,7 +170,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                 $scope.cmdlist = null;
             }
             myengine.createObjects($scope.curState.block_meta.blocks);
-            var cidx = tidx - 1; //content idx is 1 less than tidx
+            var cidx = tidx - 1; //content idx is 1 less than tidx - so to see [0] in cmdlist you need to provide 1
             if (tidx && $scope.cmdlist[cidx] && $scope.cmdlist[cidx].send && $scope.cmdlist[cidx].recv
                 && $scope.cmdlist[cidx].send.world.length && $scope.cmdlist[cidx].recv.world.length) {
                 //show the previous command state
@@ -279,7 +278,19 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                 renderTask($scope.taskidx);
             });
         };
-        $scope.submit = function (command) {
+        $scope.viewCmd = function (idx) {
+            if (idx > -1) {
+                $scope.opt.inViewMode = true;
+                $scope.opt.viewModeCmd = $scope.cmdlist[idx].send.input;
+                renderTask(idx + 1);
+            }
+            else {
+                $scope.opt.inViewMode = false;
+                $scope.opt.viewModeCmd = '';
+                renderTask($scope.taskidx);
+            }
+        };
+        $scope.submitCmd = function (command) {
             $rootScope.dataloaded = false;
             if ($scope.submitter) {
                 //if($scope.taskidx != 0) $scope.isOpenDir = false;
@@ -298,11 +309,11 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                         $rootScope.dataloaded = true;
                         return;
                     }
-                    var cmdele = serialState(command);
-                    if (cmdele) {
+                    var cmdinput = serialState(command);
+                    if (cmdinput) {
                         //submit to AI system simulate wait
                         setTimeout(function () {
-                            Meteor.call('cmdMovePost', cmdele, function (err, ret) {
+                            Meteor.call('cmdMovePost', cmdinput, function (err, ret) {
                                 if (err)
                                     return $scope.$apply(function () {
                                         toaster.pop('error', err);
@@ -314,7 +325,11 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                                 if (ret.result) {
                                     var cmdoutput = ret.result;
                                     if (cmdoutput && !cmdoutput.error) {
-                                        PostMove(cmdoutput);
+                                        var states = convCmdToState(cmdinput, cmdoutput);
+                                        showFrame(states, function () {
+                                            $scope.cmdele = { send: cmdinput, recv: cmdoutput, rate: -1 };
+                                            $scope.$apply(function () { $rootScope.dataloaded = true; });
+                                        });
                                     }
                                     else
                                         toaster.pop('error', cmdoutput.error);
@@ -323,66 +338,69 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                                     console.warn(err, ret);
                             });
                         }, 1000);
-                        function PostMove(cmdoutput) {
-                            var states = convCmdToState(cmdele, cmdoutput);
-                            console.warn('states ', states);
-                            showFrame(states, function () {
-                                $scope.cmdlist[$scope.taskidx] = { send: cmdele, recv: cmdoutput, rate: -1 };
-                                var previdx = $scope.taskidx; //get actual index
-                                $scope.taskidx += 1;
-                                if (!$scope.hitdata.timed)
-                                    $scope.hitdata.timed = {};
-                                if (!$scope.hitdata.timed[$scope.workerId])
-                                    $scope.hitdata.timed[$scope.workerId] = {};
-                                if (!$scope.hitdata.timed[$scope.workerId][previdx])
-                                    $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
-                                //must use update instead of save because _id is custom generated
-                                var setdata = {};
-                                setdata['cmdlist.' + $scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];
-                                setdata['timed.' + $scope.workerId] = $scope.hitdata.timed[$scope.workerId];
-                                GenCmdJobs.update({ _id: $scope.hitdata._id }, {
-                                    $set: setdata
-                                }, function (err, ret) {
-                                    if (err)
-                                        return toaster.pop('error', err.reason);
-                                    $scope.$apply(function () {
-                                        $scope.opt.command = '';
-                                        $rootScope.dataloaded = true;
-                                    });
-                                    //renderTask($scope.taskidx);
-                                    /*if($scope.taskidx >= $scope.maxtask && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE'){
-                                     //submission assignment as done
-                                     if(!$scope.hitdata.submitted) $scope.hitdata.submitted = [];
-                                     var subfound:miGenCmdJobs.iSubmitEle = <miGenCmdJobs.iSubmitEle>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
-                                     if(_.isUndefined(subfound)){
-                                     $scope.hitdata.submitted.push({
-                                     name: $scope.workerId,
-                                     time: (new Date()).getTime(),
-                                     aid: $scope.assignmentId,
-                                     submitto: $scope.turkSubmitTo
-                                     });
-                                     $scope.submitter = $scope.hitdata.submitted[$scope.hitdata.submitted.length-1];
-                                     $scope.taskidx = 0;
-                                     GenCmdJobs.update({_id: $scope.hitdata._id}, {
-                                     $addToSet: {
-                                     submitted: $scope.submitter
-                                     }
-                                     }, function(err, ret){
-                                     console.warn('hit', err, ret);
-                                     if(err) return toaster.pop('error', err);
-                                     $scope.$apply(function(){toaster.pop('info', 'HIT Task Submitted')});
-                                     $('form[name="submitForm"]').submit(); //submit to turk
-                                     });
-                                     }
-                                     }
-                                     else renderTask($scope.taskidx);*/
-                                });
-                            });
-                        }
                     }
                 }
                 else
                     toaster.pop('error', 'Missing HIT Id');
+            }
+        };
+        $scope.setRating = function (rating) {
+            $rootScope.dataloaded = false;
+            $scope.cmdele.rate = rating;
+            $scope.cmdlist[$scope.taskidx] = $scope.cmdele;
+            $scope.cmdele = null;
+            var previdx = $scope.taskidx; //get actual index
+            $scope.taskidx += 1;
+            if (!$scope.hitdata.timed)
+                $scope.hitdata.timed = {};
+            if (!$scope.hitdata.timed[$scope.workerId])
+                $scope.hitdata.timed[$scope.workerId] = {};
+            if (!$scope.hitdata.timed[$scope.workerId][previdx])
+                $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
+            //must use update instead of save because _id is custom generated
+            var setdata = {};
+            setdata['cmdlist.' + $scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];
+            setdata['timed.' + $scope.workerId] = $scope.hitdata.timed[$scope.workerId];
+            GenCmdJobs.update({ _id: $scope.hitdata._id }, {
+                $set: setdata
+            }, function (err, ret) {
+                if (err)
+                    return toaster.pop('error', err.reason);
+                $scope.$apply(function () {
+                    $scope.opt.command = '';
+                    $rootScope.dataloaded = true;
+                });
+            });
+        };
+        $scope.submit = function () {
+            if ($scope.taskidx >= $scope.maxtask && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE') {
+                //submission assignment as done
+                if (!$scope.hitdata.submitted)
+                    $scope.hitdata.submitted = [];
+                var subfound = _.findWhere($scope.hitdata.submitted, { name: $scope.workerId });
+                if (_.isUndefined(subfound)) {
+                    $scope.hitdata.submitted.push({
+                        name: $scope.workerId,
+                        time: (new Date()).getTime(),
+                        aid: $scope.assignmentId,
+                        submitto: $scope.turkSubmitTo
+                    });
+                    $scope.submitter = $scope.hitdata.submitted[$scope.hitdata.submitted.length - 1];
+                    $scope.taskidx = 0;
+                    GenCmdJobs.update({ _id: $scope.hitdata._id }, {
+                        $addToSet: {
+                            submitted: $scope.submitter
+                        }
+                    }, function (err, ret) {
+                        console.warn('hit', err, ret);
+                        if (err)
+                            return toaster.pop('error', err);
+                        $scope.$apply(function () {
+                            toaster.pop('info', 'HIT Task Submitted');
+                        });
+                        $('form[name="submitForm"]').submit(); //submit to turk
+                    });
+                }
             }
         };
         var serialState = function (cmd) {

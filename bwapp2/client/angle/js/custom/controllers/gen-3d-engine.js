@@ -293,7 +293,7 @@ var miGen3DEngine;
                                 self.isSteadyState = false;
                         }
                         else {
-                            c.material.emissiveColor = new BABYLON.Color3(0.2, 0.9, 0.8);
+                            c.material.emissiveColor = new BABYLON.Color3(0.5, 1.0, 0.9);
                             c.isMoving = true;
                             self.isSteadyState = false;
                         }

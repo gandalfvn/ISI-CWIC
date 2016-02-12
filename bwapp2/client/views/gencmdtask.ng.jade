@@ -10,7 +10,7 @@
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .container-fluid(ng-show='!report && assignmentId')
   accordion(ng-if='taskdata.tasktype == "cmd"')
-    accordion-group.panel-primary(is-open="isOpenDir")
+    accordion-group.panel-primary(is-open="isOpenDir && !submitter")
       accordion-heading
         h4.panel-title Directions
       h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Each description must be complete on its own.
@@ -43,36 +43,67 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
       .col-md-6
         .col-md-12
+          h4 Moved Blocks will be Highlighted
           canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
-        .col-sm-12
-          hr
-          div(style='color:orange;font-size:1.1em')
-            //-.fa.fa-exclamation-triangle
-            | &nbsp;Issue Command and Evaluate Response  
-        h4.pull-left(ng-if='submitter') {{taskidx+1}}/{{maxtask}}
-        h4.pull-left(ng-if='!submitter') {{taskidx+1}}/{{maxtask}}
-        .col-sm-11
-          form(name='submitForm', action='{{submitTo}}', method='post')
-            input(type="hidden", name="assignmentId", value="{{assignmentId}}")
-            input(type="hidden", name="created", value="{{date}}")
-            //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
-  
-          form.ng-pristine.ng-valid(name='annotForm')
-            b.pull-left(ng-show='!opt.command.length || opt.command.length < 14', style='font-size: 16px; color: red; width:4%; float: left')
-              .fa.fa-asterisk
-            b.pull-left(ng-show='opt.command.length > 13', style='font-size: 16px; color: green; width:4%;').fa.fa-check
-            .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-              textarea.form-control(ng-if='!submitter', type='text', ng-model='opt.command', style='padding-left: 26px;', clear-icon)
-            | &nbsp;
-            button.btn.btn-primary(ng-click='submit(opt.command)') Go
+        div(ng-show='opt.inViewMode')
+          h4 {{opt.viewModeCmd | uppercase}}
+          button.btn.btn-primary(ng-click='viewCmd(-1)')
+            i.fa.fa-chevron-left
+            | &nbsp;Back
+        //-command response rate
+        div(ng-show='!opt.inViewMode')
+          .col-sm-12(ng-if='taskidx >= maxtask && !submitter')
+            hr
+            button.btn.btn-primary(ng-click='submit()') Submit
+          .col-sm-12(ng-if = 'taskidx < maxtask' )
+            hr
+            div(style='color:orange;font-size:1.1em')
+              //-.fa.fa-exclamation-triangle
+              span(ng-show='!cmdele') &nbsp;Issue Command
+              span(ng-show='cmdele') &nbsp;Rate Response to Command
+            .col-sm-1
+              h4.pull-left(ng-if='submitter') {{taskidx+1}}/{{maxtask}}
+              h4.pull-left(ng-if='!submitter') {{taskidx+1}}/{{maxtask}}
+            .col-sm-11
+              //-for turk submission
+              form(name='submitForm', action='{{submitTo}}', method='post')
+                input(type="hidden", name="assignmentId", value="{{assignmentId}}")
+                input(type="hidden", name="created", value="{{date}}")
+                //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
+      
+              form.ng-pristine.ng-valid(ng-if='!cmdele' name='annotForm')
+                b.pull-left(ng-show='!opt.command.length || opt.command.length < 14', style='font-size: 16px; color: red; width:4%; float: left')
+                  .fa.fa-asterisk
+                b.pull-left(ng-show='opt.command.length > 13', style='font-size: 16px; color: green; width:4%;').fa.fa-check
+                .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
+                  textarea.form-control(ng-if='!submitter', type='text', ng-model='opt.command', style='padding-left: 26px;', clear-icon)
+                | &nbsp;
+                button.btn.btn-primary(ng-click='submitCmd(opt.command)') Go
+              div(ng-if='cmdele')
+                h4 {{opt.command | uppercase}}
+                form.ng-pristine.ng-valid.form-inline( name='rateForm')
+                  .form-group(style='margin-right: 10px', title='# of user annotations(commands) per assignment')
+                    select.form-control(ng-model='rating', ng-init='rating=0')
+                      -var txtrate = ['N/A', 'Failed', 'Correct Block', 'Correct Block & Within Quadrant', 'Correct Block & Within a Block', 'Followed Exactly']
+                      each v in [0, 1, 2, 3, 4, 5]
+                        option(value='#{v}', ng-selected='rating==#{v}') #{txtrate[v]}
+                  button.btn.btn-primary(ng-click='setRating(rating)') Rate
+
       .col-md-6
         h4 Commands
-        .col-md-11
-          div(ng-repeat='mycmd in cmdlist track by $index', ng-show='$index < taskidx')
-            button.btn.btn-xs.btn-danger.pull-left(ng-show='$index == taskidx-1', style='margin:6px', ng-click='remCmd($index)')
-              i.fa.fa-remove
-            .form-control(style='background-color:#edf1f2') {{mycmd.send.input}}
-        .col-md-1
+        div(ng-repeat='mycmd in cmdlist track by $index', ng-show='$index < taskidx')
+          .col-md-9
+            .form-inline
+              button.btn.btn-xs.btn-danger(ng-show='!submitter && $index == taskidx-1', style='margin-right:8px;margin-bottom:10px', ng-click='remCmd($index)')
+                i.fa.fa-remove
+              .form-control.mb(style='background-color:#edf1f2' ng-click='viewCmd($index)') 
+                i.fa.fa-eye
+                | &nbsp;&nbsp;{{mycmd.send.input}}
+          .col-md-3
+            span(ng-show='mycmd.rate == 1')
+              i.fa.fa-ban
+            span(ng-repeat='s in [0,1,2,3,4,5] track by $index', ng-show='mycmd.rate > 1 && $index < mycmd.rate-1')
+              i.fa.fa-star
 
   h4.text-center(ng-if='!(workerId && hitId) && !submitter') Please accept HIT to start
   
