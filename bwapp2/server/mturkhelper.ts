@@ -8,8 +8,6 @@
 /// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
 
-declare var Async:any;
-
 interface iHITContent{
   Title: string,
   Description: string,

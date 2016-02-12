@@ -160,7 +160,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
     if($scope.taskidx != 0) $scope.isOpenDir = false;
     else $scope.isOpenDir = true;
     //convert to actual index
-    var idx:number = tidx%$scope.taskdata.idxlist.length;
+    var idx:number = 0; //always the first entry for cmds as there is only 1 state the initial state
     //create the annotations
     if($scope.hitdata){
       if(!$scope.hitdata.cmdlist) $scope.hitdata.cmdlist = {};
@@ -172,14 +172,26 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
       }
       $scope.cmdlist = $scope.hitdata.cmdlist[$scope.workerId][idx];
     }
-    else{//only an example no HIT id - only need to show 1 note
-      $scope.cmdlist = [];
-      $scope.cmdlist.push('');
+    else{//only an example no HIT id - should be no notes
+      $scope.cmdlist = null;
     }
+
     myengine.createObjects($scope.curState.block_meta.blocks);
-    showFrame({block_state: $scope.curState.block_state}, ()=>{
-      $scope.$apply(()=>{$rootScope.dataloaded = true;})
-    });
+    var cidx:number = tidx-1; //content idx is 1 less than tidx
+    if(tidx && $scope.cmdlist[cidx] && $scope.cmdlist[cidx].send && $scope.cmdlist[cidx].recv
+      && $scope.cmdlist[cidx].send.world.length && $scope.cmdlist[cidx].recv.world.length
+    ){
+      //show the previous command state
+      var states:iBlockStates = convCmdToState($scope.cmdlist[cidx].send, $scope.cmdlist[cidx].recv);
+      showFrame(states, ()=>{
+        $scope.$apply(()=>{$rootScope.dataloaded = true;})
+      })
+    }else{
+      //no move command from this user so far
+      showFrame({block_state: $scope.curState.block_state}, ()=>{
+        $scope.$apply(()=>{$rootScope.dataloaded = true;})
+      });
+    }
   };
 
   var showFrame = function (state:iBlockStates, cb?:()=>void) {
@@ -193,6 +205,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
           c.isVisible = true;
           if(frame['showMoved']) c['showMoved'] = true;
+          else c['showMoved'] = false;
           if (myengine.hasPhysics) c.setPhysicsState({
             impostor: BABYLON.PhysicsEngine.BoxImpostor,
             move: true,
@@ -268,8 +281,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
       $set: setdata
     }, function(err, ret) {
       if (err) return toaster.pop('error', err.reason);
-      $scope.$apply(()=>{
-      });
+      renderTask($scope.taskidx);
     })
   };
 
@@ -315,6 +327,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
 
           function PostMove(cmdoutput:iCmdSerial){
             var states:iBlockStates = convCmdToState(cmdele, cmdoutput);
+            console.warn('states ', states);
             showFrame(states, function(){
               $scope.cmdlist[$scope.taskidx] = <miGenCmdJobs.iCmdEle>{send: cmdele, recv: cmdoutput, rate: -1};
 

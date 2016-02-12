@@ -153,7 +153,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             else
                 $scope.isOpenDir = true;
             //convert to actual index
-            var idx = tidx % $scope.taskdata.idxlist.length;
+            var idx = 0; //always the first entry for cmds as there is only 1 state the initial state
             //create the annotations
             if ($scope.hitdata) {
                 if (!$scope.hitdata.cmdlist)
@@ -168,13 +168,24 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                 $scope.cmdlist = $scope.hitdata.cmdlist[$scope.workerId][idx];
             }
             else {
-                $scope.cmdlist = [];
-                $scope.cmdlist.push('');
+                $scope.cmdlist = null;
             }
             myengine.createObjects($scope.curState.block_meta.blocks);
-            showFrame({ block_state: $scope.curState.block_state }, function () {
-                $scope.$apply(function () { $rootScope.dataloaded = true; });
-            });
+            var cidx = tidx - 1; //content idx is 1 less than tidx
+            if (tidx && $scope.cmdlist[cidx] && $scope.cmdlist[cidx].send && $scope.cmdlist[cidx].recv
+                && $scope.cmdlist[cidx].send.world.length && $scope.cmdlist[cidx].recv.world.length) {
+                //show the previous command state
+                var states = convCmdToState($scope.cmdlist[cidx].send, $scope.cmdlist[cidx].recv);
+                showFrame(states, function () {
+                    $scope.$apply(function () { $rootScope.dataloaded = true; });
+                });
+            }
+            else {
+                //no move command from this user so far
+                showFrame({ block_state: $scope.curState.block_state }, function () {
+                    $scope.$apply(function () { $rootScope.dataloaded = true; });
+                });
+            }
         };
         var showFrame = function (state, cb) {
             $scope.resetWorld();
@@ -188,6 +199,8 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                         c.isVisible = true;
                         if (frame['showMoved'])
                             c['showMoved'] = true;
+                        else
+                            c['showMoved'] = false;
                         if (myengine.hasPhysics)
                             c.setPhysicsState({
                                 impostor: BABYLON.PhysicsEngine.BoxImpostor,
@@ -263,8 +276,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             }, function (err, ret) {
                 if (err)
                     return toaster.pop('error', err.reason);
-                $scope.$apply(function () {
-                });
+                renderTask($scope.taskidx);
             });
         };
         $scope.submit = function (command) {
@@ -313,6 +325,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                         }, 1000);
                         function PostMove(cmdoutput) {
                             var states = convCmdToState(cmdele, cmdoutput);
+                            console.warn('states ', states);
                             showFrame(states, function () {
                                 $scope.cmdlist[$scope.taskidx] = { send: cmdele, recv: cmdoutput, rate: -1 };
                                 var previdx = $scope.taskidx; //get actual index

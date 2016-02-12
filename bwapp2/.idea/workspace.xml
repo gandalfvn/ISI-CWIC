@@ -5,29 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/views/gencmdtask.ng.jade" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" afterPath="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/gencmdjobs.ng.jade" afterPath="$PROJECT_DIR$/client/views/gencmdjobs.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/gencmdjobsdb.js" afterPath="$PROJECT_DIR$/model/gencmdjobsdb.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/gencmdjobsdb.js.map" afterPath="$PROJECT_DIR$/model/gencmdjobsdb.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/gencmdjobsdb.ts" afterPath="$PROJECT_DIR$/model/gencmdjobsdb.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/cmdmoveshelper.js" afterPath="$PROJECT_DIR$/server/cmdmoveshelper.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/cmdmoveshelper.js.map" afterPath="$PROJECT_DIR$/server/cmdmoveshelper.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/cmdmoveshelper.ts" afterPath="$PROJECT_DIR$/server/cmdmoveshelper.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js" afterPath="$PROJECT_DIR$/server/mturkhelper.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.js.map" afterPath="$PROJECT_DIR$/server/mturkhelper.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/mturkhelper.ts" afterPath="$PROJECT_DIR$/server/mturkhelper.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/util.js" afterPath="$PROJECT_DIR$/server/util.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/util.js.map" afterPath="$PROJECT_DIR$/server/util.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/util.ts" afterPath="$PROJECT_DIR$/server/util.ts" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -117,8 +100,8 @@
       <file leaf-file-name="gen-cmdtask-view.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.25467774">
-              <caret line="186" column="0" selection-start-line="186" selection-start-column="0" selection-end-line="186" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.5328615">
+              <caret line="282" column="55" selection-start-line="282" selection-start-column="55" selection-end-line="282" selection-end-column="55" />
               <folding>
                 <element signature="n#!!doc;n#iSceneInfo#0" expanded="false" />
               </folding>
@@ -185,13 +168,13 @@
         <option value="$PROJECT_DIR$/client/views/gencmdtask.ng.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" />
-        <option value="$PROJECT_DIR$/server/mturkhelper.ts" />
         <option value="$PROJECT_DIR$/client/views/gencmdjobs.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.ts" />
         <option value="$PROJECT_DIR$/model/gencmdjobsdb.ts" />
         <option value="$PROJECT_DIR$/client/views/gencmdtask.ng.jade" />
         <option value="$PROJECT_DIR$/server/util.ts" />
         <option value="$PROJECT_DIR$/server/cmdmoveshelper.ts" />
+        <option value="$PROJECT_DIR$/server/mturkhelper.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts" />
       </list>
@@ -1046,13 +1029,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/lib/js/app.module.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="28" selection-start-line="22" selection-start-column="28" selection-end-line="22" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/lib/js/core.module.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1315,14 +1291,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="109" column="5" selection-start-line="109" selection-start-column="5" selection-end-line="109" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/genjobsmgr.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5433589">
@@ -1351,14 +1319,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.4388271">
           <caret line="438" column="19" selection-start-line="398" selection-start-column="0" selection-end-line="468" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/mturkhelper.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14553015">
-          <caret line="136" column="31" selection-start-line="136" selection-start-column="31" selection-end-line="136" selection-end-column="31" />
           <folding />
         </state>
       </provider>
@@ -1435,18 +1395,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="109" column="5" selection-start-line="109" selection-start-column="5" selection-end-line="109" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/typings/meteor-typescript-libs/definitions/meteorhacks-npm.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13650152">
+          <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/mturkhelper.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2568251">
+          <caret line="53" column="50" selection-start-line="53" selection-start-column="50" selection-end-line="53" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3170478">
-          <caret line="177" column="36" selection-start-line="177" selection-start-column="36" selection-end-line="177" selection-end-column="36" />
+        <state vertical-scroll-proportion="0.46916077">
+          <caret line="330" column="0" selection-start-line="330" selection-start-column="0" selection-end-line="330" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.25467774">
-          <caret line="186" column="0" selection-start-line="186" selection-start-column="0" selection-end-line="186" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5328615">
+          <caret line="282" column="55" selection-start-line="282" selection-start-column="55" selection-end-line="282" selection-end-column="55" />
           <folding>
             <element signature="n#!!doc;n#iSceneInfo#0" expanded="false" />
           </folding>
