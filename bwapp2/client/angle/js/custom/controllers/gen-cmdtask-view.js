@@ -18,7 +18,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         var subErr = function (err) { if (err)
             console.warn("err:", arguments, err); return; };
         $scope.date = (new Date()).getTime();
-        $scope.opt = { bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '', inViewMode: false, viewModeCmd: '' };
+        $scope.opt = { bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '', inViewMode: false, viewModeCmd: '', viewIdx: -1, isBaseView: false };
         $scope.subscribe("gencmds", function () { }, {
             onReady: function (sub) {
                 dataReady.update('gencmds');
@@ -107,6 +107,8 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                                 if ($scope.taskidx || $scope.submitter)
                                     $scope.opt.bAgreed = true;
                                 renderTask($scope.taskidx);
+                                if ($scope.submitter)
+                                    $scope.viewCmd($scope.taskidx - 1);
                                 $scope.logolist = [];
                                 _.each($scope.curState.block_meta.blocks, function (b) {
                                     $scope.logolist.push({ name: b.name, imgref: "img/textures/logos/" + b.name.replace(/ /g, '') + '.png' });
@@ -231,12 +233,14 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                 bs[l.id] = { id: l.id, position: pos };
                 bs[l.id]['showMoved'] = false;
             });
-            //now fill delta
-            _.each(deltacmd.world, function (l) {
-                var pos = { x: l.loc[0], y: l.loc[1], z: l.loc[2] };
-                bs[l.id] = { id: l.id, position: pos };
-                bs[l.id]['showMoved'] = true;
-            });
+            if (deltacmd && !$scope.opt.isBaseView) {
+                //now fill delta
+                _.each(deltacmd.world, function (l) {
+                    var pos = { x: l.loc[0], y: l.loc[1], z: l.loc[2] };
+                    bs[l.id] = { id: l.id, position: pos };
+                    bs[l.id]['showMoved'] = true;
+                });
+            }
             _.each(bs, function (s) {
                 states.block_state.push(s);
             });
@@ -260,6 +264,16 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
       
           var img:HTMLImageElement = <HTMLImageElement>document.getElementById(eleImgID); // Use the created element
           img.src = b64img;
+        };
+        
+        var capScreen = function(){
+          BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
+            width: myengine.canvas.width,
+            height: myengine.canvas.height
+          }, function (b64i:string) {
+            var b64img:string = LZString.compressToUTF16(b64i);
+            showImage(b64img, 'Before', null, 'beforeimg');
+          });
         };*/
         $scope.remCmd = function (idx) {
             console.warn('remcmd ', $scope.taskidx, idx);
@@ -282,11 +296,13 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             if (idx > -1) {
                 $scope.opt.inViewMode = true;
                 $scope.opt.viewModeCmd = $scope.cmdlist[idx].send.input;
+                $scope.opt.viewIdx = idx;
                 renderTask(idx + 1);
             }
             else {
                 $scope.opt.inViewMode = false;
                 $scope.opt.viewModeCmd = '';
+                $scope.opt.viewIdx = -1;
                 renderTask($scope.taskidx);
             }
         };
@@ -454,6 +470,28 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             }
             cmdserial.world = newblock_state;
             return cmdserial;
+        };
+        $scope.showTransition = function () {
+            $scope.opt.isBaseView = !$scope.opt.isBaseView;
+            var base = null;
+            var delta = null;
+            if ($scope.cmdele) {
+                base = $scope.cmdele.send;
+                delta = $scope.cmdele.recv;
+            }
+            else {
+                var cidx = $scope.taskidx - 1; //taskidx shows next empty entry
+                if ($scope.opt.viewIdx > -1)
+                    cidx = $scope.opt.viewIdx;
+                base = $scope.cmdlist[cidx].send;
+                delta = $scope.cmdlist[cidx].recv;
+            }
+            var states = convCmdToState(base, delta);
+            showFrame(states, function () {
+                $scope.$apply(function () {
+                    $rootScope.dataloaded = true;
+                });
+            });
         };
         $scope.updateReport = function (idx, form) {
             var setdata = {};

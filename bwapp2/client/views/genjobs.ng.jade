@@ -204,11 +204,18 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td
               button.btn.btn-xs.btn-danger(ng-click='remHIT(task.tid, "H_"+task.hid)', title='Remove HIT {{task.hid}} from {{task.tid}}')
                 .fa.fa-remove
-              | &nbsp;&nbsp;{{task.time | date:"yyyy/MM/dd HH:mm"}}
+              | &nbsp;
+              button.btn.btn-xs.btn-info(ng-click='addAsn("H_"+task.hid)', title='Add Assignment count to HIT {{task.hid}} - does not update Turk')
+                .fa.fa-plus
+              | &nbsp;
+              button.btn.btn-xs.btn-info(ng-click='subAsn("H_"+task.hid)', title='Decrement Assignment count to HIT {{task.hid}} - does not update Turk')
+                .fa.fa-minus
+              | &nbsp;{{task.time | date:"yyyy/MM/dd HH:mm"}}
             td
-              a(href='https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId={{task.hid}}', target='_blank') {{task.hid}}  
-                b(ng-show='task.islive', style='color:green') Live
-                span(ng-show='!task.islive', style='color:grey') Sandbox
+              a(ng-show='task.islive', href='https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId={{task.hid}}', target='_blank') {{task.hid}}  
+                b(style='color:green') Live
+              a(ng-show='!task.islive', href='https://requestersandbox.mturk.com/mturk/manageHIT?viewableEditPane=&HITId={{task.hid}}', target='_blank') {{task.hid}}  
+                span(style='color:grey') Sandbox
             td Asn: {{task.asnleft}} &nbsp; {{task.reward.Amount | currency: '$'}}
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
@@ -243,14 +250,21 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             td 
               button.btn.btn-xs.btn-primary(title='Download list of links for this HIT', ng-click='dlLinks(task, false)')
                 .fa.fa-download
-              | &nbsp;&nbsp;
+              | &nbsp;
               button.btn.btn-xs.btn-success(title='Download list of VALID links for this HIT', ng-click='dlLinks(task, true)')
                 .fa.fa-thumbs-up
+              | &nbsp;
+              button.btn.btn-xs.btn-info(ng-click='addAsn("H_"+task.hid)', title='Add Assignment count to HIT {{task.hid}} - does not update Turk')
+                .fa.fa-plus
+              | &nbsp;
+              button.btn.btn-xs.btn-info(ng-click='subAsn("H_"+task.hid)', title='Decrement Assignment count to HIT {{task.hid}} - does not update Turk')
+                .fa.fa-minus
               | &nbsp;{{task.time | date:"yyyy/MM/dd HH:mm"}}
             td
-              a(href='https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId={{task.hid}}', target='_blank') {{task.hid}}  
-                b(ng-show='task.islive', style='color:green') Live
-                span(ng-show='!task.islive', style='color:grey') Sandbox
+              a(ng-show='task.islive', href='https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId={{task.hid}}', target='_blank') {{task.hid}}  
+                b(style='color:green') Live
+              a(ng-show='!task.islive', href='https://requestersandbox.mturk.com/mturk/manageHIT?viewableEditPane=&HITId={{task.hid}}', target='_blank') {{task.hid}}  
+                span(style='color:grey') Sandbox
             td(ng-click="stateGo('gentask',{taskId: task.tid, assignmentId: 'ASSIGNMENT_ID_NOT_AVAILABLE', workerId: 'EXAMPLE'}, true)")
               i.fa.fa-eye
               | &nbsp;{{task.tid}}

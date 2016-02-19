@@ -10,11 +10,11 @@
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
 .container-fluid(ng-show='!report && assignmentId')
   accordion(ng-if='taskdata.tasktype == "cmd"')
-    accordion-group.panel-primary(is-open="isOpenDir && !submitter")
+    accordion-group.panel-primary(is-open="isOpenDir")
       accordion-heading
         h4.panel-title Directions
-      h4(style='margin-top: -14px; margin-bottom: 4px;') What would you tell a friend to do in a world with objects in the first image in order to obtain the configuration in the second image?  Use each text box to write a distinct full (single/multi) sentence alternative.  Each description must be complete on its own.
-      .well.col-sm-8.col-sm-offset-2
+      h4(style='margin-top: -14px; margin-bottom: 4px;') Issue commands to move blocks in our system and rate the results.
+      //-.well.col-sm-8.col-sm-offset-2
         //-(ng-if="curState.type == 'full'")
         h4(style='margin-top: -14px; margin-bottom: 4px;') Example:
         img.center-block(src='img/example_full.png')
@@ -43,7 +43,14 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         i(ng-if='submitter.time', style='font-size: 1.1em') &nbsp;&nbsp;Job submitted on {{submitter.time | date:"MM/dd/yyyy H:m"}}
       .col-md-6
         .col-md-12
-          h4 Moved Blocks will be Highlighted
+          .col-md-12.mb(ng-if='workerId !=="EXAMPLE"')
+            button.btn.btn-primary.btn-xs(type='button', ng-model='opt.isBaseView', ng-click='showTransition()')
+              .fa.fa-toggle-off(ng-show='opt.isBaseView')
+                | &nbsp;Showing Baseline
+              .fa.fa-toggle-on(ng-show='!opt.isBaseView')
+                | &nbsp;Showing Change
+            //-span(ng-show='opt.isBaseView') &nbsp; Showing Baseline
+            //-span(ng-show='!opt.isBaseView') &nbsp; Showing Move
           canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
         div(ng-show='opt.inViewMode')
           h4 {{opt.viewModeCmd | uppercase}}
@@ -76,9 +83,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                   .fa.fa-asterisk
                 b.pull-left(ng-show='opt.command.length > 13', style='font-size: 16px; color: green; width:4%;').fa.fa-check
                 .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-                  textarea.form-control(ng-if='!submitter', type='text', ng-model='opt.command', style='padding-left: 26px;', clear-icon)
+                  textarea.form-control(type='text', ng-model='opt.command', style='padding-left: 26px;', clear-icon, ng-readonly='submitter')
                 | &nbsp;
-                button.btn.btn-primary(ng-click='submitCmd(opt.command)') Go
+                button.btn.btn-primary(ng-if='!submitter', ng-click='submitCmd(opt.command)') Go
               div(ng-if='cmdele')
                 h4 {{opt.command | uppercase}}
                 form.ng-pristine.ng-valid.form-inline( name='rateForm')
@@ -97,7 +104,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
               button.btn.btn-xs.btn-danger(ng-show='!submitter && $index == taskidx-1', style='margin-right:8px;margin-bottom:10px', ng-click='remCmd($index)')
                 i.fa.fa-remove
               .form-control.mb(style='background-color:#edf1f2' ng-click='viewCmd($index)') 
-                i.fa.fa-eye
+                i.fa.fa-eye(ng-show='opt.viewIdx != $index')
+                i.fa.fa-hand-o-right(ng-show='opt.viewIdx == $index', style='color:orange;font-size:1.3em')
                 | &nbsp;&nbsp;{{mycmd.send.input}}
           .col-md-3
             span(ng-show='mycmd.rate == 1')

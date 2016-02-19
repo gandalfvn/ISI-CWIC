@@ -446,6 +446,24 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     }
   };
 
+  $scope.addAsn = function(hid: string){
+    var hit:miGenJobsMgr.iGenJobsHIT = GenJobsMgr.findOne({_id: hid});
+    if(hit) {
+      GenJobsMgr.update({_id: hid}, {$set: {"hitcontent.MaxAssignments": hit.hitcontent.MaxAssignments+1}});
+      $scope.goodHITsData = false;
+      toaster.pop('info', 'HIT '+hid+' assignment added.  Refresh to view updates.  This does not update MTurk job.');
+    }
+  };
+
+  $scope.subAsn = function(hid: string){
+    var hit:miGenJobsMgr.iGenJobsHIT = GenJobsMgr.findOne({_id: hid});
+    if(hit) {
+      GenJobsMgr.update({_id: hid}, {$set: {"hitcontent.MaxAssignments": hit.hitcontent.MaxAssignments-1}});
+      $scope.goodHITsData = false;
+      toaster.pop('info', 'HIT '+hid+' assignment decremented.  Refresh to view updates.  This does not update MTurk job.');
+    }
+  };
+
   $scope.createHIT = function(jid:string, tid:string){
     var params:iTurkCreateParam = {jid: jid, tid: tid, islive: $scope.opt.isLive, useQual: $scope.opt.useQual};
     Meteor.call('mturkCreateHIT', params, function(err, ret){

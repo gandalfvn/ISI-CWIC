@@ -127,7 +127,8 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
    * @param sid
    */
   $scope.showState = function (sid:string) {
-    $state.transitionTo('app.gencmdexp', {sid: sid}, {notify: false});
+    if(!$stateParams.sid) //fix double routing when theres an update
+      $state.transitionTo('app.gencmdexp', {sid: sid}, {notify: false});
     $rootScope.dataloaded = false;
     $scope.enableImpSave = false;
     $scope.isExp = true;
@@ -196,7 +197,6 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
         if(!isMulti){
           $scope.curState._id = id;
           $rootScope.dataloaded = true;
-          updateAvailExp();
           $state.go('app.gencmdexp', {sid: id}, {reload:true, notify: true});
         }
         if(cb) cb();
@@ -396,77 +396,6 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
     return newBS;
   };
   
-  $scope.submit = function (cmd:string) {
-    var cmdserial:iCmdSerial = {
-      world: null,
-      input: cmd,
-      version: 1
-    };
-
-    var newblock_state:iCmdLocEle[] = [];
-    var block_state:iBlockState[] = $scope.curState.block_state;
-    var cubesused:number[] = [];
-    $scope.curState.block_meta.blocks.forEach(function(b){
-      cubesused.push(b.id);
-    });
-    cubesused = _.uniq(cubesused);
-    var isValid:boolean = true;
-    var max:number = APP_CONST.fieldsize / 2 + 0.1; //give it a little wiggle room
-    var min:number = -max;
-    var frame:iBlockState[] = [];
-    var meta:iBlockMeta = {blocks: []};
-    cubesused.forEach(function(cid:number) {
-      var c = myengine.get3DCubeById(cid);
-      if (c) {
-        if ((c.position.x - c.boxsize / 2) >= min && (c.position.x + c.boxsize / 2) <= max &&
-          (c.position.z - c.boxsize / 2) >= min && (c.position.z + c.boxsize / 2) <= max) {
-          var dat:iBlockState = {
-            id: cid,
-            position: <any>c.position.clone(),
-            rotation: <any>c.rotationQuaternion.clone()
-          };
-          frame.push(dat);
-          meta.blocks.push(myengine.cubesdata[cid].meta);
-        }
-        else {
-          isValid = false;
-          console.warn('Out',c.position.x- c.boxsize/2, c.position.x+ c.boxsize/2,c.position.z- c.boxsize/2, c.position.z+ c.boxsize/2, cid, c);
-        }
-      }
-    });
-    if(!isValid){
-      toaster.pop('error','Cube(s) Out of Bounds!');
-      return false;
-    }
-
-    for (var i = 0; i < frame.length; i++) {
-      var s = frame[i];
-      var pos:number[] = [];
-      _.each(s.position, function (v) {
-        pos.push(v);
-      });
-      newblock_state.push({id: s.id, loc: pos});
-    }
-
-    cmdserial.world = newblock_state;
-    //simulate wait
-    setTimeout(()=>{
-      Meteor.call('cmdMovePost', cmdserial, function(err, ret) {
-        if (err) return $scope.$apply(function () {
-          toaster.pop('error', err)
-        });
-        if (ret.error) return $scope.$apply(function () {
-          toaster.pop('error', ret.error)
-        });
-        if(ret.result){
-          var cmdoutput:iCmdSerial = ret.result;
-          console.warn(cmdoutput)
-        }
-        else console.warn(err, ret);
-      })
-    }, 1000);
-  };
-
   // Start by calling the createScene function that you just finished creating
   var myengine:miGen3DEngine.c3DEngine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
 

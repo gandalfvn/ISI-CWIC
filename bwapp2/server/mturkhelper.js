@@ -28,7 +28,7 @@ Meteor.methods({
             var len = taskdata.idxlist.length;
             var mturkconf = _.extend({}, serverconfig.mturk);
             mturkconf.sandbox = !p.islive;
-            mturk.connect(mturkconf).then(function (api) {
+            mturk['connect'](mturkconf).then(function (api) {
                 var quest = '<?xml version="1.0" encoding="UTF-8"?>\n<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"> <ExternalURL>https://cwc-isi.org/annotate?taskId=' + p.tid + '</ExternalURL> <FrameHeight>800</FrameHeight> </ExternalQuestion>';
                 var hitcontent = {
                     Title: 'Describe this Image ' + p.jid,
@@ -98,7 +98,7 @@ Meteor.methods({
                     done(null, { hit: resp.HIT, hitcontent: hitcontent });
                 }, function (err) {
                     console.warn('CREATEHITS ERR', err);
-                    done(err);
+                    done(err, null);
                 });
                 /*//Example operation, no params
                 api.req('GetAccountBalance').then(function(resp){
@@ -119,13 +119,13 @@ Meteor.methods({
         var turk = Async.runSync(function (done) {
             var mturkconf = _.extend({}, serverconfig.mturk);
             mturkconf.sandbox = false; //always operate in live env.
-            mturk.connect(mturkconf).then(function (api) {
+            mturk['connect'](mturkconf).then(function (api) {
                 api.req('BlockWorker', p)
                     .then(function (resp) {
                     done(null, resp);
                 }, function (err) {
                     console.warn('BlockWorker err', err);
-                    done(err);
+                    done(err, null);
                 });
             });
         });
@@ -136,13 +136,13 @@ Meteor.methods({
         var turk = Async.runSync(function (done) {
             var mturkconf = _.extend({}, serverconfig.mturk);
             mturkconf.sandbox = false; //always operate in live env.
-            mturk.connect(mturkconf).then(function (api) {
+            mturk['connect'](mturkconf).then(function (api) {
                 api.req('GetReviewableHITs', p)
                     .then(function (resp) {
                     done(null, resp);
                 }, function (err) {
                     console.warn('GetReviewableHITs err', err);
-                    done(err);
+                    done(err, null);
                 });
             });
         });
