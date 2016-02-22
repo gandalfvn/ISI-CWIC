@@ -44,7 +44,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       .col-md-6
         .col-md-12
           .col-md-12.mb(ng-if='workerId !=="EXAMPLE"')
-            button.btn.btn-primary.btn-xs(type='button', ng-model='opt.isBaseView', ng-click='showTransition()')
+            button.btn.btn-primary.btn-xs(ng-show='cmdphase != 3', type='button', ng-model='opt.isBaseView', ng-click='showTransition()')
               .fa.fa-toggle-off(ng-show='opt.isBaseView')
                 | &nbsp;Showing Baseline
               .fa.fa-toggle-on(ng-show='!opt.isBaseView')
@@ -52,13 +52,13 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             //-span(ng-show='opt.isBaseView') &nbsp; Showing Baseline
             //-span(ng-show='!opt.isBaseView') &nbsp; Showing Move
           canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
-        div(ng-show='opt.inViewMode')
+        div(ng-show='cmdphase == 0')
           h4 {{opt.viewModeCmd | uppercase}}
           button.btn.btn-primary(ng-click='viewCmd(-1)')
             i.fa.fa-chevron-left
             | &nbsp;Back
         //-command response rate
-        div(ng-show='!opt.inViewMode')
+        div(ng-show='cmdphase > 0')
           .col-sm-12(ng-if='taskidx >= maxtask && !submitter')
             hr
             button.btn.btn-primary(ng-click='submit()') Submit
@@ -66,8 +66,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             hr
             div(style='color:orange;font-size:1.1em')
               //-.fa.fa-exclamation-triangle
-              span(ng-show='!cmdele') &nbsp;Issue Command
-              span(ng-show='cmdele') &nbsp;Rate Response to Command
+              span(ng-show='cmdphase == 1') &nbsp;Issue Command
+              span(ng-show='cmdphase == 2') &nbsp;Rate Response to Command
+              span(ng-show='cmdphase == 3') &nbsp;Move Block to match Command by CLICK+HOLD then move block to location
             .col-sm-1
               h4.pull-left(ng-if='submitter') {{taskidx+1}}/{{maxtask}}
               h4.pull-left(ng-if='!submitter') {{taskidx+1}}/{{maxtask}}
@@ -78,7 +79,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 input(type="hidden", name="created", value="{{date}}")
                 //-button.btn.btn-primary(ng-if='turkSubmitTo', type='submit') Submit
       
-              form.ng-pristine.ng-valid(ng-if='!cmdele' name='annotForm')
+              form.ng-pristine.ng-valid(ng-if='!cmdele && cmdphase == 1' name='annotForm')
                 b.pull-left(ng-show='!opt.command.length || opt.command.length < 14', style='font-size: 16px; color: red; width:4%; float: left')
                   .fa.fa-asterisk
                 b.pull-left(ng-show='opt.command.length > 13', style='font-size: 16px; color: green; width:4%;').fa.fa-check
@@ -86,7 +87,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                   textarea.form-control(type='text', ng-model='opt.command', style='padding-left: 26px;', clear-icon, ng-readonly='submitter')
                 | &nbsp;
                 button.btn.btn-primary(ng-if='!submitter', ng-click='submitCmd(opt.command)') Go
-              div(ng-if='cmdele')
+              div(ng-if='cmdele && cmdphase == 2')
                 h4 {{opt.command | uppercase}}
                 form.ng-pristine.ng-valid.form-inline( name='rateForm')
                   .form-group(style='margin-right: 10px', title='# of user annotations(commands) per assignment')
@@ -95,6 +96,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                       each v in [0, 1, 2, 3, 4, 5]
                         option(value='#{v}', ng-selected='rating==#{v}') #{txtrate[v]}
                   button.btn.btn-primary(ng-click='setRating(rating)') Rate
+              div(ng-if='cmdphase == 3')
+                h4 {{opt.command | uppercase}}
+                button.btn.btn-primary(ng-click='resetFix()') Reset
+                | &nbsp;&nbsp;
+                button.btn.btn-primary(ng-click='submitFix()') Fixed
 
       .col-md-6
         h4 Commands
@@ -105,6 +111,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
                 i.fa.fa-remove
               .form-control.mb(style='background-color:#edf1f2' ng-click='viewCmd($index)') 
                 i.fa.fa-eye(ng-show='opt.viewIdx != $index')
+                i.fa.fa-wrench(ng-show='mycmd.fix')
                 i.fa.fa-hand-o-right(ng-show='opt.viewIdx == $index', style='color:orange;font-size:1.3em')
                 | &nbsp;&nbsp;{{mycmd.send.input}}
           .col-md-3

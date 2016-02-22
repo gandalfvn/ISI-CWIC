@@ -6,6 +6,7 @@
 /// <reference path="./typings/meteor/meteor.d.ts" />
 /// <reference path="./typings/meteor-typescript-libs/definitions/meteorhacks-npm.d.ts" />
 /// <reference path="./util.ts" />
+/// <reference path="../model/gencmdjobsdb.ts" />
 Meteor.methods({
     cmdMovePost: function (data) {
         var idx = rndInt(0, data.world.length - 1);
@@ -27,6 +28,7 @@ Meteor.methods({
         }
         var retdat = {
             world: [move],
+            type: mGenCmdJobs.eCmdType.AI,
             version: 1
         };
         var cmdPost = Async.runSync(function (done) {

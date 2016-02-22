@@ -3,10 +3,18 @@
  * Created by wjwong on 2/5/16.
  =========================================================*/
 /// <reference path="../server/typings/meteor/meteor.d.ts" />
-/// <reference path="../server/cmdmoveshelper.ts" />
-
 
 module miGenCmdJobs {
+  export enum eCmdType{NA, INPUT, AI, FIX}
+  export interface iCmdLocEle{id: number, loc: number[]}
+  export interface iCmdSerial{
+    world: iCmdLocEle[],
+    type: eCmdType,
+    input?: string,
+    version: number,
+    error?: string,
+  }
+
   export enum eRepValid {no, yes, tbd}
 
   export interface iGenCmdJobs {
@@ -25,6 +33,7 @@ module miGenCmdJobs {
   export interface iCmdEle{
     send: iCmdSerial,
     recv: iCmdSerial,
+    fix?: iCmdSerial,
     rate: number
   }
 

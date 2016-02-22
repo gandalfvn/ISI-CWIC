@@ -18,6 +18,8 @@ interface iSceneInfo {
   creator: string, block_meta: iBlockMeta, block_states: iBlockStates[]
 }
 
+enum eCmdPhase{VIEW, CMD, RATE, FIX};
+
 angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$reactive', 'ngDialog', 'toaster','APP_CONST' , 'AppUtils', 'deviceDetector', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $reactive, ngDialog, toaster, APP_CONST, apputils, devDetect){
   "use strict";
   $reactive(this).attach($scope);
@@ -25,7 +27,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
   $scope.date = (new Date()).getTime();
-  $scope.opt = {bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '', inViewMode: false, viewModeCmd: '', viewIdx: -1, isBaseView: false};
+  $scope.opt = {bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '', viewModeCmd: '', viewIdx: -1, isBaseView: false};
 
   $scope.subscribe("gencmds", ()=>{}, {
     onReady: function (sub) {
@@ -46,6 +48,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   $scope.maxtask = -1;
   $scope.cmdlist = null;
   $scope.cmdele = null;
+  $scope.cmdphase = eCmdPhase.CMD;
   var dataReady:iDataReady = new apputils.cDataReady(2, function():void {
     var isAdminUser = ($rootScope.currentUser) ? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
     if ($stateParams.report && !isAdminUser) { //not admin we just leave it blank
@@ -177,21 +180,24 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
     }
 
     myengine.createObjects($scope.curState.block_meta.blocks);
+    var states:iBlockStates = null;
     var cidx:number = tidx-1; //content idx is 1 less than tidx - so to see [0] in cmdlist you need to provide 1
-    if(tidx && $scope.cmdlist[cidx] && $scope.cmdlist[cidx].send && $scope.cmdlist[cidx].recv
-      && $scope.cmdlist[cidx].send.world.length && $scope.cmdlist[cidx].recv.world.length
-    ){
-      //show the previous command state
-      var states:iBlockStates = convCmdToState($scope.cmdlist[cidx].send, $scope.cmdlist[cidx].recv);
-      showFrame(states, ()=>{
-        $scope.$apply(()=>{$rootScope.dataloaded = true;})
-      })
-    }else{
-      //no move command from this user so far
-      showFrame({block_state: $scope.curState.block_state}, ()=>{
-        $scope.$apply(()=>{$rootScope.dataloaded = true;})
-      });
+    if(tidx && $scope.cmdlist[cidx] && $scope.cmdlist[cidx].send 
+      && $scope.cmdlist[cidx].send.world.length){
+      if($scope.cmdlist[cidx].fix && $scope.cmdlist[cidx].fix.world.length){
+        //show the previous command state
+        states = convCmdToState($scope.cmdlist[cidx].send, $scope.cmdlist[cidx].fix);
+      }
+      else if($scope.cmdlist[cidx].recv && $scope.cmdlist[cidx].recv.world.length){
+        //show the previous command state
+        states = convCmdToState($scope.cmdlist[cidx].send, $scope.cmdlist[cidx].recv);
+      }
     }
+    if(states == null) states = {block_state: $scope.curState.block_state};
+    //no move command from this user so far
+    showFrame(states, ()=>{
+      $scope.$apply(()=>{$rootScope.dataloaded = true;})
+    });
   };
 
   var showFrame = function (state:iBlockStates, cb?:()=>void) {
@@ -227,18 +233,18 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
     myengine.resetWorld();
   };
   
-  var convCmdToState = function(basecmd:iCmdSerial, deltacmd:iCmdSerial):iBlockStates{
+  var convCmdToState = function(basecmd:miGenCmdJobs.iCmdSerial, deltacmd:miGenCmdJobs.iCmdSerial):iBlockStates{
     var states:iBlockStates = {block_state: []};
     var bs:{[x:string]:iBlockState} = {};
     //fill all cubes
-    _.each(basecmd.world, function(l:iCmdLocEle){
+    _.each(basecmd.world, function(l:miGenCmdJobs.iCmdLocEle){
       var pos:iPosRot = {x: l.loc[0], y: l.loc[1], z: l.loc[2]};
       bs[l.id] = {id: l.id, position: pos};
       bs[l.id]['showMoved'] = false;
     });
     if(deltacmd && !$scope.opt.isBaseView){
       //now fill delta
-      _.each(deltacmd.world, function(l:iCmdLocEle){
+      _.each(deltacmd.world, function(l:miGenCmdJobs.iCmdLocEle){
         var pos:iPosRot = {x: l.loc[0], y: l.loc[1], z: l.loc[2]};
         bs[l.id] = {id: l.id, position: pos};
         bs[l.id]['showMoved'] = true;
@@ -299,12 +305,14 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
 
   $scope.viewCmd = function(idx:number){
     if(idx > -1){
-      $scope.opt.inViewMode = true;
+      $scope.cmdphase = eCmdPhase.VIEW;
       $scope.opt.viewModeCmd = $scope.cmdlist[idx].send.input;
       $scope.opt.viewIdx = idx;
       renderTask(idx+1);
     }else{
-      $scope.opt.inViewMode = false;
+      $scope.cmdphase = eCmdPhase.CMD;
+      myengine.enableUI = false; //prevent UI in case its a fix transition
+      $scope.cmdele = null;
       $scope.opt.viewModeCmd = '';
       $scope.opt.viewIdx = -1;
       renderTask($scope.taskidx);
@@ -329,7 +337,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
           $rootScope.dataloaded = true;
           return;
         }
-        var cmdinput:iCmdSerial = serialState(command);
+        var cmdinput:miGenCmdJobs.iCmdSerial = serialState(command);
         if(cmdinput){
           //submit to AI system simulate wait
           setTimeout(()=> {
@@ -341,12 +349,15 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                 toaster.pop('error', ret.error)
               });
               if (ret.result) {
-                var cmdoutput:iCmdSerial = ret.result;
+                var cmdoutput:miGenCmdJobs.iCmdSerial = ret.result;
                 if(cmdoutput && !cmdoutput.error){
                   var states:iBlockStates = convCmdToState(cmdinput, cmdoutput);
                   showFrame(states, function() {
                     $scope.cmdele = <miGenCmdJobs.iCmdEle>{send: cmdinput, recv: cmdoutput, rate: -1};
-                    $scope.$apply(()=>{$rootScope.dataloaded = true;});
+                    $scope.$apply(()=>{
+                      $rootScope.dataloaded = true;
+                      $scope.cmdphase = eCmdPhase.RATE;
+                    });
                   })
                 } else toaster.pop('error', cmdoutput.error);
               }
@@ -362,6 +373,55 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   $scope.setRating = function(rating:number){
     $rootScope.dataloaded = false;
     $scope.cmdele.rate = rating;
+
+    //must use update instead of save because _id is custom generated
+    if(rating != 1) saveCmd();
+    else renderFix();
+  };
+
+  var renderFix = function(){
+    $scope.cmdphase = eCmdPhase.FIX;
+    myengine.enableUI = true;
+    $scope.resetFix();
+    $rootScope.dataloaded = true;
+  };
+
+  $scope.resetFix = function(){
+    //reset to base view for command move
+    $scope.opt.isBaseView = false; //we get toggle in showTransition so we set to the view we DONT want
+    $scope.showTransition();
+  };
+
+  $scope.submitFix = function(){
+    $scope.cmdphase = eCmdPhase.CMD;
+    myengine.enableUI = false;
+    var cmdserial:miGenCmdJobs.iCmdSerial = serialState("fix");
+    cmdserial.type = mGenCmdJobs.eCmdType.FIX;
+    var fudgeVal:number = 0.001;
+    var deltaidx:number[] = [];
+    var slen:number = $scope.cmdele.send.world.length;
+    for(var i = 0; i < cmdserial.world.length; i++){
+      var isMatch = false;
+      var a:miGenCmdJobs.iCmdLocEle = cmdserial.world[i];
+      for(var j = 0; j < slen; j++){
+        var b:miGenCmdJobs.iCmdLocEle = $scope.cmdele.send.world[j];
+        if(Math.abs(b.loc[0]-a.loc[0]) < fudgeVal && Math.abs(b.loc[1]-a.loc[1]) < fudgeVal && Math.abs(b.loc[2]-a.loc[2]) < fudgeVal){
+          isMatch = true;
+          j = slen;
+        }
+      }
+      if(!isMatch) deltaidx.push(i);
+    }
+    var newWorld:miGenCmdJobs.iCmdLocEle[] = [];
+    _.each(deltaidx, function(i){
+      newWorld.push(cmdserial.world[i]);
+    });
+    cmdserial.world = newWorld;
+    $scope.cmdele.fix = cmdserial;
+    saveCmd();
+  };
+
+  var saveCmd = function(){
     $scope.cmdlist[$scope.taskidx] = $scope.cmdele;
     $scope.cmdele = null;
 
@@ -372,7 +432,6 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
     if(!$scope.hitdata.timed[$scope.workerId]) $scope.hitdata.timed[$scope.workerId] = {};
     if(!$scope.hitdata.timed[$scope.workerId][previdx]) $scope.hitdata.timed[$scope.workerId][previdx] = (new Date()).getTime();
 
-    //must use update instead of save because _id is custom generated
     var setdata:{[x: string]:any} = {};
     setdata['cmdlist.'+$scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];
     setdata['timed.'+$scope.workerId] = $scope.hitdata.timed[$scope.workerId];
@@ -383,9 +442,10 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
       $scope.$apply(()=>{
         $scope.opt.command = '';
         $rootScope.dataloaded = true;
+        $scope.cmdphase = eCmdPhase.CMD;
       });
     });
-  };
+  }
 
   $scope.submit = function(){
     if($scope.taskidx >= $scope.maxtask && $scope.assignmentId && $scope.assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE') {
@@ -417,14 +477,15 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
     }
   }
 
-  var serialState = function (cmd:string):iCmdSerial {
-    var cmdserial:iCmdSerial = {
+  var serialState = function (cmd:string):miGenCmdJobs.iCmdSerial {
+    var cmdserial:miGenCmdJobs.iCmdSerial = {
       world: null,
+      type: mGenCmdJobs.eCmdType.INPUT,
       input: cmd,
       version: 1
     };
 
-    var newblock_state:iCmdLocEle[] = [];
+    var newblock_state:miGenCmdJobs.iCmdLocEle[] = [];
     var block_state:iBlockState[] = $scope.curState.block_state;
     var cubesused:number[] = [];
     $scope.curState.block_meta.blocks.forEach(function(b){
@@ -475,18 +536,20 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
 
   $scope.showTransition = function(){
     $scope.opt.isBaseView = !$scope.opt.isBaseView;
-    var base:iCmdSerial = null;
-    var delta:iCmdSerial = null;
+    var base:miGenCmdJobs.iCmdSerial = null;
+    var delta:miGenCmdJobs.iCmdSerial = null;
     if($scope.cmdele){
       base = $scope.cmdele.send;
-      delta = $scope.cmdele.recv;
+      if($scope.cmdele.fix) delta = $scope.cmdele.fix;
+      else delta = $scope.cmdele.recv;
     }
     else{
       var cidx = $scope.taskidx-1; //taskidx shows next empty entry
       if($scope.opt.viewIdx > -1) //test for click on view cmd
         cidx = $scope.opt.viewIdx;
       base = $scope.cmdlist[cidx].send;
-      delta = $scope.cmdlist[cidx].recv;
+      if($scope.cmdlist[cidx].fix) delta = $scope.cmdlist[cidx].fix;
+      else delta = $scope.cmdlist[cidx].recv;
     }
     var states:iBlockStates = convCmdToState(base, delta);
     showFrame(states, ()=>{
@@ -540,7 +603,8 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   };
 
   // Start by calling the createScene function that you just finished creating
-  var myengine:miGen3DEngine.c3DEngine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
+  var myengine:miGen3DEngine.cUI3DEngine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
+  myengine.enableUI = false;
   myengine.createWorld();
   dataReady.update('world created');
 

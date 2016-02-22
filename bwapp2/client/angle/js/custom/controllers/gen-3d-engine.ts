@@ -478,6 +478,7 @@ module miGen3DEngine {
     sceney:number = null;
     scenerot:BABYLON.Vector3 = null;
     rotxy:boolean = false;
+    enableUI:boolean = true;
 
     constructor(fieldsize:number){
       super(fieldsize);
@@ -591,7 +592,7 @@ module miGen3DEngine {
     }
 
     private onPointerDown(evt){
-      if (evt.button !== 0) return;
+      if (evt.button !== 0 || !this.enableUI) return;
       var self:any = this;
       // check if we are under a mesh
       var pickInfo:BABYLON.PickingInfo = self.scene.pick(self.scene.pointerX, self.scene.pointerY, function (mesh) {

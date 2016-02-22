@@ -437,6 +437,7 @@ var miGen3DEngine;
             this.sceney = null;
             this.scenerot = null;
             this.rotxy = false;
+            this.enableUI = true;
         }
         ;
         cUI3DEngine.prototype.getGroundPosition = function (evt) {
@@ -547,7 +548,7 @@ var miGen3DEngine;
             }
         };
         cUI3DEngine.prototype.onPointerDown = function (evt) {
-            if (evt.button !== 0)
+            if (evt.button !== 0 || !this.enableUI)
                 return;
             var self = this;
             // check if we are under a mesh
