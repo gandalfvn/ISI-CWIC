@@ -6,19 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/gencmdtask.ng.jade" afterPath="$PROJECT_DIR$/client/views/gencmdtask.ng.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/gencmdjobsdb.js" afterPath="$PROJECT_DIR$/model/gencmdjobsdb.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/gencmdjobsdb.js.map" afterPath="$PROJECT_DIR$/model/gencmdjobsdb.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model/gencmdjobsdb.ts" afterPath="$PROJECT_DIR$/model/gencmdjobsdb.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/cmdmoveshelper.js" afterPath="$PROJECT_DIR$/server/cmdmoveshelper.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/cmdmoveshelper.js.map" afterPath="$PROJECT_DIR$/server/cmdmoveshelper.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/cmdmoveshelper.ts" afterPath="$PROJECT_DIR$/server/cmdmoveshelper.ts" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,8 +32,8 @@
       <file leaf-file-name="gen-cmdtask-view.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6086956">
-              <caret line="200" column="0" selection-start-line="200" selection-start-column="0" selection-end-line="200" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.69969666">
+              <caret line="415" column="0" selection-start-line="415" selection-start-column="0" selection-end-line="415" selection-end-column="0" />
               <folding>
                 <element signature="n#!!doc;n#iSceneInfo#0" expanded="false" />
               </folding>
@@ -1405,8 +1395,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6086956">
-          <caret line="200" column="0" selection-start-line="200" selection-start-column="0" selection-end-line="200" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.69969666">
+          <caret line="415" column="0" selection-start-line="415" selection-start-column="0" selection-end-line="415" selection-end-column="0" />
           <folding>
             <element signature="n#!!doc;n#iSceneInfo#0" expanded="false" />
           </folding>

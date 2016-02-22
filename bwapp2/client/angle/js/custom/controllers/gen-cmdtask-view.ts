@@ -393,8 +393,6 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   };
 
   $scope.submitFix = function(){
-    $scope.cmdphase = eCmdPhase.CMD;
-    myengine.enableUI = false;
     var cmdserial:miGenCmdJobs.iCmdSerial = serialState("fix");
     cmdserial.type = mGenCmdJobs.eCmdType.FIX;
     var fudgeVal:number = 0.001;
@@ -412,13 +410,18 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
       }
       if(!isMatch) deltaidx.push(i);
     }
-    var newWorld:miGenCmdJobs.iCmdLocEle[] = [];
-    _.each(deltaidx, function(i){
-      newWorld.push(cmdserial.world[i]);
-    });
-    cmdserial.world = newWorld;
-    $scope.cmdele.fix = cmdserial;
-    saveCmd();
+    if(deltaidx.length){
+      $scope.cmdphase = eCmdPhase.CMD;
+      myengine.enableUI = false;
+      var newWorld:miGenCmdJobs.iCmdLocEle[] = [];
+      _.each(deltaidx, function(i){
+        newWorld.push(cmdserial.world[i]);
+      });
+      cmdserial.world = newWorld;
+      $scope.cmdele.fix = cmdserial;
+      saveCmd();
+    }
+    else toaster.pop('info','Please move a cube to save a fix.')
   };
 
   var saveCmd = function(){
