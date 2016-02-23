@@ -73,6 +73,11 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
       if ($scope.hitId) {
         //load hit
         $scope.hitdata = <miGenCmdJobs.iGenJobsHIT>GenCmdJobs.findOne('H_' + $scope.hitId);
+        if(!$scope.hitdata){ //no matching HIT available
+          $rootScope.dataloaded = true;
+          $scope.assignmentId = null;
+          return;
+        }
         if ($scope.hitdata && $scope.hitdata.submitted && $scope.workerId && $scope.workerId !== 'EXAMPLE') {
           var subfound:miGenCmdJobs.iSubmitEle = <miGenCmdJobs.iSubmitEle>_.findWhere($scope.hitdata.submitted, {name: $scope.workerId});
           if (!_.isUndefined(subfound)) {//check if its already submitted by this worker

@@ -71,6 +71,11 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                 if ($scope.hitId) {
                     //load hit
                     $scope.hitdata = GenCmdJobs.findOne('H_' + $scope.hitId);
+                    if (!$scope.hitdata) {
+                        $rootScope.dataloaded = true;
+                        $scope.assignmentId = null;
+                        return;
+                    }
                     if ($scope.hitdata && $scope.hitdata.submitted && $scope.workerId && $scope.workerId !== 'EXAMPLE') {
                         var subfound = _.findWhere($scope.hitdata.submitted, { name: $scope.workerId });
                         if (!_.isUndefined(subfound)) {

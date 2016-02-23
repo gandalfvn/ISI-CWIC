@@ -125,8 +125,12 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
             $scope.subscribe("gencmds", function () { return [sid]; }, {
                 onReady: function (sub) {
                     var myframe = GenCmds.findOne({ _id: sid });
-                    if (!myframe)
-                        return toaster.pop('warn', 'Invalid State ID');
+                    if (!myframe) {
+                        $rootScope.dataloaded = true;
+                        toaster.pop('warn', 'Invalid State ID');
+                        $state.transitionTo('app.gencmdexp', {}, { notify: false });
+                        return;
+                    }
                     //update the meta
                     $scope.curState.clear();
                     $scope.curState.copy(myframe);

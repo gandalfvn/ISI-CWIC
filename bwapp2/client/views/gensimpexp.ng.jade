@@ -55,14 +55,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
     h3 Scene
     h4(ng-bind-html='utterance')
     div.col-sm-12
-      b(ng-show='curcnt > -1', style='font-size:1.25em') Create Count: {{curcnt}}
-      br
-      b(ng-show='curitr > -1', style='font-size:1.25em') Current State: {{curitr}}
-    //-div.col-sm-5
-      | Move camera by clicking and dragging in scene
+      button.btn.btn-sm.btn-info.mb-sm(ng-click='reset()') Reset
     div.col-sm-12
       canvas(id="renderCanvasBab", style='width: 480px; height: 360px;')
-      canvas(id="canvas_2D")
     div.col-sm-12(ng-if='!isgen && isExp && curState.block_meta.blocks')
       label Notes:
       textarea.form-control.mb(type='text', ng-model='notes', style='padding-left: 26px;')

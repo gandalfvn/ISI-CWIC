@@ -78,78 +78,6 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                 }
             }
         };
-        /**
-         * generate cube close to anchor cube if there is none then we just generate cube via field.
-         * returns null or vector3 position.
-         * @param size
-         * @param used
-         * @param idxdata
-         * @returns {*}
-         */
-        var genCubeNear = function (size, used, idxdata) {
-            if (used.length) {
-                var myArr = used; //its an array
-                var halfsize = size / 2;
-                var halfrad = APP_CONST.fieldsize / 4; //near radius
-                var anchorIdx = myArr[apputils.rndInt(0, myArr.length - 1)];
-                var aPos = idxdata[anchorIdx].position;
-                var fieldmin = -(APP_CONST.fieldsize / 2) + (size / 2);
-                var fieldmax = (APP_CONST.fieldsize / 2) - (size / 2);
-                var min = -halfrad + halfsize;
-                var max = halfrad - halfsize;
-                var val = APP_CONST.fieldsize;
-                var it = 0;
-                while (val > fieldmax || val < fieldmin) {
-                    val = apputils.rndInt(min * mult, max * mult) / mult + aPos.x;
-                    if (it > 50) {
-                        console.warn('it > 50 posx:', val);
-                    }
-                    ;
-                }
-                var xval = val;
-                val = APP_CONST.fieldsize;
-                it = 0;
-                while (val > fieldmax || val < fieldmin) {
-                    val = apputils.rndInt(min * mult, max * mult) / mult + aPos.z;
-                    if (it > 50) {
-                        console.warn('it > 50 posz:', val);
-                    }
-                    ;
-                }
-                var zval = val;
-                return { anchorCid: anchorIdx, position: new BABYLON.Vector3(xval, halfsize, zval) };
-            }
-            console.error('no existing cubes found');
-            return null;
-        };
-        var genCubeFar = function (size, used, idxdata) {
-            if (used.length) {
-                var myArr = used; //its an array
-                var halfsize = size / 2;
-                var halfrad = APP_CONST.fieldsize / 4; //avoid radius
-                var anchorIdx = myArr[apputils.rndInt(0, myArr.length - 1)];
-                var aPos = idxdata[anchorIdx].position;
-                var fieldmin = -(APP_CONST.fieldsize / 2) + (size / 2);
-                var fieldmax = (APP_CONST.fieldsize / 2) - (size / 2);
-                var min = -halfrad + halfsize;
-                var max = halfrad - halfsize;
-                var val = { x: APP_CONST.fieldsize, z: APP_CONST.fieldsize };
-                var it = 0;
-                while (val.x > fieldmax || val.x < fieldmin ||
-                    val.z > fieldmax || val.z < fieldmin ||
-                    (val.x > aPos.x + min && val.x < aPos.x + max
-                        && val.z > aPos.z + min && val.z < aPos.z + max)) {
-                    val.x = apputils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
-                    val.z = apputils.rndInt(fieldmin * mult, fieldmax * mult) / mult;
-                    it++;
-                    if (it > 50)
-                        console.warn('it > 50 pos:', val);
-                }
-                return { anchorCid: anchorIdx, position: new BABYLON.Vector3(val.x, halfsize, val.z) };
-            }
-            console.error('no existing cubes found');
-            return null;
-        };
         var showFrame = function (state, cb) {
             $scope.resetWorld();
             setTimeout(function () {
@@ -207,7 +135,8 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
          * @param sid
          */
         $scope.showState = function (sid) {
-            $state.transitionTo('app.gensimpexp', { sid: sid }, { notify: false });
+            if (!$stateParams.sid)
+                $state.transitionTo('app.gensimpexp', { sid: sid }, { notify: false });
             $rootScope.dataloaded = false;
             $scope.enableImpSave = false;
             $scope.isExp = true;
@@ -215,8 +144,12 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             $scope.subscribe("genexps", function () { return [sid]; }, {
                 onReady: function (sub) {
                     var myframe = GenExps.findOne({ _id: sid });
-                    if (!myframe)
-                        return toaster.pop('warn', 'Invalid State ID');
+                    if (!myframe) {
+                        $rootScope.dataloaded = true;
+                        toaster.pop('warn', 'Invalid State ID');
+                        $state.transitionTo('app.gensimpexp', {}, { notify: false });
+                        return;
+                    }
                     //update the meta
                     $scope.curState.clear();
                     $scope.curState.copy(myframe);
@@ -227,6 +160,12 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                 },
                 onStop: subErr
             });
+        };
+        $scope.reset = function () {
+            $rootScope.dataloaded = false;
+            myengine.createObjects($scope.curState.block_meta.blocks);
+            showFrame({ block_state: $scope.curState.block_state });
+            $scope.$apply(function () { $rootScope.dataloaded = true; });
         };
         $scope.remState = function (sid) {
             if (sid) {
@@ -463,38 +402,6 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                     });
             });
             return newBS;
-        };
-        $scope.startMove = function (itr) {
-            console.warn(itr);
-            itr = Number(itr);
-            $scope.isgen = true;
-            var params = { itr: itr, startMove: $scope.startMove, cubesused: null };
-            $scope.genStateN(params);
-        };
-        var nextItr = function (params) {
-            return function (err, savedsid) {
-                if (err)
-                    toaster.pop('warn', err);
-                if (savedsid) {
-                    if (params.itr > 1) {
-                        //if(params.startGen) params.startGen(params.itr - 1);
-                        if (params.startMove)
-                            params.startMove(params.itr - 1);
-                    }
-                    else {
-                        $scope.curitr = 0;
-                        $scope.curcnt = 0;
-                        $scope.isgen = false;
-                    }
-                }
-                else {
-                    //don't iterate since we had error with previous insert
-                    //which means we need to make a new init state
-                    //if(params.startGen) params.startGen(params.itr);
-                    if (params.startMove)
-                        params.startMove(params.itr);
-                }
-            };
         };
         $scope.dlScene = function (notes) {
             var tempframe = {
