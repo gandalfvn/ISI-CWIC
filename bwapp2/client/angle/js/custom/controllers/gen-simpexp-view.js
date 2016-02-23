@@ -162,10 +162,8 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
             });
         };
         $scope.reset = function () {
-            $rootScope.dataloaded = false;
             myengine.createObjects($scope.curState.block_meta.blocks);
             showFrame({ block_state: $scope.curState.block_state });
-            $scope.$apply(function () { $rootScope.dataloaded = true; });
         };
         $scope.remState = function (sid) {
             if (sid) {
