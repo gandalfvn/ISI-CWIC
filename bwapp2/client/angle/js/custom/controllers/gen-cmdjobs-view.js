@@ -42,7 +42,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
         });
         $scope.dtOptionsGrp = _.extend({}, $scope.dtOptionsAvail, {
             "lengthMenu": [[10], [10]],
-            "order": [[2, "desc"]]
+            "order": [[0, "desc"]]
         });
         $scope.dtOptionsTask = _.extend({}, $scope.dtOptionsAvail, {
             "lengthMenu": [[10], [10]],
@@ -433,6 +433,31 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
                 onReady: function (sub) {
                     var myjobs = GenCmdJobs.find({ _id: { $in: jids } }).fetch();
                     if (myjobs.length) {
+                        var jtids = [];
+                        _.each(myjobs, function (job) {
+                            jtids.push(job._id);
+                        });
+                        var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
+                        var hitlist = [];
+                        _.each(jtids, function (jtid) {
+                            var mytask = GenCmdJobs.findOne({ _id: jtid });
+                            _.each(mytask.hitlist, function (h) {
+                                var hid = h.replace(/H_/, '');
+                                hitlist.push({ jid: jtid, hid: hid, cid: mytask.cmdid, url: turkreqlink + hid });
+                            });
+                        });
+                        var dialog = ngDialog.open({
+                            template: 'didTurkURLs',
+                            data: hitlist,
+                            className: 'ngdialog-theme-default width60perc',
+                            controller: ['$scope', function ($scope) {
+                                }]
+                        });
+                        dialog.closePromise.then(function (data) {
+                            //console.log('ngDialog closed', data);
+                            if (data.value) {
+                            }
+                        });
                     }
                     else
                         toaster.pop('warning', 'Job ID not found: ' + JSON.stringify(jids));
@@ -440,10 +465,35 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
                 onStop: subErr
             });
         };
+        $scope.shareHIT = function (hitstr) {
+            $scope.subscribe('gencmdjobs', function () { return [{ type: 'item', keys: [hitstr] }]; }, {
+                onReady: function (sub) {
+                    var myjob = GenCmdJobs.find({ _id: hitstr }).fetch();
+                    myjob[0]['url'] = $state.href('gencmdtask', { taskId: myjob[0].jid, assignmentId: (new Date).getTime(), hitId: myjob[0].HITId, workerId: 'EMAILLOG' }, { absolute: true });
+                    console.warn(myjob);
+                    var dialog = ngDialog.open({
+                        template: 'didShareURL',
+                        data: myjob,
+                        className: 'ngdialog-theme-default width60perc',
+                        controller: ['$scope', function ($scope) {
+                            }]
+                    });
+                    dialog.closePromise.then(function (data) {
+                        //console.log('ngDialog closed', data);
+                        if (data.value) {
+                        }
+                    });
+                },
+                onStop: function (err) {
+                    console.warn('err ', err);
+                }
+            });
+        };
         // Start by calling the createScene function that you just finished creating
         var myengine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
         myengine.createWorld();
         dataReady.update('world created');
+        var clipopt = new Clipboard(".clipbtn");
         $scope.stateGo = apputils.stateGo($state);
     }]);
 //# sourceMappingURL=gen-cmdjobs-view.js.map

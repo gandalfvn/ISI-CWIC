@@ -8,8 +8,37 @@
       i.fa.fa-4x.fa-spin.fa-cube
       h3(style="color:#23b7e5;") Processing...
 toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'close-button':true}")
-.container-fluid(ng-show='!report && assignmentId')
-  accordion(ng-if='taskdata.tasktype == "cmd"')
+//-need email to proceed
+.container-fluid(ng-if='workerId ==="EMAILLOG"')
+  .abs-center.wd-xl(style="overflow: visible; position: absolute")
+    .panel.widget.b0(style="margin: 10px;")
+      .panel-body.shadowbox(style="border-radius:3px")
+        p.text-center
+          form(novalidate name='myform' class="simple-form")
+            b(style="font-size:1.3em;") Please Enter Email to Start
+            .panel.form-inline
+              label.error(ng-show="myform.email.$error.required", title='Required field', style='color:red;font-size:1.5em;') *
+              label.error(ng-show="myform.email.$error.email", title='Not a valid email', style='color:red;font-size:1.5em;') !
+              input.form-control(type="email", ng-model="workeremail", name='email', minlength='4', required, placeholder="Enter email", style="width:80%")
+              span.error(ng-if='myform.$valid')
+                button.btn.btn-primary.pull-right(type='submit', ng-click='emailLogin(workeremail)') Go
+                
+//-report view
+.container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
+  .row-fluid.mb-sm
+    h3 Report for Submitter {{workerId | uriCompDec}}
+    label(style='font-size:1.1em') Valid:
+    select(style='font-size:1.5em', ng-model ='opt.repvalid', ng-change='validateReport(opt.repvalid)')
+      option(ng-repeat='n in opt.repvalidlist', value='{{n}}') {{n | uppercase}}
+    | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
+    | &nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlStates()') Get States JSON
+    | &nbsp;&nbsp;
+    button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
+
+.container-fluid(ng-show='(assignmentId || currentUser.profile.roles[0] == "admin") && workerId !=="EMAILLOG"')
+  accordion(ng-if='taskdata.tasktype == "cmd" && !report')
     accordion-group.panel-primary(is-open="isOpenDir")
       accordion-heading
         h4.panel-title Directions
@@ -28,7 +57,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           | &nbsp; GOOGLE CHROME BROWSER Recommended
         
   div(ng-show='(opt.bAgreed || workerId ==="EXAMPLE")')
-    accordion(ng-if="curState.block_meta.decoration=='logo'")
+    accordion(ng-if="curState.block_meta.decoration=='logo' && !report")
       accordion-group.panel-info(is-open='true')
         accordion-heading
           h4.panel-title Logo Key
@@ -130,37 +159,4 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       i.fa.fa-exclamation-triangle
       | If job is unavailable it may be your browser.
       | &nbsp; GOOGLE CHROME BROWSER Recommended
-
-//-report view
-.container-fluid(ng-if='report  && currentUser.profile.roles[0] == "admin"')
-  .row-fluid
-    h3 Report for Submitter {{workerId}}
-    label(style='font-size:1.1em') Valid:
-    select(style='font-size:1.5em', ng-model ='opt.repvalid', ng-change='validateReport(opt.repvalid)')
-      option(ng-repeat='n in opt.repvalidlist', value='{{n}}') {{n | uppercase}}
-    | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    button.btn.btn-primary(ng-click='dlScene()') Get Scene JSON
-    | &nbsp;&nbsp;
-    button.btn.btn-primary(ng-click='dlStates()') Get States JSON
-    | &nbsp;&nbsp;
-    button.btn.btn-primary(ng-click='dlNotes()') Get Notes JSON
-  .col-sm-12(ng-repeat='(nidx,cmdlist) in hitdata.cmdlist[workerId]')
-    .col-sm-12
-      h3.pull-left {{nidx}}
-      .col-sm-6
-        div(id='statea{{nidx}}')
-      .col-sm-5
-        div(id='stateb{{nidx}}')
-    .col-sm-12
-      form.ng-pristine.ng-valid.novalidate(name='reportForm[{{nidx}}]')
-        div.mb-sm(ng-repeat='note in cmdlist track by $index')
-          .col-sm-12
-            b.pull-left(ng-show="reportForm[nidx]['repnote['+$index+']'].$dirty", style='font-size: 16px; color: red; width:2%; float: left')
-              .fa.fa-asterisk
-            .form-group.has-feedback.pull-left(style='display:inline-block; width:80%;')
-              textarea.form-control(type='text', name='repnote[{{$index}}]', ng-model='cmdlist[$index]', style='padding-left: 26px;', clear-icon)
-      button.btn.btn-warning(ng-show='reportForm[nidx].$dirty', ng-click='updateReport(nidx, reportForm[nidx])') Update
-
-    .col-sm-12
-      hr
 

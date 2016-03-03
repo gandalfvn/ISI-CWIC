@@ -55,7 +55,6 @@ GenCmdJobs.allow({
 });
 Meteor.publish('gencmdjobs', function (params) {
     if (params) {
-        //todo: not used so far
         switch (params.type) {
             case 'submitted':
                 return GenCmdJobs.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, submitted: 1 }, sort: { 'submitted.time': -1 } });
@@ -75,6 +74,8 @@ Meteor.publish('gencmdjobs', function (params) {
                 else
                     this.error(555, 'missing keys array');
                 break;
+            default:
+                console.warn('gencmdjobs pub missing type[submitted, list, item]');
         }
     }
     else

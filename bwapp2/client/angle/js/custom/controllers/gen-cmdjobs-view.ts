@@ -14,6 +14,8 @@
 /// <reference path="../../../../../server/mturkhelper.ts" />
 /// <reference path="../services/apputils.ts" />
 
+declare var Clipboard:any;
+
 interface iRepValid {
   [index:string]: string
 }
@@ -67,7 +69,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
 
   $scope.dtOptionsGrp = _.extend({}, $scope.dtOptionsAvail, {
     "lengthMenu": [[10], [10]],
-    "order": [[2, "desc"]],
+    "order": [[0, "desc"]],
   });
 
   $scope.dtOptionsTask = _.extend({}, $scope.dtOptionsAvail, {
@@ -479,50 +481,40 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
   interface iJTHInfo{
     cid:string,
     jid:string,
-    tid:string,
     hid:string,
     url:string
   }
-  $scope.getURLHITs = function(jidstr){
+  $scope.getURLHITs = function(jidstr:string){
     var jids:string[] = jidstr.trim().split(/[ ,]/);
     $scope.subscribe('gencmdjobs', ()=>{return[{type:'item', keys: jids}]}, {
       onReady: (sub)=>{
         var myjobs:miGenCmdJobs.iGenCmdJobs[] = GenCmdJobs.find({_id: {$in: jids}}).fetch();
         if(myjobs.length){
-          /*var jtids:{tid:string, jid:string}[] = [];
-          var tids:string[] = [];
+          var jtids:string[] = [];
           _.each(myjobs, function(job:miGenCmdJobs.iGenCmdJobs){
-            _.each(job.list, function(tid) {
-              jtids.push({tid: tid, jid:job._id});
-              tids.push(tid);
+            jtids.push(job._id);
+          });
+          var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
+          var hitlist:iJTHInfo[] = [];
+          _.each(jtids, function(jtid){
+            var mytask:miGenCmdJobs.iGenCmdJobs = GenCmdJobs.findOne({_id: jtid});
+            _.each(mytask.hitlist, function(h){
+              var hid = h.replace(/H_/,'');
+              hitlist.push({jid: jtid, hid: hid, cid: mytask.cmdid, url: turkreqlink+hid});
             });
           });
-          $scope.subscribe('gencmdjobs', ()=>{return[{type:'item', keys: tids}]}, {
-            onReady: (sub)=>{
-              var turkreqlink = 'https://requester.mturk.com/mturk/manageHIT?viewableEditPane=&HITId=';
-              var hitlist:iJTHInfo[] = [];
-              _.each(jtids, function(jtid){
-                var mytask:miGenCmdJobs.iGenCmdJobs = GenCmdJobs.findOne({_id: jtid.tid});
-                _.each(mytask.hitlist, function(h){
-                  var hid = h.replace(/H_/,'');
-                  hitlist.push({jid: jtid.jid, tid: jtid.tid, hid: hid, cid: mytask.cmdid, url: turkreqlink+hid});
-                });
-              });
-              var dialog = ngDialog.open({
-                template: 'didTurkURLs',
-                data: hitlist,
-                className: 'ngdialog-theme-default width60perc',
-                controller: ['$scope', function($scope){
-                }]
-              });
-              dialog.closePromise.then(function(data){
-                console.log('ngDialog closed', data);
-                if(data.value){
-                }
-              });
+          var dialog = ngDialog.open({
+            template: 'didTurkURLs',
+            data: hitlist,
+            className: 'ngdialog-theme-default width60perc',
+            controller: ['$scope', function($scope){
+            }]
+          });
+          dialog.closePromise.then(function(data){
+            //console.log('ngDialog closed', data);
+            if(data.value){
             }
-            ,onStop: subErr
-          });*/
+          });
         }
         else toaster.pop('warning','Job ID not found: '+JSON.stringify(jids));
       }
@@ -530,10 +522,37 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
     });
   };
 
+  $scope.shareHIT = function(hitstr:string){
+    $scope.subscribe('gencmdjobs', ()=>{return[{type:'item', keys: [hitstr]}]}, {
+      onReady: (sub)=> {
+        var myjob:miGenCmdJobs.iGenJobsHIT[] = GenCmdJobs.find({_id: hitstr}).fetch();
+        myjob[0]['url'] = $state.href('gencmdtask', {taskId: myjob[0].jid, assignmentId: (new Date).getTime(), hitId: myjob[0].HITId, workerId: 'EMAILLOG' }, {absolute: true});
+        console.warn(myjob);
+        var dialog = ngDialog.open({
+          template: 'didShareURL',
+          data: myjob,
+          className: 'ngdialog-theme-default width60perc',
+          controller: ['$scope', function($scope){
+          }]
+        });
+        dialog.closePromise.then(function(data){
+          //console.log('ngDialog closed', data);
+          if(data.value){
+          }
+        });
+      }
+      ,onStop: (err)=>{
+        console.warn('err ', err)
+      }
+    });
+  };
+  
   // Start by calling the createScene function that you just finished creating
   var myengine:miGen3DEngine.c3DEngine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
   myengine.createWorld();
   dataReady.update('world created');
+  
+  var clipopt = new Clipboard(".clipbtn");
 
   $scope.stateGo = apputils.stateGo($state);
 }]);

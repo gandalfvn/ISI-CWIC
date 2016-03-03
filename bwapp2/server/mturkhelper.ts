@@ -7,6 +7,7 @@
 /// <reference path="../model/gencmdjobsdb.ts" />
 /// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
+/// <reference path="./typings/meteor-typescript-libs/definitions/meteorhacks-npm.d.ts" />
 
 interface iHITContent{
   Title: string,

@@ -54,7 +54,6 @@ GenCmdJobs.allow({
 
 Meteor.publish('gencmdjobs', function(params?: {type: string}):Mongo.Cursor<miGenCmdJobs.iGenCmdJobs>{
   if(params){
-    //todo: not used so far
     switch(params.type){
       case 'submitted':
         return GenCmdJobs.find(
@@ -81,6 +80,8 @@ Meteor.publish('gencmdjobs', function(params?: {type: string}):Mongo.Cursor<miGe
         }
         else this.error(555, 'missing keys array');
         break;
+      default:
+        console.warn('gencmdjobs pub missing type[submitted, list, item]');
     }
   }
   else return GenCmdJobs.find({

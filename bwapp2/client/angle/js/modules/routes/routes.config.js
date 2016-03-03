@@ -132,7 +132,7 @@
               });
             }]
           }, //simple functions appear first so data is loaded
-          helper.resolveFor('babylonjs', 'ngDialog', 'datatables')
+          helper.resolveFor('babylonjs', 'ngDialog', 'datatables','clipboard')
         )
         ,controller: 'genCmdJobsCtrl'
       })

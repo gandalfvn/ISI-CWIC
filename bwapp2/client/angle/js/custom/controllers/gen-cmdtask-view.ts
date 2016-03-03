@@ -20,12 +20,13 @@ interface iSceneInfo {
 
 enum eCmdPhase{VIEW, CMD, RATE, FIX};
 
-angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$reactive', 'ngDialog', 'toaster','APP_CONST' , 'AppUtils', 'deviceDetector', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $reactive, ngDialog, toaster, APP_CONST, apputils, devDetect){
+angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$translate', '$window', '$localStorage', '$timeout', '$reactive', 'ngDialog', 'toaster','APP_CONST' , 'AppUtils', '$filter', 'deviceDetector', function($rootScope, $scope, $state, $stateParams, $translate, $window, $localStorage, $timeout, $reactive, ngDialog, toaster, APP_CONST, apputils, $filter, devDetect){
   "use strict";
   $reactive(this).attach($scope);
   //subscription error for onStop;
   var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
+  console.warn(angular.module('angle'));
   $scope.date = (new Date()).getTime();
   $scope.opt = {bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '', viewModeCmd: '', viewIdx: -1, isBaseView: false};
 
@@ -97,38 +98,34 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
               if ($scope.submitter.valid)
                 $scope.opt.repvalid = $scope.submitter.valid;
               else $scope.opt.repvalid = 'tbd';
-              if ($scope.hitdata.cmdlist[$scope.workerId]) {
+              /*if ($scope.hitdata.cmdlist[$scope.workerId]) {
                 $rootScope.dataloaded = true;  //turn off loading so one can quickly get data.
                 /*$timeout(function () {
                   renderReport(0)
                 });*/
-              }
+              /*}
               else {
                 $rootScope.dataloaded = true;
                 toaster.pop('error', 'Missing annotations');
-              }
+              }*/
             }
-            else {//single item view
-              $scope.maxtask = $scope.taskdata.antcnt;
-              $scope.taskidx = 0;
-              if ($scope.hitdata && $scope.hitdata.cmdlist && $scope.hitdata.cmdlist[$scope.workerId]) {
-                //we have hit data lets fast forward to the correct item to work on
-                //assume that we fill notes from pass 1 then pass 2 etc. there are no holes in the list
-                var mynotes:miGenCmdJobs.iCmdEle[][] = $scope.hitdata.cmdlist[$scope.workerId];
-                _.each(mynotes, function (n) {
-                  n.forEach(function (i) {
-                    if (i && i.send && i.send.input.length) $scope.taskidx++;
-                  })
-                })
-              }
-              if ($scope.taskidx || $scope.submitter) $scope.opt.bAgreed = true;
-              renderTask($scope.taskidx);
-              if($scope.submitter) $scope.viewCmd($scope.taskidx-1);
-              $scope.logolist = [];
-              _.each($scope.curState.block_meta.blocks, function (b:iBlockMetaEle) {
-                $scope.logolist.push({name: b.name, imgref: "img/textures/logos/" + b.name.replace(/ /g, '') + '.png'});
-              });
+            $scope.maxtask = $scope.taskdata.antcnt;
+            $scope.taskidx = 0;
+            if ($scope.hitdata && $scope.hitdata.cmdlist && $scope.hitdata.cmdlist[$scope.workerId]) {
+              //we have hit data lets fast forward to the correct item to work on
+              //assume that we fill notes from pass 1 then pass 2 etc. there are no holes in the list
+              var mynotes:miGenCmdJobs.iCmdEle[] = $scope.hitdata.cmdlist[$scope.workerId];
+              _.each(mynotes, function (i) {
+                if (i && i.send && i.send.input.length) $scope.taskidx++;
+              })
             }
+            if ($scope.taskidx || $scope.submitter) $scope.opt.bAgreed = true;
+            renderTask($scope.taskidx);
+            if($scope.submitter) $scope.viewCmd($scope.taskidx-1);
+            $scope.logolist = [];
+            _.each($scope.curState.block_meta.blocks, function (b:iBlockMetaEle) {
+              $scope.logolist.push({name: b.name, imgref: "img/textures/logos/" + b.name.replace(/ /g, '') + '.png'});
+            });
             /*Meteor.call('mturkReviewableHITs', {hid: $scope.hitId},  function(err, resp){
              console.warn(err,resp);
              })*/
@@ -167,18 +164,16 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   var renderTask = function(tidx:number){
     if($scope.taskidx != 0) $scope.isOpenDir = false;
     else $scope.isOpenDir = true;
-    //convert to actual index
-    var idx:number = 0; //always the first entry for cmds as there is only 1 state the initial state
     //create the annotations
     if($scope.hitdata){
       if(!$scope.hitdata.cmdlist) $scope.hitdata.cmdlist = {};
       if(!$scope.hitdata.cmdlist[$scope.workerId]) $scope.hitdata.cmdlist[$scope.workerId] = {};
-      if(!$scope.hitdata.cmdlist[$scope.workerId][idx]){
-        $scope.hitdata.cmdlist[$scope.workerId][idx] = [];
+      if(!$scope.hitdata.cmdlist[$scope.workerId]){
+        $scope.hitdata.cmdlist[$scope.workerId] = [];
         for(var i =0; i < $scope.taskdata.antcnt; i++)
-          $scope.hitdata.cmdlist[$scope.workerId][idx].push(null);
+          $scope.hitdata.cmdlist[$scope.workerId].push(null);
       }
-      $scope.cmdlist = $scope.hitdata.cmdlist[$scope.workerId][idx];
+      $scope.cmdlist = $scope.hitdata.cmdlist[$scope.workerId];
     }
     else{//only an example no HIT id - should be no notes
       $scope.cmdlist = null;
@@ -337,7 +332,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
       if($scope.hitId){
         //error check length
         var myWords:string[] = command.replace(/ +/g,' ').split(' ');
-        if(myWords.length < 4){
+        if(myWords.length < 3){
           toaster.pop('error', 'Not enough words used in description');
           $rootScope.dataloaded = true;
           return;
@@ -353,6 +348,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
               if (ret.error) return $scope.$apply(function () {
                 toaster.pop('error', ret.error)
               });
+              console.warn(ret);
               if (ret.result) {
                 var cmdoutput:miGenCmdJobs.iCmdSerial = ret.result;
                 if(cmdoutput && !cmdoutput.error){
@@ -567,6 +563,15 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
     })
   };
   
+  $scope.emailLogin = function(email:string){
+    if(email.length>0){
+      var emailenc:string = $filter('uriCompEnc')(email); //encodeURIComponent(email).replace(/\./g,'%2E'); //encode @ and also . so that mongo doesn't screw things up
+      var stateGo = apputils.stateGo($state);
+      stateGo('gencmdtask', {taskId: $scope.taskId, assignmentId: $scope.assignmentId, hitId: $scope.hitId, workerId: emailenc})
+    }
+  };
+
+  //todo: remove old functions
   $scope.updateReport = function(idx: number, form: angular.IFormController){
     var setdata:{[x: string]:any} = {};
     setdata['cmdlist.'+$scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];

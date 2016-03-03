@@ -18,7 +18,9 @@
             'babylonjs':          [
               'vendor/babylonjs/babylon.2.2.js',
               'vendor/babylonjs/Oimo.js',
-              'vendor/handjs/hand.js']
+              'vendor/handjs/hand.js'],
+            'clipboard':          [
+              'vendor/clipboard/dist/clipboard.min.js']
           },
           // Angular based script (use the right module name)
           modules: [
@@ -52,6 +54,10 @@
               'vendor/ng-device-detector/ng-device-detector.min.js',
               'vendor/re-tree/re-tree.min.js'
             ]},
+            /*{name: 'ngClipboard',                 files: [
+              'vendor/clipboard/dist/clipboard.js',
+              'vendor/ngclipboard/dist/ngclipboard.js'
+            ]},*/
           ]
         })
         ;
