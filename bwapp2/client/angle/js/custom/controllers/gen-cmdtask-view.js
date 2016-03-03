@@ -570,32 +570,6 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                 stateGo('gencmdtask', { taskId: $scope.taskId, assignmentId: $scope.assignmentId, hitId: $scope.hitId, workerId: emailenc });
             }
         };
-        //todo: remove old functions
-        $scope.updateReport = function (idx, form) {
-            var setdata = {};
-            setdata['cmdlist.' + $scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];
-            GenCmdJobs.update({ _id: $scope.hitdata._id }, {
-                $set: setdata
-            }, function (err, ret) {
-                if (err)
-                    return toaster.pop('error', err.reason);
-                form.$setPristine();
-            });
-        };
-        $scope.validateReport = function (opt) {
-            var subidx = _.findIndex($scope.hitdata.submitted, function (v) { return v.name == $scope.workerId; });
-            if (subidx > -1) {
-                $scope.submitter.valid = opt;
-                var setdata = {};
-                setdata['submitted.' + subidx] = $scope.submitter;
-                GenCmdJobs.update({ _id: $scope.hitdata._id }, {
-                    $set: setdata
-                }, function (err, ret) {
-                    if (err)
-                        return toaster.pop('error', err.reason);
-                });
-            }
-        };
         $scope.dlScene = function () {
             var content = JSON.stringify($scope.curState, null, 2);
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
@@ -611,6 +585,31 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             var uriContent = "data:application/octet-stream," + encodeURIComponent(content);
             apputils.saveAs(uriContent, 'bw_notes_' + $scope.hitdata.HITId + '.json'); //+'_'+$scope.workerId+'.json');
         };
+        //todo: remove old functions
+        /*$scope.updateReport = function(idx: number, form: angular.IFormController){
+          var setdata:{[x: string]:any} = {};
+          setdata['cmdlist.'+$scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];
+          GenCmdJobs.update({_id: $scope.hitdata._id}, {
+            $set: setdata
+          }, function(err, ret){
+            if(err) return toaster.pop('error', err.reason);
+            form.$setPristine();
+          });
+        };
+      
+        $scope.validateReport = function(opt: string){
+          var subidx:number = _.findIndex<miGenCmdJobs.iSubmitEle>($scope.hitdata.submitted, function(v:miGenCmdJobs.iSubmitEle){return v.name == $scope.workerId});
+          if(subidx>-1) {
+            $scope.submitter.valid = opt;
+            var setdata:{[x: string]:any} = {};
+            setdata['submitted.'+subidx] = $scope.submitter;
+            GenCmdJobs.update({_id: $scope.hitdata._id}, {
+              $set: setdata
+            }, function(err, ret){
+              if(err) return toaster.pop('error', err.reason);
+            });
+          }
+        };*/
         // Start by calling the createScene function that you just finished creating
         var myengine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
         myengine.enableUI = false;

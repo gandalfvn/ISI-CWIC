@@ -571,8 +571,26 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
     }
   };
 
+  $scope.dlScene = function(){
+    var content:string = JSON.stringify($scope.curState, null, 2);
+    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
+    apputils.saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
+  };
+
+  $scope.dlStates = function(){
+    var content:string = JSON.stringify($scope.taskdata, null, 2);
+    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
+    apputils.saveAs(uriContent, 'bw_states_'+$scope.taskdata._id+'.json');
+  };
+
+  $scope.dlNotes = function(){
+    var content:string = JSON.stringify($scope.hitdata, null, 2);
+    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
+    apputils.saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
+  };
+
   //todo: remove old functions
-  $scope.updateReport = function(idx: number, form: angular.IFormController){
+  /*$scope.updateReport = function(idx: number, form: angular.IFormController){
     var setdata:{[x: string]:any} = {};
     setdata['cmdlist.'+$scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];
     GenCmdJobs.update({_id: $scope.hitdata._id}, {
@@ -595,25 +613,8 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         if(err) return toaster.pop('error', err.reason);
       });
     }
-  };
+  };*/
   
-  $scope.dlScene = function(){
-    var content:string = JSON.stringify($scope.curState, null, 2);
-    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    apputils.saveAs(uriContent, 'bw_scene_'+$scope.curState._id+'.json');
-  };
-
-  $scope.dlStates = function(){
-    var content:string = JSON.stringify($scope.taskdata, null, 2);
-    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    apputils.saveAs(uriContent, 'bw_states_'+$scope.taskdata._id+'.json');
-  };
-
-  $scope.dlNotes = function(){
-    var content:string = JSON.stringify($scope.hitdata, null, 2);
-    var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
-    apputils.saveAs(uriContent, 'bw_notes_'+$scope.hitdata.HITId+'.json'); //+'_'+$scope.workerId+'.json');
-  };
 
   // Start by calling the createScene function that you just finished creating
   var myengine:miGen3DEngine.cUI3DEngine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
