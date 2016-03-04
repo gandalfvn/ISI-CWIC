@@ -20,7 +20,9 @@
               'vendor/babylonjs/Oimo.js',
               'vendor/handjs/hand.js'],
             'clipboard':          [
-              'vendor/clipboard/dist/clipboard.min.js']
+              'vendor/clipboard/dist/clipboard.min.js'],
+            'levenshtein':          [
+              'vendor/fast-levenshtein/levenshtein.min.js']
           },
           // Angular based script (use the right module name)
           modules: [

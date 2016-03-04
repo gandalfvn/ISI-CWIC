@@ -26,7 +26,6 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   //subscription error for onStop;
   var subErr:(err:Error)=>void = function(err:Error){if(err) console.warn("err:", arguments, err); return;};
 
-  console.warn(angular.module('angle'));
   $scope.date = (new Date()).getTime();
   $scope.opt = {bAgreed: true, repvalidlist: [mGenCmdJobs.eRepValid[0], mGenCmdJobs.eRepValid[1], mGenCmdJobs.eRepValid[2]], repvalid: '', isValidBrowser: (devDetect.browser.toLowerCase() === 'chrome'), command: '', viewModeCmd: '', viewIdx: -1, isBaseView: false};
 
@@ -337,6 +336,23 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
           $rootScope.dataloaded = true;
           return;
         }
+        var isValid:boolean = true;
+        var cmdlc:string = command.toLowerCase();
+        var l:number = Object.keys($scope.cmdlist).length; //get # of keys then length because there are no sparse numbers in associative array num index
+        for(var i = 0; i < l;i++){
+          var ldist:number = levenshtein.get(cmdlc, $scope.cmdlist[i].send.input.toLowerCase());
+          console.warn(ldist);
+          if(ldist < 2){
+            isValid = false;
+            i = l;
+          }
+        }
+        if(!isValid){
+          toaster.pop('error', 'Command is too similiar to other commands');
+          $rootScope.dataloaded = true;
+          return;
+        }
+        
         var cmdinput:miGenCmdJobs.iCmdSerial = serialState(command);
         if(cmdinput){
           //submit to AI system simulate wait
@@ -348,7 +364,6 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
               if (ret.error) return $scope.$apply(function () {
                 toaster.pop('error', ret.error)
               });
-              console.warn(ret);
               if (ret.result) {
                 var cmdoutput:miGenCmdJobs.iCmdSerial = ret.result;
                 if(cmdoutput && !cmdoutput.error){
@@ -616,6 +631,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   };*/
   
 
+  var levenshtein = $window.Levenshtein;
   // Start by calling the createScene function that you just finished creating
   var myengine:miGen3DEngine.cUI3DEngine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
   myengine.enableUI = false;

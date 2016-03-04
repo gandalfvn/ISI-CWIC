@@ -179,7 +179,7 @@
         url: '/command?taskId&assignmentId&hitId&turkSubmitTo&workerId&report',
         title: 'Command & Response Task',
         templateUrl: helper.basepath('gencmdtask.html'),
-        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect', 'babylonjs'),
+        resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect', 'babylonjs', 'levenshtein'),
         controller: 'genCmdTaskCtrl'
       })
       .state('app.tasks', {
