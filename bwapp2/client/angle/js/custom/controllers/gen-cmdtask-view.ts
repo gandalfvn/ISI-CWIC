@@ -348,7 +348,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
           }
         }
         if(!isValid){
-          toaster.pop('error', 'Command is too similiar to other commands');
+          toaster.pop('error', 'Command is too similiar to previous commands');
           $rootScope.dataloaded = true;
           return;
         }
