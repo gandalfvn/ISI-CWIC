@@ -44,7 +44,7 @@ Meteor.methods({
     else{
       var cmdPost = Async.runSync(function (done) {
         var rest:any = Meteor['npmRequire']('restler');
-        rest.postJson('http://wbtestserver.appspot.com/query', data).on('complete', function (dat, res) {
+        rest.postJson('http://54.173.185.25:8080/query', data).on('complete', function (dat, res) {
           var retdat:miGenCmdJobs.iCmdSerial = {world: null, error: null, version: 0, type: mGenCmdJobs.eCmdType.AI};
           _.each(validRetKeys, function(k){
             retdat[k] = dat[k];
