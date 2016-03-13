@@ -34,6 +34,7 @@ Meteor.methods({
                 type: mGenCmdJobs.eCmdType.AI,
                 version: 1
             };
+            //hackretdat.error = "ERROR here!!";
             var cmdPost = Async.runSync(function (done) {
                 done(null, hackretdat);
             });

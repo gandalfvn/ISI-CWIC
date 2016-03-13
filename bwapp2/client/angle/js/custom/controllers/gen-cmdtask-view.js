@@ -373,8 +373,12 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                                             });
                                         });
                                     }
-                                    else
-                                        toaster.pop('error', cmdoutput.error);
+                                    else {
+                                        $scope.$apply(function () {
+                                            $rootScope.dataloaded = true;
+                                            toaster.pop('error', cmdoutput.error);
+                                        });
+                                    }
                                 }
                                 else
                                     console.warn(err, ret);

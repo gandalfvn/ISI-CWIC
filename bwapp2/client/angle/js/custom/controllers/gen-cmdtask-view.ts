@@ -375,7 +375,12 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                       $scope.cmdphase = eCmdPhase.RATE;
                     });
                   })
-                } else toaster.pop('error', cmdoutput.error);
+                } else {
+                  $scope.$apply(()=>{
+                    $rootScope.dataloaded = true;
+                    toaster.pop('error', cmdoutput.error);
+                  })
+                }
               }
               else console.warn(err, ret);
             })
