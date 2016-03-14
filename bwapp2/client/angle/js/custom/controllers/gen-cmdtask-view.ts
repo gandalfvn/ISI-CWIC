@@ -187,7 +187,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         //show the previous command state
         states = convCmdToState($scope.cmdlist[cidx].send, $scope.cmdlist[cidx].fix);
       }
-      else if($scope.cmdlist[cidx].recv && $scope.cmdlist[cidx].recv.world.length){
+      else if($scope.cmdlist[cidx].recv && $scope.cmdlist[cidx].recv.world && $scope.cmdlist[cidx].recv.world.length){
         //show the previous command state
         states = convCmdToState($scope.cmdlist[cidx].send, $scope.cmdlist[cidx].recv);
       }
@@ -286,14 +286,13 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
   };*/
 
   $scope.remCmd = function(idx:number){
-    console.warn('remcmd ', $scope.taskidx, idx);
     $scope.taskidx = idx;
-    $scope.cmdlist[idx] = null;
+    delete $scope.cmdlist[idx]; //remove item from list
     delete $scope.hitdata.timed[$scope.workerId][idx];//erase previous time
     var setdata:{[x: string]:any} = {};
     setdata['cmdlist.'+$scope.workerId] = $scope.hitdata.cmdlist[$scope.workerId];
     setdata['timed.'+$scope.workerId] = $scope.hitdata.timed[$scope.workerId];
-    console.warn('setdata', setdata);
+    //console.warn('setdata', setdata);
     GenCmdJobs.update({_id: $scope.hitdata._id}, {
       $set: setdata
     }, function(err, ret) {
@@ -340,11 +339,12 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         var cmdlc:string = command.toLowerCase();
         var l:number = Object.keys($scope.cmdlist).length; //get # of keys then length because there are no sparse numbers in associative array num index
         for(var i = 0; i < l;i++){
-          var ldist:number = levenshtein.get(cmdlc, $scope.cmdlist[i].send.input.toLowerCase());
-          console.warn(ldist);
-          if(ldist < 2){
-            isValid = false;
-            i = l;
+          if($scope.cmdlist[i]){
+            var ldist:number = levenshtein.get(cmdlc, $scope.cmdlist[i].send.input.toLowerCase());
+            if(ldist < 2){
+              isValid = false;
+              i = l;
+            }
           }
         }
         if(!isValid){
@@ -490,7 +490,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             submitted: $scope.submitter
           }
         }, function (err, ret) {
-          console.warn('hit', err, ret);
+          //console.warn('hit', err, ret);
           if (err) return toaster.pop('error', err);
           $scope.$apply(function () {
             toaster.pop('info', 'HIT Task Submitted')

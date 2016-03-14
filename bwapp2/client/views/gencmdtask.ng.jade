@@ -136,7 +136,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         div(ng-repeat='mycmd in cmdlist track by $index', ng-show='$index < taskidx')
           .col-md-9
             .form-inline
-              button.btn.btn-xs.btn-danger(ng-show='!submitter && $index == taskidx-1', style='margin-right:8px;margin-bottom:10px', ng-click='remCmd($index)')
+              button.btn.btn-xs.btn-danger(ng-show='!submitter && $index == taskidx-1 && cmdphase == 1', style='margin-right:8px;margin-bottom:10px', ng-click='remCmd($index)')
                 i.fa.fa-remove
               .form-control.mb(style='background-color:#edf1f2' ng-click='viewCmd($index)') 
                 i.fa.fa-eye(ng-show='opt.viewIdx != $index')

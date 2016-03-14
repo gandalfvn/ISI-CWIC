@@ -51,6 +51,7 @@ Meteor.methods({
             retdat[k] = dat[k];
           });
           if(retdat.error && retdat.error.toLowerCase() == "null") retdat.error = null;
+          if(retdat.world == undefined && retdat.error == undefined) retdat.error = 'AI returned undefined';
           done(null, retdat);
         });
       });
