@@ -167,6 +167,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         $scope.curState.clear();
         $scope.curState.copy(myframe);
         $scope.utterance = $scope.curState.utterance.join(' ').toUpperCase();
+        setDecorVal($scope.curState.block_meta.decoration);
         myengine.createObjects($scope.curState.block_meta.blocks);
         showFrame({block_state: myframe.block_state});
         $scope.$apply(()=>{$rootScope.dataloaded = true});
