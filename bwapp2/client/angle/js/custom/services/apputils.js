@@ -103,7 +103,7 @@ angular.module('angle').service('AppUtils', [function () {
                 };
                 ;
                 return cDataReadyRef;
-            })(),
+            }()),
             cCurrentState: (function () {
                 function cCurrentStateDef(c) {
                     if (c)
@@ -127,7 +127,7 @@ angular.module('angle').service('AppUtils', [function () {
                 ;
                 cCurrentStateDef.l = ['type', 'block_meta', 'block_states', 'block_state', 'utterance', '_id', 'public', 'created', 'creator', 'name'];
                 return cCurrentStateDef;
-            })(),
+            }()),
             //check if the associative array contains ONLY the valid keys
             isValidKeys: function (assocarray, validKeys) {
                 var fcheck = _.difference(_.keys(assocarray), validKeys);

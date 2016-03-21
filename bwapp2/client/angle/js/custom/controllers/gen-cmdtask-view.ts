@@ -386,6 +386,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             })
           }, 1000);
         }
+        else $rootScope.dataloaded = true;
       }
       else toaster.pop('error', 'Missing HIT Id');
     }

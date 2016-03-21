@@ -415,7 +415,7 @@ var miGen3DEngine;
         };
         ;
         return c3DEngine;
-    })();
+    }());
     miGen3DEngine.c3DEngine = c3DEngine;
     var cUI3DEngine = (function (_super) {
         __extends(cUI3DEngine, _super);
@@ -795,7 +795,7 @@ var miGen3DEngine;
             });
         };
         return cUI3DEngine;
-    })(c3DEngine);
+    }(c3DEngine));
     miGen3DEngine.cUI3DEngine = cUI3DEngine;
 })(miGen3DEngine || (miGen3DEngine = {}));
 mGen3DEngine = miGen3DEngine;

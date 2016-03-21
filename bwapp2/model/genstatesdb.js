@@ -10,6 +10,6 @@ cBlockDecor = (function () {
     ciBlockDecor.logo = 'logo';
     ciBlockDecor.blank = 'blank';
     return ciBlockDecor;
-})();
+}());
 GenStates = new Mongo.Collection('genstates');
 //# sourceMappingURL=genstatesdb.js.map
