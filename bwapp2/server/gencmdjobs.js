@@ -58,15 +58,13 @@ Meteor.publish('gencmdjobs', function (params) {
         switch (params.type) {
             case 'submitted':
                 return GenCmdJobs.find({ $and: [{ HITId: { $exists: true } }, { submitted: { $exists: true } }] }, { fields: { tid: 1, submitted: 1 }, sort: { 'submitted.time': -1 } });
-                break;
             case 'list':
                 return GenCmdJobs.find({}, { sort: { 'created': -1 }, skip: params['pageSize'] * params['pageCur'], limit: params['pageSize'] });
-                /*
-                 return GenCmdJobs.find(
-                 {HITId: {$exists: true}}
-                 , {fields: {tid: 1, jid: 1, 'submitted.name': 1, 'submitted.valid': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1}, sort: {'created': -1}, skip: params['pageSize'] * params['pageCur'], limit: params['pageSize']}
-                 );*/
-                break;
+            /*
+             return GenCmdJobs.find(
+             {HITId: {$exists: true}}
+             , {fields: {tid: 1, jid: 1, 'submitted.name': 1, 'submitted.valid': 1, 'submitted.time': 1, 'hitcontent.MaxAssignments': 1, 'hitcontent.Reward': 1, 'created': 1, 'islive': 1}, sort: {'created': -1}, skip: params['pageSize'] * params['pageCur'], limit: params['pageSize']}
+             );*/
             case 'item':
                 if (Array.isArray(params['keys'])) {
                     return GenCmdJobs.find({ _id: { $in: params['keys'] } });
