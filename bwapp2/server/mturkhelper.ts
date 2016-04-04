@@ -7,6 +7,7 @@
 /// <reference path="../model/gencmdjobsdb.ts" />
 /// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
+/// <reference path="./typings/node/node.d.ts" />
 /// <reference path="./typings/meteor-typescript-libs/definitions/meteorhacks-npm.d.ts" />
 
 interface iHITContent{
@@ -49,7 +50,7 @@ interface iReviewableHITs{
 Meteor.methods({
   mturkCreateHIT: function(p:iTurkCreateParam){
     console.warn(p);
-    var mturk = Meteor['npmRequire']('mturk-api');
+    var mturk:any = require('mturk-api');
     var antpriceact:number[] = [0.5, 1.0, 1.5];
     var anttimeact:number[] = [6, 6.5, 7];
     var fullpriceact:number[] = [5.0, 10.0, 15.0];
@@ -157,7 +158,7 @@ Meteor.methods({
   },
   
   mturkBlockTurker: function(p:iBlockTurker){
-    var mturk = Meteor['npmRequire']('mturk-api');
+    var mturk:any = require('mturk-api');
 
     var turk = Async.runSync(function(done){
       var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);
@@ -177,7 +178,7 @@ Meteor.methods({
   },
 
   mturkReviewHITs: function(p:iReviewableHITs){
-    var mturk = Meteor['npmRequire']('mturk-api');
+    var mturk:any = require('mturk-api');
 
     var turk = Async.runSync(function(done){
       var mturkconf:iMTurk = <iMTurk>_.extend({}, serverconfig.mturk);

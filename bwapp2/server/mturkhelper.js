@@ -7,11 +7,12 @@
 /// <reference path="../model/gencmdjobsdb.ts" />
 /// <reference path="./typings/lodash/lodash.d.ts" />
 /// <reference path="./typings/meteor/meteor.d.ts" />
+/// <reference path="./typings/node/node.d.ts" />
 /// <reference path="./typings/meteor-typescript-libs/definitions/meteorhacks-npm.d.ts" />
 Meteor.methods({
     mturkCreateHIT: function (p) {
         console.warn(p);
-        var mturk = Meteor['npmRequire']('mturk-api');
+        var mturk = require('mturk-api');
         var antpriceact = [0.5, 1.0, 1.5];
         var anttimeact = [6, 6.5, 7];
         var fullpriceact = [5.0, 10.0, 15.0];
@@ -116,7 +117,7 @@ Meteor.methods({
         return turk;
     },
     mturkBlockTurker: function (p) {
-        var mturk = Meteor['npmRequire']('mturk-api');
+        var mturk = require('mturk-api');
         var turk = Async.runSync(function (done) {
             var mturkconf = _.extend({}, serverconfig.mturk);
             mturkconf.sandbox = false; //always operate in live env.
@@ -133,7 +134,7 @@ Meteor.methods({
         return turk;
     },
     mturkReviewHITs: function (p) {
-        var mturk = Meteor['npmRequire']('mturk-api');
+        var mturk = require('mturk-api');
         var turk = Async.runSync(function (done) {
             var mturkconf = _.extend({}, serverconfig.mturk);
             mturkconf.sandbox = false; //always operate in live env.

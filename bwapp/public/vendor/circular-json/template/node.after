@@ -1,3 +1,0 @@
-
-this.stringify = stringifyRecursion;
-this.parse = parseRecursion;
