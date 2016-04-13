@@ -69,7 +69,7 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
     myengine.resetWorld();
   };
   
-  var showFrame = function (state:iBlockStates, cb?:()=>void) {
+  /*var showFrame = function (state:iBlockStates, cb?:()=>void) {
     $scope.resetWorld();
     setTimeout(function () {
       if (state.block_state) {
@@ -146,7 +146,7 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
         $scope.curState.clear();
         $scope.curState.copy(myframe);
         myengine.createObjects($scope.curState.block_meta.blocks);
-        showFrame({block_state: myframe.block_state});
+        myengine.updateScene({block_state: myframe.block_state});
         $scope.$apply(()=>{$rootScope.dataloaded = true});
       },
       onStop: subErr
@@ -322,7 +322,7 @@ angular.module('app.generate').controller('genCmdExpCtrl', ['$rootScope', '$scop
               $scope.isgen = true;
             });
 
-            showFrame({block_state: $scope.curState.block_state}, function () {
+            myengine.updateScene({block_state: $scope.curState.block_state}, function () {
               //wait for steady state
               checkFnSS = setInterval(function () {
                 if (myengine.isSteadyState) {

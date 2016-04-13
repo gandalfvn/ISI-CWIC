@@ -338,13 +338,13 @@ var miGen3DEngine;
             this.cubeslist.length = 0;
             this.cubesdata = {};
             this.numcubes = 0;
-            var p = -2;
+            var p = -0.5;
             var i = 0;
             var z = 0;
-            var zpos = [0, 1, 2];
+            var zpos = [0, 0.3, 0.6, 0.9];
             for (var j = 0; j < blocks.length; j++) {
                 this.createCube({
-                    pos: new BABYLON.Vector3((p + i), blocks[j].shape.shape_params.side_length, zpos[z]),
+                    pos: new BABYLON.Vector3((p + i * 0.3), Number(blocks[j].shape.shape_params.side_length), zpos[z]),
                     scene: this.scene,
                     block: blocks[j],
                     isVisible: true
@@ -365,13 +365,13 @@ var miGen3DEngine;
         ;
         c3DEngine.prototype.resetWorld = function () {
             var c;
-            var p = -2, i = 0, z = 0;
+            var p = -0.5, i = 0, z = 0;
             var zpos = [7, 8, 9, 10];
             for (var j = 0; j < this.cubeslist.length; j++) {
                 c = this.cubeslist[j];
                 if (this.hasPhysics)
                     this.oimo.unregisterMesh(c); //stop physics
-                c.position = new BABYLON.Vector3((p + i), c.boxsize, zpos[z]);
+                c.position = new BABYLON.Vector3((p + i * 0.3), c.boxsize, zpos[z]);
                 c.rotationQuaternion = BABYLON.Quaternion.Identity().clone();
                 c.isVisible = true;
                 if (i > 3) {
@@ -383,6 +383,34 @@ var miGen3DEngine;
             }
             this.camera.setPosition(new BABYLON.Vector3(0, this.fieldsize * 0.95, -(this.fieldsize * 0.8)));
         };
+        c3DEngine.prototype.updateScene = function (state, cb) {
+            var self = this;
+            self.resetWorld();
+            setTimeout(function () {
+                if (state.block_state) {
+                    state.block_state.forEach(function (frame) {
+                        var c = self.get3DCubeById(frame.id);
+                        c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
+                        if (frame.rotation)
+                            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
+                        c.isVisible = true;
+                        if (self.hasPhysics)
+                            c.setPhysicsState({
+                                impostor: BABYLON.PhysicsEngine.BoxImpostor,
+                                move: true,
+                                mass: 5,
+                                friction: self.fric,
+                                restitution: self.rest
+                            });
+                    });
+                }
+                else
+                    console.warn('error', 'Missing BLOCK_STATE');
+                if (cb)
+                    cb();
+            }, 100);
+        };
+        ;
         /**
          * Overlap check for src inside tgt mesh in the x z footprint
          * @param src
@@ -437,7 +465,12 @@ var miGen3DEngine;
             this.sceney = null;
             this.scenerot = null;
             this.rotxy = false;
-            this.enableUI = true;
+            this.opt = {
+                showGrid: false,
+                showImages: true,
+                showLogos: true,
+                enableUI: false
+            };
         }
         ;
         cUI3DEngine.prototype.getGroundPosition = function (evt) {
@@ -548,7 +581,7 @@ var miGen3DEngine;
             }
         };
         cUI3DEngine.prototype.onPointerDown = function (evt) {
-            if (evt.button !== 0 || !this.enableUI)
+            if (evt.button !== 0 || !this.opt.enableUI)
                 return;
             var self = this;
             // check if we are under a mesh
@@ -562,6 +595,7 @@ var miGen3DEngine;
                 //we clean up things first;
                 //onPointerUp();
                 self.currentMesh = pickInfo.pickedMesh;
+                //show axis debug info
                 if (self.showObjAxis) {
                     self.clickMesh(self.lastMesh, pickInfo.pickedMesh);
                     self.lastMesh = pickInfo.pickedMesh;
@@ -573,8 +607,10 @@ var miGen3DEngine;
                         self.camera.detachControl(self.canvas);
                     }, 0);
                 }
+                //remove the volume mesh
                 if (self.volumeMesh)
                     self.volumeMesh.dispose();
+                //create a new one
                 self.volumeMesh = self.createVolumeShadow(self.currentMesh, self.scene, {
                     isCollider: false,
                     isVisible: true,
@@ -605,8 +641,8 @@ var miGen3DEngine;
                         self.cubeslist.forEach(function (c) {
                             if (self.intersectMesh.intersectsMesh(c, true)) {
                                 /*console.warn('c', c);
-                                 console.warn('self.intersectMesh', self.intersectMesh);
-                                 console.warn('cpa', c.position, self.intersectMesh.position);*/
+                                console.warn('self.intersectMesh', self.intersectMesh);
+                                console.warn('cpa', c.position, self.intersectMesh.position);*/
                                 c.parent = self.intersectMesh;
                                 c.position = self.XformChildToParentRelPos(c, self.intersectMesh);
                                 //console.warn('cpb', c.position);

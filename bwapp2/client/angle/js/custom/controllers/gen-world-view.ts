@@ -53,12 +53,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       data: data
     });
   };
-
-  $scope.resetWorld = function () {
-    //resetworld 
-    myengine.resetWorld();
-  };
-
+  
   /**
    * Check for cube overlap and increase height based on in order cube creation so updates to mycube y is correct
    * @param mycube - current cube
@@ -341,7 +336,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       for (var i = 0; i < block_state.length; i++) {
         block_state[i].position = <any>cubeInWorld[block_state[i].id].position;
       }
-      showFrame({block_state: block_state}, function () {
+      myengine.updateScene({block_state: block_state}, function () {
         if (params.itr) {
           //this is a iterate state generation so lets save the info
           $scope.curcnt = params.itr + 1;
@@ -381,7 +376,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
    }, 100);
    };*/
 
-  var showFrame = function (state:iBlockStates, cb?:()=>void) {
+  /*var showFrame = function (state:iBlockStates, cb?:()=>void) {
     $scope.resetWorld();
     setTimeout(function () {
       if (state.block_state) {
@@ -405,7 +400,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       });
       if (cb) cb();
     }, 100);
-  };
+  };*/
 
   /*var findBy = function(type:string, key:string, collection:any){
    return _.find(collection, function(a){return key === a[type]});
@@ -577,7 +572,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     $scope.curState.public = true;
     $scope.curState.created = (new Date).getTime();
     $scope.curState.creator = $rootScope.currentUser._id;
-    showFrame({block_state: state}, function () {
+    myengine.updateScene({block_state: state}, function () {
       checkFnSS = setInterval(function () {
         if (myengine.isSteadyState) {
           clearInterval(checkFnSS);
@@ -629,6 +624,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     $scope.subscribe("genstates", ()=>{return [sid]}, {
       onReady: function (sub) {
         var myframe:iGenStates = GenStates.findOne({_id: sid});
+        console.warn(sid, myframe);
         if (!myframe) return toaster.pop('warn', 'Invalid State ID');
         //update the meta
         $scope.curitr = myframe.block_states.length - 1;
@@ -636,7 +632,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         $scope.curState.clear();
         $scope.curState.copy(myframe);
         myengine.createObjects($scope.curState.block_meta.blocks);
-        showFrame(myframe.block_states[$scope.curitr]);
+        myengine.updateScene(myframe.block_states[$scope.curitr]);
         function itrScreencap(idx, list, cb) {
           if (_.isUndefined(list[idx])) {
             $scope.$apply(()=>{$rootScope.dataloaded = true});
@@ -665,13 +661,21 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     var lenID:number = $('div').length;
     var eleDivID:string = 'rowdiv' + lenID; // Unique ID
     var retId:string = id + lenID;
-    var htmlout:string =
-      '<button onclick="angular.element(this).scope().cloneMove(' + i + ')" class="btn btn-xs btn-info"> Clone Move </button>' +
-      '    ' +
-      '<button onclick="angular.element(this).scope().getMove(' + i + ')" class="btn btn-xs btn-info"> Get JSON </button>' +
-      '    ' +
-      '<button onclick="angular.element(this).scope().delMove(' + i + ')" class="btn btn-xs btn-info"> Delete Move(s) </button>' +
-      '<div id="' + retId + '"></div>';
+    var htmlout:string = '';
+    if($scope.opt.enableUI){
+      htmlout =
+        '<button onclick="angular.element(this).scope().getMove(' + i + ')" class="btn btn-xs btn-info"> Get JSON </button>' +
+        '<div id="' + retId + '"></div>';
+    }
+    else{
+      htmlout =
+        '<button onclick="angular.element(this).scope().cloneMove(' + i + ')" class="btn btn-xs btn-info"> Clone Move </button>' +
+        '    ' +
+        '<button onclick="angular.element(this).scope().getMove(' + i + ')" class="btn btn-xs btn-info"> Get JSON </button>' +
+        '    ' +
+        '<button onclick="angular.element(this).scope().delMove(' + i + ')" class="btn btn-xs btn-info"> Delete Move(s) </button>' +
+        '<div id="' + retId + '"></div>';
+    }
     var attachTo:string = '#galleryarea';
     $('<div>').attr({
       id: eleDivID
@@ -728,8 +732,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     //must use function to apply to scope
     $scope.impFilename = null;
     $scope.enableImpSave = false;
-    $scope.curState.clear();
-    $scope.resetWorld();
+    $scope.clearMeta();
   };
 
   $scope.saveImport = function (savename:string) {
@@ -751,27 +754,32 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       }
     }
     $scope.curState.name = savename;
-    console.warn('saveImport');
-    var params:miGen3DEngine.iMoveItr = {itr: 0, startMove: null, cubesused: cubesused};
-    setTimeout(function () {
-      waitForSSAndSave(params,
-        function (err:any, savedsid:string) {
-          console.warn('saveimport wait for');
-          if (err) toaster.pop('warn', err);
-          if (savedsid) {
-            $scope.curitr = $scope.curState.stateitr;
-            $scope.curcnt = 0;
-            updateTableStateParams();
-            $state.transitionTo('app.genworld', {sid: savedsid}, {notify: false});
-          }
-          $rootScope.dataloaded = true;
-        });
-    }, 400);
+    if($scope.curState.created && $scope.curState.creator && !_.isUndefined($scope.curState.public)){
+      console.warn('saveImport');
+      var params:miGen3DEngine.iMoveItr = {itr: 0, startMove: null, cubesused: cubesused};
+      setTimeout(function () {
+        waitForSSAndSave(params,
+          function (err:any, savedsid:string) {
+            console.warn('saveimport wait for');
+            if (err) toaster.pop('warn', err);
+            if (savedsid) {
+              $scope.curitr = $scope.curState.stateitr;
+              $scope.curcnt = 0;
+              updateTableStateParams();
+              $state.transitionTo('app.genworld', {sid: savedsid}, {notify: false});
+            }
+            $rootScope.dataloaded = true;
+          });
+      }, 400);
+    }
+    else toaster.pop('error', 'Missing Creator Information')
   };
 
   $scope.clearMeta = function () {
     $('#galleryarea').empty();
     $scope.curState.clear();
+    $scope.opt.enableUI = false;
+    myengine.resetWorld();
     $state.transitionTo('app.genworld', {}, {notify: false});
   };
 
@@ -835,7 +843,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
           });
 
           var block_state:iBlockState[] = mungeBlockState(filedata.block_state);
-          showFrame({block_state: block_state}, function () {
+          myengine.updateScene({block_state: block_state}, function () {
             $scope.$apply(function () {
               if (filedata.name) $scope.impFilename = filedata.name;
               else $scope.impFilename = $scope.statefilename[0].name.toLowerCase().replace(/\.json/g, '');
@@ -921,7 +929,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
               });
               return cb();
             }
-            showFrame(block_states[idx], function () {
+            myengine.updateScene(block_states[idx], function () {
               //wait for steady state
               checkFnSS = setInterval(function () {
                 if (myengine.isSteadyState) {
@@ -942,7 +950,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 }
               }, 100);
             });
-          }
+          };
 
           itrFrame(0, $scope.curState.block_states, function () {
             console.warn($scope.curState.block_states);
@@ -1052,7 +1060,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
 
     $('#galleryarea').empty();
     myengine.createObjects($scope.curState.block_meta.blocks);
-    showFrame(prevState.block_states[idx], function () {
+    myengine.updateScene(prevState.block_states[idx], function () {
       $scope.$apply(function () {
         if (prevState.name) $scope.impFilename = prevState.name;
         $scope.enableImpSave = true;
@@ -1075,17 +1083,17 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         var pos = '', rot = '';
         _.each(s.position, function (v) {
           if (pos.length) pos += ',';
-          pos += v;
+          pos += fixedNumber(v);
         });
         _.each(s.rotation, function (v) {
           if (rot.length) rot += ',';
-          rot += v;
+          rot += fixedNumber(v);
         });
         newblock_state.push({id: s.id, position: pos, rotation: rot})
       }
       tempframe.block_states.push({block_state: newblock_state});
     }
-    var content:string = JSON.stringify(tempframe, null, 2);
+    var content:string = JSON.stringify(angular.copy(tempframe), null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
     apputils.saveAs(uriContent, 'bw_scene_' + $scope.curState._id + '.json');
   };
@@ -1101,15 +1109,15 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       var pos = '', rot = '';
       _.each(s.position, function (v) {
         if (pos.length) pos += ',';
-        pos += v;
+        pos += fixedNumber(v);
       });
       _.each(s.rotation, function (v) {
         if (rot.length) rot += ',';
-        rot += v;
+        rot += fixedNumber(v);
       });
       tempframe.block_state.push({id: s.id, position: pos, rotation: rot})
     }
-    var content:string = JSON.stringify(tempframe, null, 2);
+    var content:string = JSON.stringify(angular.copy(tempframe), null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
     apputils.saveAs(uriContent, 'bw_state_' + $scope.curState._id + '_' + idx + '.json');
   };
@@ -1131,12 +1139,144 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     else $scope.$apply(()=>{toaster.pop('info', 'Please SAVE layout before deleting moves')});
   };
 
-  // Start by calling the createScene function that you just finished creating
-  var myengine:miGen3DEngine.c3DEngine = new mGen3DEngine.c3DEngine(APP_CONST.fieldsize);
+  $scope.setCreateMode = function(){
+    $scope.opt.enableUI = true;
+    $scope.sceneExists = false;
+    $scope.createStateIdx = 0;
+    $scope.curState.block_states = mungeBlockStates(defBlockState.block_states);
+    $scope.curState.block_meta = angular.copy(defBlockState.block_meta);
+    $scope.enabledCubes.length = 0;
+    _.each($scope.curState.block_meta.blocks, function(bl:iBlockMetaEle){
+      $scope.enabledCubes.push({id: bl.id, name: bl.name});
+    });
+    myengine.createObjects($scope.curState.block_meta.blocks);
+    myengine.updateScene($scope.curState.block_states[0]);
+  };
 
+  /**save state in create mode
+   * by saving position and screencap
+   */
+  $scope.saveState = function(){
+    //wait for steady state
+    checkFnSS = setInterval(function () {
+      if (myengine.isSteadyState) {
+        clearInterval(checkFnSS);
+        //there should be already a view since we render one
+        var block_states = $scope.curState.block_states[$scope.createStateIdx];
+        var block_state = block_states.block_state;
+        //fill the block state for this frame with information
+        $scope.curState.block_meta.blocks.forEach(function (bl) {
+          var c:miGen3DEngine.iMeshMod = myengine.get3DCubeById(bl.id);
+          var bs:iBlockState ={id: bl.id, position: {x: fixedNumber(c.position.x), y: fixedNumber(c.position.y), z: fixedNumber(c.position.z)}};
+          if(c.rotationQuaternion)
+            bs.rotation = {x: fixedNumber(c.rotationQuaternion.x), y: fixedNumber(c.rotationQuaternion.y), z: fixedNumber(c.rotationQuaternion.z), w: fixedNumber(c.rotationQuaternion.w)};
+          block_state.push(bs);
+        });
+
+        var sc = BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
+          width: myengine.canvas.width, height: myengine.canvas.height
+        }, function (b64i:string) {
+          var b64img:string = LZString.compressToUTF16(b64i);
+          /*console.warn('len', b64i.length, b64img.length);
+           console.warn('b64i', b64i);
+           console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
+          block_states.screencap = b64img;
+          block_states.created = (new Date).getTime();
+          var attachid:string = createButtons('stateimg', $scope.createStateIdx);
+          showImage(b64img, 'Move #: ' + $scope.createStateIdx, attachid);
+        });
+        $scope.createStateIdx++;
+        //now copy the current layout to the next view incase we want to undo etc.
+        if(!$scope.curState.block_states[$scope.createStateIdx]){
+          //empty block states place holder
+          var blockstatesph:iBlockStates ={created: 0, screencapid: '', block_state:[]};
+          $scope.curState.block_states.push(blockstatesph);
+        }
+        var block_states = $scope.curState.block_states[$scope.createStateIdx];
+        //make a copy of the previous states into this for reset if needed
+        block_states.block_state = angular.copy(block_state);
+        $scope.$apply(()=>{
+          $scope.sceneExists = true;
+        })
+      }
+    }, 100);
+  };
+  
+  $scope.hideCube = function(id:number){
+    if(id){
+      var block_states = $scope.curState.block_states[$scope.createStateIdx];
+      block_states.block_state = _.filter(block_states.block_state, function(bl:iBlockState){return !(bl.id == id)});
+      $scope.enabledCubes = _.filter($scope.enabledCubes, function(bl:iBlockMetaEle){return !(bl.id == id);});
+      myengine.updateScene(block_states);
+    }
+  };
+
+  /**Use existing save scene from import
+   * */
+  $scope.saveScene = function(){
+    //set curState information since we are saving
+    $scope.curState.public = true;
+    $scope.curState.created = (new Date).getTime();
+    $scope.curState.creator = $rootScope.currentUser._id;
+    //remove the placeholder frame because its not valid
+    $scope.curState.block_states.length = $scope.curState.block_states.length-1;
+    $scope.enableImpSave = true;
+    $scope.sceneExists = false;
+    $scope.opt.enableUI = false;
+  };
+  
+  var fixedNumber = function(x:number):number{return Number(x.toFixed(5))};
+
+  var defBlockState:miGen3DEngine.iBlockImport = (new cDefBlockData()).get();
+  // Start by calling the createScene function that you just finished creating
+  var myengine:miGen3DEngine.cUI3DEngine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
+
+  $scope.enabledCubes = [];
   $scope.opt = myengine.opt;
   $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
   console.warn(myengine.opt);
   myengine.createWorld();
   dataReady.update('world created');
 }]);
+
+class cDefBlockData {
+  private data:miGen3DEngine.iBlockImport = {
+    _id: null, 'public': true, name: 'default', created: null, creator: 'system',
+    "block_states": [{"block_state": []}],
+    "block_meta": {
+      "decoration": "logo",
+      "blocks": [{"shape": null, "name": "adidas", "id": 1}, {"shape": null, "name": "bmw", "id": 2}, {"shape": null, "name": "burger king", "id": 3}, 
+        {"shape": null, "name": "coca cola", "id": 4}, {"shape": null, "name": "esso", "id": 5}, {"shape": null, "name": "heineken", "id": 6}, {
+          "shape": null, "name": "hp", "id": 7}, 
+        {"shape": null, "name": "mcdonalds", "id": 8}, {"shape": null, "name": "mercedes benz", "id": 9}, {"shape": null, "name": "nvidia","id": 10},
+        {"shape": null, "name": "pepsi", "id": 11}, {"shape": null, "name": "shell", "id": 12}, {"shape": null, "name": "sri", "id": 13}, {"shape": null, "name": "starbucks", "id": 14},
+        {"shape": null, "name": "stella artois", "id": 15}, {"shape": null, "name": "target", "id": 16}, {"shape": null, "name": "texaco", "id": 17},
+        {"shape": null, "name": "toyota", "id": 18}, {"shape": null, "name": "twitter", "id": 19}, {"shape": null, "name": "ups", "id": 20}]
+    }
+  };
+  constructor(){
+    var shape:iShapeMeta = {"shape_params": {"face_4": {"color": "magenta", "orientation": 1}, "face_5": {"color": "yellow", "orientation": 1},
+      "face_6": {"color": "red", "orientation": 2}, "face_1": {"color": "blue", "orientation": 1},
+      "face_2": {"color": "green", "orientation": 1}, "face_3": {"color": "cyan", "orientation": 1}, "side_length": 0.1524},
+      "type": "cube", "size": 0.5};
+
+    var p:number = -0.5;
+    var i:number = 0;
+    var z:number = 0;
+    var zpos:number[] = [0, 0.3, 0.6, 0.9];
+    for (var j = 0; j < 20; j++) {
+      this.data.block_meta.blocks[j]['shape'] = angular.copy(shape);
+      var pos = [(p + i*0.3), Number(shape.shape_params.side_length), zpos[z]];
+      this.data.block_states[0].block_state.push({position: pos.join(','),id: j+1});
+      if (i > 3) {
+        i = 0;
+        z++;
+      }
+      else i++;
+    }
+  }
+  
+  get():miGen3DEngine.iBlockImport{
+    return angular.copy(this.data);
+  }
+}

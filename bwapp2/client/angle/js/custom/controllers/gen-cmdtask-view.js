@@ -189,42 +189,37 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             if (states == null)
                 states = { block_state: $scope.curState.block_state };
             //no move command from this user so far
-            showFrame(states, function () {
+            myengine.updateScene(states, function () {
                 $scope.$apply(function () { $rootScope.dataloaded = true; });
             });
         };
-        var showFrame = function (state, cb) {
-            $scope.resetWorld();
-            setTimeout(function () {
-                if (state.block_state) {
-                    state.block_state.forEach(function (frame) {
-                        var c = myengine.get3DCubeById(frame.id);
-                        c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
-                        if (frame.rotation)
-                            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
-                        c.isVisible = true;
-                        if (frame['showMoved'])
-                            c['showMoved'] = true;
-                        else
-                            c['showMoved'] = false;
-                        if (myengine.hasPhysics)
-                            c.setPhysicsState({
-                                impostor: BABYLON.PhysicsEngine.BoxImpostor,
-                                move: true,
-                                mass: 5,
-                                friction: myengine.fric,
-                                restitution: myengine.rest
-                            });
-                    });
-                }
-                else
-                    $scope.$apply(function () {
-                        toaster.pop('error', 'Missing BLOCK_STATE');
-                    });
-                if (cb)
-                    cb();
-            }, 100);
-        };
+        /*var showFrame = function (state:iBlockStates, cb?:()=>void) {
+          $scope.resetWorld();
+          setTimeout(function () {
+            if (state.block_state) {
+              state.block_state.forEach(function (frame) {
+                var c = myengine.get3DCubeById(frame.id);
+                c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
+                if (frame.rotation)
+                  c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
+                c.isVisible = true;
+                if(frame['showMoved']) c['showMoved'] = true;
+                else c['showMoved'] = false;
+                if (myengine.hasPhysics) c.setPhysicsState({
+                  impostor: BABYLON.PhysicsEngine.BoxImpostor,
+                  move: true,
+                  mass: 5, //c.boxsize,
+                  friction: myengine.fric,
+                  restitution: myengine.rest
+                });
+              });
+            }
+            else $scope.$apply(function () {
+              toaster.pop('error', 'Missing BLOCK_STATE')
+            });
+            if (cb) cb();
+          }, 100);
+        };*/
         $scope.resetWorld = function () {
             //resetworld 
             myengine.resetWorld();
@@ -305,7 +300,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             }
             else {
                 $scope.cmdphase = eCmdPhase.CMD;
-                myengine.enableUI = false; //prevent UI in case its a fix transition
+                myengine.opt.enableUI = false; //prevent UI in case its a fix transition
                 $scope.cmdele = null;
                 $scope.opt.viewModeCmd = '';
                 $scope.opt.viewIdx = -1;
@@ -365,7 +360,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                                     var cmdoutput = ret.result;
                                     if (cmdoutput && !cmdoutput.error) {
                                         var states = convCmdToState(cmdinput, cmdoutput);
-                                        showFrame(states, function () {
+                                        myengine.updateScene(states, function () {
                                             $scope.cmdele = { send: cmdinput, recv: cmdoutput, rate: -1 };
                                             $scope.$apply(function () {
                                                 $rootScope.dataloaded = true;
@@ -403,7 +398,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         };
         var renderFix = function () {
             $scope.cmdphase = eCmdPhase.FIX;
-            myengine.enableUI = true;
+            myengine.opt.enableUI = true;
             $scope.resetFix();
             $rootScope.dataloaded = true;
         };
@@ -433,7 +428,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
             }
             if (deltaidx.length) {
                 $scope.cmdphase = eCmdPhase.CMD;
-                myengine.enableUI = false;
+                myengine.opt.enableUI = false;
                 var newWorld = [];
                 _.each(deltaidx, function (i) {
                     newWorld.push(cmdserial.world[i]);
@@ -577,7 +572,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
                     delta = $scope.cmdlist[cidx].recv;
             }
             var states = convCmdToState(base, delta);
-            showFrame(states, function () {
+            myengine.updateScene(states, function () {
                 $scope.$apply(function () {
                     $rootScope.dataloaded = true;
                 });
@@ -633,7 +628,7 @@ angular.module('app.generate').controller('genCmdTaskCtrl', ['$rootScope', '$sco
         var levenshtein = $window.Levenshtein;
         // Start by calling the createScene function that you just finished creating
         var myengine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
-        myengine.enableUI = false;
+        myengine.opt.enableUI = false;
         myengine.createWorld();
         dataReady.update('world created');
     }]);

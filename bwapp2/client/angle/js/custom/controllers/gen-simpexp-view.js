@@ -78,34 +78,31 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                 }
             }
         };
-        var showFrame = function (state, cb) {
-            $scope.resetWorld();
-            setTimeout(function () {
-                if (state.block_state) {
-                    state.block_state.forEach(function (frame) {
-                        var c = myengine.get3DCubeById(frame.id);
-                        c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
-                        if (frame.rotation)
-                            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
-                        c.isVisible = true;
-                        if (myengine.hasPhysics)
-                            c.setPhysicsState({
-                                impostor: BABYLON.PhysicsEngine.BoxImpostor,
-                                move: true,
-                                mass: 5,
-                                friction: myengine.fric,
-                                restitution: myengine.rest
-                            });
-                    });
-                }
-                else
-                    $scope.$apply(function () {
-                        toaster.pop('error', 'Missing BLOCK_STATE');
-                    });
-                if (cb)
-                    cb();
-            }, 100);
-        };
+        /*var showFrame = function (state:iBlockStates, cb?:()=>void) {
+          $scope.resetWorld();
+          setTimeout(function () {
+            if (state.block_state) {
+              state.block_state.forEach(function (frame) {
+                var c = myengine.get3DCubeById(frame.id);
+                c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
+                if (frame.rotation)
+                  c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
+                c.isVisible = true;
+                if (myengine.hasPhysics) c.setPhysicsState({
+                  impostor: BABYLON.PhysicsEngine.BoxImpostor,
+                  move: true,
+                  mass: 5, //c.boxsize,
+                  friction: myengine.fric,
+                  restitution: myengine.rest
+                });
+              });
+            }
+            else $scope.$apply(function () {
+              toaster.pop('error', 'Missing BLOCK_STATE')
+            });
+            if (cb) cb();
+          }, 100);
+        };*/
         /*var findBy = function(type:string, key:string, collection:any){
          return _.find(collection, function(a){return key === a[type]});
          };*/
@@ -156,7 +153,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                     $scope.utterance = $scope.curState.utterance.join(' ').toUpperCase();
                     setDecorVal($scope.curState.block_meta.decoration);
                     myengine.createObjects($scope.curState.block_meta.blocks);
-                    showFrame({ block_state: myframe.block_state });
+                    myengine.updateScene({ block_state: myframe.block_state });
                     $scope.$apply(function () { $rootScope.dataloaded = true; });
                 },
                 onStop: subErr
@@ -164,7 +161,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         };
         $scope.reset = function () {
             myengine.createObjects($scope.curState.block_meta.blocks);
-            showFrame({ block_state: $scope.curState.block_state });
+            myengine.updateScene({ block_state: $scope.curState.block_state });
         };
         $scope.remState = function (sid) {
             if (sid) {
@@ -325,7 +322,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
                                 $scope.enableImpSave = false;
                                 $scope.isgen = true;
                             });
-                            showFrame({ block_state: $scope.curState.block_state }, function () {
+                            myengine.updateScene({ block_state: $scope.curState.block_state }, function () {
                                 //wait for steady state
                                 checkFnSS = setInterval(function () {
                                     if (myengine.isSteadyState) {
@@ -476,6 +473,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         };
         // Start by calling the createScene function that you just finished creating
         var myengine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
+        myengine.opt.enableUI = true;
         $scope.opt = myengine.opt;
         $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
         $scope.isExp = true; //all work is consider experiment view unless we import a state

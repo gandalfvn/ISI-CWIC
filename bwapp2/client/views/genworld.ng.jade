@@ -21,8 +21,11 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       button.btn.btn-xs.btn-default {{block.id}} &nbsp; {{block.name | uppercase}}
     div
       button.btn.btn-primary(ng-click='clearMeta()') Reset
-  tabset(ng-show='!curState.block_meta.blocks')
-    tab(heading='Create Block Actions', active=true) 
+  tabset(ng-show='!curState.block_meta.blocks && !opt.enableUI')
+    tab(heading='Create Block Actions', active=true)
+      .row
+        .content.col-sm-4.mb-sm
+          button.btn.btn-sm.btn-primary(ng-click='setCreateMode()') Create Custom Layout
       .row
         .content.col-sm-4
           form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstateform', ng-submit='loadState()')
@@ -80,7 +83,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           | &nbsp;&nbsp;
           button.btn.btn-warning.btn-sm(ng-click='cancelImport()')
             .glyphicons.remove_2 Cancel
-  .row-fluid.col-sm-2(ng-if='!isgen && !enableImpSave && curState._id && curState.block_meta.blocks && curState.block_states.length < 20')
+  //-.row-fluid.col-sm-2(ng-if='!isgen && !enableImpSave && curState._id && curState.block_meta.blocks && curState.block_states.length < 20')
     div.well
       h4 Create Block Moves
       button.btn.btn-default.mb-sm(ng-click='opt.limStack = !opt.limStack', style='margin-left: -14px;')
@@ -97,11 +100,40 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         br
         button.btn.btn-default(ng-show='mvcnt', type='submit') Go
   .row-fluid.col-sm-3(ng-if='!isgen && !enableImpSave && curState.block_meta.blocks')
-    div.well
+    .row
+      #panelInst.panel.panel-default.notouch.shadowbox(ng-show='opt.enableUI', style='background-color: rgba(255,255,255,0.5)')
+        .panel-heading(ng-class="{'panel-heading-collapsed':panelInst}", style='background-color: rgba(255,255,255,0.0)')
+          strong Navigation
+          paneltool(tool-collapse, ng-init="panelInst=false")
+        .panel-wrapper(collapse="panelInst")
+          .panel-body
+            //-strong Move Camera: 
+              | Use WASD keys
+              br
+            strong Move Blocks: 
+            | Click and hold to drag and drop blocks
+            br
+            //-strong Point Camera: 
+              | Click and move mouse to pivot camera
+              br
+            strong Move Up/Down: 
+            | Hold block, then press SHIFT key
+            br
+            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and move mouse up/down
+            br
+            strong Rotate: 
+            | Hold block, then press ALT key
+    .row.well
       h4 State
-      button.btn.btn-sm.btn-info.mb-sm(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks', ng-click='startGen()') Create Layout
-      br(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks')
+      //-button.btn.btn-sm.btn-info.mb-sm(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks', ng-click='startGen()') Create Layout
+      //-br(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks')
+      button.btn.btn-sm.btn-info.mb-sm(ng-show='opt.enableUI' ng-click='saveState()') Capture Frame
+      br
       button.btn.btn-sm.btn-info.mb-sm(ng-click='dlScene()') Get JSON
+      br
+      label Delete Cube:
+      select(ng-model = "delid" ng-change="hideCube(delid)")
+        option(ng-repeat='b in enabledCubes', value='{{b.id}}') {{b.name}}
       //-form.form-inline.ng-pristine.ng-valid(name='myshowform', ng-submit='showState(sid)')
         .form-group
           label Show:
@@ -119,6 +151,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           label Remove:
           input(type='text', ng-model='rsid', placeholder='state id')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
+    .row
+      button.btn.btn-sm.btn-success(ng-show='sceneExists  && !enableImpSave', ng-click='saveScene()') Save Scene
   //-.row-fluid.col-sm-6(ng-if='!isgen && !enableImpSave && (curState.next || curState.prev)')
     div.well
       h4 Navigate

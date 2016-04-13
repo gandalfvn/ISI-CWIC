@@ -53,7 +53,7 @@ angular.module('app.generate').controller('genPredCtrl',
       myengine.resetWorld();
     };
     
-    var showFrame = function(state:iBlockStates, cb?: ()=>void){
+    /*var showFrame = function(state:iBlockStates, cb?: ()=>void){
       $scope.resetWorld();
       setTimeout(function(){
         if(state.block_state){
@@ -75,7 +75,7 @@ angular.module('app.generate').controller('genPredCtrl',
         else $scope.$apply(function(){toaster.pop('error', 'Missing BLOCK_STATE')});
         if(cb) cb();
       }, 100);
-    };
+    };*/
 
     var createLayout = function(id:string, i:number, attachID?:string):string{
       var lenID:number = $('div').length;
@@ -320,7 +320,7 @@ angular.module('app.generate').controller('genPredCtrl',
       var dp = $scope.diffPredictions[idx];
       var block_state:iBlockStates = dp[k];
 
-      showFrame(block_state, function(){
+      myengine.updateScene(block_state, function(){
         //wait for steady state
         checkFnSS = setInterval(function(){
           if(myengine.isSteadyState){
@@ -375,7 +375,7 @@ angular.module('app.generate').controller('genPredCtrl',
         var k = idxlist[idx];
         var block_state:iBlockStates = pred[k];
 
-        showFrame(block_state, function(){
+        myengine.updateScene(block_state, function(){
           //wait for steady state
           checkFnSS = setInterval(function(){
             if(myengine.isSteadyState){

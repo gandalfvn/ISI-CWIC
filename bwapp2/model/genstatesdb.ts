@@ -12,11 +12,11 @@ cBlockDecor = class ciBlockDecor{
   static blank = 'blank';
 };
 
-interface iBlockDecor{
+/*interface iBlockDecor{
   digit: string,
   logo: string,
   blank: string
-}
+}*/
 
 interface iGenStates {
   _id: string,
@@ -46,7 +46,7 @@ interface iPosRot{
 }
 
 interface iBlockMeta {
-  decoration?: iBlockDecor,
+  decoration?: string,
   blocks: Array<iBlockMetaEle>
 }
 

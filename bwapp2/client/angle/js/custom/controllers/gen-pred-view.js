@@ -23,32 +23,29 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             //resetworld 
             myengine.resetWorld();
         };
-        var showFrame = function (state, cb) {
-            $scope.resetWorld();
-            setTimeout(function () {
-                if (state.block_state) {
-                    state.block_state.forEach(function (frame) {
-                        var c = myengine.get3DCubeById(frame.id);
-                        c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
-                        if (frame.rotation)
-                            c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
-                        c.isVisible = true;
-                        if (myengine.hasPhysics)
-                            c.setPhysicsState({
-                                impostor: BABYLON.PhysicsEngine.BoxImpostor,
-                                move: true,
-                                mass: 5,
-                                friction: myengine.fric,
-                                restitution: myengine.rest
-                            });
-                    });
-                }
-                else
-                    $scope.$apply(function () { toaster.pop('error', 'Missing BLOCK_STATE'); });
-                if (cb)
-                    cb();
-            }, 100);
-        };
+        /*var showFrame = function(state:iBlockStates, cb?: ()=>void){
+          $scope.resetWorld();
+          setTimeout(function(){
+            if(state.block_state){
+              state.block_state.forEach(function(frame){
+                var c = myengine.get3DCubeById(frame.id);
+                c.position = new BABYLON.Vector3(frame.position['x'], frame.position['y'], frame.position['z']);
+                if(frame.rotation)
+                  c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
+                c.isVisible = true;
+                if(myengine.hasPhysics) c.setPhysicsState({
+                  impostor: BABYLON.PhysicsEngine.BoxImpostor,
+                  move: true,
+                  mass: 5, //c.boxsize,
+                  friction: myengine.fric,
+                  restitution: myengine.rest
+                });
+              });
+            }
+            else $scope.$apply(function(){toaster.pop('error', 'Missing BLOCK_STATE')});
+            if(cb) cb();
+          }, 100);
+        };*/
         var createLayout = function (id, i, attachID) {
             var lenID = $('div').length;
             var eleDivID = 'rowdiv' + lenID; // Unique ID
@@ -277,7 +274,7 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
             var k = 'diff_state';
             var dp = $scope.diffPredictions[idx];
             var block_state = dp[k];
-            showFrame(block_state, function () {
+            myengine.updateScene(block_state, function () {
                 //wait for steady state
                 checkFnSS = setInterval(function () {
                     if (myengine.isSteadyState) {
@@ -331,7 +328,7 @@ angular.module('app.generate').controller('genPredCtrl', ['$rootScope', '$scope'
                     return cb();
                 var k = idxlist[idx];
                 var block_state = pred[k];
-                showFrame(block_state, function () {
+                myengine.updateScene(block_state, function () {
                     //wait for steady state
                     checkFnSS = setInterval(function () {
                         if (myengine.isSteadyState) {

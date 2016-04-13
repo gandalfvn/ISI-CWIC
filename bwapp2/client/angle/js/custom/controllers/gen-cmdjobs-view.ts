@@ -270,14 +270,14 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
         $scope.curState.clear();
         $scope.curState.copy(myframe);
         myengine.createObjects($scope.curState.block_meta.blocks);
-        showFrame({block_state: myframe.block_state});
+        myengine.updateScene({block_state: myframe.block_state});
         $scope.$apply(()=>{$rootScope.dataloaded = true});
       },
       onStop: subErr
     })
   };
   
-  var showFrame = function (state:iBlockStates, cb?:()=>void) {
+  /*var showFrame = function (state:iBlockStates, cb?:()=>void) {
     $scope.resetWorld();
     setTimeout(function () {
       if (state.block_state) {
@@ -301,7 +301,7 @@ angular.module('app.generate').controller('genCmdJobsCtrl', ['$rootScope', '$sco
       });
       if (cb) cb();
     }, 100);
-  };
+  };*/
 
   /*$scope.chooseState = function(cid:string){
     $scope.enableImpSave = false;

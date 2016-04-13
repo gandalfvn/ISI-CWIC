@@ -90,7 +90,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
   };
 
   
-  var showFrame = function (state:iBlockStates, cb?:()=>void) {
+  /*var showFrame = function (state:iBlockStates, cb?:()=>void) {
     $scope.resetWorld();
     setTimeout(function () {
       if (state.block_state) {
@@ -114,7 +114,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
       });
       if (cb) cb();
     }, 100);
-  };
+  };*/
 
   /*var findBy = function(type:string, key:string, collection:any){
    return _.find(collection, function(a){return key === a[type]});
@@ -169,7 +169,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
         $scope.utterance = $scope.curState.utterance.join(' ').toUpperCase();
         setDecorVal($scope.curState.block_meta.decoration);
         myengine.createObjects($scope.curState.block_meta.blocks);
-        showFrame({block_state: myframe.block_state});
+        myengine.updateScene({block_state: myframe.block_state});
         $scope.$apply(()=>{$rootScope.dataloaded = true});
       },
       onStop: subErr
@@ -178,7 +178,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
   
   $scope.reset = function(){
     myengine.createObjects($scope.curState.block_meta.blocks);
-    showFrame({block_state: $scope.curState.block_state});
+    myengine.updateScene({block_state: $scope.curState.block_state});
   };
 
   $scope.remState = function (sid:string) {
@@ -349,7 +349,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
               $scope.isgen = true;
             });
 
-            showFrame({block_state: $scope.curState.block_state}, function () {
+            myengine.updateScene({block_state: $scope.curState.block_state}, function () {
               //wait for steady state
               checkFnSS = setInterval(function () {
                 if (myengine.isSteadyState) {
@@ -503,6 +503,7 @@ angular.module('app.generate').controller('genSimpExpCtrl', ['$rootScope', '$sco
 
   // Start by calling the createScene function that you just finished creating
   var myengine:miGen3DEngine.cUI3DEngine = new mGen3DEngine.cUI3DEngine(APP_CONST.fieldsize);
+  myengine.opt.enableUI = true;
 
   $scope.opt = myengine.opt;
   $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
