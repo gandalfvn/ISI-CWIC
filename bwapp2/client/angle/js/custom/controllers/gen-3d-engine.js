@@ -14,13 +14,13 @@ var miGen3DEngine;
     var c3DEngine = (function () {
         function c3DEngine(fieldsize) {
             this.hasControls = false;
-            this.hasPhysics = true;
             this.rest = 0.2;
             this.fric = 0.1;
             this.opt = {
                 showGrid: false,
                 showImages: true,
-                showLogos: true
+                showLogos: true,
+                hasPhysics: true
             };
             this.ground = null;
             this.skybox = null;
@@ -236,7 +236,7 @@ var miGen3DEngine;
                 console.warn('oncollide ground', a);
             };
             this.ground.material = mat; //gridshader;
-            if (this.hasPhysics)
+            if (this.opt.hasPhysics)
                 this.ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move: false });
             this.ground.checkCollisions = true;
             this.ground.receiveShadows = true;
@@ -258,7 +258,7 @@ var miGen3DEngine;
                 console.warn('oncollide table', a);
             };
             this.table.material = tablemat; //gridshader;
-            if (this.hasPhysics)
+            if (this.opt.hasPhysics)
                 this.table.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, move: false });
             this.table.checkCollisions = true;
             this.table.receiveShadows = true;
@@ -329,23 +329,24 @@ var miGen3DEngine;
         };
         ;
         c3DEngine.prototype.createObjects = function (blocks) {
-            if (this.cubeslist.length)
-                this.cubeslist.forEach(function (c) {
-                    if (this.hasPhysics)
-                        this.oimo.unregisterMesh(c); //stop physics
+            var self = this;
+            if (self.cubeslist.length)
+                self.cubeslist.forEach(function (c) {
+                    if (self.opt.hasPhysics)
+                        self.oimo.unregisterMesh(c); //stop physics
                     c.dispose();
                 });
-            this.cubeslist.length = 0;
-            this.cubesdata = {};
-            this.numcubes = 0;
+            self.cubeslist.length = 0;
+            self.cubesdata = {};
+            self.numcubes = 0;
             var p = -0.5;
             var i = 0;
             var z = 0;
             var zpos = [0, 0.3, 0.6, 0.9];
             for (var j = 0; j < blocks.length; j++) {
-                this.createCube({
+                self.createCube({
                     pos: new BABYLON.Vector3((p + i * 0.3), Number(blocks[j].shape.shape_params.side_length), zpos[z]),
-                    scene: this.scene,
+                    scene: self.scene,
                     block: blocks[j],
                     isVisible: true
                 });
@@ -356,7 +357,7 @@ var miGen3DEngine;
                 else
                     i++;
             }
-            this.cubesid = Object.keys(this.cubesdata);
+            self.cubesid = Object.keys(this.cubesdata);
         };
         ;
         c3DEngine.prototype.get3DCubeById = function (cid) {
@@ -369,7 +370,7 @@ var miGen3DEngine;
             var zpos = [7, 8, 9, 10];
             for (var j = 0; j < this.cubeslist.length; j++) {
                 c = this.cubeslist[j];
-                if (this.hasPhysics)
+                if (this.opt.hasPhysics)
                     this.oimo.unregisterMesh(c); //stop physics
                 c.position = new BABYLON.Vector3((p + i * 0.3), c.boxsize, zpos[z]);
                 c.rotationQuaternion = BABYLON.Quaternion.Identity().clone();
@@ -394,7 +395,7 @@ var miGen3DEngine;
                         if (frame.rotation)
                             c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
                         c.isVisible = true;
-                        if (self.hasPhysics)
+                        if (self.opt.hasPhysics)
                             c.setPhysicsState({
                                 impostor: BABYLON.PhysicsEngine.BoxImpostor,
                                 move: true,
@@ -409,6 +410,22 @@ var miGen3DEngine;
                 if (cb)
                     cb();
             }, 100);
+        };
+        ;
+        c3DEngine.prototype.updatePhysics = function () {
+            var self = this;
+            if (self.cubeslist.length)
+                self.cubeslist.forEach(function (c) {
+                    self.oimo.unregisterMesh(c); //stop physics
+                    if (self.opt.hasPhysics)
+                        c.setPhysicsState({
+                            impostor: BABYLON.PhysicsEngine.BoxImpostor,
+                            move: true,
+                            mass: 5,
+                            friction: self.fric,
+                            restitution: self.rest
+                        });
+                });
         };
         ;
         /**
@@ -449,7 +466,6 @@ var miGen3DEngine;
         __extends(cUI3DEngine, _super);
         function cUI3DEngine(fieldsize) {
             _super.call(this, fieldsize);
-            this.hasPhysics = true;
             this.pointerActive = false;
             this.volumeMesh = null;
             this.intersectMesh = null;
@@ -469,7 +485,8 @@ var miGen3DEngine;
                 showGrid: false,
                 showImages: true,
                 showLogos: true,
-                enableUI: false
+                enableUI: false,
+                hasPhysics: true
             };
         }
         ;
@@ -660,7 +677,7 @@ var miGen3DEngine;
                                 c.checkCollisions = false;
                                 c.showBoundingBox = false;
                                 //console.warn('me elp', c.ellipsoid);
-                                if (self.hasPhysics)
+                                if (self.opt.hasPhysics)
                                     self.oimo.unregisterMesh(c); //stop physics
                                 self.groupMesh.push(c);
                             }
@@ -694,9 +711,10 @@ var miGen3DEngine;
                 return;
             var current;
             var delta;
+            //move up and down
             if (self.lockxz) {
                 current = self.startingPoint.clone();
-                delta = (self.sceney - self.scene.pointerY) * 0.2;
+                delta = (self.sceney - self.scene.pointerY) * 0.02;
                 current.y += delta;
                 self.sceney = self.scene.pointerY;
             }
@@ -768,7 +786,7 @@ var miGen3DEngine;
                         c.showBoundingBox = false;
                         c.material.emissiveColor = BABYLON.Color3.Black();
                         //must add physics no matter if its off the ground fo collisions to tork
-                        if (self.hasPhysics)
+                        if (self.opt.hasPhysics)
                             c.setPhysicsState({
                                 impostor: BABYLON.PhysicsEngine.BoxImpostor,
                                 move: true,

@@ -1210,6 +1210,12 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       myengine.updateScene(block_states);
     }
   };
+  
+  /**Reset Frame to the last saved update
+   * */
+  $scope.resetState = function(){
+    myengine.updateScene($scope.curState.block_states[$scope.createStateIdx]);
+  };
 
   /**Use existing save scene from import
    * */
@@ -1225,6 +1231,14 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     $scope.opt.enableUI = false;
   };
   
+  /**Update Pyshics so all items will activate
+   * If we turn it on then we have to save the current scene and add physics to the objects
+   * */
+  $scope.updatePhysics = function(){
+    $scope.opt.hasPhysics=!$scope.opt.hasPhysics;
+    myengine.updatePhysics();
+  };
+
   var fixedNumber = function(x:number):number{return Number(x.toFixed(5))};
 
   var defBlockState:miGen3DEngine.iBlockImport = (new cDefBlockData()).get();
