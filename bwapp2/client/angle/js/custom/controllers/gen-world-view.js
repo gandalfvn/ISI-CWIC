@@ -657,7 +657,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             var eleDivID = 'rowdiv' + lenID; // Unique ID
             var retId = id + lenID;
             var htmlout = '';
-            if ($scope.opt.enableUI) {
+            if (myengine.getUIVal()) {
                 htmlout =
                     '<button onclick="angular.element(this).scope().getMove(' + i + ')" class="btn btn-xs btn-info"> Get JSON </button>' +
                         '<div id="' + retId + '"></div>';
@@ -769,8 +769,9 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         $scope.clearMeta = function () {
             $('#galleryarea').empty();
             $scope.curState.clear();
-            $scope.opt.enableUI = false;
+            $scope.enableUI = false;
             myengine.resetWorld();
+            myengine.setUI($scope.enableUI);
             $state.transitionTo('app.genworld', {}, { notify: false });
         };
         $scope.loadMeta = function () {
@@ -1124,7 +1125,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 $scope.$apply(function () { toaster.pop('info', 'Please SAVE layout before deleting moves'); });
         };
         $scope.setCreateMode = function () {
-            $scope.opt.enableUI = true;
+            $scope.enableUI = true;
+            myengine.setUI($scope.enableUI);
             $scope.sceneExists = false;
             $scope.createStateIdx = 0;
             $scope.curState.block_states = mungeBlockStates(defBlockState.block_states);
@@ -1196,6 +1198,9 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         $scope.resetState = function () {
             myengine.updateScene($scope.curState.block_states[$scope.createStateIdx]);
         };
+        $scope.resetCamera = function () {
+            myengine.resetCamera();
+        };
         /**Use existing save scene from import
          * */
         $scope.saveScene = function () {
@@ -1207,7 +1212,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             $scope.curState.block_states.length = $scope.curState.block_states.length - 1;
             $scope.enableImpSave = true;
             $scope.sceneExists = false;
-            $scope.opt.enableUI = false;
+            $scope.enableUI = false;
+            myengine.setUI($scope.enableUI);
         };
         /**Update Pyshics so all items will activate
          * If we turn it on then we have to save the current scene and add physics to the objects
@@ -1223,8 +1229,9 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         $scope.enabledCubes = [];
         $scope.opt = myengine.opt;
         $scope.opt.limStack = true; //we add a stack limit to 3d engine vars
-        console.warn(myengine.opt);
+        $scope.enableUI = false;
         myengine.createWorld();
+        myengine.setUI($scope.enableUI);
         dataReady.update('world created');
     }]);
 var cDefBlockData = (function () {

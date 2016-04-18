@@ -49,7 +49,8 @@ module miGen3DEngine {
     canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("renderCanvasBab");
     engine:BABYLON.Engine;
     scene:BABYLON.Scene;
-    camera:BABYLON.ArcRotateCamera;
+    //camera:BABYLON.ArcRotateCamera;
+    camera:BABYLON.FreeCamera;
     numTextures:BABYLON.DynamicTexture[] = new Array(21);
     isSteadyState:boolean;
     oimo:BABYLON.OimoJSPlugin;
@@ -204,23 +205,18 @@ module miGen3DEngine {
       scene.collisionsEnabled = true;
       scene.workerCollisions = true;
 
+      //Left Hand Rule:
+      //https://en.wikipedia.org/wiki/Right-hand_rule
       //  Create an ArcRotateCamera aimed at 0,0,0, with no alpha, beta or radius, so be careful.  It will look broken.
-      this.camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 0, this.fieldsize, new BABYLON.Vector3(0, 0, 0), scene);
+      //this.camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 0, this.fieldsize, new BABYLON.Vector3(0, 0, 0), scene);
       // Quick, let's use the setPosition() method... with a common Vector3 position, to make our camera better aimed.
-      this.camera.setPosition(new BABYLON.Vector3(0, this.fieldsize * 0.95, -(this.fieldsize * 0.8)));
+      //this.camera.setPosition(new BABYLON.Vector3(0, this.fieldsize * 0.95, -(this.fieldsize * 0.8)));
       // This creates and positions a free camera
-      //camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 15, -46), scene);
+      this.camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 1.8, -1.8), scene);
       // This targets the camera to scene origin
-      //camera.setTarget(new BABYLON.Vector3(0,12,0));
+      this.camera.setTarget(new BABYLON.Vector3(0,0.1,0));
       // This attaches the camera to the canvas
-      //camera.attachControl(canvas, true);
-      /*camera.speed = 1;
-       camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); //bounding ellipse
-       camera.checkCollisions = true;
-       camera.keysUp = [87]; // w
-       camera.keysDown = [83]; // s
-       camera.keysLeft = [65]; //  a
-       camera.keysRight = [68]; // d*/
+      this.camera.attachControl(this.canvas, true);
 
       scene.activeCamera = this.camera;
       if(this.hasControls) scene.activeCamera.attachControl(this.canvas);
@@ -421,7 +417,14 @@ module miGen3DEngine {
         }
         else i++;
       }
-      this.camera.setPosition(new BABYLON.Vector3(0, this.fieldsize * 0.95, -(this.fieldsize * 0.8)));
+      this.resetCamera();
+    }
+
+    resetCamera(){
+      //this.camera.setPosition(new BABYLON.Vector3(0, this.fieldsize * 0.95, -(this.fieldsize * 0.8)));
+      // This creates and positions a free camera
+      this.camera.position = new BABYLON.Vector3(0, 1.8, -1.8);
+      this.camera.setTarget(new BABYLON.Vector3(0,0.1,0));
     }
 
     updateScene(state:iBlockStates, cb?:()=>void):void {
@@ -517,13 +520,7 @@ module miGen3DEngine {
     sceney:number = null;
     scenerot:BABYLON.Vector3 = null;
     rotxy:boolean = false;
-    opt:{showGrid:boolean, showImages: boolean, showLogos: boolean, enableUI: boolean, hasPhysics:boolean} = {
-      showGrid: false,
-      showImages: true,
-      showLogos: true,
-      enableUI: false,
-      hasPhysics: true
-  };
+    private enableUI = true;
 
     constructor(fieldsize:number){
       super(fieldsize);
@@ -637,7 +634,7 @@ module miGen3DEngine {
     }
 
     private onPointerDown(evt){
-      if (evt.button !== 0 || !this.opt.enableUI) return;
+      if (evt.button !== 0 || !this.enableUI) return;
       var self:any = this;
       // check if we are under a mesh
       var pickInfo:BABYLON.PickingInfo = self.scene.pick(self.scene.pointerX, self.scene.pointerY, function (mesh) {
@@ -824,6 +821,34 @@ module miGen3DEngine {
         self.currentMesh = null;
       }
     };
+
+    private enableControl(b:boolean){
+      if(b){
+        this.camera.speed = 0.2;
+        this.camera.ellipsoid = new BABYLON.Vector3(0.1, 0.1, 0.1); //bounding ellipse
+        this.camera.checkCollisions = true;
+        this.camera.keysUp = [87]; // w
+        this.camera.keysDown = [83]; // s
+        this.camera.keysLeft = [65]; //  a
+        this.camera.keysRight = [68]; // d
+      }
+      else{
+        this.camera.speed = 0;
+        this.camera.keysUp = [];
+        this.camera.keysDown = [];
+        this.camera.keysLeft = [];
+        this.camera.keysRight = [];
+      }
+    }
+    
+    setUI(b:boolean){
+      this.enableControl(b);
+      this.enableUI = b;
+    }
+
+    getUIVal(){
+      return this.enableUI
+    }
 
     createWorld(){
       var self:any = this;
