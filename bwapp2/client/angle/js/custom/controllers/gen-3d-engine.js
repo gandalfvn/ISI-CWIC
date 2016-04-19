@@ -14,8 +14,9 @@ var miGen3DEngine;
     var c3DEngine = (function () {
         function c3DEngine(fieldsize) {
             this.hasControls = false;
-            this.rest = 0.2;
-            this.fric = 0.1;
+            this.mass = 0.001;
+            this.rest = 0;
+            this.fric = 1;
             this.opt = {
                 showGrid: false,
                 showImages: true,
@@ -369,7 +370,7 @@ var miGen3DEngine;
                     this.oimo.unregisterMesh(c); //stop physics
                 c.position = new BABYLON.Vector3((p + i * 0.3), c.boxsize, zpos[z]);
                 c.rotationQuaternion = BABYLON.Quaternion.Identity().clone();
-                c.isVisible = true;
+                c.isVisible = false;
                 if (i > 3) {
                     i = 0;
                     z++;
@@ -400,7 +401,7 @@ var miGen3DEngine;
                             c.setPhysicsState({
                                 impostor: BABYLON.PhysicsEngine.BoxImpostor,
                                 move: true,
-                                mass: 5,
+                                mass: self.mass,
                                 friction: self.fric,
                                 restitution: self.rest
                             });
@@ -422,7 +423,7 @@ var miGen3DEngine;
                         c.setPhysicsState({
                             impostor: BABYLON.PhysicsEngine.BoxImpostor,
                             move: true,
-                            mass: 5,
+                            mass: self.mass,
                             friction: self.fric,
                             restitution: self.rest
                         });
@@ -643,6 +644,7 @@ var miGen3DEngine;
                     emcolor: BABYLON.Color3.Red(),
                     difcolor: BABYLON.Color3.Red()
                 });
+                //enable collision to check for overlap with cube
                 self.intersectMesh.checkCollisions = true;
                 setTimeout(function () {
                     if (self.intersectMesh) {
@@ -747,9 +749,10 @@ var miGen3DEngine;
             var diff;
             diff = current.subtract(self.startingPoint);
             self.intersectMesh.moveWithCollisions(diff);
-            self.volumeMesh.position = self.intersectMesh.position.clone();
+            //self.volumeMesh.position = self.intersectMesh.position.clone();
             setTimeout(function () {
-                self.volumeMesh.position = self.intersectMesh.position.clone();
+                if (self.intersectMesh && self.intersectMesh.position)
+                    self.volumeMesh.position = self.intersectMesh.position.clone();
             }, 50);
             self.startingPoint = current;
         };
@@ -785,7 +788,7 @@ var miGen3DEngine;
                             c.setPhysicsState({
                                 impostor: BABYLON.PhysicsEngine.BoxImpostor,
                                 move: true,
-                                mass: c['boxsize'],
+                                mass: self.mass,
                                 friction: self.fric,
                                 restitution: self.rest
                             });
@@ -800,15 +803,19 @@ var miGen3DEngine;
         ;
         cUI3DEngine.prototype.enableControl = function (b) {
             if (b) {
-                this.camera.speed = 0.2;
+                this.hasControls = true;
+                this.scene.activeCamera.attachControl(this.canvas);
+                this.camera.speed = 0.175;
                 this.camera.ellipsoid = new BABYLON.Vector3(0.1, 0.1, 0.1); //bounding ellipse
                 this.camera.checkCollisions = true;
-                this.camera.keysUp = [87]; // w
-                this.camera.keysDown = [83]; // s
-                this.camera.keysLeft = [65]; //  a
-                this.camera.keysRight = [68]; // d
+                this.camera.keysUp = [38]; // 87w
+                this.camera.keysDown = [40]; // 83s
+                this.camera.keysLeft = [37]; //  65a
+                this.camera.keysRight = [39]; // 68d
             }
             else {
+                this.hasControls = false;
+                this.camera.detachControl(this.canvas);
                 this.camera.speed = 0;
                 this.camera.keysUp = [];
                 this.camera.keysDown = [];

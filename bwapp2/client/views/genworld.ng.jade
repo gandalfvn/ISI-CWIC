@@ -112,7 +112,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         .panel-wrapper(collapse="panelInst")
           .panel-body
             strong Move Camera: 
-            | Use WASD keys
+            | Use ARROW keys
             br
             strong Point Camera: 
             | Click and move mouse to pivot camera
@@ -128,7 +128,6 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             strong Rotate: 
             | Hold block, then press ALT key
     .row.well
-      h4 State
       //-button.btn.btn-sm.btn-info.mb-sm(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks', ng-click='startGen()') Create Layout
       //-br(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks')
       button.btn.btn-default.mb-sm(ng-click='updatePhysics()')
@@ -143,11 +142,25 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
       | &nbsp;&nbsp;
       button.btn.btn-sm.btn-info.mb-sm(ng-show='enableUI' ng-click='resetState()') Reset Frame
       br
-      button.btn.btn-sm.btn-info.mb-sm(ng-click='dlScene()') Get JSON
+      label Rotate Cube:
+      select(ng-model = "rotid")
+        option(ng-repeat='b in enabledCubes', value='{{b.id}}') {{b.name}}
+      div(ng-show='rotid')
+        label Axis:
+        select(ng-model = "axs")
+          option(ng-repeat='a in ["X","Y","Z"]', value='{{a}}') {{a}}
+        span(ng-show='axs')
+          input(type='number', ng-model='deg', placeholder='number deg', style='width:20%')
+          button.btn.btn-sm.btn-primary(ng-show='deg' ng-click='rotCube(rotid, axs, deg)') Go
+          | &nbsp;&nbsp;
+          button.btn.btn-sm.btn-danger(ng-show='deg' ng-click='rotid=0; axs=""; deg=undefined;')
+            i.fa.fa-remove
       br
-      label Delete Cube:
+      label *Delete Cube:
       select(ng-model = "delid" ng-change="hideCube(delid)")
         option(ng-repeat='b in enabledCubes', value='{{b.id}}') {{b.name}}
+      br
+      i(style="color:red") *Scene resets on cube delete
       //-form.form-inline.ng-pristine.ng-valid(name='myshowform', ng-submit='showState(sid)')
         .form-group
           label Show:
@@ -159,6 +172,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           label Test Move:
           input(type='text', ng-model='tsid', placeholder='state id')
           input(type="submit", style="position: absolute; left: -9999px; width: 1px; height: 1px;")
+      hr
+      button.btn.btn-sm.btn-info.mb-sm(ng-click='dlScene()') Get JSON
       br
       form.form-inline.ng-pristine.ng-valid(name='myremform', ng-submit='remState(rsid)')
         .form-group

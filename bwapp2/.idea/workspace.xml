@@ -36,8 +36,8 @@
       <file leaf-file-name="gen-3d-engine.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="604">
-              <caret line="420" column="0" selection-start-line="420" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
+            <state relative-caret-position="349">
+              <caret line="828" column="0" selection-start-line="828" selection-start-column="0" selection-end-line="828" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -53,41 +53,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="1217" column="33" selection-start-line="1217" selection-start-column="33" selection-end-line="1217" selection-end-column="33" />
+            <state relative-caret-position="844">
+              <caret line="1223" column="2" selection-start-line="1223" selection-start-column="2" selection-end-line="1223" selection-end-column="2" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="worldview.ng.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/views/worldview.ng.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="735">
-              <caret line="59" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="world-view.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/world-view.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
-              <caret line="511" column="14" selection-start-line="511" selection-start-column="14" selection-end-line="511" selection-end-column="14" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="false">
+      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
-              <caret line="140" column="0" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
+            <state relative-caret-position="514">
+              <caret line="154" column="24" selection-start-line="154" selection-start-column="24" selection-end-line="154" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -158,9 +138,9 @@
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.ts" />
         <option value="$PROJECT_DIR$/model/genstatesdb.ts" />
         <option value="$PROJECT_DIR$/client/views/partials/top-navbar.ng.jade" />
-        <option value="$PROJECT_DIR$/client/views/genworld.ng.jade" />
-        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
+        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
+        <option value="$PROJECT_DIR$/client/views/genworld.ng.jade" />
       </list>
     </option>
   </component>
@@ -1033,12 +1013,13 @@
       <workItem from="1460491760559" duration="25966000" />
       <workItem from="1460586392414" duration="2466000" />
       <workItem from="1460753436450" duration="513000" />
-      <workItem from="1460994270960" duration="4613000" />
+      <workItem from="1460994270960" duration="5178000" />
+      <workItem from="1461082749035" duration="6486000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="56571000" />
+    <option name="totallyTimeSpent" value="63622000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="236" width="1536" height="1493" extended-state="0" />
@@ -1046,12 +1027,12 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22574258" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27156094" sideWeight="0.66930693" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27156094" sideWeight="0.67722774" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958034" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27156094" sideWeight="0.33069307" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27156094" sideWeight="0.32277226" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29722023" sideWeight="0.3960396" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29650748" sideWeight="0.39009902" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -1380,14 +1361,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/world-view.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="511" column="14" selection-start-line="511" selection-start-column="14" selection-end-line="511" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/worldview.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="735">
@@ -1396,26 +1369,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/world-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="140" column="0" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="604">
-          <caret line="420" column="0" selection-start-line="420" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
+        <state relative-caret-position="337">
+          <caret line="511" column="14" selection-start-line="511" selection-start-column="14" selection-end-line="511" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="1217" column="33" selection-start-line="1217" selection-start-column="33" selection-end-line="1217" selection-end-column="33" />
+        <state relative-caret-position="844">
+          <caret line="1223" column="2" selection-start-line="1223" selection-start-column="2" selection-end-line="1223" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="828" column="0" selection-start-line="828" selection-start-column="0" selection-end-line="828" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="514">
+          <caret line="154" column="24" selection-start-line="154" selection-start-column="24" selection-end-line="154" selection-end-column="24" />
           <folding />
         </state>
       </provider>

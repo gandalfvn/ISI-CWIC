@@ -34,8 +34,9 @@ module miGen3DEngine {
   
   export class c3DEngine {
     hasControls:boolean = false;
-    rest:number = 0.2;
-    fric:number = 0.1;
+    mass:number = 0.001;
+    rest:number = 0;
+    fric:number = 1;
     opt:{showGrid:boolean, showImages: boolean, showLogos: boolean, hasPhysics:boolean} = {
       showGrid: false,
       showImages: true,
@@ -410,7 +411,7 @@ module miGen3DEngine {
         if (this.opt.hasPhysics) this.oimo.unregisterMesh(c); //stop physics
         c.position = new BABYLON.Vector3((p + i*0.3), c.boxsize, zpos[z]);
         c.rotationQuaternion = BABYLON.Quaternion.Identity().clone();
-        c.isVisible = true;
+        c.isVisible = false;
         if (i > 3) {
           i = 0;
           z++;
@@ -441,7 +442,7 @@ module miGen3DEngine {
             if (self.opt.hasPhysics) c.setPhysicsState({
               impostor: BABYLON.PhysicsEngine.BoxImpostor,
               move: true,
-              mass: 5, //c.boxsize,
+              mass: self.mass, //c.boxsize,
               friction: self.fric,
               restitution: self.rest
             });
@@ -459,7 +460,7 @@ module miGen3DEngine {
         if(self.opt.hasPhysics) c.setPhysicsState({
           impostor: BABYLON.PhysicsEngine.BoxImpostor,
           move: true,
-          mass: 5, //c.boxsize,
+          mass: self.mass, //c.boxsize,
           friction: self.fric,
           restitution: self.rest
         });
@@ -681,6 +682,7 @@ module miGen3DEngine {
           emcolor: BABYLON.Color3.Red(),
           difcolor: BABYLON.Color3.Red()
         });
+        //enable collision to check for overlap with cube
         self.intersectMesh.checkCollisions = true;
         setTimeout(function () {//give it 10 ms to propogate mesh updates
           if (self.intersectMesh) {
@@ -774,9 +776,10 @@ module miGen3DEngine {
       var diff:BABYLON.Vector3;
       diff = current.subtract(self.startingPoint);
       self.intersectMesh.moveWithCollisions(diff);
-      self.volumeMesh.position = self.intersectMesh.position.clone();
+      //self.volumeMesh.position = self.intersectMesh.position.clone();
       setTimeout(function(){ //catchup update so that we don't ahve a moved intereset volume with a previous location shadown volume
-        self.volumeMesh.position = self.intersectMesh.position.clone();
+        if(self.intersectMesh && self.intersectMesh.position)
+          self.volumeMesh.position = self.intersectMesh.position.clone();
       }, 50);
       self.startingPoint = current;
     };
@@ -810,7 +813,7 @@ module miGen3DEngine {
             if (self.opt.hasPhysics) c.setPhysicsState({
               impostor: BABYLON.PhysicsEngine.BoxImpostor,
               move: true,
-              mass: c['boxsize'],
+              mass: self.mass,
               friction: self.fric,
               restitution: self.rest
             });
@@ -824,15 +827,19 @@ module miGen3DEngine {
 
     private enableControl(b:boolean){
       if(b){
-        this.camera.speed = 0.2;
+        this.hasControls = true;
+        this.scene.activeCamera.attachControl(this.canvas);
+        this.camera.speed = 0.175;
         this.camera.ellipsoid = new BABYLON.Vector3(0.1, 0.1, 0.1); //bounding ellipse
         this.camera.checkCollisions = true;
-        this.camera.keysUp = [87]; // w
-        this.camera.keysDown = [83]; // s
-        this.camera.keysLeft = [65]; //  a
-        this.camera.keysRight = [68]; // d
+        this.camera.keysUp = [38]; // 87w
+        this.camera.keysDown = [40]; // 83s
+        this.camera.keysLeft = [37]; //  65a
+        this.camera.keysRight = [39]; // 68d
       }
       else{
+        this.hasControls = false;
+        this.camera.detachControl(this.canvas);
         this.camera.speed = 0;
         this.camera.keysUp = [];
         this.camera.keysDown = [];

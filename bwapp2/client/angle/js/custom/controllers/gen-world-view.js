@@ -1193,6 +1193,17 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 myengine.updateScene(block_states);
             }
         };
+        var radian = function (degrees) {
+            return degrees * Math.PI / 180;
+        };
+        $scope.rotCube = function (rotid, axis, deg) {
+            if (rotid) {
+                var rad = radian(deg);
+                var c = myengine.get3DCubeById(rotid);
+                if (c.isVisible)
+                    c.rotate(BABYLON.Axis[axis], rad, BABYLON.Space.LOCAL);
+            }
+        };
         /**Reset Frame to the last saved update
          * */
         $scope.resetState = function () {
