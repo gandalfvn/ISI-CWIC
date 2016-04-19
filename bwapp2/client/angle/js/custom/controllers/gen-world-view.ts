@@ -778,6 +778,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
   $scope.clearMeta = function () {
     $('#galleryarea').empty();
     $scope.curState.clear();
+    $scope.curcnt = -1;
+    $scope.curitr = -1;
     $scope.enableUI = false;
     myengine.resetWorld();
     myengine.setUI($scope.enableUI);

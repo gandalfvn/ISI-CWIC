@@ -65,10 +65,7 @@
               if($rootScope.isRole(usr, 'guest')){
                 $state.go('main')
               }
-              else{
-                if ($rootScope.isRole(usr, 'agent')) $state.go('app.games');
-                else $state.go('app.genworld');
-              }
+              else $state.go('app.genworld');
             }
             else $state.go('main');
           }, function (err) {

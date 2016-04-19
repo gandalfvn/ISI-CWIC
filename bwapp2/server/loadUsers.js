@@ -14,7 +14,7 @@ Meteor.startup(function () {
     {username: 'maya@example.com', roles: ['agent'], pwd: 'marcumarcu'},
     {username: 'zara@example.com', roles: ['agent'], pwd: 'marcumarcu'},
     {username: 'kate@example.com', roles: ['agent'], pwd: 'katekate'}
-  ]
+  ];
 
   _.each(userlist, function(usr){
     if(!Meteor.users.findOne({username: usr.username})){
