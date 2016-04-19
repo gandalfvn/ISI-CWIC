@@ -1206,11 +1206,13 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     }, 100);
   };
   
-  $scope.hideCube = function(id:number){
-    if(id){
+  $scope.hideCube = function(cnt:number){
+    if(cnt){
       var block_states = $scope.curState.block_states[$scope.createStateIdx];
-      block_states.block_state = _.filter(block_states.block_state, function(bl:iBlockState){return !(bl.id == id)});
-      $scope.enabledCubes = _.filter($scope.enabledCubes, function(bl:iBlockMetaEle){return !(bl.id == id);});
+      //block_states.block_state = _.filter(block_states.block_state, function(bl:iBlockState){return !(bl.id == id)});
+      //$scope.enabledCubes = _.filter($scope.enabledCubes, function(bl:iBlockMetaEle){return !(bl.id == id);});
+      block_states.block_state.splice(20-cnt, cnt);
+      $scope.enabledCubes.splice(20-cnt,cnt);
       myengine.updateScene(block_states);
     }
   };

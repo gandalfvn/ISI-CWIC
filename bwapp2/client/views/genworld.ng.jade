@@ -157,9 +157,10 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           button.btn.btn-xs.btn-danger(ng-click='rotid=0; axs=""; deg=undefined;')
             i.fa.fa-remove
         br
-        label *Delete Cube:
-        select(ng-model = "delid" ng-change="hideCube(delid)")
-          option(ng-repeat='b in enabledCubes', value='{{b.id}}') {{b.name}}
+        span(ng-show='enabledCubes.length > 1')
+          label *Delete #Cubes:
+          select(ng-model = "delcnt" ng-change="hideCube(delcnt)")
+            option(ng-show='k > 0' ng-repeat='(k,v) in enabledCubes', value='{{k}}') {{k}}
         br
         i(style="color:red") *Scene resets on cube delete
         hr
