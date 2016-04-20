@@ -711,7 +711,7 @@ var miGen3DEngine;
             //move up and down
             if (self.lockxz) {
                 current = self.startingPoint.clone();
-                delta = (self.sceney - self.scene.pointerY) * 0.02;
+                delta = (self.sceney - self.scene.pointerY) * 0.008;
                 current.y += delta;
                 self.sceney = self.scene.pointerY;
             }
@@ -747,7 +747,8 @@ var miGen3DEngine;
             if (!current)
                 return;
             var diff;
-            diff = current.subtract(self.startingPoint);
+            var scale = new BABYLON.Vector3(0.7, 0.7, 0.7);
+            diff = scale.multiply(current.subtract(self.startingPoint));
             self.intersectMesh.moveWithCollisions(diff);
             //self.volumeMesh.position = self.intersectMesh.position.clone();
             setTimeout(function () {
@@ -805,7 +806,7 @@ var miGen3DEngine;
             if (b) {
                 this.hasControls = true;
                 this.scene.activeCamera.attachControl(this.canvas);
-                this.camera.speed = 0.175;
+                this.camera.speed = 0.1;
                 this.camera.ellipsoid = new BABYLON.Vector3(0.1, 0.1, 0.1); //bounding ellipse
                 this.camera.checkCollisions = true;
                 this.camera.keysUp = [38]; // 87w
