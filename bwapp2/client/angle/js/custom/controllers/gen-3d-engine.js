@@ -747,8 +747,8 @@ var miGen3DEngine;
             if (!current)
                 return;
             var diff;
-            var scale = new BABYLON.Vector3(0.7, 0.7, 0.7);
-            diff = scale.multiply(current.subtract(self.startingPoint));
+            //var scale:BABYLON.Vector3 = new BABYLON.Vector3(0.7, 0.7, 0.7);
+            diff = current.subtract(self.startingPoint);
             self.intersectMesh.moveWithCollisions(diff);
             //self.volumeMesh.position = self.intersectMesh.position.clone();
             setTimeout(function () {

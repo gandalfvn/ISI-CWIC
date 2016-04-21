@@ -774,8 +774,8 @@ module miGen3DEngine {
 
       if (!current) return;
       var diff:BABYLON.Vector3;
-      var scale:BABYLON.Vector3 = new BABYLON.Vector3(0.7, 0.7, 0.7);
-      diff = scale.multiply(current.subtract(self.startingPoint));
+      //var scale:BABYLON.Vector3 = new BABYLON.Vector3(0.7, 0.7, 0.7);
+      diff = current.subtract(self.startingPoint);
       self.intersectMesh.moveWithCollisions(diff);
       //self.volumeMesh.position = self.intersectMesh.position.clone();
       setTimeout(function(){ //catchup update so that we don't ahve a moved intereset volume with a previous location shadown volume
