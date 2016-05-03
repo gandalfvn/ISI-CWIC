@@ -1097,7 +1097,12 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         });
         newblock_state.push({id: s.id, position: pos, rotation: rot})
       }
-      tempframe.block_states.push({block_state: newblock_state});
+      var ele = {block_state: newblock_state, enablephysics: myengine.opt.hasPhysics};
+      //override with blockstate physics
+      if(!_.isUndefined($scope.curState.block_states[idx].enablephysics)){
+        ele.enablephysics = $scope.curState.block_states[idx].enablephysics
+      }
+      tempframe.block_states.push(ele);
     }
     var content:string = JSON.stringify(angular.copy(tempframe), null, 2);
     var uriContent:string = "data:application/octet-stream," + encodeURIComponent(content);
@@ -1171,14 +1176,21 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         //there should be already a view since we render one
         var block_states = $scope.curState.block_states[$scope.createStateIdx];
         var block_state = block_states.block_state;
+        block_state.length = 0;
         //fill the block state for this frame with information
         $scope.curState.block_meta.blocks.forEach(function (bl) {
           var c:miGen3DEngine.iMeshMod = myengine.get3DCubeById(bl.id);
-          var bs:iBlockState ={id: bl.id, position: {x: fixedNumber(c.position.x), y: fixedNumber(c.position.y), z: fixedNumber(c.position.z)}};
-          if(c.rotationQuaternion)
-            bs.rotation = {x: fixedNumber(c.rotationQuaternion.x), y: fixedNumber(c.rotationQuaternion.y), z: fixedNumber(c.rotationQuaternion.z), w: fixedNumber(c.rotationQuaternion.w)};
-          block_state.push(bs);
+          if(c.isVisible){
+            var bs:iBlockState ={id: bl.id, position: {x: fixedNumber(c.position.x), y: fixedNumber(c.position.y), z: fixedNumber(c.position.z)}};
+            if(c.rotationQuaternion)
+              bs.rotation = {x: fixedNumber(c.rotationQuaternion.x), y: fixedNumber(c.rotationQuaternion.y), z: fixedNumber(c.rotationQuaternion.z), w: fixedNumber(c.rotationQuaternion.w)};
+            block_state.push(bs);
+          }
         });
+        if(block_state.length != $scope.curState.block_meta.blocks.length)
+          return $scope.$apply(function () {
+            toaster.pop('error', 'Block META and STATE mismatch!');
+          });
 
         var sc = BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
           width: myengine.canvas.width, height: myengine.canvas.height
@@ -1189,6 +1201,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
            console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
           block_states.screencap = b64img;
           block_states.created = (new Date).getTime();
+          block_states.enablephysics = $scope.opt.hasPhysics;
           var attachid:string = createButtons('stateimg', $scope.createStateIdx);
           showImage(b64img, 'Move #: ' + $scope.createStateIdx, attachid);
         });
@@ -1214,8 +1227,10 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       var block_states = $scope.curState.block_states[$scope.createStateIdx];
       //block_states.block_state = _.filter(block_states.block_state, function(bl:iBlockState){return !(bl.id == id)});
       //$scope.enabledCubes = _.filter($scope.enabledCubes, function(bl:iBlockMetaEle){return !(bl.id == id);});
-      block_states.block_state.splice(20-cnt, cnt);
-      $scope.enabledCubes.splice(20-cnt,cnt);
+      var total:number = $scope.curState.block_meta.blocks.length;
+      block_states.block_state.splice(total-cnt, cnt);
+      $scope.curState.block_meta.blocks.splice(total-cnt, cnt);
+      $scope.enabledCubes.splice(total-cnt,cnt);
       myengine.updateScene(block_states);
     }
   };
