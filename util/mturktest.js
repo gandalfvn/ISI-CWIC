@@ -6,8 +6,8 @@
 var mturk = require('mturk-api');
 
 var config = {
- access : 'AKIAIU67PYL5OCMK627A',
- secret : '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',
+ access : '',
+ secret : '',
  sandbox: true
 }
 
