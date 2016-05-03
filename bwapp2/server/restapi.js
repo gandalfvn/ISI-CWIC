@@ -14,14 +14,29 @@ HTTP['methods']({
             return GenJobsMgr.findOne('H_' + this.params.id);
         }
     },
+    '/api/hit/ids': {
+        get: function () {
+            return GenJobsMgr.find({ _id: { $in: [/^H\_/] } }, { sort: { "_id": 1 }, fields: { _id: 1, created: 1 } }).fetch();
+        }
+    },
     '/api/task/:id': {
         get: function () {
             return GenJobsMgr.findOne(this.params.id);
         }
     },
+    '/api/task/ids': {
+        get: function () {
+            return GenJobsMgr.find({ _id: { $nin: [/^H\_/] } }, { sort: { "_id": 1 }, fields: { _id: 1, created: 1 } }).fetch();
+        }
+    },
     '/api/state/:id': {
         get: function () {
             return GenStates.findOne(this.params.id);
+        }
+    },
+    '/api/state/ids': {
+        get: function () {
+            return GenStates.find({}, { sort: { "_id": 1 }, fields: { _id: 1, created: 1, name: 1 } }).fetch();
         }
     },
     '/api/screencap/:id': {
