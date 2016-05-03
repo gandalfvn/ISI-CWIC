@@ -32,6 +32,7 @@ interface iGenStates {
 interface iBlockStates{
   created?: number,
   screencapid?: string,
+  enablephysics?: boolean,
   block_state: iBlockState[]
 }
 
@@ -47,6 +48,7 @@ interface iPosRot{
 
 interface iBlockMeta {
   decoration?: string,
+  savefinalstate?: boolean,
   blocks: Array<iBlockMetaEle>
 }
 

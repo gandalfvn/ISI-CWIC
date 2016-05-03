@@ -964,7 +964,10 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         var mungeBlockStates = function (bss) {
             var newbss = [];
             for (var i = 0; i < bss.length; i++) {
-                newbss.push({ block_state: mungeBlockState(bss[i].block_state) });
+                var ele = { block_state: mungeBlockState(bss[i].block_state) };
+                if (!_.isUndefined(bss[i].enablephysics))
+                    ele['enablephysics'] = bss[i].enablephysics;
+                newbss.push(ele);
             }
             return newbss;
         };

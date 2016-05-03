@@ -389,6 +389,11 @@ var miGen3DEngine;
         c3DEngine.prototype.updateScene = function (state, cb) {
             var self = this;
             self.resetWorld();
+            //check if each state has physics
+            if (!_.isUndefined(state.enablephysics)) {
+                self.opt.hasPhysics = state.enablephysics;
+                self.updatePhysics();
+            }
             setTimeout(function () {
                 if (state.block_state) {
                     state.block_state.forEach(function (frame) {

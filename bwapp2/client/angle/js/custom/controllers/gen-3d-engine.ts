@@ -18,7 +18,10 @@ module miGen3DEngine {
   export interface iCubeMove {anchorCid: number, position: BABYLON.Vector3}
   export interface iMoveItr {itr: number, startMove:(number)=>void, cubesused:number[]}
   export interface iBlockStateSerial{id: number, position: string, rotation?:string}
-  export interface iBlockStatesSerial{block_state: iBlockStateSerial[]}
+  export interface iBlockStatesSerial{
+    enablephysics?: boolean,
+    block_state: iBlockStateSerial[]
+  }
   export interface iBlockImport{
     _id: string,
     public: boolean,
@@ -431,6 +434,11 @@ module miGen3DEngine {
     updateScene(state:iBlockStates, cb?:()=>void):void {
       var self = this;
       self.resetWorld();
+      //check if each state has physics
+      if(!_.isUndefined(state.enablephysics)){
+        self.opt.hasPhysics = state.enablephysics;
+        self.updatePhysics();
+      }
       setTimeout(function () {
         if (state.block_state) {
           state.block_state.forEach(function (frame) {
