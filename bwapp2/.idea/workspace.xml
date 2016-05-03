@@ -5,26 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.idea/codeStyleSettings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.idea/encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.idea/lyricwikia.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.idea/vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.idea/workspace.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/.ipynb_checkpoints/Untitled-checkpoint.ipynb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/lyricwikia/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/lyricwikia/items.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/lyricwikia/pipelines.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/lyricwikia/settings.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/lyricwikia/spiders/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/lyricwikia/spiders/spiderlist.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/lyricwikia/spiders/spidersong.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/run.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/scrapy.cfg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../util/lyricwikia/songsu.tar.gz" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/restapi.js" afterPath="$PROJECT_DIR$/server/restapi.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/restapi.js.map" afterPath="$PROJECT_DIR$/server/restapi.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/restapi.ts" afterPath="$PROJECT_DIR$/server/restapi.ts" />
@@ -51,8 +31,8 @@
       <file leaf-file-name="restapi.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/restapi.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="30" column="72" selection-start-line="30" selection-start-column="72" selection-end-line="30" selection-end-column="72" />
+            <state relative-caret-position="724">
+              <caret line="63" column="5" selection-start-line="63" selection-start-column="5" selection-end-line="63" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -1030,12 +1010,12 @@
       <workItem from="1461256911429" duration="46000" />
       <workItem from="1461256965934" duration="266000" />
       <workItem from="1462207430109" duration="989000" />
-      <workItem from="1462301189261" duration="1578000" />
+      <workItem from="1462301189261" duration="1695000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72146000" />
+    <option name="totallyTimeSpent" value="72263000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="236" width="1536" height="1493" extended-state="0" />
@@ -1414,8 +1394,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server/restapi.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="72" selection-start-line="30" selection-start-column="72" selection-end-line="30" selection-end-column="72" />
+        <state relative-caret-position="724">
+          <caret line="63" column="5" selection-start-line="63" selection-start-column="5" selection-end-line="63" selection-end-column="5" />
           <folding />
         </state>
       </provider>

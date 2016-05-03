@@ -46,6 +46,11 @@ HTTP['methods']({
             return b64img;
         }
     },
+    '/api/screencap/ids': {
+        get: function () {
+            return ScreenCaps.find({}, { sort: { "_id": 1 }, fields: { _id: 1, created: 1 } }).fetch();
+        }
+    },
     '/api/cmd/hit/:id': {
         get: function () {
             return GenCmdJobs.findOne('H_' + this.params.id);

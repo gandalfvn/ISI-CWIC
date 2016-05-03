@@ -53,6 +53,11 @@ HTTP['methods']({
       return b64img;
     }
   },
+  '/api/screencap/ids': {
+    get: function() {
+      return <iIds[]>ScreenCaps.find({}, {sort: {"_id": 1}, fields:{_id:1, created:1}}).fetch();
+    }
+  },
   '/api/cmd/hit/:id': {
     get: function() {
       return <miGenCmdJobs.iGenJobsHIT>GenCmdJobs.findOne('H_' + this.params.id);
