@@ -28,16 +28,15 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
   tabset(ng-show='!curState.block_meta.blocks && !enableUI')
     tab(heading='Create Block Actions', active=true)
       .row
-        .content.col-sm-4.mb-sm
+        .content.col-sm-2.mb-sm
           button.btn.btn-sm.btn-primary(ng-click='setCreateMode()') Create Custom Layout
-      .row
-        .content.col-sm-4
+        //-.content.col-sm-4
           form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importstateform', ng-submit='loadState()')
             b Import State
             .form-group
               input.form-control#sfn(type='file', name='lsf', accept=".json", single, onchange="angular.element(this).scope().stateFileChanged(event)")
               button.btn.btn-default(type="submit", ng-show='statefilename') Go
-        .content.col-sm-4(ng-show='!curState.block_meta.blocks')
+        //-.content.col-sm-4(ng-show='!curState.block_meta.blocks')
           form.form-inline.ng-pristine.ng-valid.well(role="form",novalidate, name='importmetaform', ng-submit='loadMeta()')
             b Import Meta
             .form-group

@@ -882,6 +882,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             }
         };
         $scope.loadStates = function () {
+            var self = this;
             if ($scope.statesfilename && $scope.statesfilename.length) {
                 //read file
                 var reader = new FileReader();
@@ -912,41 +913,42 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         });
                         var itrFrame = function (idx, block_states, cb) {
                             if (_.isUndefined(block_states[idx])) {
-                                $scope.$apply(function () {
+                                var done = function (cb) {
                                     if (filedata.name)
                                         $scope.impFilename = filedata.name;
                                     else
                                         $scope.impFilename = $scope.statesfilename[0].name.toLowerCase().replace(/\.json/g, '');
                                     $scope.enableImpSave = true;
                                     $scope.isgen = false;
-                                });
-                                return cb();
+                                    cb();
+                                };
+                                $scope.$apply(done(cb));
                             }
-                            myengine.updateScene(block_states[idx], function () {
-                                //wait for steady state
-                                checkFnSS = setInterval(function () {
-                                    if (myengine.isSteadyState) {
-                                        clearInterval(checkFnSS);
-                                        var sc = BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
-                                            width: myengine.canvas.width, height: myengine.canvas.height
-                                        }, function (b64i) {
-                                            var b64img = LZString.compressToUTF16(b64i);
-                                            /*console.warn('len', b64i.length, b64img.length);
-                                             console.warn('b64i', b64i);
-                                             console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
-                                            block_states[idx].screencap = b64img;
-                                            block_states[idx].created = (new Date).getTime();
-                                            var attachid = createButtons('stateimg', idx);
-                                            showImage(b64img, 'Move #: ' + idx, attachid);
-                                            itrFrame(idx + 1, block_states, cb);
-                                        });
-                                    }
-                                }, 100);
-                            });
+                            else {
+                                myengine.updateScene(block_states[idx], function () {
+                                    //wait for steady state
+                                    checkFnSS = setInterval(function () {
+                                        if (myengine.isSteadyState) {
+                                            clearInterval(checkFnSS);
+                                            var sc = BABYLON.Tools.CreateScreenshot(myengine.engine, myengine.camera, {
+                                                width: myengine.canvas.width, height: myengine.canvas.height
+                                            }, function (b64i) {
+                                                var b64img = LZString.compressToUTF16(b64i);
+                                                /*console.warn('len', b64i.length, b64img.length);
+                                                 console.warn('b64i', b64i);
+                                                 console.warn('b64img', LZString.decompressFromUTF16(b64img));*/
+                                                block_states[idx].screencap = b64img;
+                                                block_states[idx].created = (new Date).getTime();
+                                                var attachid = createButtons('stateimg', idx);
+                                                showImage(b64img, 'Move #: ' + idx, attachid);
+                                                itrFrame(idx + 1, block_states, cb);
+                                            });
+                                        }
+                                    }, 100);
+                                });
+                            }
                         };
-                        itrFrame(0, $scope.curState.block_states, function () {
-                            console.warn($scope.curState.block_states);
-                        });
+                        itrFrame(0, $scope.curState.block_states, function () { });
                     }
                     else
                         $scope.$apply(function () {
