@@ -83,10 +83,12 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
           input(type='text', ng-model='impFilename')
         .form-group
           button.btn.btn-success.btn-sm(type='submit')
-            .glyphicons.floppy_saved Save
+            i.fa.fa-floppy-o
+            |  Save
           | &nbsp;&nbsp;
           button.btn.btn-warning.btn-sm(ng-click='cancelImport()')
-            .glyphicons.remove_2 Cancel
+            i.fa.fa-remove
+            |  Cancel
   //-.row-fluid.col-sm-2(ng-if='!isgen && !enableImpSave && curState._id && curState.block_meta.blocks && curState.block_states.length < 20')
     div.well
       h4 Create Block Moves

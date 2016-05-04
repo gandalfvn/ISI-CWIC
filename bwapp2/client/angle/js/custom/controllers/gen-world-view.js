@@ -772,6 +772,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
             $scope.curcnt = -1;
             $scope.curitr = -1;
             $scope.enableUI = false;
+            $scope.enableImpSave = false;
             myengine.resetWorld();
             myengine.setUI($scope.enableUI);
             $state.transitionTo('app.genworld', {}, { notify: false });
