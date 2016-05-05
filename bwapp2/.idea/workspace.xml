@@ -2,22 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/game-view.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/games-view.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/views/games.ng.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/views/gameview.ng.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/views/goalview.ng.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/views/replay.ng.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/views/tasks.ng.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/views/worldview.ng.jade" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/logos.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/mixgrass.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/target.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/img/textures/wood.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/settings-development.json" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/modules/routes/routes.config.js" afterPath="$PROJECT_DIR$/client/app/js/modules/routes/routes.config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/howtorun.txt" afterPath="$PROJECT_DIR$/howtorun.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/loadUsers.js" afterPath="$PROJECT_DIR$/server/loadUsers.js" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -48,11 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="loadUsers.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="loadUsers.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/loadUsers.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="73" selection-start-line="5" selection-start-column="73" selection-end-line="5" selection-end-column="73" />
+            <state relative-caret-position="105">
+              <caret line="7" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -82,7 +67,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="howtorun.txt" pinned="false" current-in-tab="true">
+      <file leaf-file-name="howtorun.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/howtorun.txt">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="60">
@@ -166,7 +151,6 @@
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.ts" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.ts" />
         <option value="$PROJECT_DIR$/client/views/partials/top-navbar.ng.jade" />
-        <option value="$PROJECT_DIR$/server/loadUsers.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/core/core.run.js" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/README.txt" />
         <option value="$PROJECT_DIR$/server/restapi.ts" />
@@ -177,6 +161,7 @@
         <option value="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
         <option value="$PROJECT_DIR$/client/app/js/modules/routes/routes.config.js" />
         <option value="$PROJECT_DIR$/howtorun.txt" />
+        <option value="$PROJECT_DIR$/server/loadUsers.js" />
       </list>
     </option>
   </component>
@@ -256,6 +241,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -564,12 +563,12 @@
       <workItem from="1461256965934" duration="266000" />
       <workItem from="1462207430109" duration="989000" />
       <workItem from="1462301189261" duration="11162000" />
-      <workItem from="1462462745048" duration="1464000" />
+      <workItem from="1462462745048" duration="3152000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="83194000" />
+    <option name="totallyTimeSpent" value="84882000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="236" width="1536" height="1493" extended-state="0" />
@@ -840,14 +839,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/loadUsers.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="73" selection-start-line="5" selection-start-column="73" selection-end-line="5" selection-end-column="73" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/settings-development.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -969,6 +960,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/loadUsers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding />
         </state>
       </provider>
