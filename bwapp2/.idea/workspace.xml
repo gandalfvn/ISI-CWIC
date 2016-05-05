@@ -1,15 +1,179 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" line="436" mnemonic="8" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/game-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/games-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdjobs-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdtask-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-jobs-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-pred-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-simpexp-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/goal-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/replay-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/tasks-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/world-view-simp.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/world-view.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/directives/clearicon.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/directives/panel-tools.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/filters/encuricomp.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/filters/encuricomp.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/filters/encuricomp.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/services/apputils.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/services/apputils.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/custom/services/apputils.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/colors/colors.contant.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/colors/colors.service.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/core/core.config.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/core/core.constants.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/core/core.run.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/lazyload/lazyload.config.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/lazyload/lazyload.constants.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/loadingbar/loadingbar.config.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/loadingbar/loadingbar.run.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/navsearch/navsearch.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/navsearch/navsearch.service.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/preloader/preloader.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/routes/route-helpers.provider.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/settings/settings.run.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/sidebar/sidebar.controller.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/sidebar/sidebar.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/sidebar/sidebar.service.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/sidebar/sidebar.userblock.controller.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/togglestate/toggle-state.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/togglestate/toggle-state.service.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/translate/translate.config.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/translate/translate.run.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/animate-enabled.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/browser.service.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/clear-storage.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/fullscreen.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/load-css.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/now.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/table-checkall.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/trigger-resize.directive.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/js/modules/utils/utils.service.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/01_bootstrap.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/02_app.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/animate.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/bootstrap-reset.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/breadcrumbs.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/layout-animation.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/layout-extra.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/layout.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/loading-bar.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/media-queries.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/offsidebar.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/preloader.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/print.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/sidebar.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/top-navbar.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/typo.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/app/utils.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/alerts.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/badges.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/bootstrap.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/breadcrumbs.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/button-groups.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/buttons.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/carousel.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/close.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/code.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/component-animations.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/dropdowns.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/forms.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/glyphicons.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/grid.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/input-groups.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/jumbotron.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/labels.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/list-group.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/media.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/alerts.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/background-variant.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/border-radius.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/buttons.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/center-block.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/clearfix.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/forms.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/gradients.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/grid-framework.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/grid.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/hide-text.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/image.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/labels.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/list-group.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/nav-divider.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/nav-vertical-align.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/opacity.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/pagination.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/panels.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/progress-bar.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/reset-filter.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/reset-text.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/resize.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/responsive-visibility.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/size.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/tab-focus.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/table-row.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/text-emphasis.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/text-overflow.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/mixins/vendor-prefixes.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/modals.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/navbar.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/navs.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/normalize.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/pager.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/pagination.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/panels.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/popovers.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/print.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/progress-bars.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/responsive-embed.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/responsive-utilities.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/scaffolding.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/tables.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/theme.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/thumbnails.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/tooltip.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/type.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/utilities.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/variables.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/bootstrap/wells.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/custom/custom.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-a.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-b.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-c.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-d.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-e.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-f.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-g.import.less" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/angle/less/themes/theme-h.import.less" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genworld.ng.jade" afterPath="$PROJECT_DIR$/client/views/genworld.ng.jade" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,31 +194,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="gen-3d-engine.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
+      <file leaf-file-name="gen-3d-engine.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="416" column="28" selection-start-line="416" selection-start-column="28" selection-end-line="416" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="936" column="0" selection-start-line="936" selection-start-column="0" selection-end-line="936" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="genworld.ng.jade" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -120,7 +264,6 @@
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.ts" />
         <option value="$PROJECT_DIR$/client/views/partials/top-navbar.ng.jade" />
         <option value="$PROJECT_DIR$/server/loadUsers.js" />
-        <option value="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
         <option value="$PROJECT_DIR$/client/angle/js/modules/core/core.run.js" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/README.txt" />
         <option value="$PROJECT_DIR$/server/restapi.ts" />
@@ -128,6 +271,7 @@
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts" />
         <option value="$PROJECT_DIR$/client/views/genworld.ng.jade" />
         <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts" />
+        <option value="$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js" />
       </list>
     </option>
   </component>
@@ -187,6 +331,187 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="custom" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bwapp2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="custom" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -307,221 +632,6 @@
             <PATH_ELEMENT USER_OBJECT="controllers">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="server" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="model" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="angle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="angle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="angle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="custom" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="apputils.ts" />
-              <option name="myItemType" value="com.intellij.lang.typescript.compiler.ui.projectView.TypeScriptNestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="angle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="custom" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bwapp2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="angle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="custom" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -690,12 +800,13 @@
       <workItem from="1461256911429" duration="46000" />
       <workItem from="1461256965934" duration="266000" />
       <workItem from="1462207430109" duration="989000" />
-      <workItem from="1462301189261" duration="10817000" />
+      <workItem from="1462301189261" duration="11162000" />
+      <workItem from="1462462745048" duration="672000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81385000" />
+    <option name="totallyTimeSpent" value="82402000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="236" width="1536" height="1493" extended-state="0" />
@@ -703,11 +814,11 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22574258" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27156094" sideWeight="0.50165015" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3285816" sideWeight="0.5973597" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3285816" sideWeight="0.41452146" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3285816" sideWeight="0.40264025" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958034" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27156094" sideWeight="0.49834985" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27156094" sideWeight="0.49570957" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29650748" sideWeight="0.3881188" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -739,55 +850,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/gencmdjobsdb.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="34" column="21" selection-start-line="34" selection-start-column="21" selection-end-line="34" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/services/apputils.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="54" column="6" selection-start-line="54" selection-start-column="6" selection-end-line="54" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/lib/js/lazyload.module.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="4" column="21" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/gencmds.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/gencmdjobs.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="794">
-          <caret line="273" column="34" selection-start-line="273" selection-start-column="34" selection-end-line="273" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/translate.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/sidebar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -910,9 +972,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="689">
           <caret line="338" column="38" selection-start-line="338" selection-start-column="38" selection-end-line="338" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#41#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -966,13 +1026,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/world-view.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="511" column="14" selection-start-line="511" selection-start-column="14" selection-end-line="511" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/loadUsers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="465">
@@ -984,7 +1037,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="475">
           <caret line="40" column="7" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -992,7 +1044,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="36" column="1" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1000,23 +1051,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="213">
           <caret line="16" column="24" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/README.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/README.txt" />
     <entry file="file://$PROJECT_DIR$/server/restapi.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="439">
           <caret line="44" column="21" selection-start-line="44" selection-start-column="21" selection-end-line="44" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1024,7 +1066,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="1" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1032,7 +1073,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
           <caret line="39" column="54" selection-start-line="39" selection-start-column="54" selection-end-line="39" selection-end-column="54" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1040,15 +1080,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="89" column="33" selection-start-line="89" selection-start-column="21" selection-end-line="89" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1056,30 +1087,101 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="35" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-3d-engine.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
+        <state relative-caret-position="0">
           <caret line="416" column="28" selection-start-line="416" selection-start-column="28" selection-end-line="416" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/world-view-simp.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+        <state relative-caret-position="63">
+          <caret line="6" column="49" selection-start-line="6" selection-start-column="36" selection-end-line="6" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/modules/routes/routes.config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="734">
+          <caret line="196" column="8" selection-start-line="196" selection-start-column="8" selection-end-line="196" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/world-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="5" column="45" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="46" selection-start-line="12" selection-start-column="46" selection-end-line="12" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/tasks-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-27">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/replay-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/goal-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/angle/js/custom/filters/encuricomp.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-world-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="936" column="0" selection-start-line="936" selection-start-column="0" selection-end-line="936" selection-end-column="0" />
+        <state relative-caret-position="345">
+          <caret line="21" column="46" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
