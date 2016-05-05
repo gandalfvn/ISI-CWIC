@@ -178,22 +178,6 @@
         templateUrl: helper.basepath('gencmdtask.html'),
         resolve: helper.resolveFor('modernizr', 'icons', 'toaster', 'ngDialog', 'datatables','ngDeviceDetect', 'babylonjs', 'levenshtein'),
         controller: 'genCmdTaskCtrl'
-      })
-      .state('app.tasks', {
-        url: '/tasks',
-        title: 'Tasks View',
-        templateUrl: helper.basepath('tasks.html'),
-        resolve: angular.extend(
-          {
-            "currentUser": ["$auth", '$rootScope', function ($auth, $rootScope) {
-              return $auth.requireValidUser(function (user) {
-                return !$rootScope.isRole(user, 'guest');
-              });
-            }]
-          },  //simple functions appear first so data is loaded
-          helper.resolveFor('ngDialog', 'datatables')
-        ),
-        controller: 'tasksCtrl'
       });
 
   } // routesConfig
