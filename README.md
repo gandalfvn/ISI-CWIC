@@ -39,7 +39,7 @@ Block World has many options.  The main focus is in creating worlds for annotati
 The following image shows the Block Generation UI:
 
 
-<img src="BlockWorldHowtoImages/Create.png" width=300/>
+<img src="BlockWorldHowtoImages/Create.png" width=400/>
 
 The user interface consists of a 3 main components. The Scene which renders the block world, the Creation/Review area, and setting up the block type to render.
 
@@ -50,13 +50,13 @@ Create Custom Layout
 The user can create their own block layouts by clicking on the “Create Custom Layout”.  This option allows the user to arrange the 20 blocks as needed for the project.  Click on the button <img src="BlockWorldHowtoImages/custom.png" width=100/> to get started.  This is the workspace for the simulation to create the image from the blocks:
 
 
-<img src="BlockWorldHowtoImages/20blocks_world.png" width=300/>
+<img src="BlockWorldHowtoImages/20blocks.png" width=400/>
 
 
 Scene
 The scene shows the blocks available to use about 20 of them with different logos on them.   This is where you manipulate the blocks and the camera.  The camera is what you are using to view the scene.  In the next section we will describe the navigation.  
 
-<img src="BlockWorldHowtoImages/20blocks.png" width=300/>
+<img src="BlockWorldHowtoImages/20blocks_world.png" width=300/>
 
 Navigation
 There are a number of keys and buttons to push to help you move the camera around and move the blocks around.
@@ -89,7 +89,7 @@ Delete #Cubes - when starting, count the number of cubes that you will need to u
 JSON Layout
 The major benefit of the simulation system is the ability for a user to import a json block layout file and run physics on the system.  To this point sample json file describes a 20 block (max blocks) system with 1 scene.  The file is located in ISI-CWIC/bwapp2/Sample/20blocklayout.json.  The main features for the JSON description are described in the typescript file ISI-CWIC/bwapp2/model/genstatesdb.ts - the JSON description starts with the iGenStates interface.
 
-```
+```js
 cBlockDecor = class ciBlockDecor{
  static digit = 'digit';
  static logo = 'logo';
