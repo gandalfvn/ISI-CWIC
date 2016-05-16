@@ -668,7 +668,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                         '    ' +
                         '<button onclick="angular.element(this).scope().getMove(' + i + ')" class="btn btn-xs btn-info"> Get JSON </button>' +
                         '    ' +
-                        '<button onclick="angular.element(this).scope().delMove(' + i + ')" class="btn btn-xs btn-info"> Delete Move(s) </button>' +
+                        '<button onclick="angular.element(this).scope().delMove(' + i + ')" class="btn btn-xs btn-info"> Delete Move </button>' +
                         '<div id="' + retId + '"></div>';
             }
             var attachTo = '#galleryarea';
@@ -1121,7 +1121,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         };
         $scope.delMove = function (idx) {
             console.warn('delmove');
-            var count = $scope.curState.block_states.length - idx;
+            //var count:number = $scope.curState.block_states.length - idx; //remove to end
+            var count = 1; //remove only one item
             $scope.curState.block_states.splice(idx, count);
             if ($scope.curState._id) {
                 var doc = angular.copy($scope.curState);
