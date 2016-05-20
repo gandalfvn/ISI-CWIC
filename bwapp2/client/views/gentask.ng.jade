@@ -85,7 +85,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         div(style='color:red;font-size:1.1em')
           .fa.fa-exclamation-triangle
           | Each description MUST describe the action completely.  
-          i(style='color:green') Blocks are NEVER removed, some maybe covered
+          i(style='color:green') Blocks are NEVER removed, some maybe covered.  
+          i(style='color:green') Often multiple blocks may move and/or rotate.
           //-i(ng-if="!curState.type" style='color:green') Only one block moves per action
           i(ng-if="curState.type" style='color:green') Accurately describe the actions in the fewest possible separate steps
           //-span(ng-show='notes.length > 1')
@@ -107,8 +108,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             .col-sm-12(ng-if='$index > 0 && notes[$index-1].length > 13')
               | Create a 
               b(style='color:red') COMPLETELY NEW ALTERNATIVE
-              |  description of the action. 
-              i(style='color:green') Blocks are NEVER removed, some maybe covered
+              |  description of the action.  
+              i(style='color:green') Blocks are NEVER removed, some maybe covered.  
+              i(style='color:green') Often multiple blocks may move and/or rotate.  
               //-i(ng-if="!curState.type" style='color:green') Only one block moves per action
               i(ng-if="curState.type" style='color:green') Accurately describe the actions in the fewest possible separate steps
             .col-sm-12(ng-show='!$index || ($index > 0 && notes[$index-1].length > 13 && !curState.type) || ($index > 0 && notes[$index-1].length > 75 && curState.type)')
