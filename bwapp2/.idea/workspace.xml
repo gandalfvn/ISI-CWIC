@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/gentask.ng.jade" afterPath="$PROJECT_DIR$/client/views/gentask.ng.jade" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,13 +24,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="570">
-              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+              <caret line="38" column="41" selection-start-line="38" selection-start-column="41" selection-end-line="38" selection-end-column="41" />
               <folding>
                 <marker date="1463765748000" expanded="true" signature="21753:21846" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gen-jobs-view.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="825">
+              <caret line="55" column="39" selection-start-line="55" selection-start-column="39" selection-end-line="55" selection-end-column="39" />
+              <folding>
+                <marker date="1463765554000" expanded="true" signature="12430:12446" placeholder="..." />
+                <marker date="1463765554000" expanded="true" signature="13553:13628" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -47,11 +59,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="false">
+      <file leaf-file-name="gentask.ng.jade" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1711">
-              <caret line="156" column="20" selection-start-line="156" selection-start-column="20" selection-end-line="156" selection-end-column="20" />
+            <state relative-caret-position="285">
+              <caret line="87" column="77" selection-start-line="87" selection-start-column="77" selection-end-line="87" selection-end-column="77" />
               <folding />
             </state>
           </provider>
@@ -60,7 +72,7 @@
       <file leaf-file-name="gen-task-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
+            <state relative-caret-position="615">
               <caret line="41" column="7" selection-start-line="41" selection-start-column="7" selection-end-line="41" selection-end-column="7" />
               <folding>
                 <marker date="1463765515000" expanded="true" signature="9631:9682" placeholder="..." />
@@ -72,8 +84,8 @@
       <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="900">
-              <caret line="94" column="19" selection-start-line="94" selection-start-column="19" selection-end-line="94" selection-end-column="19" />
+            <state relative-caret-position="890">
+              <caret line="120" column="34" selection-start-line="120" selection-start-column="34" selection-end-line="120" selection-end-column="34" />
               <folding>
                 <marker date="1463765551000" expanded="true" signature="11163:11179" placeholder="..." />
                 <marker date="1463765551000" expanded="true" signature="12117:12176" placeholder="..." />
@@ -146,10 +158,10 @@
         <option value="$PROJECT_DIR$/howtorun.txt" />
         <option value="$PROJECT_DIR$/server/loadUsers.js" />
         <option value="$PROJECT_DIR$/server/restapi.ts" />
-        <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
         <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.ts" />
         <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts" />
         <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" />
+        <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
       </list>
     </option>
   </component>
@@ -210,6 +222,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -632,7 +645,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -784,12 +796,13 @@
       <workItem from="1463343489399" duration="1516000" />
       <workItem from="1463495154550" duration="2351000" />
       <workItem from="1463501261494" duration="3338000" />
-      <workItem from="1463723122417" duration="3280000" />
+      <workItem from="1463723122417" duration="4359000" />
+      <workItem from="1463770206952" duration="106000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="99424000" />
+    <option name="totallyTimeSpent" value="100609000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="236" width="1536" height="1493" extended-state="0" />
@@ -797,22 +810,22 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22574258" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27084818" sideWeight="0.5122112" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25302923" sideWeight="0.6349835" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25302923" sideWeight="0.3669967" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958034" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27084818" sideWeight="0.48778877" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29650748" sideWeight="0.38613862" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="484" y="123" width="1336" height="973" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27084818" sideWeight="0.48778877" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25302923" sideWeight="0.3650165" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -833,13 +846,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/views/gensimpexp.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="694">
-          <caret line="85" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/angle/js/custom/controllers/gen-cmdexp-view.ts" />
     <entry file="file://$PROJECT_DIR$/client/views/partials/top-navbar.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
@@ -1009,17 +1015,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1711">
-          <caret line="156" column="20" selection-start-line="156" selection-start-column="20" selection-end-line="156" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
+        <state relative-caret-position="615">
           <caret line="41" column="7" selection-start-line="41" selection-start-column="7" selection-end-line="41" selection-end-column="7" />
           <folding>
             <marker date="1463765515000" expanded="true" signature="9631:9682" placeholder="..." />
@@ -1027,10 +1025,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="38" column="41" selection-start-line="38" selection-start-column="41" selection-end-line="38" selection-end-column="41" />
+          <folding>
+            <marker date="1463765748000" expanded="true" signature="21753:21846" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="825">
+          <caret line="55" column="39" selection-start-line="55" selection-start-column="39" selection-end-line="55" selection-end-column="39" />
+          <folding>
+            <marker date="1463765554000" expanded="true" signature="12430:12446" placeholder="..." />
+            <marker date="1463765554000" expanded="true" signature="13553:13628" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="900">
-          <caret line="94" column="19" selection-start-line="94" selection-start-column="19" selection-end-line="94" selection-end-column="19" />
+        <state relative-caret-position="890">
+          <caret line="120" column="34" selection-start-line="120" selection-start-column="34" selection-end-line="120" selection-end-column="34" />
           <folding>
             <marker date="1463765551000" expanded="true" signature="11163:11179" placeholder="..." />
             <marker date="1463765551000" expanded="true" signature="12117:12176" placeholder="..." />
@@ -1038,13 +1057,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
+    <entry file="file://$PROJECT_DIR$/client/views/gentask.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding>
-            <marker date="1463765748000" expanded="true" signature="21753:21846" placeholder="..." />
-          </folding>
+        <state relative-caret-position="285">
+          <caret line="87" column="77" selection-start-line="87" selection-start-column="77" selection-end-line="87" selection-end-column="77" />
+          <folding />
         </state>
       </provider>
     </entry>
