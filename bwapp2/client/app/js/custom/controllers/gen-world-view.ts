@@ -27,13 +27,13 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
       onStop: subErr
     });
 
-    $scope.subscribe("screencaps", ()=>{}, {
+    /*$scope.subscribe("screencaps", ()=>{}, {
       onReady: function (sid) {dataReady.update('screencaps');},
       onStop: subErr
-    });
+    });*/
   }, 10);
   
-  var dataReady:iDataReady = new apputils.cDataReady(2, function ():void {
+  var dataReady:iDataReady = new apputils.cDataReady(1, function ():void {
     updateTableStateParams();
     if ($stateParams.sid) {
       $scope.showState($stateParams.sid);

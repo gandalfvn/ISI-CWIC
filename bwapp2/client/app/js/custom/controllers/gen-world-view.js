@@ -23,12 +23,12 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
                 onReady: function (sid) { dataReady.update('genstates'); },
                 onStop: subErr
             });
-            $scope.subscribe("screencaps", function () { }, {
-                onReady: function (sid) { dataReady.update('screencaps'); },
-                onStop: subErr
-            });
+            /*$scope.subscribe("screencaps", ()=>{}, {
+              onReady: function (sid) {dataReady.update('screencaps');},
+              onStop: subErr
+            });*/
         }, 10);
-        var dataReady = new apputils.cDataReady(2, function () {
+        var dataReady = new apputils.cDataReady(1, function () {
             updateTableStateParams();
             if ($stateParams.sid) {
                 $scope.showState($stateParams.sid);

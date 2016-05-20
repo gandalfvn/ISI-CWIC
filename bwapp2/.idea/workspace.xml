@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.js" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.js.map" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.js" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.js.map" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.ts" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,13 +25,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="false">
+      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+            <state relative-caret-position="570">
+              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
               <folding>
-                <marker date="1463412388000" expanded="true" signature="21749:21842" placeholder="..." />
+                <marker date="1463765748000" expanded="true" signature="21753:21846" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -73,11 +69,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gen-jobs-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="885">
-              <caret line="93" column="54" selection-start-line="93" selection-start-column="54" selection-end-line="93" selection-end-column="54" />
+            <state relative-caret-position="900">
+              <caret line="94" column="19" selection-start-line="94" selection-start-column="19" selection-end-line="94" selection-end-column="19" />
               <folding>
                 <marker date="1463765551000" expanded="true" signature="11163:11179" placeholder="..." />
                 <marker date="1463765551000" expanded="true" signature="12117:12176" placeholder="..." />
@@ -149,11 +145,11 @@
         <option value="$PROJECT_DIR$/client/app/js/modules/routes/routes.config.js" />
         <option value="$PROJECT_DIR$/howtorun.txt" />
         <option value="$PROJECT_DIR$/server/loadUsers.js" />
-        <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" />
         <option value="$PROJECT_DIR$/server/restapi.ts" />
         <option value="$PROJECT_DIR$/client/views/gentask.ng.jade" />
         <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-task-view.ts" />
         <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts" />
+        <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" />
       </list>
     </option>
   </component>
@@ -788,12 +784,12 @@
       <workItem from="1463343489399" duration="1516000" />
       <workItem from="1463495154550" duration="2351000" />
       <workItem from="1463501261494" duration="3338000" />
-      <workItem from="1463723122417" duration="3079000" />
+      <workItem from="1463723122417" duration="3280000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="99223000" />
+    <option name="totallyTimeSpent" value="99424000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="236" width="1536" height="1493" extended-state="0" />
@@ -1005,16 +1001,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding>
-            <marker date="1463412388000" expanded="true" signature="21749:21842" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/restapi.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -1043,11 +1029,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-jobs-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="885">
-          <caret line="93" column="54" selection-start-line="93" selection-start-column="54" selection-end-line="93" selection-end-column="54" />
+        <state relative-caret-position="900">
+          <caret line="94" column="19" selection-start-line="94" selection-start-column="19" selection-end-line="94" selection-end-column="19" />
           <folding>
             <marker date="1463765551000" expanded="true" signature="11163:11179" placeholder="..." />
             <marker date="1463765551000" expanded="true" signature="12117:12176" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding>
+            <marker date="1463765748000" expanded="true" signature="21753:21846" placeholder="..." />
           </folding>
         </state>
       </provider>
