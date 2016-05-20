@@ -52,16 +52,16 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
                 onReady: function (sid) { dataReady.update('genstates'); },
                 onStop: subErr
             });
-            $scope.subscribe("screencaps", function () { }, {
-                onReady: function (sid) { dataReady.update('screencaps'); },
-                onStop: subErr
-            });
+            /*$scope.subscribe("screencaps", ()=>{}, {
+              onReady: function (sid) {dataReady.update('screencaps');},
+              onStop: subErr
+            });*/
             $scope.subscribe("genjobsmgr", function () { return [{ type: "list", pageCur: $scope.opt.pageCur, pageSize: $scope.opt.pageSize }]; }, {
                 onReady: function (sid) { dataReady.update('genjobsmgr'); },
                 onStop: subErr
             });
         }, 10);
-        var dataReady = new apputils.cDataReady(2, function () {
+        var dataReady = new apputils.cDataReady(1, function () {
             updateTableStateParams();
             updateJobMgr();
             $scope.refreshHITs();

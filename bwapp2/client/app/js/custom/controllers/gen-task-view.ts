@@ -34,12 +34,12 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
     },
     onStop: subErr
   });
-  $scope.subscribe("screencaps", ()=>{}, {
+  /*$scope.subscribe("screencaps", ()=>{}, {
     onReady: function (sid) {
       dataReady.update('screencaps');
     },
     onStop: subErr
-  });
+  });*/
   $scope.subscribe("genjobsmgr", ()=>{}, {
     onReady: function (sid) {
       dataReady.update('genjobsmgr');
@@ -53,7 +53,7 @@ angular.module('app.generate').controller('genTaskCtrl', ['$rootScope', '$scope'
   $scope.maxtask = -1;
   $scope.curantpass = -1;
   $scope.notes = null;
-  var dataReady:iDataReady = new apputils.cDataReady(2, function():void {
+  var dataReady:iDataReady = new apputils.cDataReady(1, function():void {
     var isAdminUser = ($rootScope.currentUser) ? $rootScope.isRole($rootScope.currentUser, 'admin') : false;
     if ($stateParams.report && !isAdminUser) { //not admin we just leave it blank
       $rootScope.dataloaded = true;

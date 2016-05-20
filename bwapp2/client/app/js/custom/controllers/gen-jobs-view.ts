@@ -80,10 +80,10 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
       onStop: subErr
     });
 
-    $scope.subscribe("screencaps", ()=>{}, {
+    /*$scope.subscribe("screencaps", ()=>{}, {
       onReady: function (sid) {dataReady.update('screencaps');},
       onStop: subErr
-    });
+    });*/
 
     $scope.subscribe("genjobsmgr", ()=>{return [{type: "list", pageCur: $scope.opt.pageCur, pageSize: $scope.opt.pageSize}]}, {
       onReady: function (sid) {dataReady.update('genjobsmgr');},
@@ -91,7 +91,7 @@ angular.module('app.generate').controller('genJobsCtrl', ['$rootScope', '$scope'
     });
   }, 10);
 
-  var dataReady:iDataReady = new apputils.cDataReady(2, function():void{
+  var dataReady:iDataReady = new apputils.cDataReady(1, function():void{
     updateTableStateParams();
     updateJobMgr();
     $scope.refreshHITs();
