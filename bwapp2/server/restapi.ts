@@ -65,7 +65,8 @@ HTTP['methods']({
           });
           newblock_state.push({id: s.id, position: pos, rotation: rot})
         }
-        var ele = {block_state: newblock_state, enablephysics: curState.block_states[idx].enablephysics};
+        var ele = {block_state: newblock_state, enablephysics: curState.block_states[idx].enablephysics, created:curState.block_states[idx].created};
+        if(curState.block_states[idx].screencapid) ele['screencapid'] = curState.block_states[idx].screencapid;
         tempframe.block_states.push(ele);
       }
       var content:string = JSON.stringify(tempframe, null, 2);
