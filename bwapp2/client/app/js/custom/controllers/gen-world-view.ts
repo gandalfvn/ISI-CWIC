@@ -1169,10 +1169,19 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     myengine.updateScene($scope.curState.block_states[0]);
   };
 
+  var lastSaveState:number = 0;
   /**save state in create mode
    * by saving position and screencap
    */
   $scope.saveState = function(){
+    var curTime:number = (new Date()).getTime();
+    var dTime:number = curTime-lastSaveState;
+    if(dTime < 1000){
+      lastSaveState = curTime;
+      toaster.pop('warning', 'Too many save clicks - ignored');
+      return;
+    }
+    else lastSaveState = curTime;
     //wait for steady state
     checkFnSS = setInterval(function () {
       if (myengine.isSteadyState) {
