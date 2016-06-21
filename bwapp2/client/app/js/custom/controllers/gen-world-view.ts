@@ -659,7 +659,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
 
   var createButtons = function (id:string, i:number):string {
     var lenID:number = $('div').length;
-    var eleDivID:string = 'rowdiv' + lenID; // Unique ID
+    var eleDivID:string = 'stateid' + i; // Unique ID
     var retId:string = id + lenID;
     var htmlout:string = '';
     if(myengine.getUIVal()){
@@ -1219,7 +1219,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
           showImage(b64img, 'Move #: ' + $scope.createStateIdx, attachid);
         });
         $scope.createStateIdx++;
-        //now copy the current layout to the next view incase we want to undo etc.
+        copyState(block_state, $scope.createStateIdx);
+        /*//now copy the current layout to the next view incase we want to undo etc.
         if(!$scope.curState.block_states[$scope.createStateIdx]){
           //empty block states place holder
           var blockstatesph:iBlockStates ={created: 0, screencapid: '', block_state:[]};
@@ -1227,7 +1228,7 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
         }
         var block_states = $scope.curState.block_states[$scope.createStateIdx];
         //make a copy of the previous states into this for reset if needed
-        block_states.block_state = angular.copy(block_state);
+        block_states.block_state = angular.copy(block_state);*/
         $scope.$apply(()=>{
           $scope.sceneExists = true;
         })
@@ -1266,6 +1267,42 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
   $scope.resetState = function(){
     myengine.updateScene($scope.curState.block_states[$scope.createStateIdx]);
   };
+
+  /**deletes a previous frame
+   */
+  $scope.delState = function(){
+    if($scope.createStateIdx > 0){
+      //console.warn('delState b',$scope.createStateIdx, $scope.curState.block_states.length);
+      //we are 0 based so we must remove one less than what we have
+      $scope.createStateIdx--;
+      $scope.curState.block_states = $scope.curState.block_states.slice(0,$scope.createStateIdx);
+      $('div#stateid'+$scope.createStateIdx).remove();
+      var block_state:iBlockState[] = null;
+      if(!$scope.createStateIdx){
+        $scope.curState.block_states = mungeBlockStates(defBlockState.block_states);
+        $scope.curState.block_meta = angular.copy(defBlockState.block_meta);
+      }
+      else{
+        block_state = $scope.curState.block_states[$scope.createStateIdx-1].block_state;
+        copyState(block_state, $scope.createStateIdx);
+        //console.warn('delState a',$scope.createStateIdx, $scope.curState.block_states.length);
+      }
+      $scope.resetState();
+    }
+  };
+  
+  var copyState = function(block_state:iBlockState[], tgtIdx:number){
+    if(tgtIdx > -1 && block_state.length){
+      //now copy the current layout to the next view incase we want to undo etc.
+      if(!$scope.curState.block_states[tgtIdx]){
+        //empty block states place holder
+        var blockstatesph:iBlockStates ={created: 0, screencapid: '', block_state:[]};
+        $scope.curState.block_states.push(blockstatesph);
+      }
+      $scope.curState.block_states[tgtIdx].block_state = angular.copy(block_state);
+    }
+  };
+
 
   $scope.resetCamera = function(){
     myengine.resetCamera();

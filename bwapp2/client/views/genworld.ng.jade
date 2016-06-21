@@ -125,9 +125,9 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
             | Hold block, then press SHIFT key
             br
             | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and move mouse up/down
-            br
-            strong Rotate: 
-            | Hold block, then press ALT key
+            //-br
+              strong Rotate: 
+              | Hold block, then press ALT key
     .row.well
       //-button.btn.btn-sm.btn-info.mb-sm(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks', ng-click='startGen()') Create Layout
       //-br(ng-if='!isgen && !enableImpSave && !curState._id && curState.block_meta.blocks')
@@ -143,6 +143,8 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         button.btn.btn-sm.btn-info.mb-sm(ng-click='saveState()') Capture Frame
         | &nbsp;&nbsp;
         button.btn.btn-sm.btn-info.mb-sm(ng-click='resetState()') Reset Frame
+        br
+        button.btn.btn-sm.btn-info.mb-sm(ng-show='createStateIdx', ng-click='delState()') Delete Last Frame
         br
         label Rotate Cube:
         select(ng-model = "rotid")
@@ -161,7 +163,7 @@ toaster-container(toaster-options="{'position-class': 'toast-bottom-right', 'clo
         span(ng-show='enabledCubes.length > 1 && createStateIdx == 0')
           label *Delete #Cubes:
           select(ng-model = "delcnt" ng-change="hideCube(delcnt)")
-            option(ng-show='k > 0' ng-repeat='(k,v) in enabledCubes', value='{{k}}') {{k}}
+            option(ng-repeat='(k,v) in enabledCubes', value='{{k}}') {{k}}
           br
           i(style="color:red") *Scene resets on cube delete
         hr
