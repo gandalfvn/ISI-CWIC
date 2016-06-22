@@ -437,7 +437,6 @@ module miGen3DEngine {
       //check if each state has physics
       if(!_.isUndefined(state.enablephysics)){
         self.opt.hasPhysics = state.enablephysics;
-        self.updatePhysics();
       }
       setTimeout(function () {
         if (state.block_state) {
@@ -447,16 +446,10 @@ module miGen3DEngine {
             if (frame.rotation)
               c.rotationQuaternion = new BABYLON.Quaternion(frame.rotation['x'], frame.rotation['y'], frame.rotation['z'], frame.rotation['w']);
             c.isVisible = true;
-            if (self.opt.hasPhysics) c.setPhysicsState({
-              impostor: BABYLON.PhysicsEngine.BoxImpostor,
-              move: true,
-              mass: self.mass, //c.boxsize,
-              friction: self.fric,
-              restitution: self.rest
-            });
           });
+          self.updatePhysics();
         }
-        else console.warn('error', 'Missing BLOCK_STATE')
+        else console.warn('error', 'Missing BLOCK_STATE');
         if (cb) cb();
       }, 100);
     };

@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d429f24e-fb6a-4680-8b15-95ff2f56890b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js.map" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/views/genworld.ng.jade" afterPath="$PROJECT_DIR$/client/views/genworld.ng.jade" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.js" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.js.map" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.js.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts" afterPath="$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts" />
     </list>
     <ignored path="bwapp2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -37,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gen-world-view.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="649">
-              <caret line="1287" column="10" selection-start-line="1287" selection-start-column="10" selection-end-line="1287" selection-end-column="10" />
+            <state relative-caret-position="322">
+              <caret line="1267" column="24" selection-start-line="1267" selection-start-column="13" selection-end-line="1267" selection-end-column="24" />
               <folding>
                 <marker date="1466529500000" expanded="true" signature="21753:21846" placeholder="..." />
               </folding>
@@ -59,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gen-3d-engine.ts" pinned="false" current-in-tab="false">
+      <file leaf-file-name="gen-3d-engine.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="15" selection-start-line="22" selection-start-column="4" selection-end-line="22" selection-end-column="15" />
+            <state relative-caret-position="859">
+              <caret line="472" column="17" selection-start-line="472" selection-start-column="17" selection-end-line="472" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -86,7 +84,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/client/angle/js/custom/controllers/gen-task-view.ts" />
         <option value="$PROJECT_DIR$/client/views/gencmdtask.ng.ts" />
         <option value="$PROJECT_DIR$/server/util.ts" />
         <option value="$PROJECT_DIR$/client/views/gencmdexp.ng.jade" />
@@ -137,6 +134,7 @@
         <option value="$PROJECT_DIR$/server/restapi.ts" />
         <option value="$PROJECT_DIR$/client/views/genworld.ng.jade" />
         <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts" />
+        <option value="$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts" />
       </list>
     </option>
   </component>
@@ -834,12 +832,12 @@
       <workItem from="1465849360574" duration="500000" />
       <workItem from="1465858217152" duration="2000" />
       <workItem from="1465921899565" duration="1176000" />
-      <workItem from="1466524932779" duration="4556000" />
+      <workItem from="1466524932779" duration="5854000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="123289000" />
+    <option name="totallyTimeSpent" value="124587000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1152" y="236" width="1536" height="1493" extended-state="0" />
@@ -1108,14 +1106,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="15" selection-start-line="22" selection-start-column="4" selection-end-line="22" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/views/genworld.ng.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="874">
@@ -1126,11 +1116,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-world-view.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="649">
-          <caret line="1287" column="10" selection-start-line="1287" selection-start-column="10" selection-end-line="1287" selection-end-column="10" />
+        <state relative-caret-position="322">
+          <caret line="1267" column="24" selection-start-line="1267" selection-start-column="13" selection-end-line="1267" selection-end-column="24" />
           <folding>
             <marker date="1466529500000" expanded="true" signature="21753:21846" placeholder="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/js/custom/controllers/gen-3d-engine.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="859">
+          <caret line="472" column="17" selection-start-line="472" selection-start-column="17" selection-end-line="472" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>
