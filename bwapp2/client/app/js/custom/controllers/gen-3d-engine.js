@@ -366,6 +366,8 @@ var miGen3DEngine;
             var zpos = [7, 8, 9, 10];
             for (var j = 0; j < this.cubeslist.length; j++) {
                 c = this.cubeslist[j];
+                if (!c.geometry)
+                    console.warn('error in geometry', c);
                 if (this.opt.hasPhysics)
                     this.oimo.unregisterMesh(c); //stop physics
                 c.position = new BABYLON.Vector3((p + i * 0.3), c.boxsize, zpos[z]);
@@ -591,9 +593,14 @@ var miGen3DEngine;
             }
         };
         cUI3DEngine.prototype.onPointerDown = function (evt) {
+            var self = this;
             if (evt.button !== 0 || !this.enableUI)
                 return;
-            var self = this;
+            if (self.groupMesh.length) {
+                //fix ERROR when block chosen user moves pointer out of view port and comes back in to drop
+                self.onPointerUp();
+                return;
+            }
             // check if we are under a mesh
             var pickInfo = self.scene.pick(self.scene.pointerX, self.scene.pointerY, function (mesh) {
                 return (mesh !== self.ground) && (mesh !== self.skybox) && (mesh !== self.volumeMesh)
