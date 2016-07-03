@@ -520,7 +520,8 @@ angular.module('app.generate').controller('genWorldCtrl', ['$rootScope', '$scope
     //var eleLabelID:string = 'h4' + $('h4').length; // Unique ID
     var htmlout:string = '';
     if (text) htmlout += '<b>' + text + '</b><br>';
-    htmlout += '<img id="' + eleImgID + '" style="width:' + myengine.canvas.width * 2 / 3 + 'px;height:' + myengine.canvas.height * 2 / 3 + 'px"></img>';
+    //style="width:' + myengine.canvas.width * 2 / 3 + 'px;height:' + myengine.canvas.height * 2 / 3 + 'px"
+    htmlout += '<img id="' + eleImgID + '" style="width:' + 480 + 'px;"></img>';
     // + '<label id="'+eleLabelID+'" class="mb"> '+id+'</label>';
     var attachTo = '#galleryarea';
     if (attachID) attachTo = '#' + attachID;
